@@ -2,7 +2,7 @@ import React from 'react'
 
 const page = () => {
   return (
-    <div>hai</div>
+    <div>hai dek sama om yuk -bernard</div>
   )
 }
 
