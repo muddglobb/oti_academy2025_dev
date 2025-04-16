@@ -1,0 +1,488 @@
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+import axios from 'axios';
+import { asyncHandler } from '../middleware/async.middleware.js';
+import { ApiResponse } from '../utils/api-response.js';
+
+const prisma = new PrismaClient();
+
+// @desc    Register user
+// @route   POST /register
+// @access  Public
+export const register = asyncHandler(async (req, res) => {
+    const { name, email, password, type, nim } = req.body;
+  
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json(
+        ApiResponse.error('User already exists with that email')
+      );
+    }
+  
+    // If DIKE user, validate NIM
+    if (type === 'DIKE') {
+      if (!nim) {
+        return res.status(400).json(
+          ApiResponse.error('NIM is required for DIKE students')
+        );
+      }
+  
+      // Check if NIM exists in DikeStudent table
+      const dikeStudent = await prisma.dikeStudent.findUnique({ where: { nim } });
+      if (!dikeStudent) {
+        return res.status(400).json(
+          ApiResponse.error('Invalid NIM. Please contact administrator')
+        );
+      }
+      
+      // Check if NIM is already registered by another user
+      const existingUserWithNim = await prisma.user.findFirst({ where: { nim } });
+      if (existingUserWithNim) {
+        return res.status(400).json(
+          ApiResponse.error('This NIM is already registered. Please contact administrator if this is a mistake')
+        );
+      }
+    }
+
+  // Hash password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  // Create user
+  const user = await prisma.user.create({
+    data: {
+      name,
+      email,
+      password: hashedPassword,
+      type,
+      nim: type === 'DIKE' ? nim : null,
+    },
+  });
+
+  // Generate tokens
+  const { accessToken, refreshToken } = generateTokens(user);
+
+  // Store refresh token
+  await prisma.refreshToken.create({
+    data: {
+      token: refreshToken,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+    },
+  });
+
+  res.status(201).json(
+    ApiResponse.success({
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        type: user.type,
+      },
+      accessToken,
+      refreshToken,
+    })
+  );
+});
+
+// @desc    Login user
+// @route   POST /login
+// @access  Public
+export const login = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  // Check if user exists
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) {
+    return res.status(401).json(
+      ApiResponse.error('Invalid credentials')
+    );
+  }
+
+  // Check if password matches
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    return res.status(401).json(
+      ApiResponse.error('Invalid credentials')
+    );
+  }
+
+  // Generate tokens
+  const { accessToken, refreshToken } = generateTokens(user);
+
+  // Store refresh token
+  await prisma.refreshToken.create({
+    data: {
+      token: refreshToken,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+    },
+  });
+
+  res.status(200).json(
+    ApiResponse.success({
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        type: user.type,
+      },
+      accessToken,
+      refreshToken,
+    })
+  );
+});
+
+// @desc    Logout User
+// @route   POST /logout
+// @access  Private
+export const logout = asyncHandler(async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(400).json(
+      ApiResponse.error('Refresh token is required')
+    );
+  }
+
+  // Remove refresh token from database
+  await prisma.refreshToken.deleteMany({
+    where: {
+      token: refreshToken,
+      userId: req.user.id
+    },
+  });
+
+  res.status(200).json(
+    ApiResponse.success('Logged out successfully')
+  );
+});
+
+// @desc    Refresh access token
+// @route   POST /refresh-token
+// @access  Public
+export const refreshToken = asyncHandler(async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(400).json(
+      ApiResponse.error('Refresh token is required')
+    );
+  }
+
+  // Check if refresh token exists and is valid
+  const storedRefreshToken = await prisma.refreshToken.findFirst({
+    where: {
+      token: refreshToken,
+      expiresAt: { gt: new Date() },
+    },
+    include: {
+      user: true
+    }
+  });
+
+  if (!storedRefreshToken) {
+    return res.status(401).json(
+      ApiResponse.error('Invalid or expired refresh token')
+    );
+  }
+
+  // Generate new access token
+  const accessToken = jwt.sign(
+    { 
+      id: storedRefreshToken.user.id,
+      role: storedRefreshToken.user.role 
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+  );
+
+  res.status(200).json(
+    ApiResponse.success({
+      accessToken
+    })
+  );
+});
+
+// @desc    Forgot password
+// @route   POST /forgot-password
+// @access  Public
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  // Check if user exists
+  const user = await prisma.user.findUnique({ where: { email } });
+  
+  // Always return success even if user not found (security)
+  if (!user) {
+    console.info(`Reset password attempted for non-existent email: ${email}`);
+    return res.status(200).json(
+      ApiResponse.success('If your email is registered, you will receive reset instructions shortly')
+    );
+  }
+
+  // Generate reset token
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex');
+  
+  // Delete any existing tokens for this user
+  await prisma.passwordReset.deleteMany({
+    where: { email: user.email }
+  });
+  
+  // Store token in database
+  await prisma.passwordReset.create({
+    data: {
+      email: user.email,
+      token: resetTokenHash,
+      expiresAt: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
+    },
+  });
+
+  const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+
+  // Try to send email but don't fail if email service is down
+  try {
+    if (process.env.EMAIL_SERVICE_URL) {
+      // Get the email service URL
+      const emailServiceUrl = process.env.EMAIL_SERVICE_URL;
+      
+      await axios.post(`${emailServiceUrl}/email/send`, {
+        to: user.email,
+        subject: 'OTI Academy - Reset Password',
+        text: `Silakan reset password Anda dengan mengklik link berikut: ${resetUrl}`,
+        html: `<p>Silakan reset password Anda dengan mengklik link berikut:</p>
+              <p><a href="${resetUrl}">Reset Password</a></p>
+              <p>Link ini akan kedaluwarsa dalam 15 menit.</p>`,
+        user_id: user.id
+      });
+      
+      console.info(`Reset password email sent to: ${email}`);
+    }
+  } catch (emailError) {
+    // Log error but don't expose to user
+    console.error(`Failed to send reset password email: ${emailError.message}`);
+  }
+  
+  // For development, log more details and provide fallback
+  if (process.env.NODE_ENV === 'development') {
+    console.log('==== DEVELOPMENT ONLY - NOT FOR PRODUCTION ====');
+    console.log(`Password reset URL for ${email}:`);
+    console.log(resetUrl);
+    console.log(`Raw reset token: ${resetToken}`);
+    console.log('=================================================');
+  }
+  
+  return res.status(200).json(
+    ApiResponse.success('If your email is registered, you will receive reset instructions shortly')
+  );
+});
+
+// @desc    Reset password
+// @route   POST /reset-password
+// @access  Public
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { token, password } = req.body;
+
+  // Hash the token to compare with the stored hash
+  const resetTokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
+  // Find valid token
+  const passwordReset = await prisma.passwordReset.findFirst({
+    where: {
+      token: resetTokenHash,
+      expiresAt: { gt: new Date() },
+    },
+  });
+
+  if (!passwordReset) {
+    return res.status(400).json(
+      ApiResponse.error('Invalid or expired password reset token')
+    );
+  }
+
+  // Update user password
+  const user = await prisma.user.findUnique({ where: { email: passwordReset.email } });
+  if (!user) {
+    return res.status(404).json(
+      ApiResponse.error('User not found')
+    );
+  }
+
+  // Hash new password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  // Update user password
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { password: hashedPassword },
+  });
+
+  // Delete all password reset tokens for this user
+  await prisma.passwordReset.deleteMany({
+    where: { email: user.email },
+  });
+
+  res.status(200).json(
+    ApiResponse.success('Password has been reset successfully')
+  );
+});
+
+// @desc    Verify reset token validity
+// @route   GET /verify-reset/:token
+// @access  Public
+export const verifyResetToken = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+  
+  // Hash token
+  const resetTokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
+  // Find valid token
+  const passwordReset = await prisma.passwordReset.findFirst({
+    where: {
+      token: resetTokenHash,
+      expiresAt: { gt: new Date() },
+    },
+  });
+
+  if (!passwordReset) {
+    return res.status(400).json(
+      ApiResponse.error('Invalid or expired password reset token')
+    );
+  }
+
+  // Return success with email (masked for security if needed)
+  const email = passwordReset.email;
+  const maskedEmail = email.replace(/(.{2})(.*)(@.*)/, '$1****$3');
+  
+  res.status(200).json(
+    ApiResponse.success({
+      valid: true,
+      email: maskedEmail
+    })
+  );
+});
+
+// @desc    Get user profile
+// @route   GET /me
+// @access  Private
+export const getMe = asyncHandler(async (req, res) => {
+  const user = await prisma.user.findUnique({ 
+    where: { id: req.user.id },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      type: true,
+      nim: true,
+      createdAt: true,
+    }
+  });
+
+  if (!user) {
+    return res.status(404).json(
+      ApiResponse.error('User not found')
+    );
+  }
+
+  res.status(200).json(
+    ApiResponse.success(user)
+  );
+});
+
+// @desc    Change password
+// @route   PATCH /change-password
+// @access  Private
+export const changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  // Get user with password
+  const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+  if (!user) {
+    return res.status(404).json(
+      ApiResponse.error('User not found')
+    );
+  }
+
+  // Verify current password
+  const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+  if (!isPasswordValid) {
+    return res.status(401).json(
+      ApiResponse.error('Current password is incorrect')
+    );
+  }
+
+  // Hash new password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+  // Update password
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { password: hashedPassword },
+  });
+
+  res.status(200).json(
+    ApiResponse.success('Password updated successfully')
+  );
+});
+
+// @desc    Update user profile
+// @route   PATCH /update-profile
+// @access  Private
+export const updateProfile = asyncHandler(async (req, res) => {
+  const { name } = req.body;
+
+  // Prepare data update object
+  const updateData = {};
+  if (name) updateData.name = name;
+
+  // Prevent empty updates
+  if (Object.keys(updateData).length === 0) {
+    return res.status(400).json(
+      ApiResponse.error('No fields to update provided')
+    );
+  }
+
+  // Update user profile
+  const updatedUser = await prisma.user.update({
+    where: { id: req.user.id },
+    data: updateData,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      type: true,
+      nim: true,
+      createdAt: true,
+    }
+  });
+
+  res.status(200).json(
+    ApiResponse.success(updatedUser)
+  );
+});
+
+// Helper function to generate tokens
+const generateTokens = (user) => {
+  const accessToken = jwt.sign(
+    { 
+      id: user.id,
+      role: user.role 
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+  );
+
+  const refreshToken = crypto.randomBytes(40).toString('hex');
+
+  return { accessToken, refreshToken };
+};
