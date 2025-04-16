@@ -142,26 +142,42 @@ export const login = asyncHandler(async (req, res) => {
 // @route   POST /logout
 // @access  Private
 export const logout = asyncHandler(async (req, res) => {
-  const { refreshToken } = req.body;
-
-  if (!refreshToken) {
-    return res.status(400).json(
-      ApiResponse.error('Refresh token is required')
+    const { refreshToken } = req.body;
+  
+    if (!refreshToken) {
+      return res.status(400).json(
+        ApiResponse.error('Refresh token is required')
+      );
+    }
+  
+    // Tangani token refresh
+    await prisma.refreshToken.deleteMany({
+      where: { token: refreshToken }
+    });
+    
+    // Blacklist access token juga (jika diinginkan)
+    const accessToken = req.headers.authorization?.split(' ')[1];
+    if (accessToken) {
+      try {
+        const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
+        
+        // Tambahkan token ke blacklist dengan expiry time yang sama
+        await prisma.tokenBlacklist.create({
+          data: {
+            token: accessToken,
+            expiresAt: new Date(decoded.exp * 1000)
+          }
+        });
+      } catch (error) {
+        // Token sudah expired, tidak perlu di-blacklist
+        console.log('Access token already expired or invalid');
+      }
+    }
+  
+    res.status(200).json(
+      ApiResponse.success('Logged out successfully')
     );
-  }
-
-  // Remove refresh token from database
-  await prisma.refreshToken.deleteMany({
-    where: {
-      token: refreshToken,
-      userId: req.user.id
-    },
   });
-
-  res.status(200).json(
-    ApiResponse.success('Logged out successfully')
-  );
-});
 
 // @desc    Refresh access token
 // @route   POST /refresh-token

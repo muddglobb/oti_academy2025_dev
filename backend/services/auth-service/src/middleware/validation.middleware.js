@@ -62,6 +62,18 @@ const validate = (schema) => (req, res, next) => {
   }
 };
 
+// Update profile schema
+const updateProfileSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters').optional(),
+});
+
+// Refresh token schema
+const refreshTokenSchema = z.object({
+  refreshToken: z.string().min(1, 'Refresh token is required'),
+});
+
+export const validateUpdateProfile = validate(updateProfileSchema);
+export const validateRefreshToken = validate(refreshTokenSchema);
 export const validateRegistration = validate(registerSchema);
 export const validateLogin = validate(loginSchema);
 export const validateForgotPassword = validate(forgotPasswordSchema);
