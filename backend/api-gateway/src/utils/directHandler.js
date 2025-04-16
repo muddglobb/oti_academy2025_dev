@@ -1,0 +1,163 @@
+import axios from 'axios';
+import express from 'express';
+import multer from 'multer';
+import FormData from 'form-data';
+import path from 'path';
+import fs from 'fs';
+
+// Simple logger functions
+const logger = {
+  info: (message) => console.log(`[INFO] ${message}`),
+  error: (message) => console.error(`[ERROR] ${message}`),
+  debug: (message) => console.log(`[DEBUG] ${message}`)
+};
+
+// Configure upload storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.join(process.cwd(), 'temp-uploads');
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+// Export multer middleware for file uploads
+export const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
+
+// Sanitize request body for logging
+const sanitizeRequestBody = (body) => {
+  if (!body) return {};
+  
+  const sanitized = { ...body };
+  
+  if (sanitized.password) sanitized.password = '***HIDDEN***';
+  if (sanitized.currentPassword) sanitized.currentPassword = '***HIDDEN***';
+  if (sanitized.newPassword) sanitized.newPassword = '***HIDDEN***';
+  
+  return sanitized;
+};
+
+/**
+ * Create a direct handler for routing to microservices
+ */
+export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true, isOptionalAuth = false, authMiddleware) => {
+  // Default middleware that just passes the request
+  const defaultMiddleware = (req, res, next) => next();
+  
+  // Determine which middleware to use
+  const middleware = requiresAuth ? 
+    (authMiddleware || defaultMiddleware) : 
+    defaultMiddleware;
+  
+  // Validate service URL with fallback
+  const baseUrl = serviceUrl || 'http://localhost:8001';
+  
+  // Log service URL for debugging
+  logger.info(`Creating handler for service: ${baseUrl}, path: ${servicePath}`);
+  
+  const subRouter = express.Router();
+  
+  // Use a simple handler for all methods and paths
+  subRouter.use((req, res, next) => {
+    middleware(req, res, async () => {
+      try {
+        // Calculate target URL
+        // Remove the base path from original URL to get the relative path
+        const originalUrl = req.originalUrl;
+        const basePathPattern = new RegExp(`^/auth`);
+        const relativePath = originalUrl.replace(basePathPattern, '');
+        
+        // Build target URL
+        const targetUrl = `${baseUrl}${servicePath}${relativePath}`;
+        
+        logger.info(`Direct request: ${req.method} ${req.originalUrl} -> ${targetUrl}`);
+        
+        // Check if this is a multipart request with file
+        const isMultipart = req.headers['content-type'] && 
+                            req.headers['content-type'].includes('multipart/form-data');
+        
+        if (isMultipart && req.file) {
+          // Handle file upload - create form data
+          const formData = new FormData();
+          
+          // Add file
+          formData.append('file', fs.createReadStream(req.file.path), {
+            filename: req.file.originalname,
+            contentType: req.file.mimetype
+          });
+          
+          // Add other form fields
+          Object.keys(req.body).forEach(key => {
+            formData.append(key, req.body[key]);
+          });
+          
+          // Set headers with form data boundaries
+          const headers = {
+            ...formData.getHeaders(),
+            ...(req.headers.authorization ? { 'Authorization': req.headers.authorization } : {}),
+            ...(req.user ? { 'X-User-ID': req.user.id, 'X-User-Role': req.user.role } : {})
+          };
+          
+          // Send request with form data
+          const response = await axios.post(targetUrl, formData, { 
+            headers: headers,
+            timeout: 30000 // 30 seconds for file uploads
+          });
+          
+          // Clean up temp file
+          fs.unlink(req.file.path, (err) => {
+            if (err) logger.error(`Error deleting temp file: ${err.message}`);
+          });
+          
+          logger.info(`Response from ${baseUrl}: ${response.status}`);
+          return res.status(response.status).json(response.data);
+        } else {
+          // Regular JSON request
+          const sanitizedBody = sanitizeRequestBody(req.body);
+          logger.debug(`Request body: ${JSON.stringify(sanitizedBody)}`);
+          
+          const headers = {
+            'Content-Type': req.headers['content-type'] || 'application/json',
+            ...(req.headers.authorization ? { 'Authorization': req.headers.authorization } : {}),
+            ...(req.user ? { 'X-User-ID': req.user.id, 'X-User-Role': req.user.role } : {})
+          };
+          
+          const response = await axios({
+            method: req.method,
+            url: targetUrl,
+            data: req.method !== 'GET' ? req.body : undefined,
+            params: req.query,
+            headers,
+            timeout: 10000 // 10 seconds timeout
+          });
+          
+          logger.info(`Response from ${baseUrl}: ${response.status}`);
+          return res.status(response.status).json(response.data);
+        }
+      } catch (error) {
+        logger.error(`Request error: ${error.message}`);
+        
+        if (error.response) {
+          return res.status(error.response.status).json(error.response.data);
+        }
+        
+        return res.status(503).json({
+          status: 'error',
+          message: 'Service temporarily unavailable',
+          error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+      }
+    });
+  });
+  
+  return subRouter;
+};
