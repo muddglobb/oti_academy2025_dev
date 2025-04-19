@@ -1,10 +1,10 @@
 import React from 'react'
-import Navbar from '@/components/home/navbar'
+// import Navbar from '@/components/home/navbar'
 
 const page = () => {
   return (
     <div className='bg-background h-screen'>
-      <Navbar />
+      {/* <Navbar /> */}
       <div>hai dek sama om yuk -bernard</div>
     </div>
   )
