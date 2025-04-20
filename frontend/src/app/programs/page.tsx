@@ -1,9 +1,25 @@
-import React from 'react'
+import React from "react";
+import ProgramsHero from "../modules/programs/programs-hero-section";
 
-const programs = () => {
+const Page = () => {
   return (
-    <div>programs</div>
-  )
-}
+    <div>
+      <div
+        className="
+        w-full
+        h-[532px]
+        bg-[url('/images/background-programs.png')] 
+        bg-cover 
+        bg-center
+        flex
+        items-center
+        justify-center
+      "
+      >
+        <ProgramsHero></ProgramsHero>
+      </div>
+    </div>
+  );
+};
 
-export default programs
+export default Page;
