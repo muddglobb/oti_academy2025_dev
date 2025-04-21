@@ -3,6 +3,7 @@ import fs from 'fs';
 import csvParser from 'csv-parser';
 import { asyncHandler } from '../middleware/async.middleware.js';
 import { ApiResponse } from '../utils/api-response.js';
+import authService from '../services/authService.js';
 
 const prisma = new PrismaClient();
 
@@ -99,4 +100,27 @@ export const importDikeStudents = asyncHandler(async (req, res) => {
       errors: errors.length ? errors : null
     }, `Successfully imported ${importedCount} DIKE students`)
   );
+});
+
+export const updateUserRole = asyncHandler(async (req, res) => {
+  const { userId, role } = req.body;
+  
+  if (!userId || !role) {
+    return res.status(400).json(
+      ApiResponse.error('User ID and role are required')
+    );
+  }
+  
+  try {
+    const updatedUser = await authService.updateUserRole(userId, role);
+    
+    res.status(200).json(
+      ApiResponse.success(updatedUser, 'User role updated successfully')
+    );
+  } catch (error) {
+    const statusCode = error.message.includes('Invalid role') ? 400 : 500;
+    res.status(statusCode).json(
+      ApiResponse.error(error.message)
+    );
+  }
 });

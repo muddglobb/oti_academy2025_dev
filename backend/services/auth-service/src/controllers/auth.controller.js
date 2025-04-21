@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import axios from 'axios';
 import { asyncHandler } from '../middleware/async.middleware.js';
 import { ApiResponse } from '../utils/api-response.js';
+import authService from '../services/authService.js';
 
 const prisma = new PrismaClient();
 
@@ -12,81 +13,19 @@ const prisma = new PrismaClient();
 // @route   POST /register
 // @access  Public
 export const register = asyncHandler(async (req, res) => {
-    const { name, email, password, type, nim } = req.body;
+  const { name, email, password, type, nim } = req.body;
   
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) {
-      return res.status(400).json(
-        ApiResponse.error('User already exists with that email')
-      );
-    }
-  
-    // If DIKE user, validate NIM
-    if (type === 'DIKE') {
-      if (!nim) {
-        return res.status(400).json(
-          ApiResponse.error('NIM is required for DIKE students')
-        );
-      }
-  
-      // Check if NIM exists in DikeStudent table
-      const dikeStudent = await prisma.dikeStudent.findUnique({ where: { nim } });
-      if (!dikeStudent) {
-        return res.status(400).json(
-          ApiResponse.error('Invalid NIM. Please contact administrator')
-        );
-      }
-      
-      // Check if NIM is already registered by another user
-      const existingUserWithNim = await prisma.user.findFirst({ where: { nim } });
-      if (existingUserWithNim) {
-        return res.status(400).json(
-          ApiResponse.error('This NIM is already registered. Please contact administrator if this is a mistake')
-        );
-      }
-    }
-
-  // Hash password
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  // Create user
-  const user = await prisma.user.create({
-    data: {
-      name,
-      email,
-      password: hashedPassword,
-      type,
-      nim: type === 'DIKE' ? nim : null,
-    },
-  });
-
-  // Generate tokens
-  const { accessToken, refreshToken } = generateTokens(user);
-
-  // Store refresh token
-  await prisma.refreshToken.create({
-    data: {
-      token: refreshToken,
-      userId: user.id,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-    },
-  });
-
-  res.status(201).json(
-    ApiResponse.success({
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        type: user.type,
-      },
-      accessToken,
-      refreshToken,
-    })
-  );
+  try {
+    const result = await authService.register({ name, email, password, type, nim });
+    
+    res.status(201).json(
+      ApiResponse.success(result, 'User registered successfully')
+    );
+  } catch (error) {
+    res.status(400).json(
+      ApiResponse.error(error.message)
+    );
+  }
 });
 
 // @desc    Login user
@@ -94,135 +33,57 @@ export const register = asyncHandler(async (req, res) => {
 // @access  Public
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-
-  // Check if user exists
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) {
-    return res.status(401).json(
+  
+  try {
+    const result = await authService.login(email, password);
+    
+    res.status(200).json(
+      ApiResponse.success(result, 'Logged in successfully')
+    );
+  } catch (error) {
+    res.status(401).json(
       ApiResponse.error('Invalid credentials')
     );
   }
-
-  // Check if password matches
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    return res.status(401).json(
-      ApiResponse.error('Invalid credentials')
-    );
-  }
-
-  // Generate tokens
-  const { accessToken, refreshToken } = generateTokens(user);
-
-  // Store refresh token
-  await prisma.refreshToken.create({
-    data: {
-      token: refreshToken,
-      userId: user.id,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-    },
-  });
-
-  res.status(200).json(
-    ApiResponse.success({
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        type: user.type,
-      },
-      accessToken,
-      refreshToken,
-    })
-  );
 });
 
 // @desc    Logout User
 // @route   POST /logout
 // @access  Private
 export const logout = asyncHandler(async (req, res) => {
-    const { refreshToken } = req.body;
+  const { refreshToken } = req.body;
+  const accessToken = req.headers.authorization?.split(' ')[1];
   
-    if (!refreshToken) {
-      return res.status(400).json(
-        ApiResponse.error('Refresh token is required')
-      );
-    }
-  
-    // Tangani token refresh
-    await prisma.refreshToken.deleteMany({
-      where: { token: refreshToken }
-    });
+  try {
+    await authService.logout(refreshToken, accessToken);
     
-    // Blacklist access token juga (jika diinginkan)
-    const accessToken = req.headers.authorization?.split(' ')[1];
-    if (accessToken) {
-      try {
-        const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
-        
-        // Tambahkan token ke blacklist dengan expiry time yang sama
-        await prisma.tokenBlacklist.create({
-          data: {
-            token: accessToken,
-            expiresAt: new Date(decoded.exp * 1000)
-          }
-        });
-      } catch (error) {
-        // Token sudah expired, tidak perlu di-blacklist
-        console.log('Access token already expired or invalid');
-      }
-    }
-  
     res.status(200).json(
-      ApiResponse.success('Logged out successfully')
+      ApiResponse.success(null, 'Logged out successfully')
     );
-  });
+  } catch (error) {
+    res.status(400).json(
+      ApiResponse.error(error.message)
+    );
+  }
+});
 
 // @desc    Refresh access token
 // @route   POST /refresh-token
 // @access  Public
 export const refreshToken = asyncHandler(async (req, res) => {
   const { refreshToken } = req.body;
-
-  if (!refreshToken) {
-    return res.status(400).json(
-      ApiResponse.error('Refresh token is required')
+  
+  try {
+    const result = await authService.refreshAccessToken(refreshToken);
+    
+    res.status(200).json(
+      ApiResponse.success(result, 'Token refreshed successfully')
+    );
+  } catch (error) {
+    res.status(401).json(
+      ApiResponse.error(error.message)
     );
   }
-
-  // Check if refresh token exists and is valid
-  const storedRefreshToken = await prisma.refreshToken.findFirst({
-    where: {
-      token: refreshToken,
-      expiresAt: { gt: new Date() },
-    },
-    include: {
-      user: true
-    }
-  });
-
-  if (!storedRefreshToken) {
-    return res.status(401).json(
-      ApiResponse.error('Invalid or expired refresh token')
-    );
-  }
-
-  // Generate new access token
-  const accessToken = jwt.sign(
-    { 
-      id: storedRefreshToken.user.id,
-      role: storedRefreshToken.user.role 
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
-  );
-
-  res.status(200).json(
-    ApiResponse.success({
-      accessToken
-    })
-  );
 });
 
 // @desc    Forgot password
