@@ -31,7 +31,7 @@ const Footer = () => {
       </div>
 
       <div className="flex justify-between p-[50px]">
-        <div className="text-[var(--color-neutral-50)] w-[33%]">
+        <div className="text-[var(--color-neutral-50)] w-[33%] flex flex-col gap-[20px]">
           <div>
             <p>Gedung Fakultas MIPA UGM Sekip Utara,
             Bulaksumur, Sinduadi, Mlati, Sleman, DI Yogyakarta</p>
