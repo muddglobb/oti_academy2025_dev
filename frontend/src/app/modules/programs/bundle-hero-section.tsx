@@ -11,7 +11,10 @@ const EntryBundle = () => {
       <div className=" text-center font-display w-xl lg:w-4xl">
         <div className="flex justify-center items-center gap-5">
           <div className="text-white border-solid border-1 rounded-[5px] px-4.5 py-1.5 border-white">
-            <CountdownTimer targetDate={"2025-05-30T23:59:59"} />
+            <CountdownTimer
+              targetDate={"2025-05-30T23:59:59"}
+              initialServerTime={Date.now()}
+            />
           </div>
           <div className="bg-primary-800 text-white  rounded-lg text-center">
             <p className="m-auto px-4.5 py-2">Bundle</p>

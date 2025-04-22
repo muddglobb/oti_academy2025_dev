@@ -3,18 +3,25 @@ import React, { useEffect, useState } from "react";
 
 interface CountdownTimerProps {
   targetDate: Date | string;
+  initialServerTime?: number;
 }
 
-const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+const CountdownTimer = ({
+  targetDate,
+  initialServerTime,
+}: CountdownTimerProps) => {
+  const [mounted, setMounted] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(() => {
+    const initialTime = initialServerTime
+      ? new Date(initialServerTime)
+      : new Date();
+    return calculateTimeLeft(initialTime);
+  });
 
-  function calculateTimeLeft() {
-    const targetTime =
-      typeof targetDate === "string"
-        ? new Date(targetDate).getTime()
-        : targetDate.getTime();
+  function calculateTimeLeft(now: Date) {
+    const targetTime = new Date(targetDate).getTime();
 
-    const difference = targetTime - new Date().getTime();
+    const difference = targetTime - now.getTime();
 
     if (difference <= 0) {
       return {
@@ -32,16 +39,18 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
     };
   }
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft());
+    setMounted(true);
+
+    const interval = setInterval(() => {
+      setTimeLeft(calculateTimeLeft(new Date()));
     }, 1000);
 
-    return () => clearTimeout(timer);
-  });
+    return () => clearInterval(interval);
+  }, [targetDate]);
 
-  const formatTime = (time: number) => {
-    return time < 10 ? `0${time}` : time;
-  };
+  if (!mounted) return null;
+
+  const formatTime = (time: number) => time.toString().padStart(2, "0");
 
   return (
     <div className="flex items-center justify-center space-x-0.5 font-display text-[22px] font-bold">
