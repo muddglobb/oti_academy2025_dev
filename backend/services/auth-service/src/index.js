@@ -7,6 +7,7 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import authRoutes from './routes/auth.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import usersRoutes from './routes/user.routes.js';
 import { ApiResponse } from './utils/api-response.js';
 
 // Load environment variables
@@ -76,6 +77,7 @@ app.use(morgan('dev'));
 // Routes
 app.use('/auth', authRoutes);
 app.use('/auth/admin', adminRoutes);
+app.use('/users', usersRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
