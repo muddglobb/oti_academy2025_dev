@@ -7,7 +7,6 @@ import {
   forgotPassword,
   resetPassword,
   verifyResetToken,
-  getMe,
   changePassword,
   updateProfile
 } from '../controllers/auth.controller.js';
@@ -22,19 +21,24 @@ import {
 } from '../middleware/validation.middleware.js';
 import { authenticateJWT } from '../middleware/auth.middleware.js';
 
+import {
+  securityLimiter,
+  standardLimiter
+} from '../../../../libs/middlewares/ratelimiter.js';
+
 const router = Router();
 
 // Public routes
-router.post('/register', validateRegistration, register);
-router.post('/login', validateLogin, login);
-router.post('/refresh-token', validateRefreshToken, refreshToken);
-router.post('/forgot-password', validateForgotPassword, forgotPassword);
-router.post('/reset-password', validateResetPassword, resetPassword);
-router.get('/verify-reset/:token', verifyResetToken);
+router.post('/register', securityLimiter, validateRegistration, register);
+router.post('/login', securityLimiter, validateLogin, login);
+router.post('/refresh-token', standardLimiter, validateRefreshToken, refreshToken);
+router.post('/forgot-password', securityLimiter, validateForgotPassword, forgotPassword);
+router.post('/reset-password', securityLimiter, validateResetPassword, resetPassword);
+router.get('/verify-reset/:token', standardLimiter, verifyResetToken);
 
 // Protected routes
 router.post('/logout', authenticateJWT, logout);
-router.get('/me', authenticateJWT, getMe);
+
 router.patch('/change-password', authenticateJWT, validateChangePassword, changePassword);
 router.patch('/update-profile', authenticateJWT, validateUpdateProfile, updateProfile);
 
