@@ -131,3 +131,32 @@ export const deleteUser = asyncHandler(async (req, res) => {
         ApiResponse.success(null, 'User deleted successfully')
     );
 });
+
+// @desc    Get user profile
+// @route   GET /me
+// @access  Private
+export const getMe = asyncHandler(async (req, res) => {
+
+    const user = await prisma.user.findUnique({
+        where: { id: req.user.id },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            type: true,
+            nim: true,
+            createdAt: true,
+        }
+    });
+
+  if (!user) {
+    return res.status(404).json(
+      ApiResponse.error('User not found')
+    );
+  }
+
+  res.status(200).json(
+    ApiResponse.success(user)
+  );
+});

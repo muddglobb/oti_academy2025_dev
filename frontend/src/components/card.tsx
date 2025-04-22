@@ -67,8 +67,8 @@ const Card = ({
             <Link href={href}>
               <Image
                 src="/link-icon.png"
-                width={20}
-                height={20}
+                width={25}
+                height={25}
                 alt="Link Icon"
                 className="p-[5px]"
               />

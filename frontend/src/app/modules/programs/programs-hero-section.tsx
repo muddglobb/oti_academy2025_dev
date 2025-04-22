@@ -1,12 +1,13 @@
 import React from "react";
 
 const ProgramsHero = () => {
+  // bg-[url('/images/background-programs.png')] 
   return (
     <div
       className="
         w-full
         h-[532px]
-        bg-[url('/images/background-programs.png')] 
+
         bg-cover 
         bg-center
         flex

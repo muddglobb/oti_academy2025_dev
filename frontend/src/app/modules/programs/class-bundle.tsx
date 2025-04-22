@@ -3,7 +3,16 @@ import Card from "@/components/card";
 
 const ClassBundle = () => {
   return (
-    <div className="bg-background flex flex-col">
+    <div
+      className="     
+      w-full
+      flex flex-col        
+      px-14
+      gap-11
+
+      justify-center
+    "
+    >
       <div>
         <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[32px] font-bold">
           Get the Best of Both Worlds with Our Class Bundle
@@ -14,7 +23,7 @@ const ClassBundle = () => {
         </p>
       </div>
 
-      <div className="flex items-center justify-center gap-[40px]">
+      <div className="flex items-center flex-wrap gap-10 justify-center">
         <Card
           type="Beginner"
           image="/images/class-profile/hako.jpg"

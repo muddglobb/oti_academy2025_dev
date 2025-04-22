@@ -6,7 +6,7 @@ import EntrySessionInfo from "@/app/modules/programs/entry-sessioninfo-section";
 const webDevelopment = () => {
   return (
     <>
-      <div className="bg-[url(/images/background-entrylevel.png)] bg-no-repeat bg-cover h-full">
+      <div className="bg-black">
         <EntryHero />
         <EntryClassInfo />
         <EntrySessionInfo />
