@@ -1,4 +1,4 @@
-import { hasPermission } from '../../roles.js';
+import { hasPermission } from '../roles.js';
 import { ApiResponse } from '../utils/api-response.js';
 
 /**
@@ -55,4 +55,28 @@ export const permitWithPermission = (requiredPermission) => {
 
     next();
   };
+};
+
+/**
+ * Authorize self or admin
+ * Requires :id param in route
+ */
+export const permitSelfOrAdmin = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json(
+      ApiResponse.error('Authentication required')
+    );
+  }
+  
+  const resourceId = parseInt(req.params.id, 10);
+  const isOwnResource = req.user.id === resourceId;
+  const isAdmin = req.user.role === 'ADMIN';
+  
+  if (!isOwnResource && !isAdmin) {
+    return res.status(403).json(
+      ApiResponse.error('Access denied. You can only access your own resources')
+    );
+  }
+  
+  next();
 };

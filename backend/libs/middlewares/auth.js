@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { PrismaClient } from '@prisma/client';
 import { ApiResponse } from '../utils/api-response.js';
+import { isStudent } from '../roles.js';
 
 const prisma = new PrismaClient();
 
@@ -53,4 +54,23 @@ export const authenticate = async (req, res, next) => {
       ApiResponse.error('Invalid or expired token')
     );
   }
+};
+
+/**
+ * Middleware untuk membatasi akses hanya untuk student (DIKE atau UMUM)
+ */
+export const authorizeStudents = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json(
+      ApiResponse.error('Authentication required')
+    );
+  }
+  
+  if (!isStudent(req.user.role)) {
+    return res.status(403).json(
+      ApiResponse.error('Access denied. Only students can access this resource')
+    );
+  }
+  
+  next();
 };

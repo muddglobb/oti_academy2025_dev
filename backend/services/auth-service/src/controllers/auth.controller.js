@@ -28,9 +28,7 @@ export const register = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Login user
-// @route   POST /login
-// @access  Public
+
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   
@@ -46,6 +44,8 @@ export const login = asyncHandler(async (req, res) => {
     );
   }
 });
+
+
 
 // @desc    Logout User
 // @route   POST /logout
@@ -348,18 +348,130 @@ export const updateProfile = asyncHandler(async (req, res) => {
   );
 });
 
-// Helper function to generate tokens
-const generateTokens = (user) => {
-  const accessToken = jwt.sign(
-    { 
-      id: user.id,
-      role: user.role 
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+export const getAllUsers = asyncHandler(async (req, res) => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      type: true,
+      nim: true,
+      createdAt: true,
+    }, 
+    orderBy: {
+      createdAt: 'desc',
+    }
+  });
+
+    res.status(200).json(
+      ApiResponse.success(users)
+    );
+  });
+
+export const getUserById = asyncHandler(async (req, res) => {
+  const userId = parseInt(req.params.id);
+
+  if(req.user.id !== userId && req.user.role !== 'ADMIN') {
+    return res.status(403).json(
+      ApiResponse.error('Not authorized to access this user profile')
+    );
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true, 
+      role: true,
+      type: true,
+      nim: true,
+      createdAt: true
+    }
+  });
+
+  if(!user){
+    return res.status(404).json(
+      ApiResponse.error('User not found')
+    );
+  }
+
+  res.status(200).json(
+    ApiResponse.success(user)
   );
+});
 
-  const refreshToken = crypto.randomBytes(40).toString('hex');
 
-  return { accessToken, refreshToken };
-};
+export const updateUser = asyncHandler(async (req, res) => {
+  const userId = parseInt(req.params.id);
+  const { name, email } = req.body;
+
+  if(req.user.id !== userId && req.user.role !== 'ADMIN') {
+    return res.status(403).json(
+      ApiResponse.error('Not authorized to update this user profile')
+    );
+  }
+
+  if(email){
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser && existingUser.id !== userId) {
+      return res.status(400).json(
+        ApiResponse.error('Email already in use')
+      );
+    }
+  }
+
+  const updateData = {};
+  if (name) updateData.name = name;
+  if (email) updateData.email = email;
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: updateData,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      type: true,
+      nim: true,
+      createdAt: true
+    }
+  });
+
+  res.status(200).json(
+    ApiResponse.success(updatedUser, 'User updated successfully')
+  );
+});
+
+export const deleteUser = asyncHandler(async (req, res) => {
+  const userId = parseInt(req.params.id);
+
+  // Check if user exists
+  const user = await prisma.user.findUnique({
+    where: { id: userId }
+  });
+
+  if (!user) {
+    return res.status(404).json(
+      ApiResponse.error('User not found')
+    );
+  }
+
+  await prisma.refreshToken.deleteMany({
+    where: { userId }
+  });
+
+  // Delete user
+  await prisma.user.delete({
+    where: { id: userId }
+  });
+
+  res.status(200).json(
+    ApiResponse.success(null, 'User deleted successfully')
+  );
+});
