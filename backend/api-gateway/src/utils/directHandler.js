@@ -89,8 +89,15 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
           // Handle file upload - create form data
           const formData = new FormData();
           
+          // Sanitize file path to prevent path traversal vulnerabilities
+          const safeFilePath = path.resolve(req.file.path);
+          const allowedDir = path.join(process.cwd(), 'temp-uploads');
+          if (!safeFilePath.startsWith(allowedDir)) {
+            throw new Error('Invalid file path');
+          }
+          
           // Add file
-          formData.append('file', fs.createReadStream(req.file.path), {
+          formData.append('file', fs.createReadStream(safeFilePath), {
             filename: req.file.originalname,
             contentType: req.file.mimetype
           });
@@ -113,10 +120,16 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
             timeout: 30000 // 30 seconds for file uploads
           });
           
-          // Clean up temp file
-          fs.unlink(req.file.path, (err) => {
-            if (err) logger.error(`Error deleting temp file: ${err.message}`);
-          });
+          // Clean up temp file with path validation
+          const safeUnlinkPath = path.resolve(req.file.path);
+          const allowedUnlinkDir = path.join(process.cwd(), 'temp-uploads');
+          if (safeUnlinkPath.startsWith(allowedUnlinkDir)) {
+            fs.unlink(safeUnlinkPath, (err) => {
+              if (err) logger.error(`Error deleting temp file: ${err.message}`);
+            });
+          } else {
+            logger.error('Attempted to delete file outside of allowed directory');
+          }
           
           logger.info(`Response from ${baseUrl}: ${response.status}`);
           return res.status(response.status).json(response.data);

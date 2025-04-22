@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { importDikeStudents } from '../controllers/admin.controller.js';
+import { 
+  importDikeStudents,
+  updateUserRole
+ } from '../controllers/admin.controller.js';
 import { authenticateJWT, authorizeRoles } from '../middleware/auth.middleware.js';
 import { uploadCSV } from '../utils/upload.util.js';
 import { asyncHandler } from '../middleware/async.middleware.js';
@@ -22,6 +25,12 @@ router.post('/import-dike-students',
     });
   },
   importDikeStudents
+);
+
+router.patch('/users/role', 
+  authenticateJWT, 
+  authorizeRoles('ADMIN'),
+  updateUserRole
 );
 
 export default router;

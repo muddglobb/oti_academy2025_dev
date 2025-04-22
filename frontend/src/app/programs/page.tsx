@@ -1,9 +1,14 @@
-import React from 'react'
+import React from "react";
+import ProgramsHero from "../modules/programs/programs-hero-section";
+import ClassBundle from "../modules/programs/class-bundle";
 
-const programs = () => {
+const Page = () => {
   return (
-    <div>programs</div>
-  )
-}
+    <div>
+      <ProgramsHero></ProgramsHero>
+      <ClassBundle></ClassBundle>
+    </div>
+  );
+};
 
-export default programs
+export default Page;

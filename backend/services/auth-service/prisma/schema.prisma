@@ -8,9 +8,10 @@ datasource db {
 }
 
 enum UserRole {
-  USER
   ADMIN
-  MENTOR
+  DIKE
+  UMUM
+  USER
 }
 
 enum UserType {
