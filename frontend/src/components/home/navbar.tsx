@@ -11,7 +11,7 @@ const navbarItems = [
 ]
 
 const Navbar = () => (
-    <main className="fixed inset-x-0 top-0 z-10 backdrop-blur-md sticky">
+    <main className="fixed inset-x-0 top-0 z-10 backdrop-blur-md">
         <Container className="flex-row items-center justify-between py-4">
             <div className='flex items-end'>
                 <Logo />
