@@ -40,6 +40,24 @@ class AuthService {
   async register(userData) {
     const { name, email, password, type, nim } = userData;
 
+    const existingEmail = await prisma.user.findUnique({
+      where: { email }
+    });
+
+    if (existingEmail) {
+      throw new Error('Email already registered');
+    }
+
+    if(type === 'DIKE' && nim){
+      const existingUserWithNim = await prisma.user.findFirst({
+        where: { nim }
+      });
+
+      if (existingUserWithNim) {
+        throw new Error('NIM already registered by anouther account, if you are the owner of this account, please contact the admin to recover your account');
+      }
+    }
+
     // Determine role based on user type
     let role;
     if (type === 'DIKE') role = 'DIKE';
