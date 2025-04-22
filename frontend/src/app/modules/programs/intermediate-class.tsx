@@ -1,25 +1,31 @@
-import React from "react";
 import Card from "@/components/card";
+import React from "react";
 
-const ClassBundle = () => {
+const IntermediateClass = () => {
+  // bg-[url('/images/intermediate-background.png')] 
   return (
     <div
-      className="     
-      w-full
-      flex flex-col        
-      px-14
-      gap-11
+      className="
+        w-full
+        h-[741px]
+        
+        bg-cover 
+        bg-center 
+        flex 
+        flex-col
+        px-14
+        gap-11
 
-      justify-center
-    "
+        justify-center
+        "
     >
       <div>
         <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[32px] font-bold">
-          Get the Best of Both Worlds with Our Class Bundle
+          MELINDA MALAS JIR
         </p>
         <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[18px]">
-          Tingkatkan kemampuanmu dengan paket belajar pemula hingga intermediate
-          dari <span className="font-bold">1 June - 30 June 2025</span>
+          MELINDA KATANYA GA MNAU BUAT{" "}
+          <span className="font-bold">1 june - 15 june 2025</span>
         </p>
       </div>
 
@@ -68,4 +74,4 @@ const ClassBundle = () => {
   );
 };
 
-export default ClassBundle;
+export default IntermediateClass;

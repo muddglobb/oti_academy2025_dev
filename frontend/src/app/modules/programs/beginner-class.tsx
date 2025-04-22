@@ -1,25 +1,25 @@
-import React from "react";
 import Card from "@/components/card";
+import React from "react";
 
-const ClassBundle = () => {
+const BeginnerClass = () => {
   return (
     <div
       className="     
-      w-full
-      flex flex-col        
-      px-14
-      gap-11
+        w-full
+        flex flex-col        
+        px-14
+        gap-11
 
-      justify-center
-    "
+        justify-center
+      "
     >
       <div>
         <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[32px] font-bold">
-          Get the Best of Both Worlds with Our Class Bundle
+          Beginner Classes to Kickstart Your Journey
         </p>
         <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[18px]">
-          Tingkatkan kemampuanmu dengan paket belajar pemula hingga intermediate
-          dari <span className="font-bold">1 June - 30 June 2025</span>
+          Kelas pemula dengan materi esensial buat langkah pertamamu dari{" "}
+          <span className="font-bold">1 june - 15 june 2025</span>
         </p>
       </div>
 
@@ -63,9 +63,29 @@ const ClassBundle = () => {
           href="https://www.youtube.com/watch?v=chWiR1H_6AY"
           description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti"
         />
+
+        <Card
+          type="Beginner"
+          image="/images/class-profile/hako.jpg"
+          teacher1="/images/teacher/faris.jpg"
+          // teacher2="/images/teacher/faris.jpg"
+          title="Dasar Pemrograman"
+          href="https://www.youtube.com/watch?v=chWiR1H_6AY"
+          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti"
+        />
+
+        <Card
+          type="Beginner"
+          image="/images/class-profile/hako.jpg"
+          teacher1="/images/teacher/faris.jpg"
+          // teacher2="/images/teacher/faris.jpg"
+          title="Dasar Pemrograman"
+          href="https://www.youtube.com/watch?v=chWiR1H_6AY"
+          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti"
+        />
       </div>
     </div>
   );
 };
 
-export default ClassBundle;
+export default BeginnerClass;
