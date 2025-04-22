@@ -11,6 +11,10 @@ export const Roles = {
     USER: 'USER'      // Basic user access
 };
 
+export const isStudent = (role) => {
+    return role === Roles.DIKE || role === Roles.UMUM;
+};
+
 // Permission mapping for more granular access control if needed
 export const Permissions = {
     [Roles.ADMIN]: [
