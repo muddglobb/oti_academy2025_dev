@@ -6,7 +6,7 @@ type CardProps = {
   type: string;
   image: string;
   teacher1: string;
-  teacher2: string;
+  teacher2?: string;
   title: string;
   href: string;
   description: string;
@@ -43,13 +43,15 @@ const Card = ({
                   height={29}
                   className="rounded-full"
                 />
-                <Image
-                  src={teacher2}
-                  alt="Teacher 2"
-                  width={29}
-                  height={29}
-                  className="rounded-full"
-                />
+                {teacher2 && (
+                  <Image
+                    src={teacher2}
+                    alt="Teacher 2"
+                    width={29}
+                    height={29}
+                    className="rounded-full"
+                  />
+                )}
               </div>
             </div>
 
