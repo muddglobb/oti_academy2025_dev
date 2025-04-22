@@ -1,0 +1,109 @@
+2025-04-22 12:05:59:559 [32minfo[39m: [32m✅ Connected to database[39m
+2025-04-22 12:05:59:559 [32minfo[39m: [32m🚀 User Profile service running on port 8002[39m
+2025-04-22 12:32:50:3250 [32minfo[39m: [32m✅ Connected to database[39m
+2025-04-22 12:32:50:3250 [32minfo[39m: [32m🚀 User Profile service running on port 8002[39m
+2025-04-22 12:33:11:3311 [32minfo[39m: [32m✅ Connected to database[39m
+2025-04-22 12:33:11:3311 [32minfo[39m: [32m🚀 User Profile service running on port 8002[39m
+2025-04-22 12:33:42:3342 [32minfo[39m: [32m✅ Connected to database[39m
+2025-04-22 12:33:42:3342 [32minfo[39m: [32m🚀 User Profile service running on port 8002[39m
+2025-04-22 12:34:21:3421 [32minfo[39m: [32m✅ Connected to database[39m
+2025-04-22 12:34:21:3421 [32minfo[39m: [32m🚀 User Profile service running on port 8002[39m
+2025-04-22 12:35:15:3515 [31merror[39m: [31mError: [39m
+[31mInvalid `prisma.userProfile.update()` invocation:[39m
+
+
+[31mAn operation failed because it depends on one or more records that were required but not found. Record to update not found.[39m
+2025-04-22 12:35:15:3515 [31merror[39m: [31mPrismaClientKnownRequestError: [39m
+[31mInvalid `prisma.userProfile.update()` invocation:[39m
+
+
+[31mAn operation failed because it depends on one or more records that were required but not found. Record to update not found.[39m
+[31m    at zn.handleRequestError (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:7459)[39m
+[31m    at zn.handleAndLogRequestError (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:6784)[39m
+[31m    at zn.request (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:6491)[39m
+[31m    at async l (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:130:9778)[39m
+[31m    at async updateLastLogin (file:///E:/PROJECT/OTI%20Academy/oti_academy2025_dev/backend/services/user-service/src/controllers/profile.controller.js:154:28)[39m
+2025-04-22 12:35:35:3535 [31merror[39m: [31mError: [39m
+[31mInvalid `prisma.userProfile.create()` invocation:[39m
+
+
+[31mForeign key constraint violated: `user_profiles_id_fkey (index)`[39m
+2025-04-22 12:35:35:3535 [31merror[39m: [31mPrismaClientKnownRequestError: [39m
+[31mInvalid `prisma.userProfile.create()` invocation:[39m
+
+
+[31mForeign key constraint violated: `user_profiles_id_fkey (index)`[39m
+[31m    at zn.handleRequestError (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:7459)[39m
+[31m    at zn.handleAndLogRequestError (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:6784)[39m
+[31m    at zn.request (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:6491)[39m
+[31m    at async l (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:130:9778)[39m
+[31m    at async initializeProfile (file:///E:/PROJECT/OTI%20Academy/oti_academy2025_dev/backend/services/user-service/src/controllers/profile.controller.js:134:26)[39m
+2025-04-22 12:35:57:3557 [32minfo[39m: [32m✅ Connected to database[39m
+2025-04-22 12:35:57:3557 [32minfo[39m: [32m🚀 User Profile service running on port 8002[39m
+2025-04-22 12:36:24:3624 [31merror[39m: [31mError: [39m
+[31mInvalid `prisma.userProfile.update()` invocation:[39m
+
+
+[31mAn operation failed because it depends on one or more records that were required but not found. Record to update not found.[39m
+2025-04-22 12:36:24:3624 [31merror[39m: [31mPrismaClientKnownRequestError: [39m
+[31mInvalid `prisma.userProfile.update()` invocation:[39m
+
+
+[31mAn operation failed because it depends on one or more records that were required but not found. Record to update not found.[39m
+[31m    at zn.handleRequestError (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:7459)[39m
+[31m    at zn.handleAndLogRequestError (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:6784)[39m
+[31m    at zn.request (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:6491)[39m
+[31m    at async l (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:130:9778)[39m
+[31m    at async updateLastLogin (file:///E:/PROJECT/OTI%20Academy/oti_academy2025_dev/backend/services/user-service/src/controllers/profile.controller.js:154:28)[39m
+2025-04-22 12:36:42:3642 [32minfo[39m: [32m✅ Connected to database[39m
+2025-04-22 12:36:42:3642 [32minfo[39m: [32m🚀 User Profile service running on port 8002[39m
+2025-04-22 12:36:46:3646 [31merror[39m: [31mError: [39m
+[31mInvalid `prisma.userProfile.create()` invocation:[39m
+
+
+[31mForeign key constraint violated: `user_profiles_id_fkey (index)`[39m
+2025-04-22 12:36:46:3646 [31merror[39m: [31mPrismaClientKnownRequestError: [39m
+[31mInvalid `prisma.userProfile.create()` invocation:[39m
+
+
+[31mForeign key constraint violated: `user_profiles_id_fkey (index)`[39m
+[31m    at zn.handleRequestError (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:7459)[39m
+[31m    at zn.handleAndLogRequestError (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:6784)[39m
+[31m    at zn.request (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:6491)[39m
+[31m    at async l (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:130:9778)[39m
+[31m    at async initializeProfile (file:///E:/PROJECT/OTI%20Academy/oti_academy2025_dev/backend/services/user-service/src/controllers/profile.controller.js:134:26)[39m
+2025-04-22 12:39:10:3910 [32minfo[39m: [32m✅ Connected to database[39m
+2025-04-22 12:39:10:3910 [32minfo[39m: [32m🚀 User Profile service running on port 8002[39m
+2025-04-22 12:39:50:3950 [32minfo[39m: [32m✅ Connected to database[39m
+2025-04-22 12:39:50:3950 [32minfo[39m: [32m🚀 User Profile service running on port 8002[39m
+2025-04-22 12:39:53:3953 [31merror[39m: [31mError: [39m
+[31mInvalid `prisma.userProfile.update()` invocation:[39m
+
+
+[31mAn operation failed because it depends on one or more records that were required but not found. Record to update not found.[39m
+2025-04-22 12:39:53:3953 [31merror[39m: [31mPrismaClientKnownRequestError: [39m
+[31mInvalid `prisma.userProfile.update()` invocation:[39m
+
+
+[31mAn operation failed because it depends on one or more records that were required but not found. Record to update not found.[39m
+[31m    at zn.handleRequestError (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:7459)[39m
+[31m    at zn.handleAndLogRequestError (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:6784)[39m
+[31m    at zn.request (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:121:6491)[39m
+[31m    at async l (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\@prisma\client\runtime\library.js:130:9778)[39m
+[31m    at async updateLastLogin (file:///E:/PROJECT/OTI%20Academy/oti_academy2025_dev/backend/services/user-service/src/controllers/profile.controller.js:158:28)[39m
+2025-04-22 12:40:05:405 [31merror[39m: [31mError: prisma is not defined[39m
+2025-04-22 12:40:05:405 [31merror[39m: [31mReferenceError: prisma is not defined[39m
+[31m    at initializeProfile (file:///E:/PROJECT/OTI%20Academy/oti_academy2025_dev/backend/services/user-service/src/controllers/profile.controller.js:119:26)[39m
+[31m    at Layer.handleRequest (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\router\lib\layer.js:152:17)[39m
+[31m    at next (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\router\lib\route.js:157:13)[39m
+[31m    at verifyServiceApiKey (file:///E:/PROJECT/OTI%20Academy/oti_academy2025_dev/backend/services/user-service/src/middlewares/service-auth.middleware.js:15:3)[39m
+[31m    at Layer.handleRequest (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\router\lib\layer.js:152:17)[39m
+[31m    at next (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\router\lib\route.js:157:13)[39m
+[31m    at Route.dispatch (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\router\lib\route.js:117:3)[39m
+[31m    at handle (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\router\index.js:435:11)[39m
+[31m    at Layer.handleRequest (E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\router\lib\layer.js:152:17)[39m
+[31m    at E:\PROJECT\OTI Academy\oti_academy2025_dev\node_modules\router\index.js:295:15[39m
+2025-04-22 12:42:26:4226 [32minfo[39m: [32m✅ Connected to database[39m
+2025-04-22 12:42:26:4226 [32minfo[39m: [32m🚀 User Profile service running on port 8002[39m
+2025-04-22 12:42:31:4231 [32minfo[39m: [32m✅ Connected to database[39m
+2025-04-22 12:42:31:4231 [32minfo[39m: [32m🚀 User Profile service running on port 8002[39m
