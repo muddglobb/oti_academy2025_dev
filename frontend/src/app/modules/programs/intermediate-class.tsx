@@ -1,8 +1,9 @@
 import Card from "@/components/card";
 import React from "react";
+import Image from "next/image";
 
 const IntermediateClass = () => {
-  // bg-[url('/images/intermediate-background.png')] 
+  // bg-[url('/images/intermediate-background.png')]
   return (
     <div
       className="
@@ -17,8 +18,18 @@ const IntermediateClass = () => {
         gap-11
 
         justify-center
+        bg-[linear-gradient(0deg,rgba(5,12,26,0.3)_0%,rgba(5,12,26,0.9)_100%)]
+        relative
         "
     >
+      {/* bg-[linear-gradient(0deg,rgba(5,12,26,0.9)_0%,rgba(5,12,26,0.3)_100%)] */}
+      <Image
+        src="/images/stars-intermediate-programs.png"
+        alt="stars"
+        fill
+        className="absolute top-0 left-0 w-full object-cover -z-10"
+      ></Image>
+
       <div>
         <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[32px] font-bold">
           MELINDA MALAS JIR
@@ -30,7 +41,7 @@ const IntermediateClass = () => {
       </div>
 
       <div className="flex items-center flex-wrap gap-10 justify-center">
-        <Card
+        <Card 
           type="Beginner"
           image="/images/class-profile/hako.jpg"
           teacher1="/images/teacher/faris.jpg"
