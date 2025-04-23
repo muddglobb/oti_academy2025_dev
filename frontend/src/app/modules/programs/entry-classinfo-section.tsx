@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/legacy/image";
+import Link from "next/link";
 
 const EntryClassInfo = () => {
   return (
@@ -26,15 +27,18 @@ const EntryClassInfo = () => {
                         <p className="text-[12px]">Teaching Assistant</p>
                       </div>
                     </div>
-                    <button className="w-[30px] h-[30px] ">
+                    <Link
+                      href={"https://www.linkedin.com/"}
+                      className="w-[30px] h-[30px] border-solid border-primary-800 border-[1px] rounded-[5px] p-1 bg-primary-50"
+                    >
                       <Image
                         src={"/icons/linkedin-icon.svg"}
                         alt="linkedin-icon"
                         width={30}
                         height={30}
-                        className="bg-primary-50 rounded-[5px] mt-0 p-[5px] border-s-white border-[1px] "
+                        className=" rounded-[5px]"
                       ></Image>
-                    </button>
+                    </Link>
                   </div>
                 </div>
                 <p className="m-4 text-xs">

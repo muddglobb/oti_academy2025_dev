@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/legacy/image";
+import Link from "next/link";
 
 const BundleClassInfo = () => {
   return (
@@ -26,15 +27,18 @@ const BundleClassInfo = () => {
                         <p className="text-[12px]">Teaching Assistant</p>
                       </div>
                     </div>
-                    <button className="w-[30px] h-[30px] ">
+                    <Link
+                      href={"https://www.linkedin.com/"}
+                      className="w-[30px] h-[30px] border-solid border-primary-800 border-[1px] rounded-[5px] p-1 bg-primary-50"
+                    >
                       <Image
                         src={"/icons/linkedin-icon.svg"}
                         alt="linkedin-icon"
                         width={30}
                         height={30}
-                        className="bg-primary-50 rounded-[5px] mt-0 p-[5px] border-s-white border-[1px] "
+                        className="rounded-[5px]"
                       ></Image>
-                    </button>
+                    </Link>
                   </div>
                 </div>
                 <p className="m-4 text-xs">
@@ -55,15 +59,18 @@ const BundleClassInfo = () => {
                         <p className="text-[12px]">Teaching Assistant</p>
                       </div>
                     </div>
-                    <button className="w-[30px] h-[30px] ">
+                    <Link
+                      href={"https://www.linkedin.com/"}
+                      className="w-[30px] h-[30px] border-solid border-primary-800 border-[1px] rounded-[5px] p-1 bg-primary-50"
+                    >
                       <Image
                         src={"/icons/linkedin-icon.svg"}
                         alt="linkedin-icon"
                         width={30}
                         height={30}
-                        className="bg-primary-50 rounded-[5px] mt-0 p-[5px] border-s-white border-[1px] "
+                        className=" rounded-[5px]"
                       ></Image>
-                    </button>
+                    </Link>
                   </div>
                 </div>
                 <p className="m-4 text-xs">
@@ -123,6 +130,146 @@ const BundleClassInfo = () => {
               <div className="absolute left-1 top-2 bottom-0 w-0.5 -translate-x-1/2 bg-white"></div>
 
               <div className="space-y-9">
+                <div className="relative flex w-full items-center">
+                  <div className="w-auto pl-8 text-left">
+                    <h3 className="font-bold text-lg">Session 1</h3>
+                    <div className="flex flex-row gap-5">
+                      <div className="text-lg flex flex-row gap-[5px] ">
+                        <Image
+                          src={"/icons/calendar-icon.svg"}
+                          alt="calendar-icon"
+                          width={24}
+                          height={24}
+                        ></Image>
+                        <p>1 June 2025</p>
+                      </div>
+                      <div className="text-lg flex flex-row gap-[5px]">
+                        <Image
+                          src={"/icons/time-icon.svg"}
+                          alt="calendar-icon"
+                          width={24}
+                          height={24}
+                        ></Image>
+                        <p>2 - 4 Jam/Sessions</p>
+                      </div>
+                    </div>
+
+                    <p className="mt-2 text-lg">
+                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                      Earum rerum est excepturi, laboriosam maiores blanditiis
+                      aliquid aliquam accusantium, dolores enim rem. Quidem
+                      similique, quos modi veniam ea velit mollitia esse.
+                    </p>
+                  </div>
+
+                  <div className="absolute left-1 flex h-5 w-5 -translate-x-1/2 -translate-y-0 items-center justify-center rounded-full  ring-2 ring-white bg-neutral-800"></div>
+                </div>
+
+                <div className="relative flex w-full items-center">
+                  <div className="w-auto pl-8 text-left">
+                    <h3 className="font-bold text-lg">Session 1</h3>
+                    <div className="flex flex-row gap-5">
+                      <div className="text-lg flex flex-row gap-[5px] ">
+                        <Image
+                          src={"/icons/calendar-icon.svg"}
+                          alt="calendar-icon"
+                          width={24}
+                          height={24}
+                        ></Image>
+                        <p>1 June 2025</p>
+                      </div>
+                      <div className="text-lg flex flex-row gap-[5px]">
+                        <Image
+                          src={"/icons/time-icon.svg"}
+                          alt="calendar-icon"
+                          width={24}
+                          height={24}
+                        ></Image>
+                        <p>2 - 4 Jam/Sessions</p>
+                      </div>
+                    </div>
+
+                    <p className="mt-2 text-lg">
+                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                      Earum rerum est excepturi, laboriosam maiores blanditiis
+                      aliquid aliquam accusantium, dolores enim rem. Quidem
+                      similique, quos modi veniam ea velit mollitia esse.
+                    </p>
+                  </div>
+
+                  <div className="absolute left-1 flex h-5 w-5 -translate-x-1/2 -translate-y-0 items-center justify-center rounded-full  ring-2 ring-white bg-neutral-800"></div>
+                </div>
+
+                <div className="relative flex w-full items-center">
+                  <div className="w-auto pl-8 text-left">
+                    <h3 className="font-bold text-lg">Session 1</h3>
+                    <div className="flex flex-row gap-5">
+                      <div className="text-lg flex flex-row gap-[5px] ">
+                        <Image
+                          src={"/icons/calendar-icon.svg"}
+                          alt="calendar-icon"
+                          width={24}
+                          height={24}
+                        ></Image>
+                        <p>1 June 2025</p>
+                      </div>
+                      <div className="text-lg flex flex-row gap-[5px]">
+                        <Image
+                          src={"/icons/time-icon.svg"}
+                          alt="calendar-icon"
+                          width={24}
+                          height={24}
+                        ></Image>
+                        <p>2 - 4 Jam/Sessions</p>
+                      </div>
+                    </div>
+
+                    <p className="mt-2 text-lg">
+                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                      Earum rerum est excepturi, laboriosam maiores blanditiis
+                      aliquid aliquam accusantium, dolores enim rem. Quidem
+                      similique, quos modi veniam ea velit mollitia esse.
+                    </p>
+                  </div>
+
+                  <div className="absolute left-1 flex h-5 w-5 -translate-x-1/2 -translate-y-0 items-center justify-center rounded-full  ring-2 ring-white bg-neutral-800"></div>
+                </div>
+
+                <div className="relative flex w-full items-center">
+                  <div className="w-auto pl-8 text-left">
+                    <h3 className="font-bold text-lg">Session 1</h3>
+                    <div className="flex flex-row gap-5">
+                      <div className="text-lg flex flex-row gap-[5px] ">
+                        <Image
+                          src={"/icons/calendar-icon.svg"}
+                          alt="calendar-icon"
+                          width={24}
+                          height={24}
+                        ></Image>
+                        <p>1 June 2025</p>
+                      </div>
+                      <div className="text-lg flex flex-row gap-[5px]">
+                        <Image
+                          src={"/icons/time-icon.svg"}
+                          alt="calendar-icon"
+                          width={24}
+                          height={24}
+                        ></Image>
+                        <p>2 - 4 Jam/Sessions</p>
+                      </div>
+                    </div>
+
+                    <p className="mt-2 text-lg">
+                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                      Earum rerum est excepturi, laboriosam maiores blanditiis
+                      aliquid aliquam accusantium, dolores enim rem. Quidem
+                      similique, quos modi veniam ea velit mollitia esse.
+                    </p>
+                  </div>
+
+                  <div className="absolute left-1 flex h-5 w-5 -translate-x-1/2 -translate-y-0 items-center justify-center rounded-full  ring-2 ring-white bg-neutral-800"></div>
+                </div>
+
                 <div className="relative flex w-full items-center">
                   <div className="w-auto pl-8 text-left">
                     <h3 className="font-bold text-lg">Session 1</h3>

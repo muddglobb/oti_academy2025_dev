@@ -1,6 +1,7 @@
 import React from "react";
 import CountdownTimer from "@/components/timer";
 import BackButton from "@/components/backButton";
+import Link from "next/link";
 
 const EntryHero = () => {
   return (
@@ -14,7 +15,7 @@ const EntryHero = () => {
           <div className="self-start">
             <BackButton></BackButton>
           </div>
-          <div className=" text-center font-display w-xl lg:w-4xl">
+          <div className="flex flex-col items-center text-center font-display w-xl lg:w-4xl">
             <div className="flex justify-center items-center gap-5">
               <div className="text-white border-solid border-1 rounded-[5px] px-4.5 py-1.5 border-white">
                 <CountdownTimer
@@ -36,12 +37,13 @@ const EntryHero = () => {
               illo debitis corrupti quam deserunt nisi, commodi nam voluptatem
               omnis quo reprehenderit vel.
             </p>
-            <button
+            <Link
+              href={"../programs"}
               className="bg-blue-500 text-white p-[8px] text-base m-[14px] rounded-lg"
               type="button"
             >
               Begin Your Journey Here
-            </button>
+            </Link>
           </div>
         </section>
       </div>
