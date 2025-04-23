@@ -1,5 +1,5 @@
 import React from 'react'
-import Hero from '@/modules/landing-page/hero'
+import Hero from '@/app/modules/landing-page/hero'
 
 const page = () => {
   return (
