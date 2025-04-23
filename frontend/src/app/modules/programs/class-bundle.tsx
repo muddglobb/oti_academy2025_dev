@@ -2,6 +2,48 @@ import React from "react";
 import Card from "@/components/card";
 import Image from "next/image";
 
+const bundleData = [
+  {
+    type: "Beginner",
+    image: "/images/class-profile/hako.jpg",
+    teacher1: "/images/teacher/faris.jpg",
+    teacher2: "/images/teacher/faris.jpg",
+    title: "Dasar Pemrograman",
+    href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
+  },
+  {
+    type: "Beginner",
+    image: "/images/class-profile/hako.jpg",
+    teacher1: "/images/teacher/faris.jpg",
+    teacher2: "/images/teacher/faris.jpg",
+    title: "Dasar Pemrograman",
+    href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
+  },
+  {
+    type: "Beginner",
+    image: "/images/class-profile/hako.jpg",
+    teacher1: "/images/teacher/faris.jpg",
+    teacher2: "/images/teacher/faris.jpg",
+    title: "Dasar Pemrograman",
+    href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
+  },
+  {
+    type: "Beginner",
+    image: "/images/class-profile/hako.jpg",
+    teacher1: "/images/teacher/faris.jpg",
+    teacher2: "/images/teacher/faris.jpg",
+    title: "Dasar Pemrograman",
+    href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
+  },
+];
 const ClassBundle = () => {
   return (
     <div
@@ -35,45 +77,18 @@ const ClassBundle = () => {
       </div>
 
       <div className="flex items-center flex-wrap gap-10 justify-center">
-        <Card
-          type="Beginner"
-          image="/images/class-profile/hako.jpg"
-          teacher1="/images/teacher/faris.jpg"
-          teacher2="/images/teacher/faris.jpg"
-          title="Dasar Pemrograman"
-          href="https://www.youtube.com/watch?v=chWiR1H_6AY"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti"
-        />
-
-        <Card
-          type="Beginner"
-          image="/images/class-profile/hako.jpg"
-          teacher1="/images/teacher/faris.jpg"
-          // teacher2="/images/teacher/faris.jpg"
-          title="Dasar Pemrograman"
-          href="https://www.youtube.com/watch?v=chWiR1H_6AY"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti"
-        />
-
-        <Card
-          type="Beginner"
-          image="/images/class-profile/hako.jpg"
-          teacher1="/images/teacher/faris.jpg"
-          teacher2="/images/teacher/faris.jpg"
-          title="Dasar Pemrograman"
-          href="https://www.youtube.com/watch?v=chWiR1H_6AY"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti"
-        />
-
-        <Card
-          type="Beginner"
-          image="/images/class-profile/hako.jpg"
-          teacher1="/images/teacher/faris.jpg"
-          teacher2="/images/teacher/faris.jpg"
-          title="Dasar Pemrograman"
-          href="https://www.youtube.com/watch?v=chWiR1H_6AY"
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti"
-        />
+      {bundleData.map((card, index) => (
+          <Card
+            key={index}
+            type={card.type}
+            image={card.image}
+            teacher1={card.teacher1}
+            teacher2={card.teacher2}
+            title={card.title}
+            href={card.href}
+            description={card.description}
+          />
+        ))}
       </div>
     </div>
   );
