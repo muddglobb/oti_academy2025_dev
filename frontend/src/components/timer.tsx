@@ -6,7 +6,12 @@ interface CountdownTimerProps {
 }
 
 const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+  const [timeLeft, setTimeLeft] = useState<null | {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  }>(null);
 
   function calculateTimeLeft() {
     const targetTime =
@@ -31,17 +36,22 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
       seconds: Math.floor((difference / 1000) % 60),
     };
   }
+
   useEffect(() => {
-    const timer = setTimeout(() => {
+    setTimeLeft(calculateTimeLeft()); // Initial set after mount
+
+    const interval = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
 
-    return () => clearTimeout(timer);
-  });
+    return () => clearInterval(interval);
+  }, []);
 
   const formatTime = (time: number) => {
     return time < 10 ? `0${time}` : time;
   };
+
+  if (!timeLeft) return null; // Avoid rendering until mounted
 
   return (
     <div className="flex items-center justify-center space-x-0.5 font-display text-[22px] font-bold">
@@ -51,11 +61,11 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
           <span>:</span>
         </>
       )}
-      <span className="bg-transparent ">{formatTime(timeLeft.hours)}</span>
+      <span className="bg-transparent">{formatTime(timeLeft.hours)}</span>
       <span>:</span>
-      <span className="bg-transparent ">{formatTime(timeLeft.minutes)}</span>
+      <span className="bg-transparent">{formatTime(timeLeft.minutes)}</span>
       <span>:</span>
-      <span className="bg-transparent ">{formatTime(timeLeft.seconds)}</span>
+      <span className="bg-transparent">{formatTime(timeLeft.seconds)}</span>
     </div>
   );
 };
