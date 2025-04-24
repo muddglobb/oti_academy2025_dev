@@ -6,17 +6,13 @@ interface CountdownTimerProps {
   initialServerTime?: number;
 }
 
-const CountdownTimer = ({
-  targetDate,
-  initialServerTime,
-}: CountdownTimerProps) => {
-  const [mounted, setMounted] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(() => {
-    const initialTime = initialServerTime
-      ? new Date(initialServerTime)
-      : new Date();
-    return calculateTimeLeft(initialTime);
-  });
+const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
+  const [timeLeft, setTimeLeft] = useState<null | {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  }>(null);
 
   function calculateTimeLeft(now: Date) {
     const targetTime = new Date(targetDate).getTime();
@@ -38,19 +34,22 @@ const CountdownTimer = ({
       seconds: Math.floor((difference / 1000) % 60),
     };
   }
+
   useEffect(() => {
-    setMounted(true);
+    setTimeLeft(calculateTimeLeft()); // Initial set after mount
 
     const interval = setInterval(() => {
-      setTimeLeft(calculateTimeLeft(new Date()));
+      setTimeLeft(calculateTimeLeft());
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [targetDate]);
+  }, []);
 
-  if (!mounted) return null;
+  const formatTime = (time: number) => {
+    return time < 10 ? `0${time}` : time;
+  };
 
-  const formatTime = (time: number) => time.toString().padStart(2, "0");
+  if (!timeLeft) return null; // Avoid rendering until mounted
 
   return (
     <div className="flex items-center justify-center space-x-0.5 font-display text-[22px] font-bold">
@@ -60,11 +59,11 @@ const CountdownTimer = ({
           <span>:</span>
         </>
       )}
-      <span className="bg-transparent ">{formatTime(timeLeft.hours)}</span>
+      <span className="bg-transparent">{formatTime(timeLeft.hours)}</span>
       <span>:</span>
-      <span className="bg-transparent ">{formatTime(timeLeft.minutes)}</span>
+      <span className="bg-transparent">{formatTime(timeLeft.minutes)}</span>
       <span>:</span>
-      <span className="bg-transparent ">{formatTime(timeLeft.seconds)}</span>
+      <span className="bg-transparent">{formatTime(timeLeft.seconds)}</span>
     </div>
   );
 };
