@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 
 interface CountdownTimerProps {
   targetDate: Date | string;
-  initialServerTime?: number;
 }
 
 const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
@@ -14,10 +13,13 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
     seconds: number;
   }>(null);
 
-  function calculateTimeLeft(now: Date) {
-    const targetTime = new Date(targetDate).getTime();
+  function calculateTimeLeft() {
+    const targetTime =
+      typeof targetDate === "string"
+        ? new Date(targetDate).getTime()
+        : targetDate.getTime();
 
-    const difference = targetTime - now.getTime();
+    const difference = targetTime - new Date().getTime();
 
     if (difference <= 0) {
       return {
