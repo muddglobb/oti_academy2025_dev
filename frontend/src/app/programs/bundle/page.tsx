@@ -1,11 +1,13 @@
 import React from "react";
-import EntryBundle from "@/app/modules/programs/bundle-hero-section";
+import BundleHero from "@/app/modules/programs/bundle-hero-section";
+import BundleClassInfo from "@/app/modules/programs/bundle-classinfo-section";
 
 const bundle = () => {
   return (
     <>
-      <div className="bg-[url(/images/background-entrylevel.png)] bg-no-repeat bg-cover h-full">
-        <EntryBundle></EntryBundle>
+      <div>
+        <BundleHero></BundleHero>
+        <BundleClassInfo></BundleClassInfo>
       </div>
     </>
   );
