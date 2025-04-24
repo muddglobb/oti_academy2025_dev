@@ -15,7 +15,7 @@ const bundleData = [
     image: "/images/class-profile/hako.jpg",
     teacher1: "/images/teacher/faris.jpg",
     teacher2: "/images/teacher/faris.jpg",
-    title: "Dasar Pemrograman",
+    title: "Graphic Design + Dipukul Melinda",
     href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",

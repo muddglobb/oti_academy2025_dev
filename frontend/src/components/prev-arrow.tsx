@@ -6,7 +6,7 @@ type PrevArrowProps = {
 };
 const PrevArrow: React.FC<PrevArrowProps> = ({ onClick }) => {
   return (
-    <div className="absolute top-103 cursor-pointer" onClick={onClick}>
+    <div className="absolute top-[100%] cursor-pointer" onClick={onClick}>
       <div className="p-3 bg-[var(--color-primary-800)] rounded-lg flex items-center gap-2 mt-2">
         <Image
           src="/icons/backarrow-icon.svg"
