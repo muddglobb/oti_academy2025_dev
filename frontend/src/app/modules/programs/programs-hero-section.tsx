@@ -32,7 +32,7 @@ const ProgramsHero = () => {
         ></Image>
 
         <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[46px] font-bold">
-          Discover the Range of Programs We Offer
+        Jelajahi Beragam Program yang Kami Tawarkan
         </p>
         <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[27px]">
           Dari <span className="font-bold">Beginner hingga Intermediate</span>,
