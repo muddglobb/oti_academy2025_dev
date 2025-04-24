@@ -7,7 +7,7 @@ const EntryClassInfo = () => {
     <>
       <div className="relative w-full overflow-hidden">
         <div className="absolute inset-0 bg-[url('/images/space-background.png')] bg-repeat bg-center -z-10">
-          <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 to-neutral-900/10 -z-20"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 via-neutral-900/10 to-neutral-900/50 -z-20"></div>
         </div>
         <div className="absolute w-3/4 h-3/4 top-0 right-0 bg-right -mr-[30%] -mt-[10%] bg-[url('/images/planet/saturnus.png')] bg-contain bg-no-repeat -z-10 scale-x-[-1] rotate-[-35deg] brightness-40"></div>
         <section className="flex flex-col gap-7.5  justify-center items-center py-10 bg-no-repeat bg-cover w-full">
