@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowUpRight } from 'lucide-react';
 
 type CardProps = {
   type: string;
@@ -60,18 +61,13 @@ const Card = ({
         </div>
       </div>
 
-      <div className="p-[20px]">
-        <div className="flex justify-between items-center">
-          <p className="font-bold text-[18px]">{title}</p>
-          <div className="bg-[var(--color-primary-500)] rounded-[5px]">
+      <div className="p-[20px] justify-between">
+        {/* <div className="flex justify-between"> */}
+        <div className="flex justify-between">
+          <p className="font-bold text-[18px] w-[95%]">{title}</p>
+          <div className="bg-[var(--color-primary-500)] rounded-[5px] self-start">
             <Link href={href}>
-              <Image
-                src="/link-icon.png"
-                width={25}
-                height={25}
-                alt="Link Icon"
-                className="p-[5px]"
-              />
+              <ArrowUpRight className="text-[var(--color-neutral-50)] p-[5px]" size={25} />
             </Link>
           </div>
         </div>
