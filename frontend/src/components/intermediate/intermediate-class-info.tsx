@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-// import MentorCard from "./mentor-card";
+import MentorCard from "./mentor-card";
 
 const IntermediateClassInfo = () => {
   return (
@@ -43,7 +43,7 @@ const IntermediateClassInfo = () => {
               description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?"
               linkedin=""
             /> */}
-            {/* <MentorCard /> */}
+            <MentorCard />
           </div>
         </div>
       </div>

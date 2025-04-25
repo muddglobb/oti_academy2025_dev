@@ -1,0 +1,133 @@
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+// import { Linkedin } from "lucide-react";
+
+// type MentorCardProps = {
+//   name: string;
+//   role: string;
+//   linkedin: string;
+//   imageUrl: string;
+//   description: string;
+// };
+const MentorCard = () => {
+  return (
+    <div
+      className="
+      flex 
+      sm:flex-row 
+      sm:w-100
+
+      md:flex-col
+      md:w-75
+      md:h-108
+    bg-white rounded-lg"
+    >
+      <div
+        className="
+        w-52
+        h-auto
+        min-h-52
+        mask-r-from-90%
+
+        sm:w-60
+        sm:h-auto
+        sm:min-h-60
+
+        md:w-75 
+        md:h-[284px] 
+        md:mask-b-from-90%
+        md:mask-r-from-100%
+        rounded-lg  
+        bg-cover
+        "
+        style={{ backgroundImage: `url(/images/teacher/faris.jpg)` }}
+      >
+        <div className="m-5">
+          <div
+            className="
+            text-white 
+              gap-1 
+              hidden
+              md:flex 
+              md:justify-between
+          "
+          >
+            <div className="w-auto max-w-[80%]">
+              <div className="font-bold h-auto w-auto">
+                <p className="bg-primary-800 rounded-[5px] text-[22px] p-1 break-words">
+                  asepfsdfsfs
+                </p>
+              </div>
+              <div className="inline-block">
+                <p className="bg-primary-800 rounded-[5px] text-[12px] p-1 mt-0.5">
+                  asep
+                </p>
+              </div>
+            </div>
+
+            <Link href="https://www.linkedin.com/in/dhimas-putra-sulistio-bbb3b1244/">
+              <Image
+                src={"/icons/linkedin-icon.svg"}
+                alt="linkedin-icon"
+                width={35}
+                height={35}
+                className="bg-primary-50 rounded-[5px] mt-0 p-[5px] cursor-pointer"
+              />
+              {/* <Linkedin size={30} className="bg-primary-50 p-5 rounded-[5px]" color="#000"/> */}
+            </Link>
+            {/* <button className="w-[30px] h-[30px]">
+              <Image
+                src={"/icons/linkedin-icon.svg"}
+                alt="linkedin-icon"
+                width={30}
+                height={30}
+                className="bg-primary-50 rounded-[5px] mt-0 p-[5px] border-s-white border-[1px] "
+              />
+            </button> */}
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="
+          w-50
+          md:w-full
+      "
+      >
+        <div className="flex justify-between p-3 md:hidden">
+          <div className="text-[var(--color-neutral-50)] w-auto max-w-[75%]">
+            <div className="font-bold h-auto">
+              <p className="bg-primary-800 rounded-[5px] text-[18px] p-1 break-words">
+                asepdfssfsfsfsffdssfsf
+              </p>
+            </div>
+            <div className="inline-block">
+              <p className="bg-primary-800 rounded-[5px] text-[12px] p-1 mt-0.5">
+                aspep
+              </p>
+            </div>
+          </div>
+
+          {/* <Link href="https://www.linkedin.com/in/dhimas-putra-sulistio-bbb3b1244/"> */}
+          <button className="w-[21px] h-[21px] cursor-pointer">
+            <Link href="https://www.linkedin.com/in/dhimas-putra-sulistio-bbb3b1244/">
+              <Image
+                src={"/icons/linkedin-icon.svg"}
+                alt="linkedin-icon"
+                width={26}
+                height={26}
+                className="bg-primary-50 rounded-[5px] mt-0 p-[5px] cursor-pointer"
+              />
+            </Link>
+          </button>
+          {/* </Link> */}
+        </div>
+
+        <p className="flex m-4 text-xs items-end">dfjsklsdf</p>
+      </div>
+    </div>
+  );
+};
+
+export default MentorCard;
