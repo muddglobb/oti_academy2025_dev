@@ -36,14 +36,21 @@ const IntermediateClassInfo = () => {
 
         <div>
           <div className="flex gap-6 flex-wrap justify-center">
-            {/* <MentorCard
+            <MentorCard
               name="Faris Alamsyah"
               imageUrl="/images/teacher/faris.jpg"
               role="Mentor"
               description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?"
-              linkedin=""
-            /> */}
-            <MentorCard />
+              linkedin="https://www.linkedin.com/in/dhimas-sulistio/"
+            />
+            
+            <MentorCard
+              name="Hafidz Wahfi"
+              imageUrl="/images/class-profile/hako.jpg"
+              role="Teaching Assistant"
+              description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?"
+              linkedin="https://www.linkedin.com/in/dhimas-sulistio/"
+            />
           </div>
         </div>
       </div>

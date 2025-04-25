@@ -3,14 +3,16 @@ import Image from "next/image";
 import Link from "next/link";
 // import { Linkedin } from "lucide-react";
 
-// type MentorCardProps = {
-//   name: string;
-//   role: string;
-//   linkedin: string;
-//   imageUrl: string;
-//   description: string;
-// };
-const MentorCard = () => {
+type MentorCardProps = {
+  name: string;
+  role: string;
+  linkedin: string;
+  imageUrl: string;
+  description: string;
+};
+const MentorCard = ({
+  name, role, imageUrl, description, linkedin,
+}: MentorCardProps) => {
   return (
     <div
       className="
@@ -41,7 +43,7 @@ const MentorCard = () => {
         rounded-lg  
         bg-cover
         "
-        style={{ backgroundImage: `url(/images/teacher/faris.jpg)` }}
+        style={{ backgroundImage: `url(${imageUrl})` }}
       >
         <div className="m-5">
           <div
@@ -56,17 +58,17 @@ const MentorCard = () => {
             <div className="w-auto max-w-[80%]">
               <div className="font-bold h-auto w-auto">
                 <p className="bg-primary-800 rounded-[5px] text-[22px] p-1 break-words">
-                  asepfsdfsfs
+                  {name}
                 </p>
               </div>
               <div className="inline-block">
                 <p className="bg-primary-800 rounded-[5px] text-[12px] p-1 mt-0.5">
-                  asep
+                  {role}
                 </p>
               </div>
             </div>
 
-            <Link href="https://www.linkedin.com/in/dhimas-putra-sulistio-bbb3b1244/">
+            <Link href={linkedin}>
               <Image
                 src={"/icons/linkedin-icon.svg"}
                 alt="linkedin-icon"
@@ -99,19 +101,19 @@ const MentorCard = () => {
           <div className="text-[var(--color-neutral-50)] w-auto max-w-[75%]">
             <div className="font-bold h-auto">
               <p className="bg-primary-800 rounded-[5px] text-[18px] p-1 break-words">
-                asepdfssfsfsfsffdssfsf
+                {name}
               </p>
             </div>
             <div className="inline-block">
               <p className="bg-primary-800 rounded-[5px] text-[12px] p-1 mt-0.5">
-                aspep
+                {role}
               </p>
             </div>
           </div>
 
           {/* <Link href="https://www.linkedin.com/in/dhimas-putra-sulistio-bbb3b1244/"> */}
           <button className="w-[21px] h-[21px] cursor-pointer">
-            <Link href="https://www.linkedin.com/in/dhimas-putra-sulistio-bbb3b1244/">
+            <Link href={linkedin}>
               <Image
                 src={"/icons/linkedin-icon.svg"}
                 alt="linkedin-icon"
@@ -124,7 +126,7 @@ const MentorCard = () => {
           {/* </Link> */}
         </div>
 
-        <p className="flex m-4 text-xs items-end">dfjsklsdf</p>
+        <p className="flex m-4 text-xs items-end">{description}</p>
       </div>
     </div>
   );
