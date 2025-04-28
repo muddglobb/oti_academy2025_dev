@@ -54,7 +54,7 @@ const CountdownTimer = ({ targetDate }: CountdownTimerProps) => {
   if (!timeLeft) return null; // Avoid rendering until mounted
 
   return (
-    <div className="flex items-center justify-center space-x-0.5 font-display text-[22px] font-bold">
+    <div className="flex items-center justify-center space-x-0.5 font-display text-3 sm:text-[22px] font-bold">
       {timeLeft.days > 0 && (
         <>
           <span className="bg-transparent">{formatTime(timeLeft.days)}</span>
