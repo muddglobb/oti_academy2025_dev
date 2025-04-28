@@ -3,14 +3,20 @@ import Hero from '@/app/modules/landing-page/hero'
 import Kenali from '@/app/modules/landing-page/kenali'
 import WhyUs from './modules/landing-page/why-us'
 import PilihanKelas from './modules/landing-page/pilihan-kelas'
+import LandingPageBackground from '@/components/landing-page-background'
 
 const page = () => {
   return (
-    <div className='bg-background min-h-screen'>
-      <Hero />
-      <Kenali />
-      <WhyUs />
-      <PilihanKelas />
+    <div className='bg-background/ overflow-x-hidden relative'>
+      <div className='min-h-screen relative z-5'>
+        <Hero />
+        <Kenali />
+        {/* <WhyUs />
+        <PilihanKelas /> */}
+      </div>
+      <div>
+        <LandingPageBackground />
+      </div>
     </div>
   )
 }
