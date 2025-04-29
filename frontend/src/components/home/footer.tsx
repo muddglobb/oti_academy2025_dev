@@ -28,7 +28,7 @@ const Footer = () => {
       <div
         className="
         w-full
-        h-245
+        h-auto
 
         bg-cover 
         bg-center
@@ -47,11 +47,20 @@ const Footer = () => {
           src="/images/stars-footer.png"
           alt="stars"
           fill
-          className="absolute top-0 left-0 w-full object-cover -z-10"
+          // width={1800}
+          // height={1800}
+          className="absolute left-0 w-full object-cover -z-10
+          top-[50px]
+          lg:top-0"
         ></Image>
 
-        <div className="px-[500px] flex flex-col items-center justify-center h-screen">
-          <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[46px] font-bold">
+        <div className="flex flex-col items-center justify-center 
+        mb-15
+        px-[30px]
+        md:px-[100px]">
+          <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center font-bold
+          text-[22px]
+          lg:text-[46px]">
             Ready to Unlock Your IT Potential and Thrive at Any Level?
           </p>
           <div className="flex justify-center mt-4">
@@ -61,8 +70,16 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="flex justify-between p-[50px]">
-          <div className="text-[var(--color-neutral-50)] w-[33%] flex flex-col gap-[20px]">
+        <div className="justify-between 
+        p-[10px]
+        md:p-[30px]
+        flex
+        flex-col
+        gap-[18px]
+        md:flex-row">
+          <div className="text-[var(--color-neutral-50)] flex flex-col gap-[20px]
+          w-full
+          md:w-[33%] ">
             <div>
               <p>
                 Gedung Fakultas MIPA UGM Sekip Utara, Bulaksumur, Sinduadi,
