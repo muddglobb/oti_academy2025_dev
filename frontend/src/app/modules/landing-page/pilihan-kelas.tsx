@@ -1,57 +1,23 @@
 import Container from "@/components/container";
-import Image from "next/image";
-import Card from "@/components/card";
+import React from "react";
+import PilihanKelasSlider from "@/components/pilihan-kelas-slider";
+
+
 
 const PilihanKelas =() => {
     return (
-        <Container className="items-center">
-            <div className="flex flex-col ">   
-                <h1 className="leading-[69px] text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-4xl lg:text-[2rem] font-bold">
-                    Pilihan Kelas untuk Semua Tingkatan
-                </h1>
-                <p className="px-[235px] text-neutral-50 text-center text-[14px] lg:text-[18px]">
-                    Online program ini mencakup <span className="font-bold">6 kelas untuk pemula</span> yang dirancang membangun pemahaman dasar IT dari <span className="font-bold">nol</span>, serta <span>4 kelas intermediate</span> untuk peserta yang ingin <span className="font-bold">mendalami keterampilan lebih lanjut</span>. Kelas berlangsung dari <span className="font-bold">1 Juni hingga 30 Juni 2025</span> dengan materi yang terstruktur dan mudah diikuti.
-                </p>
-            </div>
-
-            <div className="flex flex-row w-[1327px] justify-between pt-[45px]">
-                <Card
-                    type="Beginner"
-                    image="/images/class-profile/hako.jpg"
-                    teacher1="/images/teacher/faris.jpg"
-                    title="Web Development"
-                    href="https://www.youtube.com/watch?v=chWiR1H_6AY"
-                    description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
-                />
-                <Card
-                    type="Beginner"
-                    image="/images/class-profile/hako.jpg"
-                    teacher1="/images/teacher/faris.jpg"
-                    title="Web Development"
-                    href="https://www.youtube.com/watch?v=chWiR1H_6AY"
-                    description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
-                />
-                <Card
-                    type="Intermediate"
-                    image="/images/class-profile/hako.jpg"
-                    teacher1="/images/teacher/faris.jpg"
-                    teacher2="/images/teacher/faris.jpg"
-                    title="Web Development"
-                    href="https://www.youtube.com/watch?v=chWiR1H_6AY"
-                    description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
-                />
-                <Card
-                    type="Intermediate"
-                    image="/images/class-profile/hako.jpg"
-                    teacher1="/images/teacher/faris.jpg"
-                    teacher2="/images/teacher/faris.jpg"
-                    title="Web Development"
-                    href="https://www.youtube.com/watch?v=chWiR1H_6AY"
-                    description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
-                />
+        <Container className="w-full flex flex-col px-4 justify-center relative">
+            <h1 className="pt-10 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
+                Pilihan Kelas untuk Semua Tingkatan
+            </h1>
+            <p className="pt-0 lg:px-24 px-9 text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[12px] sm:text-[18px]">
+                Online program ini mencakup <span className="font-bold">6 kelas untuk pemula</span> yang dirancang membangun pemahaman dasar IT dari <span className="font-bold">nol</span>, serta <span>4 kelas intermediate</span> untuk peserta yang ingin <span className="font-bold">mendalami keterampilan lebih lanjut</span>. Kelas berlangsung dari <span className="font-bold">1 Juni hingga 30 Juni 2025</span> dengan materi yang terstruktur dan mudah diikuti.
+            </p>
+            <div className="w-auto pt-0 md:pt-10 flex justify-center items-center pb-48">
+                <PilihanKelasSlider />
             </div>
         </Container>
-    )
+    );
 }
 
 export default PilihanKelas;

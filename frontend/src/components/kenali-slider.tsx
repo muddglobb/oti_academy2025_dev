@@ -50,7 +50,6 @@ const KenaliSwiper = () => {
         breakpoint: 1024,
         settings: { 
           slidesToShow: 2,
-
          },
       },
       {
@@ -65,7 +64,7 @@ const KenaliSwiper = () => {
   };
 
   return (
-    <div className=" max-w-screen mx-auto">
+    <div className="max-w-screen mx-auto">
       <Slider key={isMobile ? "mobile" : "desktop"} {...settings}>
         {images.map((img) => (
           <div key={img.alt} className="px-2 w-full">
