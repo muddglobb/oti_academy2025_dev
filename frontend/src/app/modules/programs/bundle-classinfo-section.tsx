@@ -1,122 +1,143 @@
 import React from "react";
 import Image from "next/legacy/image";
-import Link from "next/link";
+// import Link from "next/link";
+import TeacherCard from "@/components/teacher-card";
+import TeacherCardMobile from "@/components/teacher-card-mobile";
 
-const BundleClassInfo = () => {
+type BundleClassInfoProps = {
+  date: string;
+  sesi: string;
+  jam: string;
+  modul: string;
+};
+
+const BundleClassInfo = ({ date, sesi, jam, modul }: BundleClassInfoProps) => {
   return (
     <>
       <div className="relative w-full overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/images/space-background.png')] bg-repeat bg-center -z-10">
+        <div
+          className="absolute inset-0 bg-repeat bg-center -z-10"
+          style={{ backgroundImage: "url('/images/space-background.png')" }}
+        >
           <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 via-neutral-900/10 to-neutral-900/50 -z-20"></div>
         </div>
-        <div className="absolute w-3/4 h-3/4 top-0 right-0 bg-right -mr-[30%] -mt-[10%] bg-[url('/images/planet/saturnus.png')] bg-contain bg-no-repeat -z-10 scale-x-[-1] rotate-[-35deg] brightness-40"></div>
+        <div
+          className="absolute w-3/4 h-3/4 top-0 right-0 bg-right -mr-[30%] -mt-[10%]  bg-contain bg-no-repeat -z-10 scale-x-[-1] rotate-[-35deg] brightness-40"
+          style={{ backgroundImage: "url(/images/planet/saturnus.png)" }}
+        ></div>
         <section className="flex flex-col gap-7.5  justify-center items-center py-10 bg-no-repeat bg-cover w-full">
           <p className="text-[2rem] text-center font-bold bg-gradient-to-b from-gray-300 to-gray-400 bg-clip-text text-transparent">
             Detailed Information About Our Class
           </p>
-          <div className="w-4xl flex flex-col justify-center items-center gap-[25px]">
-            <div className="flex flex-row justify-center gap-x-8">
-              <div className="flex flex-col w-74 h-108 bg-white rounded-lg">
-                <div className="w-[297px] h-[284px] bg-[url(/person-placeholder.jpeg)] rounded-lg mask-b-from-90% bg-cover">
-                  <div className="flex flex-row justify-between m-5">
-                    <div className="text-white flex flex-col gap-1 ">
-                      <div className="bg-primary-800 rounded-[5px] font-bold text-center h-auto w-[162px]">
-                        <p className="text-[22px] ">Dhimas Putra</p>
-                      </div>
-                      <div className="bg-primary-800 rounded-[5px] w-[122px] text-center">
-                        <p className="text-[12px]">Teaching Assistant</p>
-                      </div>
-                    </div>
-                    <Link
-                      href={"https://www.linkedin.com/"}
-                      className="w-[30px] h-[30px] border-solid border-primary-800 border-[1px] rounded-[5px] p-1 bg-primary-50"
-                    >
-                      <Image
-                        src={"/icons/linkedin-icon.svg"}
-                        alt="linkedin-icon"
-                        width={30}
-                        height={30}
-                        className="rounded-[5px]"
-                      ></Image>
-                    </Link>
+          <div className="md:w-4xl w-sm">
+            <div className="flex flex-col justify-center md:gap-x-8 gap-y-8">
+              <div>
+                <div className=" hidden md:flex flex-row justify-center gap-6">
+                  <TeacherCard
+                    teacher="Dhimas Putra"
+                    linkedin="https://www.linkedin.com/"
+                    description="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consectetur asperiores ipsa unde! Dolorem et natus nulla exercitationem dignissimos autem voluptates quam minus temporibus similique dolore, aliquid consectetur quas sequi debitis."
+                  ></TeacherCard>
+                  <TeacherCard
+                    teacher="Dhimas Putra"
+                    linkedin="https://www.linkedin.com/"
+                    description="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consectetur asperiores ipsa unde! Dolorem et natus nulla exercitationem dignissimos autem voluptates quam minus temporibus similique dolore, aliquid consectetur quas sequi debitis."
+                  ></TeacherCard>
+                </div>
+                <div className="flex flex-col justify-center md:hidden gap-6">
+                  <TeacherCardMobile
+                    teacher="Dhimas Putra"
+                    linkedin="https://www.linkedin.com/"
+                    description="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consectetur asperiores ipsa unde! Dolorem et natus nulla exercitationem dignissimos autem voluptates quam minus temporibus similique dolore, aliquid consectetur quas sequi debitis."
+                  ></TeacherCardMobile>
+                  <TeacherCardMobile
+                    teacher="Dhimas Putra"
+                    linkedin="https://www.linkedin.com/"
+                    description="Lorem ipsum dolor, sit amet consectetur adipisicing elit. Consectetur asperiores ipsa unde! Dolorem et natus nulla exercitationem dignissimos autem voluptates quam minus temporibus similique dolore, aliquid consectetur quas sequi debitis."
+                  ></TeacherCardMobile>
+                </div>
+              </div>
+
+              <div className="hidden text-sm text-white md:flex flex-col gap-2 justify-center items-center">
+                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-[619px] px-2.5 py-2">
+                  <Image
+                    src={"/icons/calendar-icon.svg"}
+                    alt="calendar-icon"
+                    width={21}
+                    height={21}
+                  ></Image>
+                  <p>{date}</p>
+                </div>
+                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-[619px] px-2.5 py-2">
+                  <Image
+                    src={"/icons/target-icon.svg"}
+                    alt="calendar-icon"
+                    width={21}
+                    height={21}
+                  ></Image>
+                  <p>{sesi}</p>
+                </div>
+                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-[619px] px-2.5 py-2">
+                  <Image
+                    src={"/icons/time-icon.svg"}
+                    alt="calendar-icon"
+                    width={21}
+                    height={21}
+                  ></Image>
+                  <p>{jam}</p>
+                </div>
+                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-[619px] px-2.5 py-2">
+                  <Image
+                    src={"/icons/stack-icon.svg"}
+                    alt="calendar-icon"
+                    width={21}
+                    height={21}
+                  ></Image>
+                  <p>{modul}</p>
+                </div>
+              </div>
+
+              <div className="md:hidden text-sm text-white flex flex-row justify-center items-center gap-1">
+                <div className="flex flex-col gap-1">
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-48 px-2.5 py-2">
+                    <Image
+                      src={"/icons/calendar-icon.svg"}
+                      alt="calendar-icon"
+                      width={21}
+                      height={21}
+                    ></Image>
+                    <p>{date}</p>
+                  </div>
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-48 px-2.5 py-2">
+                    <Image
+                      src={"/icons/target-icon.svg"}
+                      alt="calendar-icon"
+                      width={21}
+                      height={21}
+                    ></Image>
+                    <p>{sesi}</p>
                   </div>
                 </div>
-                <p className="m-4 text-xs">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Dolore, fuga rem quibusdam nulla commodi excepturi fugit vitae
-                  sint quia distinctio id. Ipsa a dolorem inventore quas aliquid
-                  ratione voluptates dignissimos!
-                </p>
-              </div>
-              <div className="flex flex-col w-74 h-108 bg-white rounded-lg">
-                <div className="w-[297px] h-[284px] bg-[url(/person-placeholder.jpeg)] rounded-lg mask-b-from-90% bg-cover">
-                  <div className="flex flex-row justify-between m-5">
-                    <div className="text-white flex flex-col gap-1 ">
-                      <div className="bg-primary-800 rounded-[5px] font-bold text-center h-auto w-[162px]">
-                        <p className="text-[22px] ">Dhimas Putra</p>
-                      </div>
-                      <div className="bg-primary-800 rounded-[5px] w-[122px] text-center">
-                        <p className="text-[12px]">Teaching Assistant</p>
-                      </div>
-                    </div>
-                    <Link
-                      href={"https://www.linkedin.com/"}
-                      className="w-[30px] h-[30px] border-solid border-primary-800 border-[1px] rounded-[5px] p-1 bg-primary-50"
-                    >
-                      <Image
-                        src={"/icons/linkedin-icon.svg"}
-                        alt="linkedin-icon"
-                        width={30}
-                        height={30}
-                        className=" rounded-[5px]"
-                      ></Image>
-                    </Link>
+                <div className="flex flex-col gap-1">
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-48 px-2.5 py-2">
+                    <Image
+                      src={"/icons/time-icon.svg"}
+                      alt="calendar-icon"
+                      width={21}
+                      height={21}
+                    ></Image>
+                    <p>{jam}</p>
+                  </div>
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-48 px-2.5 py-2">
+                    <Image
+                      src={"/icons/stack-icon.svg"}
+                      alt="calendar-icon"
+                      width={21}
+                      height={21}
+                    ></Image>
+                    <p>{modul}</p>
                   </div>
                 </div>
-                <p className="m-4 text-xs">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Dolore, fuga rem quibusdam nulla commodi excepturi fugit vitae
-                  sint quia distinctio id. Ipsa a dolorem inventore quas aliquid
-                  ratione voluptates dignissimos!
-                </p>
-              </div>
-            </div>
-            <div className="text-sm text-white flex flex-col gap-2">
-              <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-[619px] px-2.5 py-2">
-                <Image
-                  src={"/icons/calendar-icon.svg"}
-                  alt="calendar-icon"
-                  width={21}
-                  height={21}
-                ></Image>
-                <p>1 - 15 June 2025</p>
-              </div>
-              <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-[619px] px-2.5 py-2">
-                <Image
-                  src={"/icons/target-icon.svg"}
-                  alt="calendar-icon"
-                  width={21}
-                  height={21}
-                ></Image>
-                <p>6 Sesi</p>
-              </div>
-              <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-[619px] px-2.5 py-2">
-                <Image
-                  src={"/icons/time-icon.svg"}
-                  alt="calendar-icon"
-                  width={21}
-                  height={21}
-                ></Image>
-                <p>2 Jam/Sesi</p>
-              </div>
-              <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-[619px] px-2.5 py-2">
-                <Image
-                  src={"/icons/stack-icon.svg"}
-                  alt="calendar-icon"
-                  width={21}
-                  height={21}
-                ></Image>
-                <p>10 Modul</p>
               </div>
             </div>
           </div>
