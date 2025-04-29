@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 const Hero = () => {
     return (
-        <Container className="bg-gradient-to-b from-[rgba(5,12,26,0.75)] via-[rgba(5,12,26,0.4)] to-[#050C1A] py-40 max-h-screen flex flex-col items-center justify-center">
+        <Container className="bg-gradient-to-b from-neutral-900/75 via-neutral-900/40 to-neutral-900 py-40 max-h-screen flex flex-col items-center justify-center">
             <div className="pb-5 flex flex-row gap-5 md:flex-col pb-7 lg:pt-0">
                 <div className="justify-center items-center flex lg:pt-3">
                     <Link href="https://omahti.web.id/">
@@ -23,10 +23,10 @@ const Hero = () => {
                 </div>
             </div>
             <div className="lg:px-62 gap-4 flex flex-col px-9">
-                <h1 className="lg:leading-17 text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[1.375rem] sm:text-[2.5rem] font-bold">
+                <h1 className="lg:leading-17 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
                     Pelatihan IT Terstruktur yang Dirancang untuk Semua Tingkat Keahlian
                 </h1>
-                <p className="lg:px-24 px-9 text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[14px] sm:text-[18px]">
+                <p className="lg:px-24 px-9 text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[14px] sm:text-[18px]">
                     <span className="font-bold"> Online Mini Bootcamp </span> yang menawarkan pengalaman belajar intensif, mengasah keterampilan IT, cocok untuk <span className="font-bold"> pemula dan yang ingin mendalami bidang spesifik.</span>
                 </p>
                 <Link href="/register" className="flex justify-center">
