@@ -33,13 +33,18 @@ const IntermediateClassInfo = ({ classInfo }: ClassInfoProps) => {
           className="absolute top-0 left-0 w-full object-cover -z-10"
         />
 
-        <div>
-          <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[32px] font-bold mb-7.5">
+        <div className="px-4">
+          <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center font-bold mb-7.5
+          text-[22px]
+          sm:text-[26px]
+          md:text-[30px]
+          lg:text-[32px]
+          ">
             Detailed Information About Our Class
           </p>
         </div>
 
-        <div>
+        <div className="px-4">
           <div className="flex gap-6 flex-wrap justify-center mb-6">
             <MentorCard
               // name="Faris Alamsyah"
@@ -69,36 +74,39 @@ const IntermediateClassInfo = ({ classInfo }: ClassInfoProps) => {
           </div>
 
 
-          <div className="text-white flex flex-col gap-2.5 w-auto">
+          <div className="text-white flex flex-col gap-2.5 w-auto
+          text-[12px]
+          md:text-[14px]
+          ">
             <div className="flex flex-col gap-2.5">
               <div className="flex gap-2.5 lg:flex-col">
-                <div className="flex gap-2.5 border-2 p-2 rounded-[8px] w-[50%] lg:w-full">
-                  <Calendar />
+                <div className="flex gap-2.5 border-2 p-2 rounded-[8px] w-[50%] lg:w-full items-center">
+                  <Calendar size={18}/>
                   {/* <p>tanggal</p> */}
                   <p>{date}</p>
                 </div>
-                <div className="flex gap-2.5 border-2 p-2 rounded-[8px] w-[50%] lg:w-full">
-                  <Target />
+                <div className="flex gap-2.5 border-2 p-2 rounded-[8px] w-[50%] lg:w-full items-center">
+                  <Target size={18}/>
                   {/* <p>sesi</p> */}
                   <p>{session}</p>
                 </div>
               </div>
               <div className="flex gap-2.5 lg:flex-col">
-                <div className="flex gap-2.5 border-2 p-2 rounded-[8px] w-[50%] lg:w-full">
-                  <Clock />
+                <div className="flex gap-2.5 border-2 p-2 rounded-[8px] w-[50%] lg:w-full items-center">
+                  <Clock size={18}/>
                   {/* <p>jam</p> */}
                   <p>{hour}</p>
                 </div>
-                <div className="flex gap-2.5 border-2 p-2 rounded-[8px] w-[50%] lg:w-full">
-                  <Database />
+                <div className="flex gap-2.5 border-2 p-2 rounded-[8px] w-[50%] lg:w-full items-center">
+                  <Database size={18}/>
                   {/* <p>modul</p> */}
                   <p>{modul}</p>
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-2.5 border-2 p-2 rounded-[8px]">
-              <CircleAlert />
+            <div className="flex gap-2.5 border-2 p-2 rounded-[8px] items-center">
+              <CircleAlert size={18}/>
               {/* <p>prerequisites</p> */}
               <p>{prerequisites}</p>
             </div>

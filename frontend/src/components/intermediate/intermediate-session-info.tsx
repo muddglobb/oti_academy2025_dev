@@ -20,7 +20,10 @@ const IntermediateSessionInfo = ({ sessions }: { sessions: SessionData[] }) => {
         relative
     "
     >
-      <section className=" text-white py-20 bg-no-repeat bg-cover w-full px-14">
+      <section className=" text-white py-20 bg-no-repeat bg-cover w-full 
+      px-1
+      md:px-10
+      lg:px-14">
         <Image
           src="/images/class-info-background.png"
           alt="stars"
@@ -42,10 +45,12 @@ const IntermediateSessionInfo = ({ sessions }: { sessions: SessionData[] }) => {
                     className="relative flex w-full items-center"
                     key={index}
                   >
-                    <div className="w-auto pl-8 text-left">
-                      <h3 className="font-bold text-lg">{title}</h3>
+                    <div className="w-auto pl-8 text-left 
+                    text-[12px]
+                    md:text-lg">
+                      <h3 className="font-bold ">{title}</h3>
                       <div className="flex flex-row gap-5">
-                        <div className="text-lg flex flex-row gap-[5px]">
+                        <div className="flex flex-row gap-[5px]">
                           <Image
                             src={"/icons/calendar-icon.svg"}
                             alt="calendar-icon"
@@ -54,7 +59,7 @@ const IntermediateSessionInfo = ({ sessions }: { sessions: SessionData[] }) => {
                           />
                           <p>{date}</p>
                         </div>
-                        <div className="text-lg flex flex-row gap-[5px]">
+                        <div className="flex flex-row gap-[5px]">
                           <Image
                             src={"/icons/time-icon.svg"}
                             alt="time-icon"
@@ -64,7 +69,7 @@ const IntermediateSessionInfo = ({ sessions }: { sessions: SessionData[] }) => {
                           <p>{duration}</p>
                         </div>
                       </div>
-                      <p className="mt-2 text-lg">{description}</p>
+                      <p className="mt-2">{description}</p>
                     </div>
                     <div className="absolute left-1 flex h-5 w-5 -translate-x-1/2 -translate-y-0 items-center justify-center rounded-full ring-2 ring-white bg-neutral-800"></div>
                   </div>
