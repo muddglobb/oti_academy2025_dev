@@ -5,7 +5,11 @@ import Link from "next/link";
 import CountdownTimer from "../timer";
 import {ArrowLeft} from "lucide-react";
 
-const IntermediateHero = () => {
+type HeroProps = {
+  hero: [string, string];
+};
+const IntermediateHero = ({ hero }: HeroProps) => {
+  const [title, description] = hero;
   // bg-[url('/images/background-programs.png')]
   return (
     <div
@@ -24,7 +28,7 @@ const IntermediateHero = () => {
       <div className="mt-13 ml-14">
         <Link href="/programs" className="flex gap-2 bg-[var(--color-primary-800)] text-[14px] font-bold px-4.5 py-3 rounded-[5px] w-fit">
           <ArrowLeft size={20} color="white"/>
-          <p className="text-white ">asep</p>
+          <p className="text-white ">Kembali</p>
         </Link>
       </div>
 
@@ -56,12 +60,10 @@ const IntermediateHero = () => {
               </div>
 
               <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[46px] font-bold">
-                Software Engineering
+                {title}
               </p>
               <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[27px]">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi
-                suscipit ipsam tenetur temporibus atque velit laudantium animi
-                unde eum cum?
+                {description}
               </p>
             </div>
 
