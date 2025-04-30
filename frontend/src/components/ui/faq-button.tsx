@@ -58,7 +58,7 @@ function AccordionContent({
       className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm"
       {...props}
     >
-      <div className={cn("pt-0 pb-4 p-5 bg-neutral-50 rounded-b-lg border-3 border-t-0 border-[#959599]", className)}>{children}</div>
+      <div className={cn("pt-0 pb-4 p-5 bg-neutral-50 rounded-b-lg border-3 border-t-0 border-[#959599] hover:cursor-pointer", className)}>{children}</div>
     </AccordionPrimitive.Content>
   )
 }

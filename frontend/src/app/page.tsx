@@ -11,7 +11,7 @@ import FAQ from './modules/landing-page/faq'
 const page = () => {
   return (
     <div className='bg-neutral-900 overflow-x-hidden relative'>
-      <div className='min-h-screen relative z-5'>
+      <div className='min-h-screen relative z-100'>
         <Hero />
         <Kenali />
         <WhyUs />
@@ -20,7 +20,7 @@ const page = () => {
         <Comments />
         <FAQ />
       </div>
-      <div>
+      <div className='z-0'>
         <LandingPageBackground />
       </div>
     </div>

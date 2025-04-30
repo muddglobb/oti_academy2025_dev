@@ -44,12 +44,12 @@ const Details = [
 
 const Harga = () => {
     return (
-        <Container className="flex flex-col items-end px-4 gap-4 lg:gap-10">
+        <Container className="flex flex-col items-end px-4 gap-4 lg:gap-10 bg-gradient-to-b from-neutral-900 via-neutral-900 to-neutral-900/90">
             <h1 className="pt-10 w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
                 Harga Program Kami
             </h1>
             <div className="relative w-full mx-auto items-end">
-                <div className="flex flex-col md:flex-row justify-center items-end gap-4 md:gap-5">
+                <div className="flex flex-col md:flex-row justify-center items-end gap-4 md:gap-5 ">
                     {/* putih kiri */}
                     <div className="relative border bg-neutral-50 rounded-[10px] max-w-102 p-5 flex flex-col items-center justify-between w-full">
                         {/* header atasnya */}
@@ -78,10 +78,10 @@ const Harga = () => {
 
                     {/* biru tengah with glow effect */}
                     <div className="relative border rounded-[10px] max-w-105 w-full">
-                        <div className="absolute inset-0 bg-[#4A60C8]/75 rounded-[10px] blur-[15px] opacity-50 transform scale-[1.02]"></div>
+                        <div className="absolute inset-0 bg-[#4A60C8]/75 rounded-[10px] blur-[20px] opacity-100 transform scale-[1.02]"></div>
                         
                         {/* header atasnya */}
-                        <div className="relative border bg-gradient-to-b from-[#0716A2] to-[#03083C] text-neutral-50 rounded-[10px] p-5 flex flex-col items-center justify-between w-full h-full ring-2 ring-neutral-50/70">
+                        <div className="relative border bg-gradient-to-b from-[#0716A2] to-[#03083C] text-neutral-50 rounded-[10px] p-5 flex flex-col items-center justify-between w-full h-full ring-1 ring-neutral-50/70">
                             <div className="flex flex-col gap-5 justify-around w-full">
                                 <div className="flex flex-row items-center justify-between w-full">                        
                                     <h2 className="text-[18px] lg:text-[22px] font-bold justify-start">{Header[1].title}</h2>

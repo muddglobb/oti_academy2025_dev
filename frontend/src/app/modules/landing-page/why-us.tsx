@@ -54,20 +54,20 @@ const Sponsors =[
 
 const WhyUs = () => {
     return (
-        <Container className="items-center gap-4 lg:gap-10 bg-gradient-to-b from-neutral-900 to-neutral-900/10]">
+        <Container className="z-100 items-center gap-4 lg:gap-10 bg-gradient-to-b from-neutral-900 to-neutral-900/10]">
             <h1 className="pt-10 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
                 Mengapa Kami Pilihan Tepat untuk Kamu
             </h1>
-            <div className="flex flex-col justify-center gap-2 lg:gap-6 pb-6 lg:pb-15">
+            <div className="z-100 flex flex-col justify-center gap-2 lg:gap-6 pb-6 lg:pb-15">
                 {WhyUsContent.map((item, index) => {
                     const Icon = item.icon;
                     return (
                         <div
                             key={index}
-                            className="flex items-center flex-row gap-3 p-6 max-w-screen xl:w-260 border border-white rounded-xl text-neutral-50"
+                            className="z-100 flex items-center flex-row gap-3 p-6 max-w-screen xl:w-260 border border-white rounded-xl text-neutral-50"
                         >
                             <Icon size={48} />
-                            <div className="flex flex-col">
+                            <div className="z-100 flex flex-col">
                                 <h2 className="text-[14px] lg:text-[22px] font-bold">{item.header}</h2>
                                 <p className="text-[12px] lg:text-[18px]">{item.content}</p>
                             </div>

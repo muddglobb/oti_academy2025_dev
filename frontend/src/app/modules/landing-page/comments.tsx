@@ -25,7 +25,7 @@ const CommentContents = [
 
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit. sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."`,
         pic: "images/sponsors/sponsor3.JPG",
-        name: "Regina Joan Medea Jati Laksono",
+        name: "Regina Joan MJL",
         job: "Gatau gak kenal",
     },
     {
@@ -90,7 +90,7 @@ const Comments = () => {
     };
 
     return (
-        <Container className="px-0">
+        <Container className="px-0 bg-gradient-to-b from-neutral-900/90 to-neutral-900/39">
             <div className="flex flex-col items-center justify-center w-full h-full py-20">
                 <h1 className="pt-44 px-4 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
                     Kata Mereka Tentang Program Kami
