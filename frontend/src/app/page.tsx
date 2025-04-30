@@ -5,6 +5,8 @@ import WhyUs from './modules/landing-page/why-us'
 import PilihanKelas from './modules/landing-page/pilihan-kelas'
 import LandingPageBackground from '@/components/landing-page-background'
 import Harga from './modules/landing-page/harga'
+import Comments from './modules/landing-page/comments'
+import FAQ from './modules/landing-page/faq'
 
 const page = () => {
   return (
@@ -15,6 +17,8 @@ const page = () => {
         <WhyUs />
         <PilihanKelas />
         <Harga />
+        <Comments />
+        <FAQ />
       </div>
       <div>
         <LandingPageBackground />

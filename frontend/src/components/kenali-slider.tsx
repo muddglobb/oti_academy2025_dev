@@ -25,7 +25,7 @@ const images = [
   },
 ];
 
-const KenaliSwiper = () => {
+const KenaliSlider = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -82,4 +82,4 @@ const KenaliSwiper = () => {
   );
 };
 
-export default KenaliSwiper;
+export default KenaliSlider;

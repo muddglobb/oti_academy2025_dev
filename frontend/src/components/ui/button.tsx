@@ -9,9 +9,11 @@ const buttonVariants = cva(
                 default: "bg-primary-500 text-neutral-50 hover:bg-primary-700",
                 "learn-more-blue": "bg-neutral-700 text-neutral-50 hover:bg-neutral-900",
                 "learn-more-white": "bg-neutral-50 text-neutral-700",
+                "FAQ-button": "bg-gradient-to-b from-neutral-50 to-[#959599] text-neutral-900 font-normal",
             },
             size: {
-                default: "h-9 px-4 py-2 has-[>svg]:px-3"
+                default: "h-9 px-4 py-2 has-[>svg]:px-3",
+                "FAQ-button": "p-5 text-[18px] has-[>svg]:px-5",
             }
         },
         defaultVariants: {
