@@ -4,12 +4,11 @@ import BackButton from "@/components/backButton";
 import Link from "next/link";
 
 type HeroProps = {
-  classLevel: string;
   className: string;
   classDescription: string;
 };
 
-const ClassHero = ({ classLevel, className, classDescription }: HeroProps) => {
+const EntryHero = ({ className, classDescription }: HeroProps) => {
   return (
     <div className="relative w-full overflow-hidden">
       <div
@@ -32,7 +31,7 @@ const ClassHero = ({ classLevel, className, classDescription }: HeroProps) => {
               <CountdownTimer targetDate={"2025-05-30T23:59:59"} />
             </div>
             <div className="bg-primary-800 text-white  rounded-lg text-center">
-              <p className="m-auto px-4.5 py-2">{classLevel}</p>
+              <p className="m-auto px-4.5 py-2">Beginer Level</p>
             </div>
           </div>
 
@@ -55,4 +54,4 @@ const ClassHero = ({ classLevel, className, classDescription }: HeroProps) => {
   );
 };
 
-export default ClassHero;
+export default EntryHero;
