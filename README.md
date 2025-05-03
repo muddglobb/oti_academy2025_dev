@@ -36,3 +36,46 @@ Ensure you have Docker and Docker Desktop installed and configured on your local
 git clone https://github.com/muddglobb/oti_academy2025_dev.git
 # Then, follow the instructions in the "Usage" section.
 ```
+
+## How to access the API
+On postman, set environment:
+```bash
+baseUrl: http://localhost:8080
+```
+
+Then access the endpoint:
+```bash
+{{baseUrl}}/serviceName/...
+```
+
+example:
+```bash
+{{baseUrl}}/auth/register
+```
+
+## How to start docker
+
+- To start fresh without prebuilt images:
+```bash
+docker compose up --build
+```
+
+- To start an existing image (without applying new changes):
+```bash
+docker compose up
+```
+
+- To stop the development server:
+```bash
+docker compose down
+```
+
+- To apply new changes:
+```bash
+docker compose down && docker compose up --build
+```
+
+- To remove all data (volume included):
+```bash
+docker compose down -v
+```
