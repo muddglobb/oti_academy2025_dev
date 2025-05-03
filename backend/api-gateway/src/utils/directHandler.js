@@ -59,7 +59,7 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
     defaultMiddleware;
   
   // Validate service URL with fallback
-  const baseUrl = serviceUrl || 'http://localhost:8001';
+  const baseUrl = serviceUrl || 'http://auth-service-api:8001';
   
   // Log service URL for debugging
   logger.info(`Creating handler for service: ${baseUrl}, path: ${servicePath}`);
@@ -70,11 +70,22 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
   subRouter.use((req, res, next) => {
     middleware(req, res, async () => {
       try {
-        // Calculate target URL
-        // Remove the base path from original URL to get the relative path
-        const originalUrl = req.originalUrl;
-        const basePathPattern = new RegExp(`^/auth`);
-        const relativePath = originalUrl.replace(basePathPattern, '');
+
+        const routeKey = req.baseUrl.split('/')[1]; 
+        const basePathPattern = new RegExp(`^/${routeKey}`);
+        let relativePath = req.originalUrl.replace(basePathPattern, '');
+        
+        // Prevent double slashes by ensuring proper path format
+        let formattedServicePath = servicePath;
+        if (servicePath && !servicePath.startsWith('/')) {
+          formattedServicePath = `/${servicePath}`;
+        }
+        
+        // Handle case when both paths have slashes or neither has
+        if ((formattedServicePath.endsWith('/') && relativePath.startsWith('/')) ||
+            (!formattedServicePath && relativePath.startsWith('/'))) {
+          relativePath = relativePath.substring(1);
+        }
         
         // Build target URL
         const targetUrl = `${baseUrl}${servicePath}${relativePath}`;

@@ -8,7 +8,7 @@ const config = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   
   // Service URLs
-  AUTH_SERVICE_URL: process.env.AUTH_SERVICE_URL || 'http://localhost:8001',
+  AUTH_SERVICE_URL: process.env.AUTH_SERVICE_URL || 'http://auth-service-api:8001',
   
   // Security configuration
   JWT_SECRET: process.env.JWT_SECRET,

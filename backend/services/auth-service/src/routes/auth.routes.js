@@ -24,7 +24,7 @@ import { authenticateJWT } from '../middleware/auth.middleware.js';
 import {
   securityLimiter,
   standardLimiter
-} from '../../../../libs/middlewares/ratelimiter.js';
+} from '../middleware/rateLimiter.js'
 
 const router = Router();
 

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import dotenv from 'dotenv';
 import config from '../config/index.js';
 
 export const checkHealth = async (req, res) => {

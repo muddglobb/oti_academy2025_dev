@@ -5,7 +5,7 @@ import { jwtValidatorMiddleware } from '../middlewares/jwtValidator.js';
 const router = Router();
 
 // Get AUTH_SERVICE_URL with fallback
-const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || 'http://localhost:8001';
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || 'http://auth-service-api:8001';
 console.log('Using AUTH_SERVICE_URL:', AUTH_SERVICE_URL);
 
 // Special route for file upload - Fixed path
