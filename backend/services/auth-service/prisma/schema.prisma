@@ -20,7 +20,7 @@ enum UserType {
 }
 
 model User {
-  id            Int           @id @default(autoincrement())
+  id            String        @id @default(uuid())
   name          String
   email         String        @unique
   password      String
@@ -33,9 +33,9 @@ model User {
 }
 
 model RefreshToken {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   token     String   @unique
-  userId    Int
+  userId    String
   user      User     @relation(fields: [userId], references: [id])
   expiresAt DateTime
   createdAt DateTime @default(now())
@@ -43,7 +43,7 @@ model RefreshToken {
 }
 
 model DikeStudent {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   name      String
   nim       String   @unique
   email     String   @unique
@@ -52,7 +52,7 @@ model DikeStudent {
 }
 
 model PasswordReset {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   email     String
   token     String   @unique
   expiresAt DateTime
