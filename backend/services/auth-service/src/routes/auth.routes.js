@@ -17,7 +17,8 @@ import {
   validateResetPassword,
   validateChangePassword,
   validateUpdateProfile,
-  validateRefreshToken
+  validateRefreshToken,
+  validateTokenRequest
 } from '../middleware/validation.middleware.js';
 import { authenticateJWT } from '../middleware/auth.middleware.js';
 
@@ -35,6 +36,7 @@ router.post('/refresh-token', standardLimiter, validateRefreshToken, refreshToke
 router.post('/forgot-password', securityLimiter, validateForgotPassword, forgotPassword);
 router.post('/reset-password', securityLimiter, validateResetPassword, resetPassword);
 router.get('/verify-reset/:token', standardLimiter, verifyResetToken);
+router.post('/validate-token', validateTokenRequest, validateTokenRequest);
 
 // Protected routes
 router.post('/logout', authenticateJWT, logout);

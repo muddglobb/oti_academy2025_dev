@@ -447,3 +447,20 @@ export const deleteUser = asyncHandler(async (req, res) => {
     ApiResponse.success(null, 'User deleted successfully')
   );
 });
+
+export const validateToken = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+
+  // Verify the token
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json(
+        ApiResponse.error('Invalid token')
+      );
+    }
+
+    res.status(200).json(
+      ApiResponse.success(decoded, 'Token is valid')
+    );
+  });
+});

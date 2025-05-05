@@ -72,6 +72,11 @@ const refreshTokenSchema = z.object({
   refreshToken: z.string().min(1, 'Refresh token is required'),
 });
 
+const validateTokenSchema = z.object({
+  token: z.string().min(1, 'Token is required'),
+});
+
+export const validateTokenRequest = validate(validateTokenSchema);
 export const validateUpdateProfile = validate(updateProfileSchema);
 export const validateRefreshToken = validate(refreshTokenSchema);
 export const validateRegistration = validate(registerSchema);
