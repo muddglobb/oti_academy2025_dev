@@ -74,27 +74,6 @@ services:
         timeout: 10s
         retries: 3
 
-  # Nginx API Gateway
-  nginx-gateway:
-    image: nginx:1.25-alpine
-    ports:
-      - "${NGINX_API_GATEWAY_PORT:-8080}:80"
-    volumes:
-      - ./nginx/conf:/etc/nginx/conf.d
-      - ./nginx/ssl:/etc/nginx/ssl
-      - ./nginx/logs:/var/log/nginx
-    depends_on:
-      - api-gateway
-      - auth-service-api
-    networks:
-      - oti-network
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:80/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
 networks:
   oti-network:
     driver: bridge
