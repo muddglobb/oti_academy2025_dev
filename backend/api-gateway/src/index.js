@@ -3,14 +3,17 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import routes from './routes/index.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import config from './config/index.js';
 
 // Load environment variables
 dotenv.config();
 
 // Initialize Express app
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = config.PORT || 8000;
 
 // Middleware
 app.use(helmet()); // Security headers
@@ -19,7 +22,7 @@ app.use(express.json()); // Parse JSON bodies
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
+  origin: config.CORS_ORIGIN || '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -30,7 +33,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// Mount API routes
+// Get current file directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const routesPath = path.join(__dirname, 'routes');
+
+// Import routes directly instead of dynamic loading due to ES modules limitations
+import routes from './routes/index.js';
 app.use(routes);
 
 // 404 handler
