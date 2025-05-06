@@ -1,56 +1,26 @@
 import React from "react";
 import Image from "next/legacy/image";
 import MentorCard from "@/components/intermediate/mentor-card";
-import EntrySessionInfo from "./entry-sessioninfo";
+// import EntrySessionInfo from "./entry-sessioninfo";
 
-type EntryClassInfoProps = {
-  date: string;
-  sesi: string;
-  jam: string;
-  modul: string;
-  mentor: string;
-  mentorImage: string;
-  mentorDesc: string;
-  mentorLink: string;
+// type EntryClassInfoProps = {
+//   date: string;
+//   sesi: string;
+//   jam: string;
+//   modul: string;
+//   mentor: string;
+//   mentorImage: string;
+//   mentorDesc: string;
+//   mentorLink: string;
+// };
+type ClassInfoProps = {
+  classInfo: [string, string, string, string, string, string, string, string];
 };
 
-const sessions: [string, string, string, string][] = [
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-];
+const EntryClassInfo = ({classInfo
+}: ClassInfoProps) => {
+  const [date, sesi, jam, modul, mentor, mentorImage, mentorDesc, mentorLink] = classInfo;
 
-const EntryClassInfo = ({
-  date,
-  sesi,
-  jam,
-  modul,
-  mentor,
-  mentorImage,
-  mentorDesc,
-  mentorLink,
-}: EntryClassInfoProps) => {
   return (
     <>
       <div className="relative w-full overflow-hidden">
@@ -162,7 +132,7 @@ const EntryClassInfo = ({
             </div>
           </div>
         </section>
-        <EntrySessionInfo sessions={sessions}></EntrySessionInfo>
+        
       </div>
     </>
   );

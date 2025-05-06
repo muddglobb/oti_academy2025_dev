@@ -1,15 +1,72 @@
 import React from "react";
 import BundleClassInfo from "@/components/bundle/bundle-classinfo";
 import ClassHero from "@/components/entry/entry-hero";
+// import BundleSessionInfo from "@/components/bundle/bundle-sessioninfo";
+import SessionInfo from "@/components/intermediate/intermediate-session-info";
 
+const hero: [string, string] = [
+  "Web Development + Software Engineering",
+  "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis? fjieofjiojwjefoiejwoi",
+];
+const sessions: [string, string, string, string][] = [
+  [
+    "Session 1",
+    "1 June 2025",
+    "2 - 4 Jam/Sessions",
+    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+  ],
+  [
+    "Session 1",
+    "1 June 2025",
+    "2 - 4 Jam/Sessions",
+    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+  ],
+  [
+    "Session 1",
+    "1 June 2025",
+    "2 - 4 Jam/Sessions",
+    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+  ],
+  [
+    "Session 1",
+    "1 June 2025",
+    "2 - 4 Jam/Sessions",
+    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+  ],
+  [
+    "Session 1",
+    "1 June 2025",
+    "2 - 4 Jam/Sessions",
+    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+  ],
+  [
+    "Session 1",
+    "1 June 2025",
+    "2 - 4 Jam/Sessions",
+    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+  ],
+  [
+    "Session 1",
+    "1 June 2025",
+    "2 - 4 Jam/Sessions",
+    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+  ],
+  [
+    "Session 1",
+    "1 June 2025",
+    "2 - 4 Jam/Sessions",
+    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+  ],
+];
 const bundle = () => {
   return (
     <>
       <div>
-        <ClassHero
+        {/* <ClassHero
           className="Web Development + Software Engineering"
           classDescription="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa harum accusamus quos incidunt vero sed iusto tempora similique, dignissimos reprehenderit dicta amet voluptate, ducimus ex rem aliquam, molestiae commodi sapiente."
-        ></ClassHero>
+        ></ClassHero> */}
+        <ClassHero hero={hero} />
         <BundleClassInfo
           date="1 - 15 June 2025"
           sesi="6 Sesi"
@@ -24,6 +81,8 @@ const bundle = () => {
           TADesc="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?"
           TALink="https://www.linkedin.com"
         ></BundleClassInfo>
+
+        <SessionInfo sessions={sessions} />
       </div>
     </>
   );

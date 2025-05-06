@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/legacy/image";
 // import Link from "next/link";
 import MentorCard from "@/components/intermediate/mentor-card";
-import BundleSessionInfo from "./bundle-sessioninfo";
+// import BundleSessionInfo from "./bundle-sessioninfo";
 
 type BundleClassInfoProps = {
   date: string;
@@ -18,57 +18,6 @@ type BundleClassInfoProps = {
   TALink: string;
   TADesc: string;
 };
-
-const sessions: [string, string, string, string][] = [
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-];
 
 const BundleClassInfo = ({
   date,
@@ -205,7 +154,7 @@ const BundleClassInfo = ({
             </div>
           </div>
         </section>
-        <BundleSessionInfo sessions={sessions} />
+        
       </div>
     </>
   );
