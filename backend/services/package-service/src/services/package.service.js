@@ -59,6 +59,12 @@ export const PackageService = {
    * @returns {Promise<Object>} Package yang telah dihapus
    */
   async deletePackage(id) {
+    // First delete all associated courses in PackageCourse table
+    await prisma.packageCourse.deleteMany({
+      where: { packageId: id }
+    });
+    
+    // Then delete the package itself
     return await prisma.package.delete({
       where: { id }
     });
