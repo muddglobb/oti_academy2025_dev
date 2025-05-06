@@ -49,11 +49,12 @@ export const userProfileCache = async (req, res, next) => {
         
         // Only cache successful responses
         if (res.statusCode === 200 && parsedBody.status === 'success') {
-          // Store in Redis with TTL
-          redisClient.setEx(
+          // Store in Redis with TTL - using set with EX option instead of setEx
+          redisClient.set(
             cacheKey,
-            config.REDIS.ttl.userProfile,
-            body
+            body,
+            'EX',
+            config.REDIS.ttl.userProfile
           ).catch(err => logger.error(`Redis cache error: ${err.message}`));
         }
       } catch (error) {

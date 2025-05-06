@@ -88,7 +88,7 @@ enum BackPaymentMethod {
 
 enum UserType {
   DIKE
-  REGULER
+  UMUM
 }
 
 ```

@@ -5,7 +5,7 @@ import { jwtValidatorMiddleware } from '../middlewares/jwtValidator.js';
 const router = Router();
 
 // Get PACKAGE_SERVICE_URL with fallback
-const PACKAGE_SERVICE_URL = process.env.PACKAGE_SERVICE_URL || 'http://package-service-api:8003';
+const PACKAGE_SERVICE_URL = process.env.PACKAGE_SERVICE_URL || 'http://package-service-api:8005';
 console.log('Using PACKAGE_SERVICE_URL:', PACKAGE_SERVICE_URL);
 
 // Route all package requests to the Package service

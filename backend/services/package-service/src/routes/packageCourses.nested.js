@@ -27,8 +27,11 @@ router.get('/', authenticate, asyncHandler(async (req, res) => {
   // Tambahkan data dummy untuk course
   const coursesWithDummyData = PackageCourseService.addDummyCourseData(packageCourses);
   
+  // Format respons berdasarkan tipe package
+  const formattedResponse = await PackageCourseService.formatCourseResponse(coursesWithDummyData, packageId);
+  
   res.status(200).json(
-    ApiResponse.success(coursesWithDummyData)
+    ApiResponse.success(formattedResponse)
   );
 }));
 
@@ -39,14 +42,7 @@ router.get('/', authenticate, asyncHandler(async (req, res) => {
  */
 router.post('/', authenticate, permit(Roles.ADMIN), asyncHandler(async (req, res) => {
   const { packageId } = req.params;
-  const { courseId } = req.body;
-  
-  // Validasi input
-  if (!courseId) {
-    return res.status(400).json(
-      ApiResponse.error('CourseID wajib diisi')
-    );
-  }
+  const { courseId, courseIds } = req.body;
   
   // Validasi package
   const package_ = await PackageService.getPackageById(packageId);
@@ -55,21 +51,63 @@ router.post('/', authenticate, permit(Roles.ADMIN), asyncHandler(async (req, res
       ApiResponse.error('Package tidak ditemukan')
     );
   }
-  
-  try {
-    const packageCourse = await PackageCourseService.addCourseToPackage(packageId, courseId);
-    
-    res.status(201).json(
-      ApiResponse.success(packageCourse, 'Course berhasil ditambahkan ke package')
-    );
-  } catch (error) {
-    // Untuk menangani kasus di mana relasi sudah ada
-    if (error.code === 'P2002') {
+
+  // Penanganan berbeda berdasarkan tipe package
+  if (package_.type === 'BUNDLE') {
+    // Untuk BUNDLE, gunakan courseIds (array pasangan)
+    if (!courseIds || !Array.isArray(courseIds) || courseIds.length !== 2) {
       return res.status(400).json(
-        ApiResponse.error('Course sudah ada dalam package')
+        ApiResponse.error('Untuk package tipe BUNDLE, courseIds wajib berupa array yang berisi 2 course ID')
       );
     }
-    throw error;
+
+    try {
+      // Tambahkan pasangan course sekaligus
+      const result = await PackageCourseService.addCoursePairToPackage(packageId, courseIds);
+      
+      res.status(201).json(
+        ApiResponse.success(result, 'Pasangan course berhasil ditambahkan ke package BUNDLE')
+      );
+    } catch (error) {
+      // Untuk menangani kasus di mana relasi sudah ada
+      if (error.code === 'P2002') {
+        return res.status(400).json(
+          ApiResponse.error('Salah satu course sudah ada dalam package')
+        );
+      }
+      throw error;
+    }
+  } else {
+    // Untuk BEGINNER/INTERMEDIATE, gunakan courseId tunggal
+    if (!courseId) {
+      return res.status(400).json(
+        ApiResponse.error('CourseID wajib diisi')
+      );
+    }
+    
+    // Validasi batasan jumlah course berdasarkan tipe package
+    const validation = await PackageCourseService.validateCourseAddition(packageId, courseId);
+    if (!validation.valid) {
+      return res.status(400).json(
+        ApiResponse.error(validation.message)
+      );
+    }
+    
+    try {
+      const packageCourse = await PackageCourseService.addCourseToPackage(packageId, courseId);
+      
+      res.status(201).json(
+        ApiResponse.success(packageCourse, 'Course berhasil ditambahkan ke package')
+      );
+    } catch (error) {
+      // Untuk menangani kasus di mana relasi sudah ada
+      if (error.code === 'P2002') {
+        return res.status(400).json(
+          ApiResponse.error('Course sudah ada dalam package')
+        );
+      }
+      throw error;
+    }
   }
 }));
 

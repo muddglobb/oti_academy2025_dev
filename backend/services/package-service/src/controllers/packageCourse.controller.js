@@ -93,7 +93,10 @@ export const listCoursesInPackage = asyncHandler(async (req, res) => {
   // Tambahkan data dummy untuk course
   const coursesWithDummyData = PackageCourseService.addDummyCourseData(packageCourses);
   
+  // Format respons berdasarkan tipe package
+  const formattedResponse = await PackageCourseService.formatCourseResponse(coursesWithDummyData, packageId);
+  
   res.status(200).json(
-    ApiResponse.success(coursesWithDummyData)
+    ApiResponse.success(formattedResponse)
   );
 });

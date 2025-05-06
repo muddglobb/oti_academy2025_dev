@@ -229,6 +229,8 @@ Authorization: Bearer {{accessToken}}
 ```
 
 #### 2.2. Add Course to Package (Admin Only)
+
+##### 2.2.1 Untuk Package Tipe BEGINNER dan INTERMEDIATE
 ```
 POST {{baseUrl}}/packages/:packageId/courses
 ```
@@ -258,6 +260,42 @@ Content-Type: application/json
 }
 ```
 
+##### 2.2.2 Untuk Package Tipe BUNDLE
+```
+POST {{baseUrl}}/packages/:packageId/courses
+```
+
+**Headers:**
+```
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "courseIds": ["course-uuid-001", "course-uuid-002"]
+}
+```
+
+**Response (201):**
+```json
+{
+  "status": "success",
+  "message": "Pasangan course berhasil ditambahkan ke package BUNDLE",
+  "data": [
+    {
+      "packageId": "550e8400-e29b-41d4-a716-446655440002",
+      "courseId": "course-uuid-001"
+    },
+    {
+      "packageId": "550e8400-e29b-41d4-a716-446655440002",
+      "courseId": "course-uuid-002"
+    }
+  ]
+}
+```
+
 #### 2.3. Remove Course from Package (Admin Only)
 ```
 DELETE {{baseUrl}}/packages/:packageId/courses/:courseId
@@ -284,11 +322,20 @@ Authorization: Bearer {{accessToken}}
 3. **Role-Based Access Control**:
    - Semua user dengan role `ADMIN`, `DIKE`, `UMUM`, atau `USER` dapat mengakses endpoint GET
    - Hanya user dengan role `ADMIN` yang dapat membuat, memperbarui, atau menghapus data
-4. **Error yang umum**:
-   - 400: Bad Request - Input validation error
+4. **Batasan Course dalam Package**:
+   - **BEGINNER**: Dapat memiliki banyak course tanpa batasan
+   - **INTERMEDIATE**: Dapat memiliki banyak course tanpa batasan
+   - **BUNDLE**: Setiap penambahan course harus berpasangan (2 course sekaligus) menggunakan format `courseIds`
+5. **Format Request Body Berbeda untuk Tipe Package**:
+   - Package **BEGINNER** dan **INTERMEDIATE**: Gunakan `{ "courseId": "course-uuid-xxx" }`
+   - Package **BUNDLE**: Gunakan `{ "courseIds": ["course-uuid-xxx", "course-uuid-yyy"] }`
+6. **Error yang umum**:
+   - 400: Bad Request - Input validation error (format tidak sesuai dengan tipe package)
+   - 400: Bad Request - "Untuk package tipe BUNDLE, courseIds wajib berupa array yang berisi 2 course ID"
    - 401: Unauthorized - Invalid token atau missing token
    - 403: Forbidden - Role tidak memiliki akses
    - 404: Not Found - Package tidak ditemukan
+   - 400: Bad Request - "Course sudah ada dalam package" (saat course sudah ada di package)
    - 500: Internal Server Error - Error pada server
 
 ## 🔄 Langkah-Langkah Pengujian
@@ -297,6 +344,40 @@ Authorization: Bearer {{accessToken}}
 2. Set environment dengan `baseUrl`
 3. Jalankan request "Login (Get Token)" terlebih dahulu untuk mendapatkan token
 4. Gunakan token tersebut untuk mengakses endpoint Package-Service lainnya
-5. Untuk menguji kendali akses, coba login dengan user non-admin dan coba akses endpoint yang dibatasi hanya untuk admin
 
-Similar code found with 3 license types
+## 📋 Contoh Penggunaan BUNDLE
+
+Berikut adalah contoh untuk menambahkan pasangan course ke package tipe BUNDLE:
+
+### 1. Penambahan Bundle Web Development + Software Engineering
+```
+POST {{baseUrl}}/packages/550e8400-e29b-41d4-a716-446655440002/courses
+```
+**Body:**
+```json
+{
+  "courseIds": ["course-uuid-001", "course-uuid-002"]
+}
+```
+
+### 2. Penambahan Bundle Graphic Design + UI/UX 
+```
+POST {{baseUrl}}/packages/550e8400-e29b-41d4-a716-446655440002/courses
+```
+**Body:**
+```json
+{
+  "courseIds": ["course-uuid-003", "course-uuid-004"]
+}
+```
+
+### 3. Penambahan Bundle Python + Data Science
+```
+POST {{baseUrl}}/packages/550e8400-e29b-41d4-a716-446655440002/courses
+```
+**Body:**
+```json
+{
+  "courseIds": ["course-uuid-005", "course-uuid-006"]
+}
+```
