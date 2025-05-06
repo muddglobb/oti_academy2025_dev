@@ -20,6 +20,9 @@ COPY --chown=appuser:appuser . .
 # Set NODE_PATH to include parent directories for module resolution
 ENV NODE_PATH=/home/appuser
 
+RUN mkdir -p /home/appuser/app/node_modules/.prisma
+RUN chown -R appuser:appuser /home/appuser/app/node_modules
+
 # Use non-root user
 USER appuser
 
