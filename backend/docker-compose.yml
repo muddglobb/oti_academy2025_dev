@@ -69,6 +69,40 @@ services:
     networks:
       - oti-network
       
+  # PAYMENT SERVICE DATABASE
+  payment-service-db:
+    image: postgres:17.4-alpine
+    env_file: 
+      - ./services/payment-service/.env
+    environment:
+    - POSTGRES_DB=payment_service_db
+    - POSTGRES_USER=${PG_USER}
+    - POSTGRES_PASSWORD=${PG_PASSWORD} 
+    volumes:
+      - payment-data:/var/lib/postgresql/data
+    networks:
+      - oti-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d payment_service_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # PAYMENT SERVICE API
+  payment-service-api:
+    build: ./services/payment-service
+    env_file:
+      - ./services/payment-service/.env
+      - .env
+    volumes:
+      - ./services/payment-service/logs:/home/appuser/app/logs
+      - ./libs:/home/appuser/app/libs
+    depends_on:
+      payment-service-db:
+        condition: service_healthy
+    networks:
+      - oti-network
+      
   # Redis cache service
   redis:
     container_name: redis
@@ -115,4 +149,5 @@ networks:
 volumes:
   auth-data:
   package-data:
+  payment-data:
   redis-data:

@@ -49,10 +49,12 @@ export const jwtValidatorMiddleware = async (req, res, next) => {
     
     // 3. Store in Redis for future use with TTL 1 hour
     try {
-      await redisClient.setEx(
+      // Using set with EX option instead of setEx
+      await redisClient.set(
         redisKey, 
-        config.REDIS.ttl.token, 
-        JSON.stringify(req.user)
+        JSON.stringify(req.user),
+        'EX', 
+        config.REDIS.ttl.token
       );
     } catch (redisError) {
       // Log Redis error but continue processing
@@ -111,10 +113,12 @@ export const optionalJwtValidator = async (req, res, next) => {
     
     // Store in Redis for future use
     try {
-      await redisClient.setEx(
+      // Using set with EX option instead of setEx
+      await redisClient.set(
         redisKey, 
-        config.REDIS.ttl.token, 
-        JSON.stringify(req.user)
+        JSON.stringify(req.user),
+        'EX', 
+        config.REDIS.ttl.token
       );
     } catch (redisError) {
       // Log Redis error but continue processing

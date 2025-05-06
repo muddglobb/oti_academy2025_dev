@@ -2,6 +2,7 @@ import { Router } from 'express';
 import authRoutes from './auth.routes.js';
 import userRoutes from './user.routes.js';
 import packageRoutes from './package.routes.js';
+import paymentRoutes from './payment.routes.js';
 import { checkHealth } from '../controllers/health.controller.js';
 
 const router = Router();
@@ -13,5 +14,6 @@ router.get('/health', checkHealth);
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/packages', packageRoutes);
+router.use('/payments', paymentRoutes);
 
 export default router;
