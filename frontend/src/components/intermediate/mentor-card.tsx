@@ -27,7 +27,7 @@ const MentorCard = ({
     >
       <div
         className="
-        w-52
+        w-[50%]
         h-auto
         min-h-52
         mask-r-from-90%
@@ -93,7 +93,7 @@ const MentorCard = ({
 
       <div
         className="
-          w-50
+          w-[50%]
           md:w-full
       "
       >

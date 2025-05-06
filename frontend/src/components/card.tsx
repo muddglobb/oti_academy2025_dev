@@ -61,7 +61,7 @@ const Card = ({
         </div>
       </div>
 
-      <div className="p-[20px] justify-between">
+      <div className="p-[20px] h-[150px] justify-between">
         {/* <div className="flex justify-between"> */}
         <div className="flex justify-between">
           <p className="font-bold text-[18px] w-[95%]">{title}</p>
