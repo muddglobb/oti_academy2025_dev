@@ -35,6 +35,40 @@ services:
     networks:
       - oti-network
       
+  # PACKAGE SERVICE DATABASE
+  package-service-db:
+    image: postgres:17.4-alpine
+    env_file: 
+      - ./services/package-service/.env
+    environment:
+    - POSTGRES_DB=package_service_db
+    - POSTGRES_USER=${PG_USER}
+    - POSTGRES_PASSWORD=${PG_PASSWORD} 
+    volumes:
+      - package-data:/var/lib/postgresql/data
+    networks:
+      - oti-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d package_service_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # PACKAGE SERVICE API
+  package-service-api:
+    build: ./services/package-service
+    env_file:
+      - ./services/package-service/.env
+      - .env
+    volumes:
+      - ./services/package-service/logs:/home/appuser/app/logs
+      - ./libs:/home/appuser/app/libs
+    depends_on:
+      package-service-db:
+        condition: service_healthy
+    networks:
+      - oti-network
+      
   # Redis cache service
   redis:
     container_name: redis
@@ -80,4 +114,5 @@ networks:
 
 volumes:
   auth-data:
+  package-data:
   redis-data:
