@@ -1,0 +1,47 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum PaymentStatus {
+  PAID
+  APPROVED
+}
+
+enum BackStatus {
+  REQUESTED
+  COMPLETED
+}
+
+enum BackPaymentMethod {
+  BNI
+  GOPAY
+  OVO
+  DANA
+}
+
+enum UserType {
+  DIKE
+  UMUM
+}
+
+model Payment {
+  id                String            @id @default(uuid())
+  userId            String
+  packageId         String
+  courseId          String            @default("00000000-0000-0000-0000-000000000000") 
+  type              UserType
+  proofLink         String
+  status            PaymentStatus     @default(PAID)
+  backPaymentMethod BackPaymentMethod?
+  backAccountNumber String?
+  backRecipient     String?
+  backStatus        BackStatus?       @default(REQUESTED)
+  backCompletedAt   DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+}
