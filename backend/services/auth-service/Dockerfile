@@ -27,7 +27,7 @@ RUN mkdir -p logs && chown -R appuser:appgroup logs
 # Switch ke non-root user
 USER appuser
 
-EXPOSE 8001
+EXPOSE ${PORT}
 
 # Gunakan db push untuk fase pengembangan
 CMD sh -c "npx prisma db push && node src/index.js"
