@@ -1,0 +1,31 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum PackageType {
+  BEGINNER
+  INTERMEDIATE
+  BUNDLE
+}
+
+model Package {
+  id         String          @id @default(uuid())
+  name       String
+  type       PackageType
+  price      Int
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  courses    PackageCourse[]
+}
+
+model PackageCourse {
+  package   Package @relation(fields: [packageId], references: [id])
+  packageId String
+  courseId  String  // UUID dari Course (dummy untuk sekarang)
+  @@id([packageId, courseId])
+}
