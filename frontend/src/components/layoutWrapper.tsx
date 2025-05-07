@@ -10,7 +10,7 @@ export default function LayoutWrapper({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isAuthPage = ["/login", "/register"].includes(pathname);
+  const isAuthPage = ["/login", "/register", "/lupa-password"].includes(pathname);
 
   return (
     <>
