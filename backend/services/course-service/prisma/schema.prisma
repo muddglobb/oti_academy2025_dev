@@ -1,0 +1,41 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Level {
+  BEGINNER
+  INTERMEDIATE
+}
+
+model Course {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  quota       Int
+  level       Level
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relasi ke sesi pertemuan
+  sessions    Session[]
+}
+
+model Session {
+  id          String    @id @default(uuid())
+  courseId    String
+  startAt     DateTime  // tanggal+jam mulai sesi
+  durationHrs Int       // durasi sesi dalam jam
+  description String?   // keterangan sesi
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relasi balik ke Course
+  course      Course    @relation(fields: [courseId], references: [id])
+
+  @@index([courseId])
+}
