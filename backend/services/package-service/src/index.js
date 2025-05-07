@@ -4,6 +4,9 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
+import { exec } from 'child_process';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 import packageRoutes from './routes/package.routes.js';
 import packageCourseRoutes from './routes/packageCourse.routes.js';
@@ -15,10 +18,50 @@ dotenv.config();
 
 // Initialize Express app
 const app = express();
-const PORT = process.env.PORT || 8003;
+const PORT = process.env.PORT || 8005;
 
 // Initialize Prisma client
 const prisma = new PrismaClient();
+
+/**
+ * Fungsi untuk menjalankan seeder jika database kosong
+ */
+async function checkAndRunSeeder() {
+  try {
+    console.log('📊 Checking if seed data is needed...');
+    
+    // Cek apakah sudah ada package di database
+    const existingPackages = await prisma.package.findMany();
+    
+    // Jika tidak ada package, jalankan seeder
+    if (existingPackages.length === 0) {
+      console.log('🌱 Database kosong, menjalankan seeder...');
+      
+      // Mendapatkan path absolut ke direktori seed.js
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = path.dirname(__filename);
+      const rootDir = path.resolve(__dirname, '..');
+      const seedPath = path.join(rootDir, 'prisma', 'seed.js');
+      
+      // Menjalankan seeder dengan node
+      exec(`node ${seedPath}`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`❌ Error menjalankan seeder: ${error.message}`);
+          return;
+        }
+        if (stderr) {
+          console.error(`⚠️ Seeder stderr: ${stderr}`);
+          return;
+        }
+        console.log(`✅ Seeder berhasil dijalankan: ${stdout}`);
+      });
+    } else {
+      console.log('✅ Data sudah ada, tidak perlu menjalankan seeder.');
+    }
+  } catch (error) {
+    console.error('❌ Error saat memeriksa database:', error.message);
+  }
+}
 
 // Middleware
 app.use(helmet());
@@ -88,6 +131,9 @@ const startServer = async () => {
     // Test database connection
     await prisma.$connect();
     console.log('✅ Connected to database');
+    
+    // Jalankan pengecekan dan seeder jika diperlukan
+    await checkAndRunSeeder();
     
     app.listen(PORT, () => {
       console.log(`🚀 Package service running on port ${PORT}`);

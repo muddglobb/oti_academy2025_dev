@@ -54,7 +54,7 @@ router.post(
 router.delete(
   '/:id',
   authenticate,
-  permit('ADMIN', 'DIKE', 'UMUM'),
+  permit('ADMIN'),
   asyncHandler(controller.deletePayment)
 );
 
