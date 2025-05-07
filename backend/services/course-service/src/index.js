@@ -25,9 +25,9 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // Routes
-app.use('/api/admin', adminRoutes);
-app.use('/api/courses', courseRoutes);
-app.use('/api/sessions', sessionRoutes);
+app.use('/admin/courses', adminRoutes);
+app.use('/courses', courseRoutes);
+app.use('/sessions', sessionRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

@@ -36,6 +36,22 @@ router.patch(
 );
 
 // User operations
+// Get user's own payment history
+router.get(
+  '/my-payments',
+  authenticate,
+  permit('DIKE', 'UMUM', 'ADMIN'),
+  asyncHandler(controller.getUserPayments)
+);
+
+// Update payment details (proofLink and/or back payment info)
+router.patch(
+  '/:id/update',
+  authenticate,
+  permit('DIKE', 'UMUM'),
+  asyncHandler(controller.updatePayment)
+);
+
 router.get(
   '/:id',
   authenticate,
@@ -50,7 +66,6 @@ router.post(
   asyncHandler(controller.requestBack)
 );
 
-// Delete payment (admin or owner)
 router.delete(
   '/:id',
   authenticate,

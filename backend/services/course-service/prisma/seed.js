@@ -32,17 +32,17 @@ async function main() {
                 title: 'Competitive Programming',
                 description: 'Learn algorithms and data structures for competitive programming contests.',
                 level: 'BEGINNER',
-                quota: XX,
+                quota: 140,
                 sessions: {
                     create: [
                         {
                             startAt: futureDate(7),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Introduction to Algorithm Complexity'
                         },
                         {
                             startAt: futureDate(14),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Basic Data Structures'
                         }
                     ]
@@ -52,17 +52,17 @@ async function main() {
                 title: 'Graphic Design Fundamentals',
                 description: 'Master the basics of graphic design including color theory, typography, and composition.',
                 level: 'BEGINNER',
-                quota: XX,
+                quota: 140,
                 sessions: {
                     create: [
                         {
                             startAt: futureDate(5),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Design Principles & Elements'
                         },
                         {
                             startAt: futureDate(12),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Typography & Color Theory'
                         }
                     ]
@@ -72,37 +72,37 @@ async function main() {
                 title: 'Fundamental Cybersecurity',
                 description: 'Learn the basics of cybersecurity, including threat identification and security principles.',
                 level: 'BEGINNER',
-                quota: XX,
+                quota: 140,
                 sessions: {
                     create: [
                         {
                             startAt: futureDate(3),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Security Fundamentals'
                         },
                         {
                             startAt: futureDate(10),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Common Threats & Vulnerabilities'
                         }
                     ]
                 }
             },
             {
-                title: 'Game Development Basics',
+                title: 'Game Development',
                 description: 'Introduction to game development concepts, engines, and basic implementation.',
                 level: 'BEGINNER',
-                quota: XX,
+                quota: 140,
                 sessions: {
                     create: [
                         {
                             startAt: futureDate(8),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Game Design Concepts'
                         },
                         {
                             startAt: futureDate(15),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Introduction to Unity Engine'
                         }
                     ]
@@ -112,37 +112,37 @@ async function main() {
                 title: 'Web Development Fundamentals',
                 description: 'Learn HTML, CSS, and JavaScript to build responsive websites from scratch.',
                 level: 'BEGINNER',
-                quota: XX,
+                quota: 140,
                 sessions: {
                     create: [
                         {
                             startAt: futureDate(4),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'HTML & CSS Basics'
                         },
                         {
                             startAt: futureDate(11),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'JavaScript Essentials'
                         }
                     ]
                 }
             },
             {
-                title: 'Python Programming Basics',
+                title: 'Basic Python',
                 description: 'Introduction to Python programming language, syntax, and basic applications.',
                 level: 'BEGINNER',
-                quota: XX,
+                quota: 140,
                 sessions: {
                     create: [
                         {
                             startAt: futureDate(6),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Python Syntax & Data Types'
                         },
                         {
                             startAt: futureDate(13),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Control Structures & Functions'
                         }
                     ]
@@ -154,60 +154,60 @@ async function main() {
         // Intermediate courses
         const intermediateCourses = [
             {
-                title: 'Software Engineering Practices',
+                title: 'Software Engineering',
                 description: 'Learn professional software development practices including version control, testing, and CI/CD pipelines.',
                 level: 'INTERMEDIATE',
-                quota: XX,
+                quota: 140,
                 sessions: {
                     create: [
                         {
                             startAt: futureDate(9),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Version Control with Git'
                         },
                         {
                             startAt: futureDate(16),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Testing & Quality Assurance'
                         }
                     ]
                 }
             },
             {
-                title: 'Data Science & AI',
+                title: 'Data Science & Artificial Intelligence',
                 description: 'Explore data analysis, machine learning, and artificial intelligence techniques.',
                 level: 'INTERMEDIATE',
-                quota: XX,
+                quota: 140,
                 sessions: {
                     create: [
                         {
                             startAt: futureDate(7),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Data Analysis with Pandas'
                         },
                         {
                             startAt: futureDate(14),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Machine Learning Fundamentals'
                         }
                     ]
                 }
             },
             {
-                title: 'Cybersecurity Advanced Topics',
+                title: 'Advance Cybersecurity',
                 description: 'Advanced security concepts including penetration testing and security architecture.',
                 level: 'INTERMEDIATE',
-                quota: XX,
+                quota: 140,
                 sessions: {
                     create: [
                         {
                             startAt: futureDate(10),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Network Security'
                         },
                         {
                             startAt: futureDate(17),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Penetration Testing Basics'
                         }
                     ]
@@ -217,17 +217,17 @@ async function main() {
                 title: 'UI/UX Design',
                 description: 'User interface and experience design principles, tools, and methodologies.',
                 level: 'INTERMEDIATE',
-                quota: XX,
+                quota: 140,
                 sessions: {
                     create: [
                         {
                             startAt: futureDate(8),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'User Research Methods'
                         },
                         {
                             startAt: futureDate(15),
-                            durationHrs: XX,
+                            durationHrs: 2,
                             description: 'Prototyping with Figma'
                         }
                     ]

@@ -8,6 +8,7 @@ import axios from 'axios';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { PaymentService } from '../services/payment.service.js';
 
 // Mendapatkan path absolut untuk menyimpan data enrollment
 const __filename = fileURLToPath(import.meta.url);
@@ -39,35 +40,78 @@ export const createEnrollmentAfterPayment = async (payment) => {
     // Karena enrollment service belum ada, kita akan menyimpan data pembayaran yang diapprove
     // ke dalam file untuk diproses nanti oleh enrollment service
 
-    // Format data payment untuk enrollment
-    const enrollmentData = {
+    // Get package info to determine if it's a bundle
+    const packageInfo = await PaymentService.getPackageInfo(payment.packageId);
+    const isBundle = packageInfo && packageInfo.type === 'BUNDLE';
+    
+    // Format data payment for enrollment
+    const baseEnrollmentData = {
       paymentId: payment.id,
       userId: payment.userId,
       packageId: payment.packageId,
-      courseId: payment.courseId,
-      packageType: payment.packageType || 'UNKNOWN', // Dari enhanced payment
-      price: payment.price || 0,                     // Dari enhanced payment
+      packageType: packageInfo ? packageInfo.type : 'UNKNOWN',
+      price: payment.price || 0,
       approvedAt: new Date(),
-      status: 'PENDING_ENROLLMENT'
     };
 
-    // Simpan data ke file dalam format JSON
-    const filename = `${payment.id}-${Date.now()}.json`;
-    const filepath = path.join(enrollmentQueuePath, filename);
-    
-    await fs.writeFile(
-      filepath,
-      JSON.stringify(enrollmentData, null, 2),
-      'utf-8'
-    );
-    
-    console.log(`✅ Enrollment data saved to queue: ${filepath}`);
-    
-    return {
-      status: 'queued',
-      message: 'Enrollment queued for processing',
-      queueFile: filename
-    };
+    // For bundle packages, get all courses in the package
+    if (isBundle) {
+      // Get all courses in the bundle package
+      const coursesInBundle = await PaymentService.getCoursesInPackage(payment.packageId);
+      
+      // Create enrollment data for each course in the bundle
+      const bundleEnrollmentData = {
+        ...baseEnrollmentData,
+        isBundle: true,
+        courses: coursesInBundle,
+        status: 'PENDING_ENROLLMENT'
+      };
+      
+      // Save bundle enrollment data to file
+      const filename = `bundle-${payment.id}-${Date.now()}.json`;
+      const filepath = path.join(enrollmentQueuePath, filename);
+      
+      await fs.writeFile(
+        filepath,
+        JSON.stringify(bundleEnrollmentData, null, 2),
+        'utf-8'
+      );
+      
+      console.log(`✅ Bundle enrollment data saved to queue: ${filepath}`);
+      
+      return {
+        status: 'queued',
+        message: 'Bundle enrollment queued for processing',
+        queueFile: filename
+      };
+    } else {
+      // For BEGINNER and INTERMEDIATE packages, create enrollment only for selected course
+      // Format data payment for enrollment
+      const enrollmentData = {
+        ...baseEnrollmentData,
+        isBundle: false,
+        courseId: payment.courseId, // Only one course for non-bundle
+        status: 'PENDING_ENROLLMENT'
+      };
+
+      // Save to file in JSON format
+      const filename = `${payment.id}-${Date.now()}.json`;
+      const filepath = path.join(enrollmentQueuePath, filename);
+      
+      await fs.writeFile(
+        filepath,
+        JSON.stringify(enrollmentData, null, 2),
+        'utf-8'
+      );
+      
+      console.log(`✅ Enrollment data saved to queue: ${filepath}`);
+      
+      return {
+        status: 'queued',
+        message: 'Enrollment queued for processing',
+        queueFile: filename
+      };
+    }
     
   } catch (error) {
     console.error('❌ Error creating enrollment queue:', error.message);

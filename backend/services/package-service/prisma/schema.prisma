@@ -15,7 +15,7 @@ enum PackageType {
 
 model Package {
   id         String          @id @default(uuid())
-  name       String
+  name       String          @unique
   type       PackageType
   price      Int
   createdAt  DateTime        @default(now())
@@ -26,7 +26,6 @@ model Package {
 model PackageCourse {
   package   Package @relation(fields: [packageId], references: [id])
   packageId String
-  courseId  String  // UUID dari Course (dummy para ahora)
-  metadata  Json?   // Para almacenar bundleGroupId y otras informaciones adicionales
+  courseId  String  // UUID dari Course (dummy untuk sekarang)
   @@id([packageId, courseId])
 }

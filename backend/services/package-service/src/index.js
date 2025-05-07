@@ -28,13 +28,19 @@ const prisma = new PrismaClient();
  */
 async function checkAndRunSeeder() {
   try {
+    // Check if auto-seeding is disabled via environment variable
+    if (process.env.DISABLE_AUTO_SEED === 'true') {
+      console.log('🚫 Auto-seeding is disabled by environment variable');
+      return;
+    }
+    
     console.log('📊 Checking if seed data is needed...');
     
     // Cek apakah sudah ada package di database
-    const existingPackages = await prisma.package.findMany();
+    const existingPackagesCount = await prisma.package.count();
     
     // Jika tidak ada package, jalankan seeder
-    if (existingPackages.length === 0) {
+    if (existingPackagesCount === 0) {
       console.log('🌱 Database kosong, menjalankan seeder...');
       
       // Mendapatkan path absolut ke direktori seed.js
@@ -43,20 +49,23 @@ async function checkAndRunSeeder() {
       const rootDir = path.resolve(__dirname, '..');
       const seedPath = path.join(rootDir, 'prisma', 'seed.js');
       
-      // Menjalankan seeder dengan node
-      exec(`node ${seedPath}`, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`❌ Error menjalankan seeder: ${error.message}`);
-          return;
-        }
-        if (stderr) {
-          console.error(`⚠️ Seeder stderr: ${stderr}`);
-          return;
-        }
-        console.log(`✅ Seeder berhasil dijalankan: ${stdout}`);
+      // Menjalankan seeder dengan promisify untuk mengontrol alur eksekusi dengan lebih baik
+      return new Promise((resolve, reject) => {
+        exec(`node ${seedPath}`, (error, stdout, stderr) => {
+          if (error) {
+            console.error(`❌ Error menjalankan seeder: ${error.message}`);
+            reject(error);
+            return;
+          }
+          if (stderr) {
+            console.error(`⚠️ Seeder stderr: ${stderr}`);
+          }
+          console.log(`✅ Seeder berhasil dijalankan: ${stdout}`);
+          resolve();
+        });
       });
     } else {
-      console.log('✅ Data sudah ada, tidak perlu menjalankan seeder.');
+      console.log(`✅ Data sudah ada (${existingPackagesCount} package ditemukan), tidak perlu menjalankan seeder.`);
     }
   } catch (error) {
     console.error('❌ Error saat memeriksa database:', error.message);

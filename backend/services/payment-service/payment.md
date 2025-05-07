@@ -53,8 +53,8 @@ Content-Type: application/json
 **Body:**
 ```json
 {
-  "userId": "51f9bfb8-4c1a-4a7a-85a3-65ca1cde33d1",
-  "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+  "packageId": "{{packageId}}",
+  "courseId": "{{courseId}}",
   "type": "UMUM",
   "proofLink": "https://example.com/bukti-transfer-umum.jpg"
 }
@@ -98,8 +98,8 @@ Content-Type: application/json
 **Body:**
 ```json
 {
-  "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
-  "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+  "packageId": "{{packageId}}",
+  "courseId": "{{courseId}}", 
   "type": "DIKE",
   "proofLink": "https://example.com/bukti-transfer-dike.jpg",
   "backPaymentMethod": "BNI",
@@ -368,6 +368,67 @@ Content-Type: application/json
   }
 }
 ```
+
+### Memperbarui Detail Pembayaran (DIKE & UMUM)
+
+```
+PATCH {{baseUrl}}/payments/75c2d819-7a8d-4ce7-ac19-bba55efd2b72/update
+```
+
+**Headers:**
+```
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "proofLink": "https://example.com/bukti-transfer-baru.jpg"
+}
+```
+
+**Body (khusus untuk DIKE - memperbarui info back payment):**
+```json
+{
+  "proofLink": "https://example.com/bukti-transfer-baru.jpg",
+  "backPaymentMethod": "DANA",
+  "backAccountNumber": "0812345678",
+  "backRecipient": "Andi Susanto"
+}
+```
+
+**Response (200):**
+```json
+{
+  "status": "success",
+  "message": "Payment updated successfully",
+  "data": {
+    "id": "75c2d819-7a8d-4ce7-ac19-bba55efd2b72",
+    "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
+    "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+    "type": "DIKE",
+    "proofLink": "https://example.com/bukti-transfer-baru.jpg",
+    "status": "PAID",
+    "backPaymentMethod": "DANA",
+    "backAccountNumber": "0812345678",
+    "backRecipient": "Andi Susanto",
+    "backStatus": "REQUESTED",
+    "backCompletedAt": null,
+    "createdAt": "2025-05-06T10:17:45.567Z",
+    "updatedAt": "2025-05-07T09:15:22.891Z"
+  }
+}
+```
+
+**Catatan Penting:**
+1. Endpoint ini dapat digunakan oleh baik user DIKE maupun UMUM
+2. User UMUM hanya dapat memperbarui `proofLink`
+3. User DIKE dapat memperbarui `proofLink` dan/atau informasi back payment
+4. Jika memperbarui informasi back payment, ketiga field (`backPaymentMethod`, `backAccountNumber`, `backRecipient`) harus disertakan
+5. Hanya pemilik pembayaran yang dapat memperbarui data pembayarannya
+6. Pembayaran yang sudah diapprove (status = `APPROVED`) tidak dapat diperbarui
+7. Field `backStatus` akan otomatis diset ulang ke `REQUESTED` jika informasi back payment diperbarui
 
 ### Menyelesaikan Back Payment (Admin Only)
 

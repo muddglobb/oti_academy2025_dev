@@ -4,7 +4,8 @@ import { createEnrollmentAfterPayment } from '../utils/enrollment-helper.js';
 import { 
   createPaymentSchema, 
   paymentFilterSchema,
-  completeBackSchema
+  completeBackSchema,
+  updatePaymentSchema
 } from '../schemas/payment.schema.js';
 
 /**
@@ -14,18 +15,21 @@ import {
  */
 export const createPayment = async (req, res) => {
   try {
-    // Validate request body
-    const validatedData = createPaymentSchema.parse(req.body);
-    
-    // Validasi user ID jika tidak sama dengan ID dari token
-    if (req.user && req.user.id && req.user.id !== validatedData.userId && req.user.role !== 'ADMIN') {
-      return res.status(403).json(
-        ApiResponse.error('Anda hanya dapat membuat pembayaran untuk diri sendiri')
+    // Ensure user is authenticated
+    if (!req.user || !req.user.id) {
+      return res.status(401).json(
+        ApiResponse.error('Authentication required to create payment')
       );
     }
     
-    // Dapatkan informasi lengkap user dari auth-service untuk validasi tipe
-    const userInfo = await PaymentService.getUserInfo(validatedData.userId);
+    // Get user ID from JWT token
+    const userId = req.user.id;
+    
+    // Validate request body
+    const validatedData = createPaymentSchema.parse(req.body);
+    
+    // Get user information from auth-service
+    const userInfo = await PaymentService.getUserInfo(userId);
     
     if (!userInfo) {
       return res.status(404).json(
@@ -33,7 +37,7 @@ export const createPayment = async (req, res) => {
       );
     }
     
-    // Validasi tipe pembayaran harus sesuai dengan tipe user
+    // Validate that payment type matches user type
     if (userInfo.type !== validatedData.type) {
       return res.status(400).json(
         ApiResponse.error(`Pengguna ${userInfo.type} hanya dapat membuat pembayaran dengan tipe ${userInfo.type}`)
@@ -47,23 +51,35 @@ export const createPayment = async (req, res) => {
         ApiResponse.error('Paket tidak ditemukan')
       );
     }
+
+    // Check if package is a bundle
+    const isBundle = packageInfo.type === 'BUNDLE';
     
-    // Validasi courseId harus bagian dari packageId yang dipilih
-    const isCourseInPackage = await PaymentService.validateCourseInPackage(
-      validatedData.packageId, 
-      validatedData.courseId
-    );
-    if (!isCourseInPackage) {
+    // For non-bundle packages (beginner/intermediate), courseId is required
+    if (!isBundle && !validatedData.courseId) {
       return res.status(400).json(
-        ApiResponse.error('Course yang dipilih bukan bagian dari paket yang dipilih')
+        ApiResponse.error('CourseId diperlukan untuk paket non-bundle (BEGINNER atau INTERMEDIATE)')
       );
     }
     
+    // Only validate courseId for non-bundle packages
+    if (!isBundle && validatedData.courseId) {
+      const isCourseInPackage = await PaymentService.validateCourseInPackage(
+        validatedData.packageId, 
+        validatedData.courseId
+      );
+      if (!isCourseInPackage) {
+        return res.status(400).json(
+          ApiResponse.error('Course yang dipilih bukan bagian dari paket yang dipilih')
+        );
+      }
+    }
+    
     // Check user's existing payments and validate enrollment rules
-    const userExistingPayments = await PaymentService.getUserPayments(validatedData.userId);
+    const userExistingPayments = await PaymentService.getUserPayments(userId);
     
     // If package is bundle, user shouldn't have any other payments
-    if (packageInfo.type === 'BUNDLE') {
+    if (isBundle) {
       if (userExistingPayments.length > 0) {
         return res.status(400).json(
           ApiResponse.error('Anda tidak dapat mendaftar paket bundle karena sudah terdaftar di kelas lain')
@@ -97,12 +113,16 @@ export const createPayment = async (req, res) => {
     
     // Prepare payment data based on user type
     let paymentData = {
-      userId: validatedData.userId,
+      userId: userId, // Use userId from JWT token
       packageId: validatedData.packageId,
-      courseId: validatedData.courseId,
       type: validatedData.type,
       proofLink: validatedData.proofLink
     };
+    
+    // Only include courseId for non-bundle packages
+    if (!isBundle && validatedData.courseId) {
+      paymentData.courseId = validatedData.courseId;
+    }
     
     // Add back payment fields only for DIKE users
     if (validatedData.type === 'DIKE') {
@@ -115,7 +135,7 @@ export const createPayment = async (req, res) => {
     // Create payment with validated data
     const payment = await PaymentService.createPayment(paymentData);
     
-    // Tambahkan informasi harga dari package
+    // Add package information to the response
     const enhancedPayment = {
       ...payment,
       packageName: packageInfo.name,
@@ -145,22 +165,45 @@ export const createPayment = async (req, res) => {
  */
 export const getAllPayments = async (req, res) => {
   try {
-    // Validate and parse query filters
-    const filters = paymentFilterSchema.parse(req.query);
-    
-    // Extract pagination params
+    // Extract pagination parameters
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const pageSize = parseInt(req.query.pageSize) || 10;
     
-    // Get paginated payments
-    const result = await PaymentService.getAllPayments({
-      ...filters,
+    // Validate and parse query filters
+    const filters = paymentFilterSchema.parse({
+      ...req.query,
       page,
-      limit
+      limit: pageSize
     });
     
+    // Get paginated payments with basic information
+    const result = await PaymentService.getAllPayments(filters);
+    
+    // Extract user IDs for batch fetching
+    const userIds = result.payments.map(payment => payment.userId);
+    
+    // Batch fetch user information
+    const userInfoMap = await PaymentService.getBatchUserInfo(userIds);
+    
+    // Format payments for list view with user information
+    const formattedPayments = await PaymentService.formatPaymentsForList(
+      result.payments, 
+      userInfoMap
+    );
+    
+    // Prepare paginated response
+    const response = {
+      payments: formattedPayments,
+      meta: {
+        page: result.pagination.page,
+        pageSize: result.pagination.limit,
+        totalItems: result.pagination.total,
+        totalPages: result.pagination.pages
+      }
+    };
+    
     res.status(200).json(
-      ApiResponse.success(result, 'Payments retrieved successfully')
+      ApiResponse.success(response, 'Payments retrieved successfully')
     );
   } catch (error) {
     if (error.name === 'ZodError') {
@@ -169,6 +212,7 @@ export const getAllPayments = async (req, res) => {
       );
     }
     
+    console.error('Error fetching payments:', error);
     throw error;
   }
 };
@@ -198,11 +242,14 @@ export const getPaymentById = async (req, res) => {
       );
     }
     
-    // Enhance payment with additional information
-    const enhancedPayment = await enhancePaymentResponse(payment);
+    // Get user info from Auth-Service
+    const userInfo = await PaymentService.getUserInfo(payment.userId);
+    
+    // Format detailed payment with all required information
+    const detailedPayment = await PaymentService.formatDetailedPayment(payment, userInfo);
     
     res.status(200).json(
-      ApiResponse.success(enhancedPayment, 'Payment retrieved successfully')
+      ApiResponse.success(detailedPayment, 'Payment retrieved successfully')
     );
   } catch (error) {
     console.error('Error fetching payment details:', error);
@@ -211,115 +258,130 @@ export const getPaymentById = async (req, res) => {
 };
 
 /**
- * Enhance payment response with additional information
- * @param {Object} payment - Payment data
- * @returns {Object} Enhanced payment data
+ * Get user's payment history
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
  */
-async function enhancePaymentResponse(payment) {
-  // Create a new object based on payment
-  const enhancedPayment = { ...payment };
-  
-  // 1. Get user info from Auth-Service
+export const getUserPayments = async (req, res) => {
   try {
-    const userInfo = await PaymentService.getUserInfo(payment.userId);
-    if (userInfo) {
-      enhancedPayment.userName = userInfo.name || 'Nama Tidak Tersedia';
-      enhancedPayment.userEmail = userInfo.email || 'Email Tidak Tersedia';
-    } else {
-      // Fallback values if userInfo couldn't be fetched
-      enhancedPayment.userName = 'Nama Tidak Tersedia';
-      enhancedPayment.userEmail = 'Email Tidak Tersedia';
-      console.warn(`Could not fetch user info for userId: ${payment.userId}`);
+    // Get user ID from JWT token (authenticated user)
+    const userId = req.user.id;
+    
+    if (!userId) {
+      return res.status(401).json(
+        ApiResponse.error('Authentication required to view payment history')
+      );
+    }
+    
+    // Fetch user's payments from database
+    const payments = await PaymentService.getPaymentsByUserId(userId);
+    
+    if (!payments || payments.length === 0) {
+      // Return empty array if user has no payments
+      return res.status(200).json(
+        ApiResponse.success([], 'No payments found for this user')
+      );
+    }
+    
+    // Get user info for the payment details
+    const userInfo = await PaymentService.getUserInfo(userId);
+    
+    // Format each payment with detailed information
+    const detailedPayments = await Promise.all(
+      payments.map(payment => PaymentService.formatDetailedPayment(payment, userInfo))
+    );
+    
+    res.status(200).json(
+      ApiResponse.success(detailedPayments, 'User payments retrieved successfully')
+    );
+  } catch (error) {
+    console.error('Error fetching user payment history:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update payment details (proofLink and/or back payment info)
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const updatePayment = async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    // Ensure user is authenticated
+    if (!req.user || !req.user.id) {
+      return res.status(401).json(
+        ApiResponse.error('Authentication required to update payment')
+      );
+    }
+    
+    // Get user ID from JWT token
+    const userId = req.user.id;
+    
+    // Validate request body
+    const validatedData = updatePaymentSchema.parse(req.body);
+    
+    // Check if there's any data to update
+    if (Object.keys(validatedData).length === 0) {
+      return res.status(400).json(
+        ApiResponse.error('No valid fields provided for update')
+      );
+    }
+    
+    try {
+      // Update payment
+      const updatedPayment = await PaymentService.updatePayment(id, validatedData, userId);
+      
+      // Get user info for the complete response
+      const userInfo = await PaymentService.getUserInfo(userId);
+      
+      // Format detailed payment with all required information
+      const detailedPayment = await PaymentService.formatDetailedPayment(updatedPayment, userInfo);
+      
+      return res.status(200).json(
+        ApiResponse.success(detailedPayment, 'Payment updated successfully')
+      );
+    } catch (serviceError) {
+      // Handle specific errors from service
+      if (serviceError.message === 'Payment not found') {
+        return res.status(404).json(
+          ApiResponse.error('Payment not found')
+        );
+      } else if (serviceError.message === 'You are not authorized to update this payment') {
+        return res.status(403).json(
+          ApiResponse.error('You are not authorized to update this payment')
+        );
+      } else if (serviceError.message === 'Cannot update payment that has already been approved') {
+        return res.status(400).json(
+          ApiResponse.error('Cannot update payment that has already been approved')
+        );
+      } else {
+        throw serviceError; // Re-throw for general error handler
+      }
     }
   } catch (error) {
-    console.error('Error fetching user info:', error.message);
-    // Provide default values in case of error
-    enhancedPayment.userName = 'Nama Tidak Tersedia';
-    enhancedPayment.userEmail = 'Email Tidak Tersedia';
-  }
-  
-  // 2. Get package details from Package-Service
-  // Note: Some basic package info (name, type, price) is already included in payment
-  // by the enhancePaymentsWithPrice method in PaymentService
-  
-  // 2a. Get courses in the package
-  try {
-    const coursesInPackage = await PaymentService.getCoursesInPackage(payment.packageId);
-    enhancedPayment.coursesInPackage = coursesInPackage;
-  } catch (error) {
-    console.error('Error fetching courses in package:', error.message);
-    enhancedPayment.coursesInPackage = [];
-  }
-  
-  // 3. Determine enrollment status
-  // A simple check from the enrollment-queue or enrollment-service
-  try {
-    const enrollmentStatus = await PaymentService.checkEnrollmentStatus(payment.id);
-    enhancedPayment.enrolled = enrollmentStatus.enrolled;
-  } catch (error) {
-    console.error('Error checking enrollment status:', error.message);
-    enhancedPayment.enrolled = false;
-  }
-  
-  // 4. Add refund flags based on payment data
-  enhancedPayment.isRefundable = 
-    payment.type === 'DIKE' && 
-    payment.status === 'PAID' && 
-    payment.backStatus === 'REQUESTED';
+    if (error.name === 'ZodError') {
+      return res.status(400).json(
+        ApiResponse.error(error.errors)
+      );
+    }
     
-  enhancedPayment.canApproveBack = 
-    payment.type === 'DIKE' && 
-    payment.backStatus === 'REQUESTED' && 
-    payment.backCompletedAt === null;
-  
-  // 5. Format dates for better readability
-  if (payment.createdAt) {
-    enhancedPayment.createdAtFormatted = formatDateTimeForDisplay(payment.createdAt);
+    console.error('Error updating payment:', error);
+    throw error;
   }
-  
-  if (payment.updatedAt) {
-    enhancedPayment.updatedAtFormatted = formatDateTimeForDisplay(payment.updatedAt);
-  }
-  
-  if (payment.backCompletedAt) {
-    enhancedPayment.backCompletedAtFormatted = formatDateTimeForDisplay(payment.backCompletedAt);
-  }
-  
-  return enhancedPayment;
-}
+};
 
 /**
- * Format date for display
- * @param {Date} date - Date to format
- * @returns {string} Formatted date string
- */
-function formatDateTimeForDisplay(date) {
-  if (!date) return null;
-  
-  const parsedDate = new Date(date);
-  
-  // Format as YYYY-MM-DD HH:mm:ss
-  return parsedDate.toLocaleString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  }).replace(/(\d+)\/(\d+)\/(\d+), (\d+:\d+:\d+)/, '$3-$1-$2 $4');
-}
-
-/**
- * Approve payment (admin only)
+ * Approve a payment (admin only)
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
 export const approvePayment = async (req, res) => {
-  const { id } = req.params;
-  
   try {
-    // Check if payment exists
+    const { id } = req.params;
+    
+    // Get payment first to check if it exists
     const payment = await PaymentService.getPaymentById(id);
     
     if (!payment) {
@@ -335,27 +397,25 @@ export const approvePayment = async (req, res) => {
       );
     }
     
-    // Approve payment
+    // Approve the payment
     const updatedPayment = await PaymentService.approvePayment(id);
     
-    // Notifikasi ke enrollment service
+    // Get user info for the complete response
+    const userInfo = await PaymentService.getUserInfo(updatedPayment.userId);
+    
+    // Format detailed payment with all required information
+    const detailedPayment = await PaymentService.formatDetailedPayment(updatedPayment, userInfo);
+    
+    // Try to trigger course enrollment if applicable
     try {
-      await createEnrollmentAfterPayment(updatedPayment);
-      console.log(`Notifikasi enrollment berhasil dikirim untuk payment ${id}`);
-    } catch (enrollError) {
-      // Log error tetapi jangan gagalkan proses approval
-      console.error(`Error notifying enrollment service: ${enrollError.message}`);
-      // Tambahkan ke respons bahwa ada warning
-      return res.status(200).json(
-        ApiResponse.success(
-          updatedPayment, 
-          'Payment approved successfully, but there was an issue with enrollment notification. The system will retry automatically.'
-        )
-      );
+      await createEnrollmentAfterPayment(updatedPayment, userInfo);
+    } catch (enrollmentError) {
+      console.error('Error creating enrollment:', enrollmentError);
+      // Continue despite enrollment error - it will be handled later
     }
     
     res.status(200).json(
-      ApiResponse.success(updatedPayment, 'Payment approved successfully')
+      ApiResponse.success(detailedPayment, 'Payment approved successfully')
     );
   } catch (error) {
     console.error('Error approving payment:', error);
@@ -364,69 +424,15 @@ export const approvePayment = async (req, res) => {
 };
 
 /**
- * Request back payment (DIKE only)
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-export const requestBack = async (req, res) => {
-  const { id } = req.params;
-  const backData = req.body;
-  
-  // Check if payment exists
-  const payment = await PaymentService.getPaymentById(id);
-  
-  if (!payment) {
-    return res.status(404).json(
-      ApiResponse.error('Payment not found')
-    );
-  }
-  
-  // Check if user owns the payment
-  if (payment.userId !== req.user.id) {
-    return res.status(403).json(
-      ApiResponse.error('You can only request back for your own payments')
-    );
-  }
-  
-  // Check if payment type is DIKE
-  if (payment.type !== 'DIKE') {
-    return res.status(400).json(
-      ApiResponse.error('Only DIKE payments can request back')
-    );
-  }
-  
-  // Check if back payment is already completed
-  if (payment.backStatus === 'COMPLETED') {
-    return res.status(400).json(
-      ApiResponse.error('Back payment is already completed')
-    );
-  }
-  
-  // Update back payment info
-  const updatedPayment = await PaymentService.requestBack(id, {
-    backPaymentMethod: backData.backPaymentMethod,
-    backAccountNumber: backData.backAccountNumber,
-    backRecipient: backData.backRecipient
-  });
-  
-  res.status(200).json(
-    ApiResponse.success(updatedPayment, 'Back payment requested successfully')
-  );
-};
-
-/**
  * Complete back payment (admin only)
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
 export const completeBack = async (req, res) => {
-  const { id } = req.params;
-  
   try {
-    // Validate request body
-    completeBackSchema.parse(req.body);
+    const { id } = req.params;
     
-    // Check if payment exists
+    // Get payment first to check if it exists
     const payment = await PaymentService.getPaymentById(id);
     
     if (!payment) {
@@ -435,10 +441,10 @@ export const completeBack = async (req, res) => {
       );
     }
     
-    // Check if payment type is DIKE
+    // Check if this is a DIKE payment
     if (payment.type !== 'DIKE') {
       return res.status(400).json(
-        ApiResponse.error('Only DIKE payments can be completed for back payment')
+        ApiResponse.error('Only DIKE payments can have back payments')
       );
     }
     
@@ -449,58 +455,28 @@ export const completeBack = async (req, res) => {
       );
     }
     
-    // Complete back payment
-    const updatedPayment = await PaymentService.completeBack(id);
-    
-    res.status(200).json(
-      ApiResponse.success(updatedPayment, 'Back payment completed successfully')
-    );
-  } catch (error) {
-    if (error.name === 'ZodError') {
+    // Check if there is a back payment request
+    if (payment.backStatus !== 'REQUESTED') {
       return res.status(400).json(
-        ApiResponse.error(error.errors)
+        ApiResponse.error('No back payment has been requested for this payment')
       );
     }
     
+    // Complete the back payment
+    const updatedPayment = await PaymentService.completeBack(id);
+    
+    // Get user info for the complete response
+    const userInfo = await PaymentService.getUserInfo(updatedPayment.userId);
+    
+    // Format detailed payment with all required information
+    const detailedPayment = await PaymentService.formatDetailedPayment(updatedPayment, userInfo);
+    
+    res.status(200).json(
+      ApiResponse.success(detailedPayment, 'Back payment completed successfully')
+    );
+  } catch (error) {
+    console.error('Error completing back payment:', error);
     throw error;
   }
 };
 
-/**
- * Delete payment by ID (admin or owner)
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
-export const deletePayment = async (req, res) => {
-  const { id } = req.params;
-  
-  // Check if payment exists
-  const payment = await PaymentService.getPaymentById(id);
-  
-  if (!payment) {
-    return res.status(404).json(
-      ApiResponse.error('Payment not found')
-    );
-  }
-  
-  // Check authorization: only admin or payment owner can delete
-  if (req.user.role !== 'ADMIN' && req.user.id !== payment.userId) {
-    return res.status(403).json(
-      ApiResponse.error('You are not authorized to delete this payment')
-    );
-  }
-
-  // If payment is already approved and user is not admin, don't allow deletion
-  if (payment.status === 'APPROVED' && req.user.role !== 'ADMIN') {
-    return res.status(400).json(
-      ApiResponse.error('Cannot delete payment that has been approved. Please contact admin.')
-    );
-  }
-  
-  // Delete payment
-  await PaymentService.deletePayment(id);
-  
-  res.status(200).json(
-    ApiResponse.success(null, 'Payment deleted successfully')
-  );
-};

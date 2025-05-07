@@ -342,9 +342,9 @@ export const getAllUsers = asyncHandler(async (req, res) => {
   });
 
 export const getUserById = asyncHandler(async (req, res) => {
-  const userId = parseInt(req.params.id);
+  const userId = req.params.id;
 
-  if(req.user.id !== userId && req.user.role !== 'ADMIN') {
+  if(req.user.id !== userId && req.user.role !== 'ADMIN' && req.user.role !== 'SERVICE') {
     return res.status(403).json(
       ApiResponse.error('Not authorized to access this user profile')
     );
@@ -376,7 +376,7 @@ export const getUserById = asyncHandler(async (req, res) => {
 
 
 export const updateUser = asyncHandler(async (req, res) => {
-  const userId = parseInt(req.params.id);
+  const userId = req.params.id;
   const { name, email } = req.body;
 
   if(req.user.id !== userId && req.user.role !== 'ADMIN') {
@@ -421,7 +421,7 @@ export const updateUser = asyncHandler(async (req, res) => {
 });
 
 export const deleteUser = asyncHandler(async (req, res) => {
-  const userId = parseInt(req.params.id);
+  const userId = req.params.id;
 
   // Check if user exists
   const user = await prisma.user.findUnique({

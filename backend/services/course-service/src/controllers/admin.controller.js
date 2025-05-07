@@ -62,3 +62,77 @@ export const updateCourse = asyncHandler(async (req, res) => {
     throw error;
   }
 });
+
+/**
+ * @desc    Delete a course
+ * @route   DELETE /api/admin/courses/:id
+ * @access  Admin only
+ */
+export const deleteCourse = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    await CourseService.deleteCourse(id);
+    
+    res.status(200).json(
+      ApiResponse.success(null, 'Course deleted successfully')
+    );
+  } catch (error) {
+    if (error.message === 'Course not found') {
+      return res.status(404).json(
+        ApiResponse.error('Course not found')
+      );
+    }
+    throw error;
+  }
+});
+
+/**
+ * @desc    Get all courses (admin view with full details)
+ * @route   GET /api/admin/courses
+ * @access  Admin only
+ */
+export const getAllCourses = asyncHandler(async (req, res) => {
+  // Filter options
+  const { level, search } = req.query;
+  
+  // Build filter object
+  const filter = {};
+  if (level) filter.level = level;
+  if (search) {
+    filter.OR = [
+      { title: { contains: search, mode: 'insensitive' } },
+      { description: { contains: search, mode: 'insensitive' } }
+    ];
+  }
+  
+  const courses = await CourseService.getAllCourses(filter);
+  
+  res.status(200).json(
+    ApiResponse.success(courses)
+  );
+});
+
+/**
+ * @desc    Get a course by ID (admin view with full details)
+ * @route   GET /api/admin/courses/:id
+ * @access  Admin only
+ */
+export const getCourseById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  
+  try {
+    const course = await CourseService.getCourseById(id);
+    
+    res.status(200).json(
+      ApiResponse.success(course)
+    );
+  } catch (error) {
+    if (error.message === 'Course not found') {
+      return res.status(404).json(
+        ApiResponse.error('Course not found')
+      );
+    }
+    throw error;
+  }
+});

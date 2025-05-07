@@ -13,8 +13,8 @@ const router = Router();
 // Protect all routes
 router.use(authenticateJWT);
 
-// Get all users - Admin only
-router.get('/', authorizeRoles('ADMIN'), getAllUsers);
+// Get all users - Admin and Service
+router.get('/', authorizeRoles('ADMIN', 'SERVICE'), getAllUsers);
 
 router.get('/me', getMe);
 
