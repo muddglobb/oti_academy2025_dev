@@ -100,7 +100,7 @@ const IntermediateSessionInfo = ({ sessions }: { sessions: SessionData[] }) => {
                     <div>
                       <h3 className="font-bold ">{title}</h3>
                       <div className="flex flex-row gap-5">
-                        <div className="flex flex-row gap-[5px]">
+                        <div className="flex flex-row gap-[5px] items-center">
                           <Image
                             src={"/icons/calendar-icon.svg"}
                             alt="calendar-icon"
@@ -109,7 +109,7 @@ const IntermediateSessionInfo = ({ sessions }: { sessions: SessionData[] }) => {
                           />
                           <p>{date}</p>
                         </div>
-                        <div className="flex flex-row gap-[5px]">
+                        <div className="flex flex-row gap-[5px] items-center">
                           <Image
                             src={"/icons/time-icon.svg"}
                             alt="time-icon"

@@ -1,6 +1,6 @@
 import React from "react";
 import BundleClassInfo from "@/components/bundle/bundle-classinfo";
-import ClassHero from "@/components/entry/entry-hero";
+import Hero from "@/components/intermediate/intermediate-hero";
 // import BundleSessionInfo from "@/components/bundle/bundle-sessioninfo";
 import SessionInfo from "@/components/intermediate/intermediate-session-info";
 
@@ -62,11 +62,7 @@ const bundle = () => {
   return (
     <>
       <div>
-        {/* <ClassHero
-          className="Web Development + Software Engineering"
-          classDescription="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa harum accusamus quos incidunt vero sed iusto tempora similique, dignissimos reprehenderit dicta amet voluptate, ducimus ex rem aliquam, molestiae commodi sapiente."
-        ></ClassHero> */}
-        <ClassHero hero={hero} />
+        <Hero hero={hero} />
         <BundleClassInfo
           date="1 - 15 June 2025"
           sesi="6 Sesi"
