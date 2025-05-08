@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { createDirectHandler, upload } from '../utils/directHandler.js';
 import { jwtValidatorMiddleware } from '../middlewares/jwtValidator.js';
+import { handleLogout, handleTokenRefresh, cacheNewToken } from '../controllers/authController.js';
 
 const router = Router();
 
@@ -28,6 +29,28 @@ router.post('/admin/import-dike-students',
     '/auth', // Using the full path to avoid path construction issues
     true
   )
+);
+
+// Route khusus untuk logout - menggunakan middleware handleLogout untuk invalidasi token
+router.post('/logout', 
+  jwtValidatorMiddleware, 
+  handleLogout, 
+  createDirectHandler(
+    AUTH_SERVICE_URL,
+    '/auth',
+    true
+  )
+);
+
+// Route khusus untuk refresh token - menambahkan middleware cacheNewToken
+router.post('/refresh-token',
+  handleTokenRefresh,
+  createDirectHandler(
+    AUTH_SERVICE_URL,
+    '/auth',
+    false
+  ),
+  cacheNewToken
 );
 
 // Route all other /auth requests to the Auth service

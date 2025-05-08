@@ -12,7 +12,7 @@ console.log('Using PACKAGE_SERVICE_URL:', PACKAGE_SERVICE_URL);
 router.use('/', createDirectHandler(
   PACKAGE_SERVICE_URL,
   '/packages',
-  true, // Requires authentication
+  false, // Requires authentication
   false, // Not optional auth
   jwtValidatorMiddleware // Use JWT validator middleware
 ));
@@ -21,7 +21,7 @@ router.use('/', createDirectHandler(
 router.use('/:packageId/courses', createDirectHandler(
   PACKAGE_SERVICE_URL,
   '/packages',
-  true, // Requires authentication
+  false, // Requires authentication
   false, // Not optional auth
   jwtValidatorMiddleware // Use JWT validator middleware
 ));

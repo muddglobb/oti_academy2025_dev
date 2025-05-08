@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import cookieParser from 'cookie-parser';
 import config from './config/index.js';
 
 // Load environment variables
@@ -19,12 +20,14 @@ const PORT = config.PORT || 8000;
 app.use(helmet()); // Security headers
 app.use(morgan('dev')); // Logging
 app.use(express.json()); // Parse JSON bodies
+app.use(cookieParser()); // Parse cookies
 
 // CORS configuration
 app.use(cors({
   origin: config.CORS_ORIGIN || '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // Enable credentials (cookies, auth headers)
 }));
 
 // Request logger middleware

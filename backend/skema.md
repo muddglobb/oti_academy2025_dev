@@ -13,7 +13,7 @@ generator client {
 
 /// Jenis paket
 enum PackageType {
-  BEGINNER
+  ENTRY
   INTERMEDIATE
   BUNDLE
 }
@@ -23,7 +23,7 @@ model Package {
   /// Primary key
   id         String       @id @default(uuid())
 
-  /// Nama paket (misal: "Beginner Web Dev", "Bundle Full Stack")
+  /// Nama paket (misal: "Entry Web Dev", "Bundle Full Stack")
   name       String
 
   /// Tipe paket
@@ -134,7 +134,7 @@ generator client {
 }
 
 enum Level {
-  BEGINNER
+  ENTRY
   INTERMEDIATE
 }
 

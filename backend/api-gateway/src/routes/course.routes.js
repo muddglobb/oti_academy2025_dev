@@ -12,7 +12,7 @@ console.log('Using COURSE_SERVICE_URL:', COURSE_SERVICE_URL);
 router.use('/', createDirectHandler(
   COURSE_SERVICE_URL,
   '/courses',
-  true, // Requires authentication
+  false, // Requires authentication
   false, // Not optional auth
   jwtValidatorMiddleware // Use JWT validator middleware
 ));
@@ -21,7 +21,7 @@ router.use('/', createDirectHandler(
 router.use('/:courseId/sessions', createDirectHandler(
   COURSE_SERVICE_URL,
   '/courses',
-  true, // Requires authentication
+  false, // Requires authentication
   false, // Not optional auth
   jwtValidatorMiddleware // Use JWT validator middleware
 ));
