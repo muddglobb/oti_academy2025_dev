@@ -1,6 +1,6 @@
-import IntermediateBackground from '@/components/intermediate/intermediate-background'
-import IntermediatePage from '@/components/intermediate/intermediate-page'
-import React from 'react'
+// import IntermediateBackground from "@/components/intermediate/intermediate-background";
+import IntermediatePage from "@/components/intermediate/intermediate-page";
+import React from "react";
 
 const SoftwareEngineering = () => {
   return (
@@ -10,11 +10,10 @@ const SoftwareEngineering = () => {
       overflow-x-hidden
       "
     >
-
-      <IntermediateBackground />
+      {/* <IntermediateBackground /> */}
       <IntermediatePage />
     </div>
-  )
-}
+  );
+};
 
-export default SoftwareEngineering
+export default SoftwareEngineering;

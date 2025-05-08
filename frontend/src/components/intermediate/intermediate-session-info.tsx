@@ -92,7 +92,6 @@ const IntermediateSessionInfo = ({ sessions }: { sessions: SessionData[] }) => {
                   {/* Garis hanya jika bukan elemen terakhir */}
                   {index !== sessions.length - 1 && (
                     <div className="absolute left-1 top-2 bottom-0 w-0.5 -translate-x-1/2 bg-white z-0"></div>
-                    
                   )}
 
                   {/* Konten session */}
