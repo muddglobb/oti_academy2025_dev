@@ -1,6 +1,7 @@
 import React from "react";
 import EntryClassInfo from "@/components/entry/entry-classinfo";
-import EntryHero from "@/components/entry/entry-hero";
+// import EntryHero from "@/components/entry/entry-hero";
+import Hero from "@/components/intermediate/intermediate-hero";
 // import EntrySessionInfo from "@/components/entry/entry-sessioninfo";
 import SessionInfo from "@/components/intermediate/intermediate-session-info";
 
@@ -60,7 +61,8 @@ const webDevelopment = () => {
         className="Web Development"
         classDescription="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa harum accusamus quos incidunt vero sed iusto tempora similique, dignissimos reprehenderit dicta amet voluptate, ducimus ex rem aliquam, molestiae commodi sapiente."
       ></EntryHero> */}
-      <EntryHero hero={hero} />
+      {/* <EntryHero hero={hero} /> */}
+      <Hero hero={hero}/>
       {/* <EntryClassInfo
         date="1 - 15 June 2025"
         sesi="6 Sesi"

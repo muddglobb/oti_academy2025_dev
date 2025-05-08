@@ -20,6 +20,33 @@ const Navbar = () => {
 
   return (
     <main className="fixed inset-x-0 top-0 z-1000 backdrop-blur-md">
+      <div className="bg-[#002B63] text-white text-center text-sm px-5 py-4">
+        <div className="lg:hidden pt-10 w-full">
+          <span className="text-left inline-block">
+            <strong>Special Class Bundling</strong> berakhir setelah{" "}
+            <strong>kuota terpenuhi</strong>, jangan sampai ketinggalan!
+          </span>
+        </div>
+        <div className="absolute top-13 right-5 cursor-pointer lg:hidden">
+          <a href="#kembali" className="text-white text-xl">
+            →
+          </a>
+        </div>
+
+        <div className="hidden lg:flex justify-center items-center gap-2">
+          <span>
+            <strong>Special Class Bundling</strong> berakhir setelah{" "}
+            <strong>kuota terpenuhi </strong>, jangan sampai ketinggalan!
+          </span>
+          <Link
+            href="/special-class"
+            className="underline font-semibold hover:text-blue-300 transition"
+          >
+            Learn More →
+          </Link>
+        </div>
+      </div>
+
       <Container className="flex-row items-center justify-between py-4">
         <div className="flex items-end">
           <Link href="/">
@@ -48,6 +75,7 @@ const Navbar = () => {
               <Button>Get Started</Button>
             </Link>
           </nav>
+
           <button
             onClick={toggleMenu}
             className="lg:hidden text-white p-2"
@@ -110,7 +138,7 @@ const Navbar = () => {
             <Link href="/login">
               <Button
                 variant="outline"
-                className="w-full text-white hover:bg-white hover:text-black"
+                className="w-full text-white border hover:bg-white hover:text-black"
               >
                 Log In
               </Button>
