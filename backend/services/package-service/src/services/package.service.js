@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { CourseService } from './course.service.js';
 
 const prisma = new PrismaClient();
 
@@ -15,29 +16,69 @@ export const PackageService = {
   },
 
   /**
-   * Mendapatkan semua package
-   * @returns {Promise<Array>} Daftar semua package
+   * Mendapatkan semua package dengan informasi course lengkap
+   * @returns {Promise<Array>} Daftar semua package dengan detail course
    */
   async getAllPackages() {
-    return await prisma.package.findMany({
+    // Get all packages with their courses
+    const packages = await prisma.package.findMany({
       include: {
         courses: true
       }
     });
+    
+    // Extract all course IDs
+    const allCourseIds = packages.flatMap(pkg => 
+      pkg.courses.map(course => course.courseId)
+    );
+    
+    // Fetch course details for all course IDs
+    const coursesMap = await CourseService.getCoursesByIds(allCourseIds);
+    
+    // Enhance each package with course details
+    return packages.map(pkg => ({
+      ...pkg,
+      courses: pkg.courses.map(course => ({
+        ...course,
+        title: coursesMap[course.courseId]?.title || 'Unknown Course',
+        description: coursesMap[course.courseId]?.description || null,
+        level: coursesMap[course.courseId]?.level || null
+      }))
+    }));
   },
 
   /**
-   * Mendapatkan package berdasarkan ID
+   * Mendapatkan package berdasarkan ID dengan informasi course lengkap
    * @param {string} id - ID package
    * @returns {Promise<Object|null>} Package yang ditemukan atau null
    */
   async getPackageById(id) {
-    return await prisma.package.findUnique({
+    // Get package with courses
+    const package_ = await prisma.package.findUnique({
       where: { id },
       include: {
         courses: true
       }
     });
+    
+    if (!package_) return null;
+    
+    // Extract course IDs
+    const courseIds = package_.courses.map(course => course.courseId);
+    
+    // Fetch course details
+    const coursesMap = await CourseService.getCoursesByIds(courseIds);
+    
+    // Enhance package with course details
+    return {
+      ...package_,
+      courses: package_.courses.map(course => ({
+        ...course,
+        title: coursesMap[course.courseId]?.title || 'Unknown Course',
+        description: coursesMap[course.courseId]?.description || null,
+        level: coursesMap[course.courseId]?.level || null
+      }))
+    };
   },
 
   /**

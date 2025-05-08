@@ -25,8 +25,8 @@ function generateServiceToken() {
 // Package data to be seeded
 const packages = [
   {
-    name: 'Paket Beginner',
-    type: 'BEGINNER',
+    name: 'Paket Entry',
+    type: 'ENTRY',
     price: 100000
   },
   {
@@ -45,7 +45,7 @@ const packages = [
     price: 200000
   },
   {
-    name: 'Bundle Fundamental Cyber + Advanced Cybersecurity',
+    name: 'Bundle Fundamental Cyber + Cybersecurity',
     type: 'BUNDLE',
     price: 200000
   },
@@ -56,38 +56,67 @@ const packages = [
   }
 ];
 
-async function fetchCoursesFromCourseService() {
-  try {
-    const courseServiceUrl = process.env.COURSE_SERVICE_URL || 'http://course-service-api:8002';
-    const serviceToken = generateServiceToken();
-    
-    const headers = {
-      'Authorization': `Bearer ${serviceToken}`
-    };
-    
-    // Fetch all courses from course service
-    console.log('📡 Fetching courses from course service...');
-    const response = await axios.get(`${courseServiceUrl}/courses`, { headers });
-    
-    if (!response.data || !response.data.data) {
-      throw new Error('Invalid response from course service');
+async function fetchCoursesFromCourseService(maxRetries = 3, retryDelay = 3000) {
+  let retries = 0;
+  
+  while (retries < maxRetries) {
+    try {
+      const courseServiceUrl = process.env.COURSE_SERVICE_URL || 'http://course-service-api:8002';
+      const serviceToken = generateServiceToken();
+      
+      const headers = {
+        'Authorization': `Bearer ${serviceToken}`
+      };
+      
+      console.log(`📡 Attempt ${retries + 1}: Fetching courses from course service at ${courseServiceUrl}/courses...`);
+      const response = await axios.get(`${courseServiceUrl}/courses`, { headers });
+      
+      if (!response.data || !response.data.data) {
+        throw new Error('Invalid response from course service');
+      }
+      
+      console.log(`✅ Successfully fetched ${response.data.data.length} courses from course service`);
+      return response.data.data;
+    } catch (error) {
+      retries++;
+      
+      if (retries >= maxRetries) {
+        console.error('❌ Failed to fetch courses from course service after maximum retries:', error.message);
+        throw error;
+      }
+      
+      console.log(`⏳ Course service not available (attempt ${retries}/${maxRetries}). Retrying in ${retryDelay/1000} seconds...`);
+      // Wait before retrying
+      await new Promise(resolve => setTimeout(resolve, retryDelay));
     }
-    
-    console.log(`✅ Successfully fetched ${response.data.data.length} courses from course service`);
-    return response.data.data;
-  } catch (error) {
-    console.error('❌ Failed to fetch courses from course service:', error.message);
-    if (error.response) {
-      console.error('Error response data:', error.response.data);
-      console.error('Error response status:', error.response.status);
-    }
-    throw error;
   }
 }
 
 async function main() {
   try {
     console.log('🌱 Starting seeding process...');
+    
+    console.log('💾 Clearing existing package course relationships...');
+    // Only delete the join table to keep relationships clean
+    await prisma.packageCourse.deleteMany({});
+    
+    console.log('💾 Upserting packages...');
+    // Use upsert for each package with name as unique key
+    const createdPackages = await Promise.all(
+      packages.map(async (packageData) => {
+        const createdPackage = await prisma.package.upsert({
+          where: { name: packageData.name },
+          update: {
+            // Update price and type if they change
+            price: packageData.price,
+            type: packageData.type
+          },
+          create: packageData
+        });
+        console.log(`✅ Upserted package: ${createdPackage.name} (${createdPackage.type})`);
+        return createdPackage;
+      })
+    );
     
     // Fetch all courses from course service
     const allCourses = await fetchCoursesFromCourseService();
@@ -119,16 +148,16 @@ async function main() {
     
     // Define mappings for packages
     const packageCoursesMapping = [
-      // BEGINNER package courses
+      // ENTRY package courses
       {
-        packageIndex: 0, // Paket Beginner
+        packageIndex: 0, // Paket Entry
         courseFilters: [
-          { title: 'competitive', level: 'BEGINNER' },
-          { title: 'graphic design fund', level: 'BEGINNER' },
-          { title: 'fundamental cyber', level: 'BEGINNER' },
-          { title: 'game dev', level: 'BEGINNER' },
-          { title: 'web dev', level: 'BEGINNER' },
-          { title: 'python', level: 'BEGINNER' }
+          { title: 'competitive', level: 'ENTRY' },
+          { title: 'graphic design', level: 'ENTRY' },
+          { title: 'fundamental cyber', level: 'ENTRY' },
+          { title: 'game dev', level: 'ENTRY' },
+          { title: 'web dev', level: 'ENTRY' },
+          { title: 'python', level: 'ENTRY' }
         ]
       },
       // INTERMEDIATE package courses
@@ -137,7 +166,7 @@ async function main() {
         courseFilters: [
           { title: 'software eng', level: 'INTERMEDIATE' },
           { title: 'data science', level: 'INTERMEDIATE' },
-          { title: 'advance cyber', level: 'INTERMEDIATE' },
+          { title: 'cyber security', level: 'INTERMEDIATE' },
           { title: 'ui/ux', level: 'INTERMEDIATE' }
         ]
       },
@@ -145,54 +174,32 @@ async function main() {
       {
         packageIndex: 2, // Bundle Python + Data Science & AI
         courseFilters: [
-          { title: 'python', level: 'BEGINNER' },
+          { title: 'python', level: 'ENTRY' },
           { title: 'data science', level: 'INTERMEDIATE' }
         ]
       },
       {
         packageIndex: 3, // Bundle Web Development + Software Engineering
         courseFilters: [
-          { title: 'web dev', level: 'BEGINNER' },
+          { title: 'web dev', level: 'ENTRY' },
           { title: 'software eng', level: 'INTERMEDIATE' }
         ]
       },
       {
-        packageIndex: 4, // Bundle Fundamental Cyber + Advanced Cybersecurity
+        packageIndex: 4, // Bundle Fundamental Cyber + Cybersecurity
         courseFilters: [
-          { title: 'fundamental cyber', level: 'BEGINNER' },
-          { title: 'advance cyber', level: 'INTERMEDIATE' }
+          { title: 'fundamental cyber', level: 'ENTRY' },
+          { title: 'cyber security', level: 'INTERMEDIATE' }
         ]
       },
       {
         packageIndex: 5, // Bundle Graphic Design + UI/UX
         courseFilters: [
-          { title: 'graphic design', level: 'BEGINNER' },
+          { title: 'graphic design', level: 'ENTRY' },
           { title: 'ui/ux', level: 'INTERMEDIATE' }
         ]
       }
     ];
-    
-    console.log('💾 Clearing existing package course relationships...');
-    // Only delete the join table to keep relationships clean
-    await prisma.packageCourse.deleteMany({});
-    
-    console.log('💾 Upserting packages...');
-    // Use upsert for each package with name as unique key
-    const createdPackages = await Promise.all(
-      packages.map(async (packageData) => {
-        const createdPackage = await prisma.package.upsert({
-          where: { name: packageData.name },
-          update: {
-            // Update price and type if they change
-            price: packageData.price,
-            type: packageData.type
-          },
-          create: packageData
-        });
-        console.log(`✅ Upserted package: ${createdPackage.name} (${createdPackage.type})`);
-        return createdPackage;
-      })
-    );
     
     console.log('💾 Adding courses to packages...');
     // Add courses to each package

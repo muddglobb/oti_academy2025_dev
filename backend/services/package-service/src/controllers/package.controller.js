@@ -16,7 +16,7 @@ export const createPackage = asyncHandler(async (req, res) => {
   }
   
   // Validasi tipe package
-  const validTypes = ['BEGINNER', 'INTERMEDIATE', 'BUNDLE'];
+  const validTypes = ['ENTRY', 'INTERMEDIATE', 'BUNDLE'];
   if (!validTypes.includes(type)) {
     return res.status(400).json(
       ApiResponse.error(`Tipe package tidak valid. Pilih salah satu dari: ${validTypes.join(', ')}`)
@@ -81,7 +81,7 @@ export const updatePackage = asyncHandler(async (req, res) => {
   
   // Validasi tipe package jika disediakan
   if (type) {
-    const validTypes = ['BEGINNER', 'INTERMEDIATE', 'BUNDLE'];
+    const validTypes = ['ENTRY', 'INTERMEDIATE', 'BUNDLE'];
     if (!validTypes.includes(type)) {
       return res.status(400).json(
         ApiResponse.error(`Tipe package tidak valid. Pilih salah satu dari: ${validTypes.join(', ')}`)

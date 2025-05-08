@@ -1,104 +1,66 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 
-/**
- * CourseService - Handles integration with course-service
- */
+// Generate service JWT token for inter-service communication
+function generateServiceToken() {
+  const payload = {
+    id: 'package-service',
+    role: 'SERVICE'
+  };
+  
+  return jwt.sign(
+    payload,
+    process.env.JWT_SECRET, 
+    { expiresIn: '1h' }
+  );
+}
+
 export const CourseService = {
   /**
-   * Generate a valid JWT token for service-to-service communication
-   * @returns {string} JWT token
+   * Fetch course data by ID from course service
+   * @param {string} courseId - Course ID to fetch
+   * @returns {Promise<Object|null>} Course data or null if not found
    */
-  generateServiceToken() {
-    // Create a JWT token with service identity for inter-service communication
-    const payload = {
-      id: 'package-service',
-      role: 'SERVICE'
-    };
-    
-    return jwt.sign(
-      payload,
-      process.env.JWT_SECRET, 
-      { expiresIn: '1h' }
-    );
-  },
-
-  /**
-   * Get course by ID from course-service
-   * @param {string} id - Course ID
-   * @returns {Promise<Object>} Course with sessions
-   */
-  async getCourseById(id) {
+  async getCourseById(courseId) {
     try {
       const courseServiceUrl = process.env.COURSE_SERVICE_URL || 'http://course-service-api:8002';
-      const serviceToken = this.generateServiceToken();
+      const serviceToken = generateServiceToken();
       
       const headers = {
         'Authorization': `Bearer ${serviceToken}`
       };
       
-      const response = await axios.get(`${courseServiceUrl}/courses/${id}`, { headers });
-      return response.data.data;
-    } catch (error) {
-      console.error('Error fetching course:', error.message);
-      if (error.response) {
-        console.error('Error response data:', error.response.data);
-        console.error('Error response status:', error.response.status);
+      const response = await axios.get(`${courseServiceUrl}/courses/${courseId}`, { headers });
+      
+      if (response.data && response.data.data) {
+        return response.data.data;
       }
+      return null;
+    } catch (error) {
+      console.error(`Failed to fetch course ${courseId}:`, error.message);
       return null;
     }
   },
-
+  
   /**
-   * Get courses by IDs from course-service
-   * @param {string[]} ids - Array of course IDs
-   * @returns {Promise<Object[]>} List of courses
+   * Fetch multiple courses by their IDs
+   * @param {Array<string>} courseIds - Array of course IDs to fetch
+   * @returns {Promise<Object>} Map of course IDs to course data
    */
-  async getCoursesByIds(ids) {
-    try {
-      // Filter out any duplicates
-      const uniqueIds = [...new Set(ids)];
-      
-      // Get all courses in parallel
-      const coursesPromises = uniqueIds.map(id => this.getCourseById(id));
-      const courses = await Promise.all(coursesPromises);
-      
-      // Filter out any null values (failed requests)
-      return courses.filter(course => course !== null);
-    } catch (error) {
-      console.error('Error fetching courses by IDs:', error.message);
-      return [];
-    }
-  },
-
-  /**
-   * Get all courses from course-service, optionally filtered by level
-   * @param {string} level - Optional level filter (BEGINNER, INTERMEDIATE)
-   * @returns {Promise<Object[]>} List of courses
-   */
-  async getAllCourses(level = null) {
-    try {
-      const courseServiceUrl = process.env.COURSE_SERVICE_URL || 'http://course-service-api:8002';
-      const serviceToken = this.generateServiceToken();
-      
-      const headers = {
-        'Authorization': `Bearer ${serviceToken}`
-      };
-      
-      // Add query parameters for filtering if level is provided
-      const url = level 
-        ? `${courseServiceUrl}/courses?level=${level}` 
-        : `${courseServiceUrl}/courses`;
-        
-      const response = await axios.get(url, { headers });
-      return response.data.data;
-    } catch (error) {
-      console.error('Error fetching all courses:', error.message);
-      if (error.response) {
-        console.error('Error response data:', error.response.data);
-        console.error('Error response status:', error.response.status);
-      }
-      return [];
-    }
+  async getCoursesByIds(courseIds) {
+    const uniqueIds = [...new Set(courseIds)]; // Remove duplicates
+    const courseMap = {};
+    
+    // Fetch courses in parallel
+    await Promise.all(
+      uniqueIds.map(async (id) => {
+        const course = await this.getCourseById(id);
+        if (course) {
+          courseMap[id] = course;
+        }
+      })
+    );
+    
+    return courseMap;
   }
 };

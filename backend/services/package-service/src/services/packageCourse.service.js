@@ -26,10 +26,10 @@ export const PackageCourseService = {
       return { valid: false, message: 'Course tidak ditemukan di course-service' };
     }
     
-    // Untuk package tipe BEGINNER dan INTERMEDIATE, cek level
-    if (package_.type === 'BEGINNER' || package_.type === 'INTERMEDIATE') {
+    // Untuk package tipe ENTRY dan INTERMEDIATE, cek level
+    if (package_.type === 'ENTRY' || package_.type === 'INTERMEDIATE') {
       // Cek kesesuaian level course dengan tipe package
-      if ((package_.type === 'BEGINNER' && course.level !== 'BEGINNER') ||
+      if ((package_.type === 'ENTRY' && course.level !== 'ENTRY') ||
           (package_.type === 'INTERMEDIATE' && course.level !== 'INTERMEDIATE')) {
         return { valid: false, message: `Course level ${course.level} tidak sesuai dengan package tipe ${package_.type}` };
       }
@@ -173,11 +173,11 @@ export const PackageCourseService = {
       return [];
     }
     
-    const courses = await CourseService.getCoursesByIds(courseIds);
+    const coursesMap = await CourseService.getCoursesByIds(courseIds);
     
     // Map package course relations with actual course data
     return packageCourses.map(pc => {
-      const courseData = courses.find(c => c.id === pc.courseId) || null;
+      const courseData = coursesMap[pc.courseId]; // Access map directly by courseId key
       return {
         courseId: pc.courseId,
         title: courseData ? courseData.title : `Unknown Course (${pc.courseId})`,

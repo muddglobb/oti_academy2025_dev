@@ -6,26 +6,28 @@ import { isStudent } from './roles.js';
 const prisma = new PrismaClient();
 
 /**
- * Middleware to validate JWT tokens and set authenticated user in request
+ * JWT authentication middleware
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @param {Function} next - Express next function
- * @returns {void}
  */
-export const authenticate = async (req, res, next) => {
-  // Get token from header
-  const authHeader = req.headers.authorization;
+export const authenticate = (req, res, next) => {
+  // Pertama cek apakah token ada di cookie (prioritas utama)
+  let token = req.cookies?.accessToken;
   
-  // Check if auth header exists
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json(
-      ApiResponse.error('Authentication required. No token provided.')
-    );
+  // Jika tidak ada di cookie, coba ambil dari header (backwards compatibility)
+  if (!token) {
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json(
+        ApiResponse.error('Authentication required. No token provided.')
+      );
+    }
+    
+    token = authHeader.split(' ')[1];
   }
-
-  // Extract token
-  const token = authHeader.split(' ')[1];
-
+  
   try {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -39,8 +41,15 @@ export const authenticate = async (req, res, next) => {
     next();
   } catch (error) {
     console.error('JWT Verification Error:', error.message);
+    
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json(
+        ApiResponse.error('Token expired. Please login again.')
+      );
+    }
+    
     return res.status(401).json(
-      ApiResponse.error('Invalid or expired token')
+      ApiResponse.error('Invalid token')
     );
   }
 };

@@ -3,6 +3,7 @@ import { authenticate, permit, Roles, ApiResponse } from '../config/auth.js';
 import { PackageService } from '../services/package.service.js';
 import { PackageCourseService } from '../services/packageCourse.service.js';
 import { asyncHandler } from '../middlewares/async.middleware.js';
+import { cacheMiddleware, invalidateCache } from '../middlewares/cacheMiddleware.js';
 
 const router = Router({ mergeParams: true });
 
@@ -11,7 +12,7 @@ const router = Router({ mergeParams: true });
  * @desc    Get all courses in a package
  * @access  All authenticated users
  */
-router.get('/', authenticate, asyncHandler(async (req, res) => {
+router.get('/', cacheMiddleware('package-nested-courses', 30 * 60), authenticate, asyncHandler(async (req, res) => {
   const { packageId } = req.params;
   
   // Validasi package
@@ -38,7 +39,7 @@ router.get('/', authenticate, asyncHandler(async (req, res) => {
  * @desc    Add course to a package
  * @access  Admin only
  */
-router.post('/', authenticate, permit(Roles.ADMIN), asyncHandler(async (req, res) => {
+router.post('/', authenticate, permit(Roles.ADMIN), invalidateCache('package'), asyncHandler(async (req, res) => {
   const { packageId } = req.params;
   const { courseId, courseIds } = req.body;
   
@@ -82,7 +83,7 @@ router.post('/', authenticate, permit(Roles.ADMIN), asyncHandler(async (req, res
       throw error;
     }
   } else {
-    // Untuk BEGINNER/INTERMEDIATE, gunakan courseId tunggal
+    // Untuk ENTRY/INTERMEDIATE, gunakan courseId tunggal
     if (!courseId) {
       return res.status(400).json(
         ApiResponse.error('CourseID wajib diisi')
@@ -126,7 +127,7 @@ router.post('/', authenticate, permit(Roles.ADMIN), asyncHandler(async (req, res
  * @desc    Remove course from a package
  * @access  Admin only
  */
-router.delete('/:courseId', authenticate, permit(Roles.ADMIN), asyncHandler(async (req, res) => {
+router.delete('/:courseId', authenticate, permit(Roles.ADMIN), invalidateCache('package'), asyncHandler(async (req, res) => {
   const { packageId, courseId } = req.params;
   
   try {

@@ -63,8 +63,8 @@ Authorization: Bearer {{accessToken}}
   "data": [
     {
       "id": "550e8400-e29b-41d4-a716-446655440000",
-      "name": "Beginner Web Development",
-      "type": "BEGINNER",
+      "name": "Entry Web Development",
+      "type": "ENTRY",
       "price": 250000,
       "createdAt": "2025-05-06T04:30:45.123Z",
       "updatedAt": "2025-05-06T04:30:45.123Z",
@@ -91,8 +91,8 @@ Authorization: Bearer {{accessToken}}
   "message": "Success",
   "data": {
     "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Beginner Web Development",
-    "type": "BEGINNER",
+    "name": "Entry Web Development",
+    "type": "ENTRY",
     "price": 250000,
     "createdAt": "2025-05-06T04:30:45.123Z",
     "updatedAt": "2025-05-06T04:30:45.123Z",
@@ -230,7 +230,7 @@ Authorization: Bearer {{accessToken}}
 
 #### 2.2. Add Course to Package (Admin Only)
 
-##### 2.2.1 Untuk Package Tipe BEGINNER dan INTERMEDIATE
+##### 2.2.1 Untuk Package Tipe ENTRY dan INTERMEDIATE
 ```
 POST {{baseUrl}}/packages/:packageId/courses
 ```
@@ -323,11 +323,11 @@ Authorization: Bearer {{accessToken}}
    - Semua user dengan role `ADMIN`, `DIKE`, `UMUM`, atau `USER` dapat mengakses endpoint GET
    - Hanya user dengan role `ADMIN` yang dapat membuat, memperbarui, atau menghapus data
 4. **Batasan Course dalam Package**:
-   - **BEGINNER**: Dapat memiliki banyak course tanpa batasan
+   - **ENTRY**: Dapat memiliki banyak course tanpa batasan
    - **INTERMEDIATE**: Dapat memiliki banyak course tanpa batasan
    - **BUNDLE**: Setiap penambahan course harus berpasangan (2 course sekaligus) menggunakan format `courseIds`
 5. **Format Request Body Berbeda untuk Tipe Package**:
-   - Package **BEGINNER** dan **INTERMEDIATE**: Gunakan `{ "courseId": "course-uuid-xxx" }`
+   - Package **ENTRY** dan **INTERMEDIATE**: Gunakan `{ "courseId": "course-uuid-xxx" }`
    - Package **BUNDLE**: Gunakan `{ "courseIds": ["course-uuid-xxx", "course-uuid-yyy"] }`
 6. **Error yang umum**:
    - 400: Bad Request - Input validation error (format tidak sesuai dengan tipe package)
