@@ -58,7 +58,7 @@ export const createPayment = async (req, res) => {
     // For non-bundle packages (beginner/intermediate), courseId is required
     if (!isBundle && !validatedData.courseId) {
       return res.status(400).json(
-        ApiResponse.error('CourseId diperlukan untuk paket non-bundle (BEGINNER atau INTERMEDIATE)')
+        ApiResponse.error('CourseId diperlukan untuk paket non-bundle (ENTRY atau INTERMEDIATE)')
       );
     }
     
@@ -352,9 +352,9 @@ export const updatePayment = async (req, res) => {
         return res.status(403).json(
           ApiResponse.error('You are not authorized to update this payment')
         );
-      } else if (serviceError.message === 'Cannot update payment that has already been approved') {
+      } else if (serviceError.message === 'Cannot update payment that has already been transferred back') {
         return res.status(400).json(
-          ApiResponse.error('Cannot update payment that has already been approved')
+          ApiResponse.error('Cannot update payment that has already been transferred back')
         );
       } else {
         throw serviceError; // Re-throw for general error handler

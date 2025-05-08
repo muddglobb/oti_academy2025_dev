@@ -4,8 +4,9 @@
 
 ### Environment Variables
 ```
-baseUrl: http://localhost:8080
-accessToken: (akan diisi setelah login)
+baseUrl: http://localhost:8000
+accessToken: (akan diisi otomatis setelah login)
+refreshToken: (akan diisi otomatis setelah login)
 ```
 
 ### Mendapatkan Token (Authentication)
@@ -31,6 +32,7 @@ Content-Type: application/json
 if (pm.response.code === 200) {
     const jsonData = pm.response.json();
     pm.environment.set("accessToken", jsonData.data.accessToken);
+    pm.environment.set("refreshToken", jsonData.data.refreshToken);
 }
 ```
 
@@ -38,7 +40,7 @@ if (pm.response.code === 200) {
 
 ### Membuat Pembayaran (Create Payment)
 
-#### A. Untuk User UMUM
+#### 1. Create Payment UMUM (Bukan Bundle - ENTRY atau INTERMEDIATE)
 
 ```
 POST {{baseUrl}}/payments
@@ -69,6 +71,7 @@ Content-Type: application/json
     "id": "e71f3c5d-6c0f-42e4-8f85-39f4d15e2b19",
     "userId": "51f9bfb8-4c1a-4a7a-85a3-65ca1cde33d1",
     "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+    "courseId": "00000000-0000-0000-0000-000000000001",
     "type": "UMUM",
     "proofLink": "https://example.com/bukti-transfer-umum.jpg",
     "status": "PAID",
@@ -78,12 +81,62 @@ Content-Type: application/json
     "backStatus": null,
     "backCompletedAt": null,
     "createdAt": "2025-05-06T10:15:30.123Z",
-    "updatedAt": "2025-05-06T10:15:30.123Z"
+    "updatedAt": "2025-05-06T10:15:30.123Z",
+    "packageName": "Entry Web Development",
+    "packageType": "ENTRY",
+    "price": 250000
   }
 }
 ```
 
-#### B. Untuk User DIKE
+#### 2. Create Payment UMUM (Bundle)
+
+```
+POST {{baseUrl}}/payments
+```
+
+**Headers:**
+```
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "packageId": "{{packageId}}",
+  "type": "UMUM",
+  "proofLink": "https://example.com/bukti-transfer-bundle.jpg"
+}
+```
+
+**Response (201):**
+```json
+{
+  "status": "success",
+  "message": "Payment created successfully",
+  "data": {
+    "id": "5f91cc42-8dbd-4f6a-9f8d-3e0a3c50e5d2",
+    "userId": "51f9bfb8-4c1a-4a7a-85a3-65ca1cde33d1",
+    "packageId": "a31b1707-2c3a-4e1c-b0b8-a4d854ed47ec",
+    "type": "UMUM",
+    "proofLink": "https://example.com/bukti-transfer-bundle.jpg",
+    "status": "PAID",
+    "backPaymentMethod": null,
+    "backAccountNumber": null,
+    "backRecipient": null,
+    "backStatus": null,
+    "backCompletedAt": null,
+    "createdAt": "2025-05-07T10:17:45.567Z",
+    "updatedAt": "2025-05-07T10:17:45.567Z",
+    "packageName": "Web Development Bundle",
+    "packageType": "BUNDLE",
+    "price": 450000
+  }
+}
+```
+
+#### 3. Create Payment DIKE (Bukan Bundle - ENTRY atau INTERMEDIATE)
 
 ```
 POST {{baseUrl}}/payments
@@ -117,6 +170,7 @@ Content-Type: application/json
     "id": "75c2d819-7a8d-4ce7-ac19-bba55efd2b72",
     "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
     "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+    "courseId": "00000000-0000-0000-0000-000000000001",
     "type": "DIKE",
     "proofLink": "https://example.com/bukti-transfer-dike.jpg",
     "status": "PAID",
@@ -126,12 +180,15 @@ Content-Type: application/json
     "backStatus": "REQUESTED",
     "backCompletedAt": null,
     "createdAt": "2025-05-06T10:17:45.567Z",
-    "updatedAt": "2025-05-06T10:17:45.567Z"
+    "updatedAt": "2025-05-06T10:17:45.567Z",
+    "packageName": "Entry Web Development",
+    "packageType": "ENTRY",
+    "price": 250000
   }
 }
 ```
 
-#### C. Untuk Package Tipe BUNDLE
+#### 4. Create Payment DIKE (Bundle)
 
 ```
 POST {{baseUrl}}/payments
@@ -146,14 +203,12 @@ Content-Type: application/json
 **Body:**
 ```json
 {
-  "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
-  "packageId": "a31b1707-2c3a-4e1c-b0b8-a4d854ed47ec", // ID paket bundle
-  "courseId": "00000000-0000-0000-0000-000000000007", // Pilih salah satu course dari bundle
-  "type": "DIKE", // atau "UMUM" sesuai tipe user
-  "proofLink": "https://example.com/bukti-transfer-bundle.jpg",
-  "backPaymentMethod": "BNI", // wajib jika type = "DIKE"
-  "backAccountNumber": "1234567890", // wajib jika type = "DIKE"
-  "backRecipient": "Andi Susanto" // wajib jika type = "DIKE"
+  "packageId": "{{packageId}}",
+  "type": "DIKE",
+  "proofLink": "https://example.com/bukti-transfer-dike.jpg",
+  "backPaymentMethod": "BNI",
+  "backAccountNumber": "1234567890",
+  "backRecipient": "Andi Susanto"
 }
 ```
 
@@ -166,9 +221,8 @@ Content-Type: application/json
     "id": "5f91cc42-8dbd-4f6a-9f8d-3e0a3c50e5d2",
     "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
     "packageId": "a31b1707-2c3a-4e1c-b0b8-a4d854ed47ec",
-    "courseId": "00000000-0000-0000-0000-000000000007",
     "type": "DIKE",
-    "proofLink": "https://example.com/bukti-transfer-bundle.jpg",
+    "proofLink": "https://example.com/bukti-transfer-dike.jpg",
     "status": "PAID",
     "backPaymentMethod": "BNI",
     "backAccountNumber": "1234567890",
@@ -176,16 +230,13 @@ Content-Type: application/json
     "backStatus": "REQUESTED",
     "backCompletedAt": null,
     "createdAt": "2025-05-07T10:17:45.567Z",
-    "updatedAt": "2025-05-07T10:17:45.567Z"
+    "updatedAt": "2025-05-07T10:17:45.567Z",
+    "packageName": "Web Development Bundle",
+    "packageType": "BUNDLE",
+    "price": 450000
   }
 }
 ```
-
-**Catatan Penting untuk Paket Bundle:**
-1. Pilih salah satu `courseId` yang ada dalam paket bundle (bisa menggunakan endpoint `/packages/{packageId}/courses` untuk melihat courses yang tersedia)
-2. Payment service akan memvalidasi bahwa courseId yang dipilih memang termasuk dalam paket bundle
-3. Ketika pembayaran disetujui (status = `APPROVED`), enrollment service akan mendaftarkan pengguna ke SEMUA course dalam paket bundle, tidak hanya ke course yang dipilih saat pembayaran
-4. Pengguna yang sudah memiliki pembayaran aktif tidak bisa mendaftar ke paket bundle, dan pengguna dengan paket bundle tidak bisa mendaftar ke kelas lain
 
 ### Mendapatkan Semua Pembayaran (Admin Only)
 
@@ -220,6 +271,7 @@ limit=10
         "id": "75c2d819-7a8d-4ce7-ac19-bba55efd2b72",
         "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
         "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+        "courseId": "00000000-0000-0000-0000-000000000001",
         "type": "DIKE",
         "proofLink": "https://example.com/bukti-transfer-dike.jpg",
         "status": "PAID",
@@ -229,12 +281,19 @@ limit=10
         "backStatus": "REQUESTED",
         "backCompletedAt": null,
         "createdAt": "2025-05-06T10:17:45.567Z",
-        "updatedAt": "2025-05-06T10:17:45.567Z"
+        "updatedAt": "2025-05-06T10:17:45.567Z",
+        "userName": "Andi Susanto",
+        "userEmail": "andi@example.com",
+        "userType": "DIKE",
+        "packageName": "Entry Web Development",
+        "packageType": "ENTRY",
+        "price": 250000
       },
       {
         "id": "e71f3c5d-6c0f-42e4-8f85-39f4d15e2b19",
         "userId": "51f9bfb8-4c1a-4a7a-85a3-65ca1cde33d1",
         "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+        "courseId": "00000000-0000-0000-0000-000000000002",
         "type": "UMUM",
         "proofLink": "https://example.com/bukti-transfer-umum.jpg",
         "status": "PAID",
@@ -244,16 +303,68 @@ limit=10
         "backStatus": null,
         "backCompletedAt": null,
         "createdAt": "2025-05-06T10:15:30.123Z",
-        "updatedAt": "2025-05-06T10:15:30.123Z"
+        "updatedAt": "2025-05-06T10:15:30.123Z",
+        "userName": "Budi Santoso",
+        "userEmail": "budi@example.com",
+        "userType": "UMUM",
+        "packageName": "Entry Web Development",
+        "packageType": "ENTRY",
+        "price": 250000
       }
     ],
-    "pagination": {
-      "total": 2,
+    "meta": {
       "page": 1,
-      "limit": 10,
-      "pages": 1
+      "pageSize": 10,
+      "totalItems": 2,
+      "totalPages": 1
     }
   }
+}
+```
+
+### Mendapatkan Pembayaran Milik Saya
+
+```
+GET {{baseUrl}}/payments/my-payments
+```
+
+**Headers:**
+```
+Authorization: Bearer {{accessToken}}
+```
+
+**Response (200):**
+```json
+{
+  "status": "success",
+  "message": "User payments retrieved successfully",
+  "data": [
+    {
+      "id": "75c2d819-7a8d-4ce7-ac19-bba55efd2b72",
+      "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
+      "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+      "courseId": "00000000-0000-0000-0000-000000000001",
+      "type": "DIKE",
+      "proofLink": "https://example.com/bukti-transfer-dike.jpg",
+      "status": "PAID",
+      "backPaymentMethod": "BNI",
+      "backAccountNumber": "1234567890",
+      "backRecipient": "Andi Susanto",
+      "backStatus": "REQUESTED",
+      "backCompletedAt": null,
+      "createdAt": "2025-05-06T10:17:45.567Z",
+      "updatedAt": "2025-05-06T10:17:45.567Z",
+      "packageName": "Entry Web Development",
+      "packageType": "ENTRY",
+      "price": 250000,
+      "course": {
+        "id": "00000000-0000-0000-0000-000000000001",
+        "title": "Web Development Fundamentals"
+      },
+      "enrollmentStatus": false,
+      "paymentDate": "2025-05-06T10:17:45.567Z"
+    }
+  ]
 }
 ```
 
@@ -277,6 +388,7 @@ Authorization: Bearer {{accessToken}}
     "id": "75c2d819-7a8d-4ce7-ac19-bba55efd2b72",
     "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
     "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+    "courseId": "00000000-0000-0000-0000-000000000001",
     "type": "DIKE",
     "proofLink": "https://example.com/bukti-transfer-dike.jpg",
     "status": "PAID",
@@ -286,7 +398,24 @@ Authorization: Bearer {{accessToken}}
     "backStatus": "REQUESTED",
     "backCompletedAt": null,
     "createdAt": "2025-05-06T10:17:45.567Z",
-    "updatedAt": "2025-05-06T10:17:45.567Z"
+    "updatedAt": "2025-05-06T10:17:45.567Z",
+    "packageName": "Entry Web Development",
+    "packageType": "ENTRY",
+    "price": 250000,
+    "user": {
+      "id": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
+      "name": "Andi Susanto",
+      "email": "andi@example.com",
+      "type": "DIKE"
+    },
+    "course": {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "title": "Web Development Fundamentals",
+      "description": "Learn HTML, CSS, and JavaScript to build responsive websites from scratch",
+      "level": "ENTRY"
+    },
+    "enrollmentStatus": false,
+    "paymentDate": "2025-05-06T10:17:45.567Z"
   }
 }
 ```
@@ -311,6 +440,7 @@ Authorization: Bearer {{accessToken}}
     "id": "75c2d819-7a8d-4ce7-ac19-bba55efd2b72",
     "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
     "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+    "courseId": "00000000-0000-0000-0000-000000000001",
     "type": "DIKE",
     "proofLink": "https://example.com/bukti-transfer-dike.jpg",
     "status": "APPROVED",
@@ -320,7 +450,10 @@ Authorization: Bearer {{accessToken}}
     "backStatus": "REQUESTED",
     "backCompletedAt": null,
     "createdAt": "2025-05-06T10:17:45.567Z",
-    "updatedAt": "2025-05-06T10:25:12.891Z"
+    "updatedAt": "2025-05-06T10:25:12.891Z",
+    "packageName": "Entry Web Development",
+    "packageType": "ENTRY",
+    "price": 250000
   }
 }
 ```
@@ -355,6 +488,7 @@ Content-Type: application/json
     "id": "75c2d819-7a8d-4ce7-ac19-bba55efd2b72",
     "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
     "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+    "courseId": "00000000-0000-0000-0000-000000000001",
     "type": "DIKE",
     "proofLink": "https://example.com/bukti-transfer-dike.jpg",
     "status": "APPROVED",
@@ -364,7 +498,10 @@ Content-Type: application/json
     "backStatus": "REQUESTED",
     "backCompletedAt": null,
     "createdAt": "2025-05-06T10:17:45.567Z",
-    "updatedAt": "2025-05-06T10:35:20.459Z"
+    "updatedAt": "2025-05-06T10:35:20.459Z",
+    "packageName": "Entry Web Development",
+    "packageType": "ENTRY",
+    "price": 250000
   }
 }
 ```
@@ -381,14 +518,14 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 ```
 
-**Body:**
+**Body untuk UMUM:**
 ```json
 {
   "proofLink": "https://example.com/bukti-transfer-baru.jpg"
 }
 ```
 
-**Body (khusus untuk DIKE - memperbarui info back payment):**
+**Body untuk DIKE:**
 ```json
 {
   "proofLink": "https://example.com/bukti-transfer-baru.jpg",
@@ -407,6 +544,7 @@ Content-Type: application/json
     "id": "75c2d819-7a8d-4ce7-ac19-bba55efd2b72",
     "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
     "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+    "courseId": "00000000-0000-0000-0000-000000000001",
     "type": "DIKE",
     "proofLink": "https://example.com/bukti-transfer-baru.jpg",
     "status": "PAID",
@@ -416,19 +554,13 @@ Content-Type: application/json
     "backStatus": "REQUESTED",
     "backCompletedAt": null,
     "createdAt": "2025-05-06T10:17:45.567Z",
-    "updatedAt": "2025-05-07T09:15:22.891Z"
+    "updatedAt": "2025-05-07T09:15:22.891Z",
+    "packageName": "Entry Web Development",
+    "packageType": "ENTRY",
+    "price": 250000
   }
 }
 ```
-
-**Catatan Penting:**
-1. Endpoint ini dapat digunakan oleh baik user DIKE maupun UMUM
-2. User UMUM hanya dapat memperbarui `proofLink`
-3. User DIKE dapat memperbarui `proofLink` dan/atau informasi back payment
-4. Jika memperbarui informasi back payment, ketiga field (`backPaymentMethod`, `backAccountNumber`, `backRecipient`) harus disertakan
-5. Hanya pemilik pembayaran yang dapat memperbarui data pembayarannya
-6. Pembayaran yang sudah diapprove (status = `APPROVED`) tidak dapat diperbarui
-7. Field `backStatus` akan otomatis diset ulang ke `REQUESTED` jika informasi back payment diperbarui
 
 ### Menyelesaikan Back Payment (Admin Only)
 
@@ -450,6 +582,7 @@ Authorization: Bearer {{accessToken}}
     "id": "75c2d819-7a8d-4ce7-ac19-bba55efd2b72",
     "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
     "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+    "courseId": "00000000-0000-0000-0000-000000000001",
     "type": "DIKE",
     "proofLink": "https://example.com/bukti-transfer-dike.jpg",
     "status": "APPROVED",
@@ -459,8 +592,31 @@ Authorization: Bearer {{accessToken}}
     "backStatus": "COMPLETED",
     "backCompletedAt": "2025-05-06T11:05:33.128Z",
     "createdAt": "2025-05-06T10:17:45.567Z",
-    "updatedAt": "2025-05-06T11:05:33.128Z"
+    "updatedAt": "2025-05-06T11:05:33.128Z",
+    "packageName": "Entry Web Development",
+    "packageType": "ENTRY",
+    "price": 250000
   }
+}
+```
+
+### Menghapus Pembayaran (Admin Only)
+
+```
+DELETE {{baseUrl}}/payments/75c2d819-7a8d-4ce7-ac19-bba55efd2b72
+```
+
+**Headers:**
+```
+Authorization: Bearer {{accessToken}}
+```
+
+**Response (200):**
+```json
+{
+  "status": "success",
+  "message": "Payment deleted successfully",
+  "data": null
 }
 ```
 
@@ -481,15 +637,35 @@ Authorization: Bearer {{accessToken}}
 
 Saat pembayaran diapprove oleh admin (status = `APPROVED`), enrollment service akan menangani pendaftaran course untuk pengguna:
 
-1. **Untuk Paket BEGINNER dan INTERMEDIATE:**
+1. **Untuk Paket ENTRY dan INTERMEDIATE:**
    - Enrollment service akan mendaftarkan pengguna hanya ke course yang dipilih saat pembayaran
 
 2. **Untuk Paket BUNDLE:**
    - Enrollment service akan mendaftarkan pengguna ke SEMUA course yang ada dalam paket bundle
-   - Course yang dipilih saat pembayaran hanya digunakan sebagai referensi dan validasi
+   - Course yang dipilih saat pembayaran hanya digunakan sebagai referensi dan validasi untuk paket non-bundle
    - Ini memungkinkan bundle berisi multiple courses tapi menggunakan model payment yang konsisten
 
-## 5. Response Error
+## 5. Aturan Validasi Penting
+
+1. **Validasi Tipe User dan Tipe Payment:**
+   - User dengan tipe DIKE hanya dapat membuat pembayaran dengan tipe DIKE
+   - User dengan tipe UMUM hanya dapat membuat pembayaran dengan tipe UMUM
+   
+2. **Validasi Bundle Package:**
+   - Pengguna yang sudah memiliki pembayaran aktif tidak bisa mendaftar ke paket bundle
+   - Pengguna dengan paket bundle tidak bisa mendaftar ke kelas lain
+   
+3. **Validasi ENTRY/INTERMEDIATE Package:**
+   - CourseId wajib diisi untuk paket tipe ENTRY dan INTERMEDIATE
+   - CourseId yang dipilih harus termasuk dalam package yang dipilih
+   - Pengguna tidak dapat mendaftar di kelas dengan tipe yang sama (contoh: tidak bisa mendaftar 2 kelas ENTRY)
+   - Pengguna yang sudah memiliki paket bundle tidak bisa mendaftar ke kelas lain
+
+4. **Validasi Back Payment (khusus DIKE):**
+   - Jika tipe user DIKE, wajib menyertakan backPaymentMethod, backAccountNumber, dan backRecipient
+   - Pilihan backPaymentMethod hanya BNI, GOPAY, OVO, atau DANA
+
+## 6. Response Error
 
 ### 400 Bad Request (Validasi Gagal)
 ```json
@@ -527,5 +703,34 @@ Saat pembayaran diapprove oleh admin (status = `APPROVED`), enrollment service a
 {
   "status": "error",
   "message": "Payment not found"
+}
+```
+
+### 400 Validasi Bisnis (Contoh-contoh)
+```json
+{
+  "status": "error",
+  "message": "Anda tidak dapat mendaftar paket bundle karena sudah terdaftar di kelas lain"
+}
+```
+
+```json
+{
+  "status": "error",
+  "message": "Anda sudah terdaftar di kelas entry. Tidak dapat mendaftar di kelas entry lainnya"
+}
+```
+
+```json
+{
+  "status": "error",
+  "message": "Course yang dipilih bukan bagian dari paket yang dipilih"
+}
+```
+
+```json
+{
+  "status": "error",
+  "message": "DIKE users require backPaymentMethod, backAccountNumber, and backRecipient"
 }
 ```

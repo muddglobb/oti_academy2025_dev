@@ -85,7 +85,7 @@ export const createEnrollmentAfterPayment = async (payment) => {
         queueFile: filename
       };
     } else {
-      // For BEGINNER and INTERMEDIATE packages, create enrollment only for selected course
+      // For ENTRY and INTERMEDIATE packages, create enrollment only for selected course
       // Format data payment for enrollment
       const enrollmentData = {
         ...baseEnrollmentData,
@@ -147,7 +147,7 @@ export const handlePaymentApprovedInEnrollmentService = async (paymentId) => {
     //     });
     //   }
     // } else {
-    //   // Untuk BEGINNER dan INTERMEDIATE, buat enrollment hanya untuk course yang dipilih
+    //   // Untuk ENTRY dan INTERMEDIATE, buat enrollment hanya untuk course yang dipilih
     //   await createEnrollment({
     //     userId: payment.userId,
     //     courseId: payment.courseId,

@@ -483,8 +483,8 @@ export class PaymentService {
     }
 
     // Only allow updates if payment is in PAID status (not APPROVED)
-    if (existingPayment.status === 'APPROVED') {
-      throw new Error('Cannot update payment that has already been approved');
+    if (existingPayment.backStatus === 'COMPLETED') {
+      throw new Error('Cannot update payment that has already been transferred back');
     }
 
     // Prepare update data
@@ -581,7 +581,7 @@ export class PaymentService {
       
       // Format response depends on package type
       if (responseData.courses) {
-        // For BEGINNER or INTERMEDIATE packages
+        // For ENTRY or INTERMEDIATE packages
         courses = responseData.courses.map(course => ({
           id: course.courseId,
           title: course.title || 'Untitled Course',

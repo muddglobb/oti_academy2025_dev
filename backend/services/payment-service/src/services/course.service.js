@@ -37,7 +37,7 @@ export class CourseService {
         'Authorization': `Bearer ${serviceToken}`
       };
       
-      const response = await axios.get(`${courseServiceUrl}/api/courses/${id}`, { headers });
+      const response = await axios.get(`${courseServiceUrl}/courses/${id}`, { headers });
       return response.data.data;
     } catch (error) {
       console.error('Error fetching course:', error.message);
@@ -73,7 +73,7 @@ export class CourseService {
 
   /**
    * Get all courses from course-service, optionally filtered by level
-   * @param {string} level - Optional level filter (BEGINNER, INTERMEDIATE)
+   * @param {string} level - Optional level filter (ENTRY, INTERMEDIATE)
    * @returns {Promise<Object[]>} List of courses
    */
   static async getAllCourses(level = null) {
@@ -87,8 +87,8 @@ export class CourseService {
       
       // Add query parameters for filtering if level is provided
       const url = level 
-        ? `${courseServiceUrl}/api/courses?level=${level}` 
-        : `${courseServiceUrl}/api/courses`;
+        ? `${courseServiceUrl}/courses?level=${level}` 
+        : `${courseServiceUrl}/courses`;
         
       const response = await axios.get(url, { headers });
       return response.data.data;

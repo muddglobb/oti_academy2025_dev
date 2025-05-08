@@ -9,16 +9,20 @@ import { isStudent } from './roles.js';
  * @param {Function} next - Express next function
  */
 export const authenticate = (req, res, next) => {
-  // Get token from header
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.startsWith('Bearer ') 
-    ? authHeader.split(' ')[1] 
-    : null;
+  // Pertama cek apakah token ada di cookie (prioritas utama)
+  let token = req.cookies?.accessToken;
   
+  // Jika tidak ada di cookie, coba ambil dari header (backwards compatibility)
   if (!token) {
-    return res.status(401).json(
-      ApiResponse.error('Access denied. No token provided.')
-    );
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json(
+        ApiResponse.error('Authentication required. No token provided.')
+      );
+    }
+    
+    token = authHeader.split(' ')[1];
   }
   
   try {
