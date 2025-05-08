@@ -1,13 +1,6 @@
-"use client"
-
 // import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
-// <<<<<<< dhimas
-// import Navbar from "@/components/home/navbar";
-// import Footer from "@/components/home/footer";
-// import { usePathname } from "next/navigation"
-// =======
 import LayoutWrapper from "@/components/layoutWrapper";
 
 
@@ -37,26 +30,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-
-  // const hideNavbarOnRoutes = ["/troll", "/dashboard"];
-  // const showNavbar = !hideNavbarOnRoutes.includes(pathname);
-
-  const hideNavbarOnPrefixes = ["/troll", "/dashboard"];
-  const showNavbar = !hideNavbarOnPrefixes.some(prefix => pathname.startsWith(prefix));
 
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased ${poppins.className}`}
       >
-<!--         <<<<<<< dhimas
-        {showNavbar && <Navbar />}
-        {/* <Navbar/> */}
-        <main>{children}</main>
-        {showNavbar && <Footer />}
-        {/* <Footer/> */} -->
-
         <LayoutWrapper>{children}</LayoutWrapper>
       </body>
     </html>
