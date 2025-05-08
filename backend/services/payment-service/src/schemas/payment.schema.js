@@ -15,9 +15,9 @@ const BackPaymentMethod = {
 
 // Create payment schema validation
 export const createPaymentSchema = z.object({
-  userId: z.string().uuid(),
+  // userId removed - will be taken from JWT token
   packageId: z.string().uuid(),
-  courseId: z.string().uuid(), // Menambahkan courseId untuk tracking enrollment
+  courseId: z.string().uuid().optional(), // Made optional - will be required only for non-bundle packages
   type: z.enum(['DIKE', 'UMUM']),
   proofLink: z.string().url(),
   backPaymentMethod: z.enum(['BNI', 'GOPAY', 'OVO', 'DANA']).optional(),
@@ -30,6 +30,24 @@ export const createPaymentSchema = z.object({
   return true;
 }, {
   message: 'DIKE users require backPaymentMethod, backAccountNumber, and backRecipient',
+  path: ['backPaymentMethod', 'backAccountNumber', 'backRecipient']
+});
+
+// Update payment schema validation
+export const updatePaymentSchema = z.object({
+  proofLink: z.string().url().optional(),
+  backPaymentMethod: z.enum(['BNI', 'GOPAY', 'OVO', 'DANA']).optional(),
+  backAccountNumber: z.string().min(1).optional(),
+  backRecipient: z.string().min(1).optional(),
+}).refine(data => {
+  // If any back payment field is provided, all three must be present
+  const hasBackPaymentField = data.backPaymentMethod || data.backAccountNumber || data.backRecipient;
+  if (hasBackPaymentField) {
+    return data.backPaymentMethod && data.backAccountNumber && data.backRecipient;
+  }
+  return true;
+}, {
+  message: 'If updating back payment info, all three fields (method, account number, recipient) are required',
   path: ['backPaymentMethod', 'backAccountNumber', 'backRecipient']
 });
 

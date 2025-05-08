@@ -102,6 +102,40 @@ services:
         condition: service_healthy
     networks:
       - oti-network
+
+    # COURSE SERVICE DATABASE
+  course-service-db:
+    image: postgres:17.4-alpine
+    env_file: 
+      - ./services/course-service/.env
+    environment:
+    - POSTGRES_DB=course_service_db
+    - POSTGRES_USER=${PG_USER}
+    - POSTGRES_PASSWORD=${PG_PASSWORD} 
+    volumes:
+      - course-data:/var/lib/postgresql/data
+    networks:
+      - oti-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d course_service_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # COURSE SERVICE API
+  course-service-api:
+    build: ./services/course-service
+    env_file:
+      - ./services/course-service/.env
+      - .env
+    volumes:
+      - ./services/course-service/logs:/home/appuser/app/logs
+      - ./libs:/home/appuser/app/libs
+    depends_on:
+      course-service-db:
+        condition: service_healthy
+    networks:
+      - oti-network
       
   # Redis cache service
   redis:
@@ -148,6 +182,7 @@ networks:
 
 volumes:
   auth-data:
+  course-data:
   package-data:
   payment-data:
   redis-data:

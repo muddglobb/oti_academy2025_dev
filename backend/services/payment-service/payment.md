@@ -53,8 +53,8 @@ Content-Type: application/json
 **Body:**
 ```json
 {
-  "userId": "51f9bfb8-4c1a-4a7a-85a3-65ca1cde33d1",
-  "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+  "packageId": "{{packageId}}",
+  "courseId": "{{courseId}}",
   "type": "UMUM",
   "proofLink": "https://example.com/bukti-transfer-umum.jpg"
 }
@@ -98,8 +98,8 @@ Content-Type: application/json
 **Body:**
 ```json
 {
-  "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
-  "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+  "packageId": "{{packageId}}",
+  "courseId": "{{courseId}}", 
   "type": "DIKE",
   "proofLink": "https://example.com/bukti-transfer-dike.jpg",
   "backPaymentMethod": "BNI",
@@ -130,6 +130,62 @@ Content-Type: application/json
   }
 }
 ```
+
+#### C. Untuk Package Tipe BUNDLE
+
+```
+POST {{baseUrl}}/payments
+```
+
+**Headers:**
+```
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
+  "packageId": "a31b1707-2c3a-4e1c-b0b8-a4d854ed47ec", // ID paket bundle
+  "courseId": "00000000-0000-0000-0000-000000000007", // Pilih salah satu course dari bundle
+  "type": "DIKE", // atau "UMUM" sesuai tipe user
+  "proofLink": "https://example.com/bukti-transfer-bundle.jpg",
+  "backPaymentMethod": "BNI", // wajib jika type = "DIKE"
+  "backAccountNumber": "1234567890", // wajib jika type = "DIKE"
+  "backRecipient": "Andi Susanto" // wajib jika type = "DIKE"
+}
+```
+
+**Response (201):**
+```json
+{
+  "status": "success",
+  "message": "Payment created successfully",
+  "data": {
+    "id": "5f91cc42-8dbd-4f6a-9f8d-3e0a3c50e5d2",
+    "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
+    "packageId": "a31b1707-2c3a-4e1c-b0b8-a4d854ed47ec",
+    "courseId": "00000000-0000-0000-0000-000000000007",
+    "type": "DIKE",
+    "proofLink": "https://example.com/bukti-transfer-bundle.jpg",
+    "status": "PAID",
+    "backPaymentMethod": "BNI",
+    "backAccountNumber": "1234567890",
+    "backRecipient": "Andi Susanto",
+    "backStatus": "REQUESTED",
+    "backCompletedAt": null,
+    "createdAt": "2025-05-07T10:17:45.567Z",
+    "updatedAt": "2025-05-07T10:17:45.567Z"
+  }
+}
+```
+
+**Catatan Penting untuk Paket Bundle:**
+1. Pilih salah satu `courseId` yang ada dalam paket bundle (bisa menggunakan endpoint `/packages/{packageId}/courses` untuk melihat courses yang tersedia)
+2. Payment service akan memvalidasi bahwa courseId yang dipilih memang termasuk dalam paket bundle
+3. Ketika pembayaran disetujui (status = `APPROVED`), enrollment service akan mendaftarkan pengguna ke SEMUA course dalam paket bundle, tidak hanya ke course yang dipilih saat pembayaran
+4. Pengguna yang sudah memiliki pembayaran aktif tidak bisa mendaftar ke paket bundle, dan pengguna dengan paket bundle tidak bisa mendaftar ke kelas lain
 
 ### Mendapatkan Semua Pembayaran (Admin Only)
 
@@ -313,6 +369,67 @@ Content-Type: application/json
 }
 ```
 
+### Memperbarui Detail Pembayaran (DIKE & UMUM)
+
+```
+PATCH {{baseUrl}}/payments/75c2d819-7a8d-4ce7-ac19-bba55efd2b72/update
+```
+
+**Headers:**
+```
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+```
+
+**Body:**
+```json
+{
+  "proofLink": "https://example.com/bukti-transfer-baru.jpg"
+}
+```
+
+**Body (khusus untuk DIKE - memperbarui info back payment):**
+```json
+{
+  "proofLink": "https://example.com/bukti-transfer-baru.jpg",
+  "backPaymentMethod": "DANA",
+  "backAccountNumber": "0812345678",
+  "backRecipient": "Andi Susanto"
+}
+```
+
+**Response (200):**
+```json
+{
+  "status": "success",
+  "message": "Payment updated successfully",
+  "data": {
+    "id": "75c2d819-7a8d-4ce7-ac19-bba55efd2b72",
+    "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
+    "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
+    "type": "DIKE",
+    "proofLink": "https://example.com/bukti-transfer-baru.jpg",
+    "status": "PAID",
+    "backPaymentMethod": "DANA",
+    "backAccountNumber": "0812345678",
+    "backRecipient": "Andi Susanto",
+    "backStatus": "REQUESTED",
+    "backCompletedAt": null,
+    "createdAt": "2025-05-06T10:17:45.567Z",
+    "updatedAt": "2025-05-07T09:15:22.891Z"
+  }
+}
+```
+
+**Catatan Penting:**
+1. Endpoint ini dapat digunakan oleh baik user DIKE maupun UMUM
+2. User UMUM hanya dapat memperbarui `proofLink`
+3. User DIKE dapat memperbarui `proofLink` dan/atau informasi back payment
+4. Jika memperbarui informasi back payment, ketiga field (`backPaymentMethod`, `backAccountNumber`, `backRecipient`) harus disertakan
+5. Hanya pemilik pembayaran yang dapat memperbarui data pembayarannya
+6. Pembayaran yang sudah diapprove (status = `APPROVED`) tidak dapat diperbarui
+7. Field `backStatus` akan otomatis diset ulang ke `REQUESTED` jika informasi back payment diperbarui
+
 ### Menyelesaikan Back Payment (Admin Only)
 
 ```
@@ -360,7 +477,19 @@ Authorization: Bearer {{accessToken}}
 - Dapat melakukan request back payment setelah pembayaran dibuat
 - Nilai default `backStatus` adalah `REQUESTED`
 
-## 4. Response Error
+## 4. Integrasi dengan Enrollment Service
+
+Saat pembayaran diapprove oleh admin (status = `APPROVED`), enrollment service akan menangani pendaftaran course untuk pengguna:
+
+1. **Untuk Paket BEGINNER dan INTERMEDIATE:**
+   - Enrollment service akan mendaftarkan pengguna hanya ke course yang dipilih saat pembayaran
+
+2. **Untuk Paket BUNDLE:**
+   - Enrollment service akan mendaftarkan pengguna ke SEMUA course yang ada dalam paket bundle
+   - Course yang dipilih saat pembayaran hanya digunakan sebagai referensi dan validasi
+   - Ini memungkinkan bundle berisi multiple courses tapi menggunakan model payment yang konsisten
+
+## 5. Response Error
 
 ### 400 Bad Request (Validasi Gagal)
 ```json

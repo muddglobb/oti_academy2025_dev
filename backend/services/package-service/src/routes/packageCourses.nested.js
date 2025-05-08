@@ -22,13 +22,11 @@ router.get('/', authenticate, asyncHandler(async (req, res) => {
     );
   }
   
-  const packageCourses = await PackageCourseService.listCoursesInPackage(packageId);
-  
-  // Tambahkan data dummy untuk course
-  const coursesWithDummyData = PackageCourseService.addDummyCourseData(packageCourses);
+  // Get courses in package with data from course-service
+  const coursesWithData = await PackageCourseService.listCoursesInPackage(packageId);
   
   // Format respons berdasarkan tipe package
-  const formattedResponse = await PackageCourseService.formatCourseResponse(coursesWithDummyData, packageId);
+  const formattedResponse = await PackageCourseService.formatCourseResponse(coursesWithData, packageId);
   
   res.status(200).json(
     ApiResponse.success(formattedResponse)
@@ -75,6 +73,12 @@ router.post('/', authenticate, permit(Roles.ADMIN), asyncHandler(async (req, res
           ApiResponse.error('Salah satu course sudah ada dalam package')
         );
       }
+      // Handle error when course not found in course-service
+      if (error.message && error.message.includes('tidak ditemukan di course-service')) {
+        return res.status(404).json(
+          ApiResponse.error(error.message)
+        );
+      }
       throw error;
     }
   } else {
@@ -104,6 +108,12 @@ router.post('/', authenticate, permit(Roles.ADMIN), asyncHandler(async (req, res
       if (error.code === 'P2002') {
         return res.status(400).json(
           ApiResponse.error('Course sudah ada dalam package')
+        );
+      }
+      // Handle error when course not found in course-service
+      if (error.message && error.message.includes('tidak ditemukan di course-service')) {
+        return res.status(404).json(
+          ApiResponse.error(error.message)
         );
       }
       throw error;

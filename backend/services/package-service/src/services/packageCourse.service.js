@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { CourseService } from './course.service.js';
 
 const prisma = new PrismaClient();
 
@@ -19,8 +20,19 @@ export const PackageCourseService = {
       return { valid: false, message: 'Package tidak ditemukan' };
     }
     
-    // Untuk package tipe BEGINNER dan INTERMEDIATE, izinkan semua penambahan course
+    // Validasi course exists in course-service
+    const course = await CourseService.getCourseById(courseId);
+    if (!course) {
+      return { valid: false, message: 'Course tidak ditemukan di course-service' };
+    }
+    
+    // Untuk package tipe BEGINNER dan INTERMEDIATE, cek level
     if (package_.type === 'BEGINNER' || package_.type === 'INTERMEDIATE') {
+      // Cek kesesuaian level course dengan tipe package
+      if ((package_.type === 'BEGINNER' && course.level !== 'BEGINNER') ||
+          (package_.type === 'INTERMEDIATE' && course.level !== 'INTERMEDIATE')) {
+        return { valid: false, message: `Course level ${course.level} tidak sesuai dengan package tipe ${package_.type}` };
+      }
       return { valid: true };
     }
     
@@ -81,6 +93,12 @@ export const PackageCourseService = {
       if (existingCourse) {
         throw new Error(`Course dengan ID ${courseId} sudah ada dalam package`);
       }
+      
+      // Validasi course exists in course-service
+      const course = await CourseService.getCourseById(courseId);
+      if (!course) {
+        throw new Error(`Course dengan ID ${courseId} tidak ditemukan di course-service`);
+      }
     }
     
     // Tambahkan kedua course secara berurutan
@@ -105,6 +123,12 @@ export const PackageCourseService = {
    * @returns {Promise<Object>} Relasi PackageCourse yang telah dibuat
    */
   async addCourseToPackage(packageId, courseId) {
+    // Validasi course exists in course-service
+    const course = await CourseService.getCourseById(courseId);
+    if (!course) {
+      throw new Error(`Course dengan ID ${courseId} tidak ditemukan di course-service`);
+    }
+    
     return await prisma.packageCourse.create({
       data: {
         packageId,
@@ -142,35 +166,32 @@ export const PackageCourseService = {
       }
     });
 
-    // Mengembalikan daftar courseId saja
-    return packageCourses;
+    // Get actual course data from course-service
+    const courseIds = packageCourses.map(pc => pc.courseId);
+    
+    if (courseIds.length === 0) {
+      return [];
+    }
+    
+    const courses = await CourseService.getCoursesByIds(courseIds);
+    
+    // Map package course relations with actual course data
+    return packageCourses.map(pc => {
+      const courseData = courses.find(c => c.id === pc.courseId) || null;
+      return {
+        courseId: pc.courseId,
+        title: courseData ? courseData.title : `Unknown Course (${pc.courseId})`,
+        description: courseData ? courseData.description : null,
+        level: courseData ? courseData.level : null,
+        packageId: pc.packageId
+      };
+    });
   },
 
-  /**
-   * Menambahkan dummy course data untuk respons API
-   * @param {Array} packageCourses - Daftar PackageCourse
-   * @returns {Array} Daftar course dengan data dummy
-   */
-  addDummyCourseData(packageCourses) {
-    const dummyCourseMap = {
-      '00000000-0000-0000-0000-000000000001': 'Intro to Web Development',
-      '00000000-0000-0000-0000-000000000002': 'Intermediate JavaScript',
-      '00000000-0000-0000-0000-000000000003': 'React Fundamentals',
-      '00000000-0000-0000-0000-000000000004': 'NodeJS Basics',
-      '00000000-0000-0000-0000-000000000005': 'Full Stack Development',
-    };
-
-    return packageCourses.map(pc => ({
-      courseId: pc.courseId,
-      title: dummyCourseMap[pc.courseId] || `Course ${pc.courseId}`,
-      packageId: pc.packageId
-    }));
-  },
-  
   /**
    * Format respons course berdasarkan tipe package
    * @param {Array} courses - Daftar course dengan data lengkap
-   * @param {string} packageType - Tipe package (BEGINNER, INTERMEDIATE, BUNDLE)
+   * @param {string} packageId - ID package
    * @returns {Object} Respons yang sudah diformat sesuai tipe package
    */
   async formatCourseResponse(courses, packageId) {

@@ -8,7 +8,8 @@ export const Roles = {
     ADMIN: 'ADMIN',   // Full system access
     DIKE: 'DIKE',     // DIKE student access
     UMUM: 'UMUM',     // Regular student access
-    USER: 'USER'      // Basic user access
+    USER: 'USER',     // Basic user access
+    SERVICE: 'SERVICE' // Service-to-service communication
 };
 
 // Permission mapping for more granular access control if needed
@@ -32,6 +33,11 @@ export const Permissions = {
     [Roles.USER]: [
         'user:read:self',
         'course:read'
+    ],
+    [Roles.SERVICE]: [
+        'user:read',  // Allow services to read user data
+        'course:read',
+        'package:read'
     ]
 };
 
