@@ -33,6 +33,37 @@ class AuthService {
   }
 
   /**
+   * Generate secure cookie options for HTTP-only cookies
+   * @param {string} tokenType - Type of token ('access' or 'refresh')
+   * @returns {Object} Cookie options
+   */
+  getCookieOptions(tokenType) {
+    const isProduction = process.env.NODE_ENV === 'production';
+    
+    // Base options for all cookies
+    const options = {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? 'strict' : 'lax',
+      path: '/',
+    };
+    
+    // Add domain if configured in environment
+    if (process.env.COOKIE_DOMAIN) {
+      options.domain = process.env.COOKIE_DOMAIN;
+    }
+    
+    // Add expiration based on token type
+    if (tokenType === 'refresh') {
+      options.maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+    } else {
+      options.maxAge = parseInt(process.env.JWT_EXPIRES_IN_MS || '3600000'); // Default to 1 hour
+    }
+    
+    return options;
+  }
+
+  /**
    * Register a new user
    * @param {Object} userData - User registration data
    * @returns {Object} User object and auth tokens
@@ -216,12 +247,12 @@ class AuthService {
   }
 
   /**
- * Update user role
- * @param {number} userId - User ID to update
- * @param {string} newRole - New role (ADMIN, DIKE, UMUM, USER)
- * @returns {Object} Updated user
- */
-async updateUserRole(userId, newRole) {
+   * Update user role
+   * @param {number} userId - User ID to update
+   * @param {string} newRole - New role (ADMIN, DIKE, UMUM, USER)
+   * @returns {Object} Updated user
+   */
+  async updateUserRole(userId, newRole) {
     // Validate that newRole is one of the valid roles
     const validRoles = ['ADMIN', 'DIKE', 'UMUM', 'USER'];
     
