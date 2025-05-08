@@ -4,9 +4,10 @@ import Hero from "@/components/intermediate/intermediate-hero";
 // import BundleSessionInfo from "@/components/bundle/bundle-sessioninfo";
 import SessionInfo from "@/components/intermediate/intermediate-session-info";
 
-const hero: [string, string] = [
+const hero: [string, string, string] = [
   "Web Development + Software Engineering",
   "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis? fjieofjiojwjefoiejwoi",
+  "Bundle",
 ];
 const sessions: [string, string, string, string][] = [
   [
