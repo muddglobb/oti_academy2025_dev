@@ -13,7 +13,7 @@ type SecondContentProps = {
 };
 const SecondContent = ({ data }: SecondContentProps) => {
   return (
-    <div className="grid grid-cols-3 gap-6">  
+    <div className="grid grid-cols-3 gap-6">
       {/* Left Column */}
       <div className="col-span-2">
         <div className="bg-gray-800 rounded-lg p-6 mb-6">
@@ -28,15 +28,17 @@ const SecondContent = ({ data }: SecondContentProps) => {
           {data.map((enrolledClass) => (
             <div
               key={enrolledClass.id}
-              className="mt-4 bg-gray-900 rounded-lg p-4 flex"
+              className="mt-4 bg-gray-900 rounded-lg flex h-35"
             >
-              <div className="w-16 h-16 bg-gray-700 rounded mr-4"></div>
-              <div className="flex-grow">
-                <h4 className="font-medium">{enrolledClass.message}</h4>
-                <p className="text-sm text-gray-400 mt-1">
-                  {enrolledClass.description}
-                </p>
-                <button className="mt-3 bg-blue-600 hover:bg-blue-700 text-white py-1 px-4 rounded text-sm">
+              <div className="w-35 h-full bg-gray-700 rounded-l-lg"></div>
+              <div className="flex flex-col justify-between p-4">
+                <div className="flex-grow">
+                  <h4 className="font-medium">{enrolledClass.message}</h4>
+                  <p className="text-sm text-gray-400 mt-1">
+                    {enrolledClass.description}
+                  </p>
+                </div>
+                <button className="bg-primary-500 text-white py-2 px-3 rounded font-bold text-sm w-auto self-start">
                   Eksplor Sekarang
                 </button>
               </div>
@@ -52,20 +54,20 @@ const SecondContent = ({ data }: SecondContentProps) => {
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-medium">July 2025</h3>
             <button className="bg-blue-600 text-white text-xs rounded px-2 py-1">
-              Bukan data kelas hari
+              No class
             </button>
           </div>
 
           <div className="grid grid-cols-7 gap-1 text-center text-xs">
-            <div className="text-gray-400">Mon</div>
-            <div className="text-gray-400">Tue</div>
-            <div className="text-gray-400">Wed</div>
-            <div className="text-gray-400">Thu</div>
-            <div className="text-gray-400">Fri</div>
-            <div className="text-gray-400">Sat</div>
-            <div className="text-gray-400">Sun</div>
+            <div className="text-gray-400">M</div>
+            <div className="text-gray-400">T</div>
+            <div className="text-gray-400">W</div>
+            <div className="text-gray-400">T</div>
+            <div className="text-gray-400">F</div>
+            <div className="text-gray-400">S</div>
+            <div className="text-gray-400">S</div>
 
-            <div className="py-1 text-gray-500">31</div>
+            <div className="py-1 text-gray-500">30</div>
             <div className="py-1">1</div>
             <div className="py-1">2</div>
             <div className="py-1">3</div>
@@ -100,10 +102,10 @@ const SecondContent = ({ data }: SecondContentProps) => {
             <div className="py-1">28</div>
             <div className="py-1">29</div>
             <div className="py-1">30</div>
+            <div className="py-1">31</div>
             <div className="py-1 text-gray-500">1</div>
             <div className="py-1 text-gray-500">2</div>
             <div className="py-1 text-gray-500">3</div>
-            <div className="py-1 text-gray-500">4</div>
           </div>
         </div>
 

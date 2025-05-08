@@ -24,13 +24,13 @@ const WelcomeCard = ({ data }: { data: UserData }) => {
                 Siap-siap untuk transformasi seru dan setiap programmu akan kita rayakan bersama!
               </p>
             </div>
-            <div>
+            <div className='self-end'>
               <Image 
-                src="/images/planet/bumi-dashboard.png" 
+                src="/images/planet/bumi-dashboard.webp" 
                 alt="Earth" 
                 width={336}
                 height={289}
-                // className="w-full h-full object-cover"
+                className="self-end"
               />
             </div>
           </div>

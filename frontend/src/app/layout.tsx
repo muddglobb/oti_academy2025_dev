@@ -35,9 +35,11 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
 
-  const hideNavbarOnRoutes = ["/troll"];
+  // const hideNavbarOnRoutes = ["/troll", "/dashboard"];
+  // const showNavbar = !hideNavbarOnRoutes.includes(pathname);
 
-  const showNavbar = !hideNavbarOnRoutes.includes(pathname);
+  const hideNavbarOnPrefixes = ["/troll", "/dashboard"];
+  const showNavbar = !hideNavbarOnPrefixes.some(prefix => pathname.startsWith(prefix));
 
   return (
     <html lang="en">
