@@ -25,7 +25,9 @@ const courseCreationSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
   description: z.string().min(20, 'Description must be at least 20 characters'),
   level: z.enum(['ENTRY', 'INTERMEDIATE', 'ADVANCED']).optional(),
-  quota: z.number().int().positive().optional()
+  quota: z.number().int().positive().optional(),
+  entryQuota: z.number().int().positive().optional(),
+  bundleQuota: z.number().int().positive().optional()
 });
 
 // Course update schema
@@ -33,7 +35,9 @@ const courseUpdateSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters').optional(),
   description: z.string().min(20, 'Description must be at least 20 characters').optional(),
   level: z.enum(['ENTRY', 'INTERMEDIATE', 'ADVANCED']).optional(),
-  quota: z.number().int().positive().optional()
+  quota: z.number().int().positive().optional(),
+  entryQuota: z.number().int().positive().optional(),
+  bundleQuota: z.number().int().positive().optional()
 });
 
 export const validateCourseCreation = validate(courseCreationSchema);

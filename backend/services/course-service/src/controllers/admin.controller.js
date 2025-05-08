@@ -9,7 +9,7 @@ import config from '../config/index.js';
  * @access  Admin only
  */
 export const createCourse = asyncHandler(async (req, res) => {
-  const { title, description, level, quota } = req.body;
+  const { title, description, level, quota, entryQuota, bundleQuota } = req.body;
   
   // Validation
   if (!title || !description) {
@@ -18,12 +18,19 @@ export const createCourse = asyncHandler(async (req, res) => {
     );
   }
   
+  // Set default quota values
+  const totalQuota = quota || config.DEFAULT_COURSE_QUOTA;
+  const defaultEntryQuota = Math.floor(totalQuota * 0.7); // 70% of total quota
+  const defaultBundleQuota = Math.floor(totalQuota * 0.3); // 30% of total quota
+  
   // Create course
   const course = await CourseService.createCourse({
     title,
     description,
     level: level || 'ENTRY',
-    quota: quota || config.DEFAULT_COURSE_QUOTA
+    quota: totalQuota,
+    entryQuota: entryQuota || defaultEntryQuota,
+    bundleQuota: bundleQuota || defaultBundleQuota
   });
   
   res.status(201).json(
@@ -38,7 +45,7 @@ export const createCourse = asyncHandler(async (req, res) => {
  */
 export const updateCourse = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { title, description, level, quota } = req.body;
+  const { title, description, level, quota, entryQuota, bundleQuota } = req.body;
   
   try {
     const updateData = {};
@@ -46,7 +53,20 @@ export const updateCourse = asyncHandler(async (req, res) => {
     if (title !== undefined) updateData.title = title;
     if (description !== undefined) updateData.description = description;
     if (level !== undefined) updateData.level = level;
-    if (quota !== undefined) updateData.quota = quota;
+    
+    // Handle quota updates
+    if (quota !== undefined) {
+      updateData.quota = quota;
+      
+      // Recalculate entry and bundle quotas if they weren't explicitly provided
+      if (entryQuota === undefined && bundleQuota === undefined) {
+        updateData.entryQuota = Math.floor(quota * 0.7);  // 70% of total quota
+        updateData.bundleQuota = Math.floor(quota * 0.3); // 30% of total quota
+      }
+    }
+    
+    if (entryQuota !== undefined) updateData.entryQuota = entryQuota;
+    if (bundleQuota !== undefined) updateData.bundleQuota = bundleQuota;
     
     const updatedCourse = await CourseService.updateCourse(id, updateData);
     

@@ -4,8 +4,10 @@ import dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
-// NOTE: QUOTA AND DURATION VALUES ARE PLACEHOLDERS (XX) AND SHOULD BE REPLACED WITH ACTUAL VALUES
-// quota 140 per course, nanti bundle bakal dikurangi, session belum.
+// Total quota is 100 per course, with 70 for entry/intermediate and 30 for bundle
+const DEFAULT_TOTAL_QUOTA = 100;
+const DEFAULT_ENTRY_QUOTA = 70;
+const DEFAULT_BUNDLE_QUOTA = 30;
 
 const prisma = new PrismaClient();
 
@@ -32,7 +34,9 @@ async function main() {
                 title: 'Competitive Programming',
                 description: 'Learn algorithms and data structures for competitive programming contests.',
                 level: 'ENTRY',
-                quota: 140,
+                quota: DEFAULT_TOTAL_QUOTA,
+                entryQuota: DEFAULT_ENTRY_QUOTA,
+                bundleQuota: DEFAULT_BUNDLE_QUOTA,
                 sessions: {
                     create: [
                         {
@@ -52,7 +56,9 @@ async function main() {
                 title: 'Graphic Design',
                 description: 'Master the basics of graphic design including color theory, typography, and composition.',
                 level: 'ENTRY',
-                quota: 140,
+                quota: DEFAULT_TOTAL_QUOTA,
+                entryQuota: DEFAULT_ENTRY_QUOTA,
+                bundleQuota: DEFAULT_BUNDLE_QUOTA,
                 sessions: {
                     create: [
                         {
@@ -72,7 +78,9 @@ async function main() {
                 title: 'Fundamental Cyber Security',
                 description: 'Learn the basics of cybersecurity, including threat identification and security principles.',
                 level: 'ENTRY',
-                quota: 140,
+                quota: DEFAULT_TOTAL_QUOTA,
+                entryQuota: DEFAULT_ENTRY_QUOTA,
+                bundleQuota: DEFAULT_BUNDLE_QUOTA,
                 sessions: {
                     create: [
                         {
@@ -92,7 +100,9 @@ async function main() {
                 title: 'Game Development',
                 description: 'Introduction to game development concepts, engines, and basic implementation.',
                 level: 'ENTRY',
-                quota: 140,
+                quota: DEFAULT_TOTAL_QUOTA,
+                entryQuota: DEFAULT_ENTRY_QUOTA,
+                bundleQuota: DEFAULT_BUNDLE_QUOTA,
                 sessions: {
                     create: [
                         {
@@ -112,7 +122,9 @@ async function main() {
                 title: 'Web Development',
                 description: 'Learn HTML, CSS, and JavaScript to build responsive websites from scratch.',
                 level: 'ENTRY',
-                quota: 140,
+                quota: DEFAULT_TOTAL_QUOTA,
+                entryQuota: DEFAULT_ENTRY_QUOTA,
+                bundleQuota: DEFAULT_BUNDLE_QUOTA,
                 sessions: {
                     create: [
                         {
@@ -132,7 +144,9 @@ async function main() {
                 title: 'Basic Python',
                 description: 'Introduction to Python programming language, syntax, and basic applications.',
                 level: 'ENTRY',
-                quota: 140,
+                quota: DEFAULT_TOTAL_QUOTA,
+                entryQuota: DEFAULT_ENTRY_QUOTA,
+                bundleQuota: DEFAULT_BUNDLE_QUOTA,
                 sessions: {
                     create: [
                         {
@@ -157,7 +171,9 @@ async function main() {
                 title: 'Software Engineering',
                 description: 'Learn professional software development practices including version control, testing, and CI/CD pipelines.',
                 level: 'INTERMEDIATE',
-                quota: 140,
+                quota: DEFAULT_TOTAL_QUOTA,
+                entryQuota: DEFAULT_ENTRY_QUOTA,
+                bundleQuota: DEFAULT_BUNDLE_QUOTA,
                 sessions: {
                     create: [
                         {
@@ -177,7 +193,9 @@ async function main() {
                 title: 'Data Science & Artificial Intelligence',
                 description: 'Explore data analysis, machine learning, and artificial intelligence techniques.',
                 level: 'INTERMEDIATE',
-                quota: 140,
+                quota: DEFAULT_TOTAL_QUOTA,
+                entryQuota: DEFAULT_ENTRY_QUOTA,
+                bundleQuota: DEFAULT_BUNDLE_QUOTA,
                 sessions: {
                     create: [
                         {
@@ -197,7 +215,9 @@ async function main() {
                 title: 'Cyber Security',
                 description: 'Advanced security concepts including penetration testing and security architecture.',
                 level: 'INTERMEDIATE',
-                quota: 140,
+                quota: DEFAULT_TOTAL_QUOTA,
+                entryQuota: DEFAULT_ENTRY_QUOTA,
+                bundleQuota: DEFAULT_BUNDLE_QUOTA,
                 sessions: {
                     create: [
                         {
@@ -217,7 +237,9 @@ async function main() {
                 title: 'UI/UX',
                 description: 'User interface and experience design principles, tools, and methodologies.',
                 level: 'INTERMEDIATE',
-                quota: 140,
+                quota: DEFAULT_TOTAL_QUOTA,
+                entryQuota: DEFAULT_ENTRY_QUOTA,
+                bundleQuota: DEFAULT_BUNDLE_QUOTA,
                 sessions: {
                     create: [
                         {
