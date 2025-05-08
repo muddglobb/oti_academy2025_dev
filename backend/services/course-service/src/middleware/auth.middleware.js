@@ -8,16 +8,21 @@ import { Roles, isStudent } from '../libs/roles.js';
  * Middleware to authenticate users
  */
 export const authenticate = async (req, res, next) => {
-  // Get token from header
-  const authHeader = req.headers.authorization;
+  // Pertama cek apakah token ada di cookie (prioritas utama)
+  let token = req.cookies?.accessToken;
   
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json(
-      ApiResponse.error('Authentication required. No token provided.')
-    );
+  // Jika tidak ada di cookie, coba ambil dari header (backwards compatibility)
+  if (!token) {
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json(
+        ApiResponse.error('Authentication required. No token provided.')
+      );
+    }
+    
+    token = authHeader.split(' ')[1];
   }
-
-  const token = authHeader.split(' ')[1];
 
   try {
     // Try local verification first (if JWT_SECRET is available)
@@ -33,7 +38,7 @@ export const authenticate = async (req, res, next) => {
         console.log('Local token verification failed, trying auth service');
       }
     }
-
+    
     // If local verification fails, verify with auth service
     const response = await axios.post(
       `${config.AUTH_SERVICE_URL}/api/auth/verify`, 

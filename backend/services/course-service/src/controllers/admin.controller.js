@@ -22,7 +22,7 @@ export const createCourse = asyncHandler(async (req, res) => {
   const course = await CourseService.createCourse({
     title,
     description,
-    level: level || 'BEGINNER',
+    level: level || 'ENTRY',
     quota: quota || config.DEFAULT_COURSE_QUOTA
   });
   

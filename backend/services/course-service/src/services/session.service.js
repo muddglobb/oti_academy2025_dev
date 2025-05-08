@@ -1,5 +1,6 @@
 import { CourseModel } from '../models/course.model.js';
 import { SessionModel } from '../models/session.model.js';
+import { CacheService } from './cache.service.js';
 
 export const SessionService = {
   /**
@@ -14,7 +15,15 @@ export const SessionService = {
       throw new Error('Course not found');
     }
     
-    return await SessionModel.create(sessionData);
+    const session = await SessionModel.create(sessionData);
+    
+    // Invalidate related caches
+    await Promise.all([
+      CacheService.invalidate(`course:${sessionData.courseId}`),
+      CacheService.invalidate(`course-sessions:${sessionData.courseId}`)
+    ]);
+    
+    return session;
   },
   
   /**
@@ -23,11 +32,13 @@ export const SessionService = {
    * @returns {Promise<Object>} Session
    */
   async getSessionById(id) {
-    const session = await SessionModel.findById(id);
-    if (!session) {
-      throw new Error('Session not found');
-    }
-    return session;
+    return await CacheService.getOrSet(`session:${id}`, async () => {
+      const session = await SessionModel.findById(id);
+      if (!session) {
+        throw new Error('Session not found');
+      }
+      return session;
+    }, 30 * 60); // Cache for 30 minutes
   },
   
   /**
@@ -42,7 +53,9 @@ export const SessionService = {
       throw new Error('Course not found');
     }
     
-    return await SessionModel.findByCourseId(courseId);
+    return await CacheService.getOrSet(`course-sessions:${courseId}`, async () => {
+      return await SessionModel.findByCourseId(courseId);
+    }, 30 * 60); // Cache for 30 minutes
   },
   
   /**
@@ -57,7 +70,16 @@ export const SessionService = {
       throw new Error('Session not found');
     }
     
-    return await SessionModel.update(id, data);
+    const updatedSession = await SessionModel.update(id, data);
+    
+    // Invalidate related caches
+    await Promise.all([
+      CacheService.invalidate(`session:${id}`),
+      CacheService.invalidate(`course-sessions:${session.courseId}`),
+      CacheService.invalidate(`course:${session.courseId}`)
+    ]);
+    
+    return updatedSession;
   },
   
   /**
@@ -72,5 +94,12 @@ export const SessionService = {
     }
     
     await SessionModel.delete(id);
+    
+    // Invalidate related caches
+    await Promise.all([
+      CacheService.invalidate(`session:${id}`),
+      CacheService.invalidate(`course-sessions:${session.courseId}`),
+      CacheService.invalidate(`course:${session.courseId}`)
+    ]);
   }
 };

@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import config from './config/index.js';
 
@@ -9,6 +11,9 @@ import config from './config/index.js';
 import adminRoutes from './routes/admin.routes.js';
 import courseRoutes from './routes/course.routes.js';
 import sessionRoutes from './routes/session.routes.js';
+
+// Load environment variables
+dotenv.config();
 
 // Initialize Express app
 const app = express();
@@ -19,9 +24,11 @@ app.use(helmet());
 app.use(cors({
   origin: config.CORS_ORIGIN || '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // Enable credentials (cookies, auth headers)
 }));
 app.use(express.json());
+app.use(cookieParser()); // Parse cookies
 app.use(morgan('dev'));
 
 // Routes

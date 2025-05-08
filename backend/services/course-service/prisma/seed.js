@@ -31,7 +31,7 @@ async function main() {
             {
                 title: 'Competitive Programming',
                 description: 'Learn algorithms and data structures for competitive programming contests.',
-                level: 'BEGINNER',
+                level: 'ENTRY',
                 quota: 140,
                 sessions: {
                     create: [
@@ -49,9 +49,9 @@ async function main() {
                 }
             },
             {
-                title: 'Graphic Design Fundamentals',
+                title: 'Graphic Design',
                 description: 'Master the basics of graphic design including color theory, typography, and composition.',
-                level: 'BEGINNER',
+                level: 'ENTRY',
                 quota: 140,
                 sessions: {
                     create: [
@@ -69,9 +69,9 @@ async function main() {
                 }
             },
             {
-                title: 'Fundamental Cybersecurity',
+                title: 'Fundamental Cyber Security',
                 description: 'Learn the basics of cybersecurity, including threat identification and security principles.',
-                level: 'BEGINNER',
+                level: 'ENTRY',
                 quota: 140,
                 sessions: {
                     create: [
@@ -91,7 +91,7 @@ async function main() {
             {
                 title: 'Game Development',
                 description: 'Introduction to game development concepts, engines, and basic implementation.',
-                level: 'BEGINNER',
+                level: 'ENTRY',
                 quota: 140,
                 sessions: {
                     create: [
@@ -109,9 +109,9 @@ async function main() {
                 }
             },
             {
-                title: 'Web Development Fundamentals',
+                title: 'Web Development',
                 description: 'Learn HTML, CSS, and JavaScript to build responsive websites from scratch.',
-                level: 'BEGINNER',
+                level: 'ENTRY',
                 quota: 140,
                 sessions: {
                     create: [
@@ -131,7 +131,7 @@ async function main() {
             {
                 title: 'Basic Python',
                 description: 'Introduction to Python programming language, syntax, and basic applications.',
-                level: 'BEGINNER',
+                level: 'ENTRY',
                 quota: 140,
                 sessions: {
                     create: [
@@ -194,7 +194,7 @@ async function main() {
                 }
             },
             {
-                title: 'Advance Cybersecurity',
+                title: 'Cyber Security',
                 description: 'Advanced security concepts including penetration testing and security architecture.',
                 level: 'INTERMEDIATE',
                 quota: 140,
@@ -214,7 +214,7 @@ async function main() {
                 }
             },
             {
-                title: 'UI/UX Design',
+                title: 'UI/UX',
                 description: 'User interface and experience design principles, tools, and methodologies.',
                 level: 'INTERMEDIATE',
                 quota: 140,

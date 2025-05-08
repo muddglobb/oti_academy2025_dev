@@ -3,7 +3,7 @@
 ## 1. Setup Postman
 
 1. **Set environment variables**:
-   - `baseUrl`: `http://localhost:8080` (URL API Gateway)
+   - `baseUrl`: `http://localhost:8000` (URL API Gateway)
 
 2. **Set headers untuk semua requests**:
    - `Content-Type`: `application/json`
@@ -30,8 +30,8 @@ Authorization: Bearer {{accessToken}}
 
 **Query Parameters (opsional):**
 ```
-?level=BEGINNER  // Filter berdasarkan level (BEGINNER/INTERMEDIATE)
-?search=Web      // Pencarian berdasarkan title atau description
+?level=ENTRY  // Filter berdasarkan level (ENTRY/INTERMEDIATE)
+?search=Web   // Pencarian berdasarkan title atau description
 ```
 
 **Response (200):**
@@ -45,7 +45,7 @@ Authorization: Bearer {{accessToken}}
       "title": "Web Development Fundamentals",
       "description": "Learn HTML, CSS, and JavaScript to build responsive websites from scratch.",
       "quota": 140,
-      "level": "BEGINNER",
+      "level": "ENTRY",
       "createdAt": "2025-05-06T04:30:45.123Z",
       "updatedAt": "2025-05-06T04:30:45.123Z",
       "sessions": [
@@ -86,7 +86,7 @@ Authorization: Bearer {{accessToken}}
       "title": "Web Development Fundamentals",
       "description": "Learn HTML, CSS, and JavaScript to build responsive websites from scratch.",
       "quota": 140,
-      "level": "BEGINNER",
+      "level": "ENTRY",
       "createdAt": "2025-05-06T04:30:45.123Z",
       "updatedAt": "2025-05-06T04:30:45.123Z",
       "sessions": [
@@ -128,7 +128,7 @@ Authorization: Bearer {{accessToken}}
     "title": "Web Development Fundamentals",
     "description": "Learn HTML, CSS, and JavaScript to build responsive websites from scratch.",
     "quota": 140,
-    "level": "BEGINNER",
+    "level": "ENTRY",
     "createdAt": "2025-05-06T04:30:45.123Z",
     "updatedAt": "2025-05-06T04:30:45.123Z",
     "sessions": [
@@ -175,7 +175,7 @@ Authorization: Bearer {{accessToken}}
     "title": "Web Development Fundamentals",
     "description": "Learn HTML, CSS, and JavaScript to build responsive websites from scratch.",
     "quota": 140,
-    "level": "BEGINNER",
+    "level": "ENTRY",
     "createdAt": "2025-05-06T04:30:45.123Z",
     "updatedAt": "2025-05-06T04:30:45.123Z",
     "sessions": [

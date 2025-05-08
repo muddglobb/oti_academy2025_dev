@@ -1,0 +1,60 @@
+import { getCache, setCache, deleteCache, deletePattern } from '../utils/redisClient.js';
+
+/**
+ * Service untuk menangani caching data course
+ */
+export class CacheService {
+  /**
+   * Mendapatkan cache untuk sebuah key, atau menyimpan hasil dari callback jika cache tidak ada
+   * @param {string} key - Cache key
+   * @param {Function} callback - Async function yang akan dipanggil jika cache tidak ada
+   * @param {number} ttl - Time-to-live dalam detik
+   * @returns {Promise<any>} Data dari cache atau hasil callback
+   */
+  static async getOrSet(key, callback, ttl = 3600) {
+    try {
+      // Try to get data from cache first
+      const cachedData = await getCache(key);
+      
+      if (cachedData) {
+        console.log(`🔄 Cache hit for ${key}`);
+        return cachedData;
+      }
+      
+      console.log(`🔍 Cache miss for ${key}, fetching fresh data`);
+      
+      // If cache miss, execute callback to get fresh data
+      const freshData = await callback();
+      
+      // Store result in cache with TTL
+      await setCache(key, freshData, ttl);
+      
+      return freshData;
+    } catch (error) {
+      console.error(`Cache service error for key ${key}: ${error.message}`);
+      // If anything goes wrong with cache, just return the callback result
+      return callback();
+    }
+  }
+  
+  /**
+   * Menghapus cache untuk sebuah key atau pattern
+   * @param {string} keyOrPattern - Cache key atau pattern (dengan *)
+   * @param {boolean} isPattern - Apakah key adalah pattern
+   * @returns {Promise<boolean>} Success status
+   */
+  static async invalidate(keyOrPattern, isPattern = false) {
+    try {
+      if (isPattern) {
+        console.log(`🗑️ Invalidating cache pattern: ${keyOrPattern}`);
+        return await deletePattern(keyOrPattern);
+      } else {
+        console.log(`🗑️ Invalidating cache key: ${keyOrPattern}`);
+        return await deleteCache(keyOrPattern);
+      }
+    } catch (error) {
+      console.error(`Cache invalidation error: ${error.message}`);
+      return false;
+    }
+  }
+}

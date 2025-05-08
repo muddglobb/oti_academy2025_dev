@@ -1,4 +1,5 @@
 import { CourseModel } from '../models/course.model.js';
+import { CacheService } from './cache.service.js';
 
 export const CourseService = {
   /**
@@ -7,7 +8,12 @@ export const CourseService = {
    * @returns {Promise<Object>} Created course
    */
   async createCourse(courseData) {
-    return await CourseModel.create(courseData);
+    const course = await CourseModel.create(courseData);
+    
+    // Invalidate courses cache after creating a new course
+    await CacheService.invalidate('courses:*', true);
+    
+    return course;
   },
 
   /**
@@ -16,11 +22,13 @@ export const CourseService = {
    * @returns {Promise<Object>} Course with sessions
    */
   async getCourseById(id) {
-    const course = await CourseModel.findById(id);
-    if (!course) {
-      throw new Error('Course not found');
-    }
-    return course;
+    return await CacheService.getOrSet(`course:${id}`, async () => {
+      const course = await CourseModel.findById(id);
+      if (!course) {
+        throw new Error('Course not found');
+      }
+      return course;
+    }, 30 * 60); // Cache for 30 minutes
   },
 
   /**
@@ -30,7 +38,12 @@ export const CourseService = {
    * @returns {Promise<Array>} List of courses
    */
   async getAllCourses(filter = {}, options = {}) {
-    return await CourseModel.findAll(filter, options);
+    // Generate cache key based on filter and options
+    const cacheKey = `courses:${JSON.stringify(filter)}:${JSON.stringify(options)}`;
+    
+    return await CacheService.getOrSet(cacheKey, async () => {
+      return await CourseModel.findAll(filter, options);
+    }, 30 * 60); // Cache for 30 minutes
   },
 
   /**
@@ -44,7 +57,16 @@ export const CourseService = {
     if (!courseExists) {
       throw new Error('Course not found');
     }
-    return await CourseModel.update(id, data);
+    
+    const updatedCourse = await CourseModel.update(id, data);
+    
+    // Invalidate specific course cache and any cached lists
+    await Promise.all([
+      CacheService.invalidate(`course:${id}`),
+      CacheService.invalidate('courses:*', true)
+    ]);
+    
+    return updatedCourse;
   },
 
   /**
@@ -57,6 +79,13 @@ export const CourseService = {
     if (!courseExists) {
       throw new Error('Course not found');
     }
+    
     await CourseModel.delete(id);
+    
+    // Invalidate specific course cache and any cached lists
+    await Promise.all([
+      CacheService.invalidate(`course:${id}`),
+      CacheService.invalidate('courses:*', true)
+    ]);
   }
 };

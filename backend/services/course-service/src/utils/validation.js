@@ -24,7 +24,7 @@ const validate = (schema) => (req, res, next) => {
 const courseCreationSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
   description: z.string().min(20, 'Description must be at least 20 characters'),
-  level: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED']).optional(),
+  level: z.enum(['ENTRY', 'INTERMEDIATE', 'ADVANCED']).optional(),
   quota: z.number().int().positive().optional()
 });
 
@@ -32,7 +32,7 @@ const courseCreationSchema = z.object({
 const courseUpdateSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters').optional(),
   description: z.string().min(20, 'Description must be at least 20 characters').optional(),
-  level: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED']).optional(),
+  level: z.enum(['ENTRY', 'INTERMEDIATE', 'ADVANCED']).optional(),
   quota: z.number().int().positive().optional()
 });
 
