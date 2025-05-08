@@ -5,9 +5,10 @@ import Hero from "@/components/intermediate/intermediate-hero";
 // import EntrySessionInfo from "@/components/entry/entry-sessioninfo";
 import SessionInfo from "@/components/intermediate/intermediate-session-info";
 
-const hero: [string, string] = [
+const hero: [string, string, string] = [
   "Web Development",
   "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis? fjieofjiojwjefoiejwoi",
+  "Beginner Level",
 ];
 const classInfo: [
   string,
@@ -62,7 +63,7 @@ const webDevelopment = () => {
         classDescription="Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa harum accusamus quos incidunt vero sed iusto tempora similique, dignissimos reprehenderit dicta amet voluptate, ducimus ex rem aliquam, molestiae commodi sapiente."
       ></EntryHero> */}
       {/* <EntryHero hero={hero} /> */}
-      <Hero hero={hero}/>
+      <Hero hero={hero} />
       {/* <EntryClassInfo
         date="1 - 15 June 2025"
         sesi="6 Sesi"
@@ -75,7 +76,7 @@ const webDevelopment = () => {
       /> */}
       <EntryClassInfo classInfo={classInfo} />
 
-      <SessionInfo sessions={sessions}/>
+      <SessionInfo sessions={sessions} />
     </div>
   );
 };
