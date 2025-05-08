@@ -73,6 +73,25 @@ export const createPayment = async (req, res) => {
           ApiResponse.error('Course yang dipilih bukan bagian dari paket yang dipilih')
         );
       }
+      
+      // Check course quota availability - NEW VALIDATION
+      const courseAvailability = await PaymentService.validateCourseAvailability(
+        validatedData.courseId,
+        packageInfo.type
+      );
+      
+      if (!courseAvailability.valid) {
+        return res.status(400).json(
+          ApiResponse.error(courseAvailability.message)
+        );
+      }
+    }
+    
+    // For bundle packages, ensure no courseId is provided
+    if (isBundle && validatedData.courseId) {
+      return res.status(400).json(
+        ApiResponse.error('CourseId tidak boleh disertakan untuk paket BUNDLE')
+      );
     }
     
     // Check user's existing payments and validate enrollment rules
@@ -84,6 +103,23 @@ export const createPayment = async (req, res) => {
         return res.status(400).json(
           ApiResponse.error('Anda tidak dapat mendaftar paket bundle karena sudah terdaftar di kelas lain')
         );
+      }
+      
+      // For bundle packages, we need to check quota for all courses in the bundle
+      const coursesInBundle = await PaymentService.getCoursesInPackage(validatedData.packageId);
+      
+      // Check quota for each course in the bundle
+      for (const course of coursesInBundle) {
+        const courseAvailability = await PaymentService.validateCourseAvailability(
+          course.id,
+          'BUNDLE'
+        );
+        
+        if (!courseAvailability.valid) {
+          return res.status(400).json(
+            ApiResponse.error(courseAvailability.message)
+          );
+        }
       }
     } 
     // If package is not bundle (beginner or intermediate)
@@ -144,17 +180,26 @@ export const createPayment = async (req, res) => {
     };
     
     res.status(201).json(
-      ApiResponse.success(enhancedPayment, 'Payment created successfully')
+      ApiResponse.success(
+        enhancedPayment,
+        'Pembayaran berhasil dibuat'
+      )
     );
   } catch (error) {
     if (error.name === 'ZodError') {
+      const errors = error.errors.map(err => ({
+        field: err.path.join('.'),
+        message: err.message
+      }));
+      
       return res.status(400).json(
-        ApiResponse.error(error.errors)
+        ApiResponse.error('Validation failed', errors)
       );
     }
-    
     console.error('Error creating payment:', error);
-    throw error;
+    res.status(500).json(
+      ApiResponse.error('Terjadi kesalahan saat membuat pembayaran')
+    );
   }
 };
 
@@ -397,7 +442,6 @@ export const approvePayment = async (req, res) => {
       );
     }
     
-    // Approve the payment
     const updatedPayment = await PaymentService.approvePayment(id);
     
     // Get user info for the complete response
@@ -480,3 +524,80 @@ export const completeBack = async (req, res) => {
   }
 };
 
+export const deletePayment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    await PaymentService.deletePayment(id);
+    
+    res.status(200).json({
+      status: 'success',
+      message: 'Payment deleted successfully'
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'error',
+      message: error.message
+    });
+  }
+};
+
+/**
+ * Get enrollment statistics for a specific course
+ * Shows quota and enrollment counts from approved payments
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const getCourseEnrollmentStats = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    
+    // Import CourseService at the top level to avoid circular dependencies
+    const { CourseService } = await import('../services/course.service.js');
+    
+    // Ambil detail course terlebih dahulu
+    const course = await CourseService.getCourseById(courseId);
+    if (!course) {
+      return res.status(404).json(
+        ApiResponse.error('Course not found')
+      );
+    }
+
+    // Gunakan fungsi yang sudah ada untuk menghitung enrollment
+    const enrollmentCounts = await PaymentService.getCourseEnrollmentCount(courseId);
+    
+    // Hitung slot tersedia
+    const entryAvailable = course.entryQuota - enrollmentCounts.entryIntermediateCount;
+    const bundleAvailable = course.bundleQuota - enrollmentCounts.bundleCount;
+    
+    // Format response
+    const response = {
+      course: {
+        id: course.id,
+        title: course.title,
+        level: course.level
+      },
+      quota: {
+        total: course.quota,
+        entryIntermediateQuota: course.entryQuota,
+        bundleQuota: course.bundleQuota
+      },
+      enrollments: {
+        entryIntermediateCount: enrollmentCounts.entryIntermediateCount,
+        bundleCount: enrollmentCounts.bundleCount,
+        total: enrollmentCounts.total
+      },
+      available: {
+        entryIntermediateAvailable: Math.max(0, entryAvailable),
+        bundleAvailable: Math.max(0, bundleAvailable),
+        totalAvailable: Math.max(0, course.quota - enrollmentCounts.total)
+      },
+      percentageFilled: Math.round((enrollmentCounts.total / course.quota) * 100)
+    };
+    
+    res.status(200).json(ApiResponse.success(response));
+  } catch (error) {
+    console.error('Error getting enrollment stats:', error);
+    res.status(500).json(ApiResponse.error('Error retrieving enrollment statistics'));
+  }
+};

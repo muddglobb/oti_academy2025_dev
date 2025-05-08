@@ -101,4 +101,28 @@ export class CourseService {
       return [];
     }
   }
+  
+  /**
+   * Get course enrollment count from enrollment service
+   * @param {string} courseId - Course ID
+   * @returns {Promise<Object>} Enrollment counts
+   */
+  static async getEnrollmentCount(courseId) {
+    try {
+      // In the future, call to a real enrollment service
+      // For now, return default values
+      return {
+        total: 0,
+        bundleCount: 0,
+        entryIntermediateCount: 0
+      };
+    } catch (error) {
+      console.error('Error fetching enrollment count:', error.message);
+      return {
+        total: 0,
+        bundleCount: 0,
+        entryIntermediateCount: 0
+      };
+    }
+  }
 }

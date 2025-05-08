@@ -458,54 +458,6 @@ Authorization: Bearer {{accessToken}}
 }
 ```
 
-### Memperbarui Informasi Back Payment (DIKE Only)
-
-```
-POST {{baseUrl}}/payments/75c2d819-7a8d-4ce7-ac19-bba55efd2b72/back
-```
-
-**Headers:**
-```
-Authorization: Bearer {{accessToken}}
-Content-Type: application/json
-```
-
-**Body:**
-```json
-{
-  "backPaymentMethod": "OVO",
-  "backAccountNumber": "0812345678",
-  "backRecipient": "Andi Susanto"
-}
-```
-
-**Response (200):**
-```json
-{
-  "status": "success",
-  "message": "Back payment requested successfully",
-  "data": {
-    "id": "75c2d819-7a8d-4ce7-ac19-bba55efd2b72",
-    "userId": "dafc9d5e-3b7a-4a63-b160-7a13c922104f",
-    "packageId": "f23a7642-9df3-42cf-9c1e-b8962dbd5608",
-    "courseId": "00000000-0000-0000-0000-000000000001",
-    "type": "DIKE",
-    "proofLink": "https://example.com/bukti-transfer-dike.jpg",
-    "status": "APPROVED",
-    "backPaymentMethod": "OVO",
-    "backAccountNumber": "0812345678",
-    "backRecipient": "Andi Susanto",
-    "backStatus": "REQUESTED",
-    "backCompletedAt": null,
-    "createdAt": "2025-05-06T10:17:45.567Z",
-    "updatedAt": "2025-05-06T10:35:20.459Z",
-    "packageName": "Entry Web Development",
-    "packageType": "ENTRY",
-    "price": 250000
-  }
-}
-```
-
 ### Memperbarui Detail Pembayaran (DIKE & UMUM)
 
 ```
@@ -617,6 +569,49 @@ Authorization: Bearer {{accessToken}}
   "status": "success",
   "message": "Payment deleted successfully",
   "data": null
+}
+```
+
+
+### Get payment stats
+
+```
+GET {{baseUrl}}/payments/courses/{{courseId}}/enrollment-stats
+```
+
+**Headers:**
+```
+Authorization: Bearer {{accessToken}}
+```
+
+**Response (200):**
+```json
+{
+    "status": "success",
+    "message": "Success",
+    "data": {
+        "course": {
+            "id": "6948a9a3-2a3c-4692-b19a-d230884a2334",
+            "title": "Software Engineering",
+            "level": "INTERMEDIATE"
+        },
+        "quota": {
+            "total": 100,
+            "entryIntermediateQuota": 70,
+            "bundleQuota": 30
+        },
+        "enrollments": {
+            "entryIntermediateCount": 1,
+            "bundleCount": 2,
+            "total": 3
+        },
+        "available": {
+            "entryIntermediateAvailable": 69,
+            "bundleAvailable": 28,
+            "totalAvailable": 97
+        },
+        "percentageFilled": 3
+    }
 }
 ```
 

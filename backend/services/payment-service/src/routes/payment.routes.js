@@ -13,7 +13,6 @@ router.post(
   asyncHandler(controller.createPayment)
 );
 
-// Admin operations
 router.get(
   '/',
   authenticate,
@@ -35,8 +34,6 @@ router.patch(
   asyncHandler(controller.completeBack)
 );
 
-// User operations
-// Get user's own payment history
 router.get(
   '/my-payments',
   authenticate,
@@ -44,7 +41,6 @@ router.get(
   asyncHandler(controller.getUserPayments)
 );
 
-// Update payment details (proofLink and/or back payment info)
 router.patch(
   '/:id/update',
   authenticate,
@@ -59,18 +55,18 @@ router.get(
   asyncHandler(controller.getPaymentById)
 );
 
-router.post(
-  '/:id/back',
-  authenticate,
-  permit('DIKE'),
-  asyncHandler(controller.requestBack)
-);
-
 router.delete(
   '/:id',
   authenticate,
   permit('ADMIN'),
   asyncHandler(controller.deletePayment)
+);
+
+router.get(
+  '/courses/:courseId/enrollment-stats',
+  authenticate,
+  permit('ADMIN', 'DIKE', 'UMUM'),
+  asyncHandler(controller.getCourseEnrollmentStats)
 );
 
 export default router;

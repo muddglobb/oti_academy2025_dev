@@ -367,6 +367,116 @@ export class PaymentService {
   }
 
   /**
+   * Validasi quota course berdasarkan tipe package
+   * @param {string} courseId - ID course yang akan divalidasi
+   * @param {string} packageType - Tipe package (ENTRY, INTERMEDIATE, BUNDLE)
+   * @returns {Promise<Object>} Hasil validasi dengan status dan pesan
+   */
+  static async validateCourseAvailability(courseId, packageType) {
+    try {
+      // Import CourseService at the top level to avoid circular dependencies
+      const { CourseService } = await import('./course.service.js');
+      
+      // Get course information including quota details
+      const course = await CourseService.getCourseById(courseId);
+      if (!course) {
+        return { valid: false, message: 'Kelas tidak ditemukan' };
+      }
+      
+      // Get total approved enrollments for this course
+      const enrollmentCounts = await this.getCourseEnrollmentCount(courseId);
+      
+      // Check against the relevant quota based on package type
+      if (packageType === 'BUNDLE') {
+        if (enrollmentCounts.bundleCount >= course.bundleQuota) {
+          return { 
+            valid: false, 
+            message: `Kuota kelas bundle untuk "${course.title}" sudah penuh (${enrollmentCounts.bundleCount}/${course.bundleQuota})` 
+          };
+        }
+      } else { // ENTRY or INTERMEDIATE
+        if (enrollmentCounts.entryIntermediateCount >= course.entryQuota) {
+          return { 
+            valid: false, 
+            message: `Kuota kelas ${packageType.toLowerCase()} untuk "${course.title}" sudah penuh (${enrollmentCounts.entryIntermediateCount}/${course.entryQuota})` 
+          };
+        }
+      }
+      
+      return { valid: true };
+    } catch (error) {
+      console.error('Error validating course availability:', error.message);
+      return { valid: false, message: 'Gagal validasi ketersediaan kelas' };
+    }
+  }
+
+/**
+ * Mendapatkan jumlah pendaftaran untuk suatu course berdasarkan tipe package
+ * @param {string} courseId - ID course
+ * @returns {Promise<Object>} Jumlah pendaftaran per tipe package
+ */
+static async getCourseEnrollmentCount(courseId) {
+  try {
+    // Get only APPROVED payments for this course (non-bundle)
+    const payments = await prisma.payment.findMany({
+      where: {
+        courseId,
+        status: 'APPROVED'
+      }
+    });
+    
+    let bundleCount = 0;
+    let entryIntermediateCount = 0;
+    
+    // Count entry/intermediate enrollments
+    for (const payment of payments) {
+      const packageInfo = await this.getPackageInfo(payment.packageId);
+      if (packageInfo && packageInfo.type !== 'BUNDLE') {
+        entryIntermediateCount++;
+      }
+    }
+    
+    // For bundles, get all approved payments
+    const allApprovedPayments = await prisma.payment.findMany({
+      where: {
+        status: 'APPROVED'
+      }
+    });
+    
+    // Filter to find bundle payments based on package info
+    for (const payment of allApprovedPayments) {
+      const packageInfo = await this.getPackageInfo(payment.packageId);
+      if (packageInfo && packageInfo.type === 'BUNDLE') {
+        // For each bundle payment, check if the course is in the bundle
+        try {
+          const coursesInBundle = await this.getCoursesInPackage(payment.packageId);
+          const isCourseInBundle = coursesInBundle.some(c => String(c.id) === String(courseId));
+          
+          if (isCourseInBundle) {
+            bundleCount++;
+          }
+        } catch (error) {
+          console.error(`Error processing bundle payment ${payment.id}:`, error.message);
+        }
+      }
+    }
+    
+    return {
+      total: entryIntermediateCount + bundleCount,
+      bundleCount,
+      entryIntermediateCount
+    };
+  } catch (error) {
+    console.error('Error getting course enrollment count:', error.message);
+    return {
+      total: 0,
+      bundleCount: 0,
+      entryIntermediateCount: 0
+    };
+  }
+}
+
+  /**
    * Get user's existing payments with package information
    * @param {string} userId - User ID
    * @returns {Promise<Array>} User's payments with package info
@@ -687,17 +797,55 @@ export class PaymentService {
     if (payment.courseId) {
       // Import CourseService at the top level to avoid circular dependencies
       const { CourseService } = await import('./course.service.js');
-      const course = await CourseService.getCourseById(payment.courseId);
       
-      courseInfo = course ? {
-        id: payment.courseId,
-        title: course.title,
-        description: course.description,
-        level: course.level
-      } : {
-        id: payment.courseId,
-        title: 'Unknown Course'
-      };
+      try {
+        // Fetch course directly from course service
+        const courseServiceUrl = process.env.COURSE_SERVICE_URL || 'http://course-service-api:8002';
+        const serviceToken = this.generateServiceToken();
+        
+        const headers = {
+          'Authorization': `Bearer ${serviceToken}`
+        };
+        
+        console.log(`Making direct API call to course service for ID: ${payment.courseId}`);
+        const response = await axios.get(`${courseServiceUrl}/courses/${payment.courseId}`, { headers });
+        
+        if (response.data && response.data.data) {
+          const courseData = response.data.data;
+          courseInfo = {
+            id: payment.courseId,
+            title: courseData.title || `Course ${payment.courseId.substring(0, 8)}`,
+            description: courseData.description || '',
+            level: courseData.level || null
+          };
+          console.log(`Retrieved course title: ${courseInfo.title}`);
+        } else {
+          // Try getting course info from package-service as fallback
+          const coursesInPackage = await this.getCoursesInPackage(payment.packageId);
+          const matchingCourse = coursesInPackage.find(c => c.id === payment.courseId);
+          
+          if (matchingCourse) {
+            console.log(`Found course info in package: ${matchingCourse.title}`);
+            courseInfo = {
+              id: payment.courseId,
+              title: matchingCourse.title,
+              description: matchingCourse.description || '',
+              level: matchingCourse.level || null
+            };
+          } else {
+            courseInfo = {
+              id: payment.courseId,
+              title: `Course ${payment.courseId.substring(0, 8)}`  // Show truncated ID as fallback
+            };
+          }
+        }
+      } catch (error) {
+        console.error(`Error fetching course details: ${error.message}`);
+        courseInfo = {
+          id: payment.courseId,
+          title: `Course ${payment.courseId.substring(0, 8)}`  // Show truncated ID as fallback
+        };
+      }
     }
 
     // For bundle packages, get all courses in the bundle
