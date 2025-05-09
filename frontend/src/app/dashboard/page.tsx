@@ -28,7 +28,7 @@ const enrolledClassData = [
 
 const Dashboard = () => {
   return (
-    <main className="p-6 min-h-screen">
+    <main className="p-6 min-h-screen bg-neutral-900">
       {/* <WelcomeCard data={userData} /> */}
       <WelcomeCard />
       <SecondContent data={enrolledClassData} />

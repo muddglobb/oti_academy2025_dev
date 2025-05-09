@@ -22,7 +22,7 @@ export default function TrollLayout({
       </aside>
 
       <main className="flex-1">
-        <div className="flex bg-neutral-900 text-white">
+        <div className="flex text-white">
           <div className="flex-grow">
             {/* <DashboardHeader data={userData} /> */}
             <DashboardHeader />
