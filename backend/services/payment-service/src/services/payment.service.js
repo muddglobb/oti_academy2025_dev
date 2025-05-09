@@ -417,46 +417,94 @@ export class PaymentService {
  */
 static async getCourseEnrollmentCount(courseId) {
   try {
-    // Get only APPROVED payments for this course (non-bundle)
-    const payments = await prisma.payment.findMany({
+    // Create a package type cache to avoid redundant API calls
+    const packageTypeCache = new Map();
+    const bundleCourseCache = new Map();
+    
+    // 1. Get direct enrollments (non-bundle) for this course
+    const directPayments = await prisma.payment.findMany({
       where: {
         courseId,
         status: 'APPROVED'
+      },
+      select: {
+        id: true,
+        packageId: true
       }
     });
     
-    let bundleCount = 0;
+    // 2. Process direct payments with batch package info retrieval
+    const uniquePackageIds = [...new Set(directPayments.map(p => p.packageId))];
     let entryIntermediateCount = 0;
     
-    // Count entry/intermediate enrollments
-    for (const payment of payments) {
-      const packageInfo = await this.getPackageInfo(payment.packageId);
-      if (packageInfo && packageInfo.type !== 'BUNDLE') {
-        entryIntermediateCount++;
+    // Batch fetch package info for direct payments
+    if (uniquePackageIds.length > 0) {
+      await Promise.all(uniquePackageIds.map(async (packageId) => {
+        if (!packageTypeCache.has(packageId)) {
+          const packageInfo = await this.getPackageInfo(packageId);
+          if (packageInfo) {
+            packageTypeCache.set(packageId, packageInfo.type);
+          }
+        }
+      }));
+      
+      // Count non-bundle enrollments
+      for (const payment of directPayments) {
+        const packageType = packageTypeCache.get(payment.packageId);
+        if (packageType && packageType !== 'BUNDLE') {
+          entryIntermediateCount++;
+        }
       }
     }
     
-    // For bundles, get all approved payments
-    const allApprovedPayments = await prisma.payment.findMany({
+    // 3. Get bundle enrollments more efficiently (only fetch bundle packages)
+    const bundlePayments = await prisma.payment.findMany({
       where: {
         status: 'APPROVED'
+      },
+      select: {
+        id: true,
+        packageId: true
       }
     });
     
-    // Filter to find bundle payments based on package info
-    for (const payment of allApprovedPayments) {
-      const packageInfo = await this.getPackageInfo(payment.packageId);
-      if (packageInfo && packageInfo.type === 'BUNDLE') {
-        // For each bundle payment, check if the course is in the bundle
-        try {
-          const coursesInBundle = await this.getCoursesInPackage(payment.packageId);
-          const isCourseInBundle = coursesInBundle.some(c => String(c.id) === String(courseId));
-          
-          if (isCourseInBundle) {
-            bundleCount++;
-          }
-        } catch (error) {
-          console.error(`Error processing bundle payment ${payment.id}:`, error.message);
+    // Get unique package IDs from all payments
+    const allPackageIds = [...new Set(bundlePayments.map(p => p.packageId))];
+    
+    // Fetch package info for all packages in one batch
+    await Promise.all(allPackageIds.map(async (packageId) => {
+      if (!packageTypeCache.has(packageId)) {
+        const packageInfo = await this.getPackageInfo(packageId);
+        if (packageInfo) {
+          packageTypeCache.set(packageId, packageInfo.type);
+        }
+      }
+    }));
+    
+    // Filter to only bundle payments
+    const bundlePackageIds = allPackageIds.filter(
+      packageId => packageTypeCache.get(packageId) === 'BUNDLE'
+    );
+    
+    // Batch fetch courses for all bundle packages
+    let bundleCount = 0;
+    await Promise.all(bundlePackageIds.map(async (packageId) => {
+      try {
+        const coursesInBundle = await this.getCoursesInPackage(packageId);
+        bundleCourseCache.set(packageId, coursesInBundle);
+      } catch (error) {
+        console.error(`Error fetching courses for bundle ${packageId}:`, error.message);
+      }
+    }));
+    
+    // Count bundle enrollments
+    for (const payment of bundlePayments) {
+      const packageType = packageTypeCache.get(payment.packageId);
+      if (packageType === 'BUNDLE') {
+        const coursesInBundle = bundleCourseCache.get(payment.packageId) || [];
+        const isCourseInBundle = coursesInBundle.some(c => String(c.id) === String(courseId));
+        if (isCourseInBundle) {
+          bundleCount++;
         }
       }
     }
