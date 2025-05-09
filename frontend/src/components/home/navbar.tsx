@@ -20,7 +20,7 @@ const Navbar = () => {
 
   return (
     <main className="fixed inset-x-0 top-0 z-1000 backdrop-blur-md">
-      <div className="bg-[#002B63] text-white text-center text-sm px-5 py-4">
+      <div className="bg-[#06163c] text-white text-center text-sm px-5 py-4">
         <div className="lg:hidden pt-10 w-full">
           <span className="text-left inline-block">
             <strong>Special Class Bundling</strong> berakhir setelah{" "}
@@ -100,9 +100,9 @@ const Navbar = () => {
       </Container>
 
       {isMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-90 text-white flex flex-col justify-between p-6">
+        <div className="fixed top-0 left-0 w-1/4 h-screen z-[1000] bg-[#050c1a] text-white flex flex-col justify-between px-6 py-8">
           <div className="flex justify-end">
-            <button onClick={toggleMenu} aria-label="Close menu">
+            <button onClick={toggleMenu}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6 text-white"
@@ -120,7 +120,7 @@ const Navbar = () => {
             </button>
           </div>
 
-          <nav className="flex flex-col gap-6 mt-10">
+          <nav className="flex flex-col gap-2 mb-80">
             <Link href="/">
               <span className="text-lg">Home</span>
             </Link>
@@ -131,14 +131,16 @@ const Navbar = () => {
             ))}
           </nav>
 
-          <div className="flex flex-col gap-3 mt-80">
+          <div className="flex flex-col gap-3">
             <Link href="/register">
-              <Button className="w-full">Get Started</Button>
+              <Button className="w-full bg-[#113EA7] text-white hover:bg-[#0d2d7a]">
+                Get Started
+              </Button>
             </Link>
             <Link href="/login">
               <Button
                 variant="outline"
-                className="w-full text-white border hover:bg-white hover:text-black"
+                className="w-full bg-white text-[#113EA7] border border-[#113EA7] hover:bg-[#113EA7] hover:text-white"
               >
                 Log In
               </Button>
