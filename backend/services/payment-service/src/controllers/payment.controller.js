@@ -601,3 +601,31 @@ export const getCourseEnrollmentStats = async (req, res) => {
     res.status(500).json(ApiResponse.error('Error retrieving enrollment statistics'));
   }
 };
+
+/**
+ * @desc    Mendapatkan jumlah pendaftaran untuk semua kursus
+ * @route   GET /payments/stats
+ * @access  Admin only
+ */
+export const getAllCoursesEnrollmentStats = async (req, res) => {
+  try {
+    // Get enrollment counts for all courses
+    const enrollmentStats = await PaymentService.getAllCoursesEnrollmentCount();
+    
+    if (!enrollmentStats.success) {
+      return res.status(400).json(
+        ApiResponse.error(enrollmentStats.message)
+      );
+    }
+    
+    // Return successful response
+    res.status(200).json(
+      ApiResponse.success(enrollmentStats.data, enrollmentStats.message)
+    );
+  } catch (error) {
+    console.error('Error getting all courses enrollment stats:', error);
+    return res.status(500).json(
+      ApiResponse.error('Terjadi kesalahan saat mendapatkan statistik pendaftaran')
+    );
+  }
+};

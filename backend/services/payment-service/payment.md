@@ -576,7 +576,7 @@ Authorization: Bearer {{accessToken}}
 ### Get payment stats
 
 ```
-GET {{baseUrl}}/payments/courses/{{courseId}}/enrollment-stats
+GET {{baseUrl}}/payments/{{courseId}}/stats
 ```
 
 **Headers:**
@@ -612,6 +612,49 @@ Authorization: Bearer {{accessToken}}
         },
         "percentageFilled": 3
     }
+}
+```
+
+### Get all payment stats (ADMIN)
+
+```
+GET {{baseUrl}}/payments/all-stats
+```
+
+**Headers:**
+```
+Authorization: Bearer {{accessToken}}
+```
+
+**Response (200):**
+```json
+{
+    "status": "success",
+    "message": "Success",
+    "data": {
+        "course": {
+            "id": "6948a9a3-2a3c-4692-b19a-d230884a2334",
+            "title": "Software Engineering",
+            "level": "INTERMEDIATE"
+        },
+        "quota": {
+            "total": 100,
+            "entryIntermediateQuota": 70,
+            "bundleQuota": 30
+        },
+        "enrollments": {
+            "entryIntermediateCount": 1,
+            "bundleCount": 2,
+            "total": 3
+        },
+        "available": {
+            "entryIntermediateAvailable": 69,
+            "bundleAvailable": 28,
+            "totalAvailable": 97
+        },
+        "percentageFilled": 3
+    },
+    ...
 }
 ```
 

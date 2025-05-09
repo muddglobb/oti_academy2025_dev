@@ -49,6 +49,20 @@ router.patch(
 );
 
 router.get(
+  '/all-stats',
+  authenticate,
+  permit('ADMIN'),
+  asyncHandler(controller.getAllCoursesEnrollmentStats)
+);
+
+router.get(
+  '/:courseId/stats',
+  authenticate,
+  permit('ADMIN', 'DIKE', 'UMUM'),
+  asyncHandler(controller.getCourseEnrollmentStats)
+);
+
+router.get(
   '/:id',
   authenticate,
   permit('ADMIN', 'DIKE', 'UMUM'),
@@ -60,13 +74,6 @@ router.delete(
   authenticate,
   permit('ADMIN'),
   asyncHandler(controller.deletePayment)
-);
-
-router.get(
-  '/courses/:courseId/enrollment-stats',
-  authenticate,
-  permit('ADMIN', 'DIKE', 'UMUM'),
-  asyncHandler(controller.getCourseEnrollmentStats)
-);
+)
 
 export default router;

@@ -524,6 +524,67 @@ static async getCourseEnrollmentCount(courseId) {
   }
 }
 
+/**
+ * Mendapatkan jumlah pendaftaran untuk semua courses
+ * @returns {Promise<Object>} Jumlah pendaftaran per course dengan detailnya
+ */
+static async getAllCoursesEnrollmentCount() {
+  try {
+    // Dapatkan semua kursus dari course-service
+    const { CourseService } = await import('./course.service.js');
+    const allCourses = await CourseService.getAllCourses();
+    
+    if (!allCourses || !Array.isArray(allCourses) || allCourses.length === 0) {
+      return {
+        success: false,
+        message: 'Tidak dapat mendapatkan daftar kursus',
+        data: []
+      };
+    }
+    
+    // Dapatkan jumlah pendaftaran untuk setiap kursus secara paralel
+    const enrollmentCountsPromises = allCourses.map(async (course) => {
+      const enrollmentCount = await this.getCourseEnrollmentCount(course.id);
+      
+      return {
+        id: course.id,
+        title: course.title,
+        level: course.level,
+        quota: {
+          total: course.quota || 0,
+          entryQuota: course.entryQuota || 0,
+          bundleQuota: course.bundleQuota || 0
+        },
+        enrollment: {
+          total: enrollmentCount.total || 0,
+          entryIntermediateCount: enrollmentCount.entryIntermediateCount || 0,
+          bundleCount: enrollmentCount.bundleCount || 0
+        },
+        remaining: {
+          entryIntermediate: (course.entryQuota || 0) - (enrollmentCount.entryIntermediateCount || 0),
+          bundle: (course.bundleQuota || 0) - (enrollmentCount.bundleCount || 0)
+        }
+      };
+    });
+    
+    const enrollmentCounts = await Promise.all(enrollmentCountsPromises);
+    
+    return {
+      success: true,
+      message: 'Data jumlah pendaftaran semua kursus berhasil didapatkan',
+      data: enrollmentCounts
+    };
+    
+  } catch (error) {
+    console.error('Error getting all courses enrollment count:', error.message);
+    return {
+      success: false,
+      message: 'Gagal mendapatkan data jumlah pendaftaran',
+      data: []
+    };
+  }
+}
+
   /**
    * Get user's existing payments with package information
    * @param {string} userId - User ID
