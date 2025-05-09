@@ -38,7 +38,7 @@ const SecondContent = ({ data }: SecondContentProps) => {
                     {enrolledClass.description}
                   </p>
                 </div>
-                <button className="bg-primary-500 text-white py-2 px-3 rounded font-bold text-sm w-auto self-start">
+                <button className="bg-primary-500 text-white py-2 px-3 rounded-lg font-bold text-sm w-auto self-start">
                   Eksplor Sekarang
                 </button>
               </div>
