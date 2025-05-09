@@ -20,6 +20,6 @@ export default {
   CORS_ORIGIN: process.env.CORS_ORIGIN || '*',
   
   // Course defaults
-  DEFAULT_COURSE_QUOTA: 100,
+  DEFAULT_COURSE_QUOTA: process.env.DEFAULT_TOTAL_QUOTA,
   DEFAULT_SESSION_DURATION: 2 // hours
 };
