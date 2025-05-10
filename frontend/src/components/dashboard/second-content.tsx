@@ -15,30 +15,30 @@ const SecondContent = ({ data }: SecondContentProps) => {
   return (
     <div className="grid grid-cols-3 gap-6">
       {/* Left Column */}
-      <div className="col-span-2">
-        <div className="bg-gray-800 rounded-lg p-6 mb-6">
+      <div className="col-span-2 border-2 border-neutral-500 rounded-[20px]">
+        <div className="rounded-[20px] p-6 ">
           <h3 className="text-lg font-medium mb-4">Enrolled Class</h3>
-          <div className="flex items-center mb-2">
+          <div className="flex items-center mb-2 pb-3 border-b-2 border-neutral-500">
             <Clock size={16} className="mr-2 text-gray-400" />
             <p className="text-sm text-gray-300">
-              Kamu bisa daftar 2 kelas: Intermediate dan I Entry data I Bundle
+              Kamu bisa daftar 2 kelas: 1 Intermediate dan 1 Entry atau 1 Bundle
             </p>
           </div>
 
           {data.map((enrolledClass) => (
             <div
               key={enrolledClass.id}
-              className="mt-4 bg-gray-900 rounded-lg flex h-35"
+              className="mt-4 flex h-auto border-2 border-neutral-500 rounded-[20px]"
             >
-              <div className="w-35 h-full bg-gray-700 rounded-l-lg"></div>
-              <div className="flex flex-col justify-between p-4">
-                <div className="flex-grow">
-                  <h4 className="font-medium">{enrolledClass.message}</h4>
-                  <p className="text-sm text-gray-400 mt-1">
+              <div className="w-35 h-35 bg-gray-700 rounded-[20px]"></div>
+              <div className=" flex flex-col justify-between p-4">
+                <div className="">
+                  <p className="text-3">{enrolledClass.message}</p>
+                  <p className="text-[12px] text-gray-400 mt-1">
                     {enrolledClass.description}
                   </p>
                 </div>
-                <button className="bg-primary-500 text-white py-2 px-3 rounded-lg font-bold text-sm w-auto self-start">
+                <button className="bg-primary-500 text-white py-2 px-3 rounded-lg font-bold text-[12px] self-start">
                   Eksplor Sekarang
                 </button>
               </div>
@@ -50,22 +50,22 @@ const SecondContent = ({ data }: SecondContentProps) => {
       {/* Right Column */}
       <div className="col-span-1">
         {/* Calendar */}
-        <div className="bg-gray-800 rounded-lg p-4 mb-6">
-          <div className="flex justify-between items-center mb-4">
+        <div className="border-2 border-neutral-500 rounded-[20px] p-5 mb-6">
+          <div className="flex justify-between items-center mb-4 pb-3 border-b-2 border-neutral-500">
             <h3 className="font-medium">July 2025</h3>
             <button className="bg-blue-600 text-white text-xs rounded px-2 py-1">
               No class
             </button>
           </div>
 
-          <div className="grid grid-cols-7 gap-1 text-center text-xs">
-            <div className="text-gray-400">M</div>
-            <div className="text-gray-400">T</div>
-            <div className="text-gray-400">W</div>
-            <div className="text-gray-400">T</div>
-            <div className="text-gray-400">F</div>
-            <div className="text-gray-400">S</div>
-            <div className="text-gray-400">S</div>
+          <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold">
+            <div className="text-[var(--color-primary-100)]">M</div>
+            <div className="text-[var(--color-primary-100)]">T</div>
+            <div className="text-[var(--color-primary-100)]">W</div>
+            <div className="text-[var(--color-primary-100)]">T</div>
+            <div className="text-[var(--color-primary-100)]">F</div>
+            <div className="text-[var(--color-primary-100)]">S</div>
+            <div className="text-[var(--color-primary-100)]">S</div>
 
             <div className="py-1 text-gray-500">30</div>
             <div className="py-1">1</div>
@@ -110,8 +110,10 @@ const SecondContent = ({ data }: SecondContentProps) => {
         </div>
 
         {/* WhatsApp Group */}
-        <div className="bg-gray-800 rounded-lg p-4">
-          <h3 className="font-medium mb-4">WhatsApp Group</h3>
+        <div className="border-2 border-neutral-500 rounded-[20px] p-5">
+          <h3 className="font-medium mb-3 pb-3 border-b-2 border-neutral-500">
+            WhatsApp Group
+          </h3>
           <p className="text-sm text-gray-300">
             Grup WA ini khusus untuk yang sudah terdaftar, jadi jangan lupa
             daftar!
