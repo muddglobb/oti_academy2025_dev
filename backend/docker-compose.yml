@@ -53,7 +53,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
   # PACKAGE SERVICE API
   package-service-api:
     build: ./services/package-service
@@ -66,8 +65,16 @@ services:
     depends_on:
       package-service-db:
         condition: service_healthy
+      course-service-api:
+        condition: service_healthy
     networks:
       - oti-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8005/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
       
   # PAYMENT SERVICE DATABASE
   payment-service-db:
@@ -97,6 +104,7 @@ services:
     volumes:
       - ./services/payment-service/logs:/home/appuser/app/logs
       - ./libs:/home/appuser/app/libs
+      - ./enrollment-queue:/home/appuser/app/enrollment-queue
     depends_on:
       payment-service-db:
         condition: service_healthy
@@ -121,7 +129,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
   # COURSE SERVICE API
   course-service-api:
     build: ./services/course-service
@@ -136,6 +143,46 @@ services:
         condition: service_healthy
     networks:
       - oti-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8002/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+   # ENROLLMENT SERVICE DATABASE
+  enrollment-service-db:
+    image: postgres:17.4-alpine
+    env_file: 
+      - ./services/enrollment-service/.env
+    environment:
+    - POSTGRES_DB=enrollment_service_db
+    - POSTGRES_USER=${PG_USER}
+    - POSTGRES_PASSWORD=${PG_PASSWORD} 
+    volumes:
+      - enrollment-data:/var/lib/postgresql/data
+    networks:
+      - oti-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d enrollment_service_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  # ENROLLMENT SERVICE API
+  enrollment-service-api:
+    build: ./services/enrollment-service
+    env_file:
+      - ./services/enrollment-service/.env
+      - .env
+    volumes:
+      - ./services/enrollment-service/logs:/home/appuser/app/logs
+      - ./libs:/home/appuser/app/libs
+      - ./enrollment-queue:/home/appuser/app/enrollment-queue
+    depends_on:
+      enrollment-service-db:
+        condition: service_healthy
+    networks:
+      - oti-network   
       
   # Redis cache service
   redis:
@@ -185,4 +232,5 @@ volumes:
   course-data:
   package-data:
   payment-data:
+  enrollment-data:
   redis-data:

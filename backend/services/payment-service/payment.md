@@ -371,7 +371,7 @@ Authorization: Bearer {{accessToken}}
 ### Mendapatkan Detail Pembayaran
 
 ```
-GET {{baseUrl}}/payments/75c2d819-7a8d-4ce7-ac19-bba55efd2b72
+GET {{baseUrl}}/payments/{{paymentId}}
 ```
 
 **Headers:**
@@ -657,6 +657,27 @@ Authorization: Bearer {{accessToken}}
     ...
 }
 ```
+
+### Update Back Payment (DIKE Only)
+
+```
+PATCH {{baseUrl}}/payments/{{paymentId}}/update
+```
+
+**Headers**
+```
+Authorization: Bearer {{accessToken}}
+```
+
+```
+{
+  "backPaymentMethod": "OVO",
+  "backAccountNumber": "08227394123",
+  "backRecipient": "Kevin antonio",
+  "proofLink": "https://youtu.com/img.jpg"
+}
+```
+
 
 ## 3. Perbedaan User UMUM dan DIKE
 

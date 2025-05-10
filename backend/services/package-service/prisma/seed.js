@@ -35,7 +35,7 @@ const packages = [
     price: 150000
   },
   {
-    name: 'Bundle Python + Data Science & AI',
+    name: 'Bundle Python + Data Science & Artificial Intelligence',
     type: 'BUNDLE',
     price: 200000
   },
@@ -45,7 +45,7 @@ const packages = [
     price: 200000
   },
   {
-    name: 'Bundle Fundamental Cyber + Cybersecurity',
+    name: 'Bundle Fundamental Cyber Security + Cyber Security',
     type: 'BUNDLE',
     price: 200000
   },
@@ -55,6 +55,12 @@ const packages = [
     price: 200000
   }
 ];
+
+// Check if data already exists
+async function dataExists() {
+  const count = await prisma.package.count();
+  return count > 0;
+}
 
 async function fetchCoursesFromCourseService(maxRetries = 3, retryDelay = 3000) {
   let retries = 0;
@@ -92,13 +98,32 @@ async function fetchCoursesFromCourseService(maxRetries = 3, retryDelay = 3000) 
   }
 }
 
-async function main() {
+// Export the seeding function for programmatic use
+export async function seedPackages(options = { force: false }) {
   try {
-    console.log('🌱 Starting seeding process...');
+    console.log('🌱 Starting package service seeding process...');
+    
+    // Check if data already exists and we're not forcing a reseed
+    if (!options.force) {
+      const exists = await dataExists();
+      if (exists) {
+        console.log('Packages already exist, skipping seed');
+        return { 
+          success: true, 
+          message: 'Packages already exist, seeding skipped' 
+        };
+      }
+    }
     
     console.log('💾 Clearing existing package course relationships...');
     // Only delete the join table to keep relationships clean
     await prisma.packageCourse.deleteMany({});
+    
+    // If force is true, also delete existing packages
+    if (options.force) {
+      console.log('💾 Clearing existing packages...');
+      await prisma.package.deleteMany({});
+    }
     
     console.log('💾 Upserting packages...');
     // Use upsert for each package with name as unique key
@@ -152,99 +177,149 @@ async function main() {
       {
         packageIndex: 0, // Paket Entry
         courseFilters: [
-          { title: 'competitive', level: 'ENTRY' },
-          { title: 'graphic design', level: 'ENTRY' },
-          { title: 'fundamental cyber', level: 'ENTRY' },
-          { title: 'game dev', level: 'ENTRY' },
-          { title: 'web dev', level: 'ENTRY' },
-          { title: 'python', level: 'ENTRY' }
+          { title: 'Competitive Programming', level: 'ENTRY' },
+          { title: 'Graphic Design', level: 'ENTRY' },
+          { title: 'Fundamental Cyber Security', level: 'ENTRY' },
+          { title: 'Game Development', level: 'ENTRY' },
+          { title: 'Web Development', level: 'ENTRY' },
+          { title: 'Basic Python', level: 'ENTRY' }
         ]
       },
       // INTERMEDIATE package courses
       {
         packageIndex: 1, // Paket Intermediate
         courseFilters: [
-          { title: 'software eng', level: 'INTERMEDIATE' },
-          { title: 'data science', level: 'INTERMEDIATE' },
-          { title: 'cyber security', level: 'INTERMEDIATE' },
-          { title: 'ui/ux', level: 'INTERMEDIATE' }
+          { title: 'Software Engineering', level: 'INTERMEDIATE' },
+          { title: 'Data Science & Artificial Intelligence', level: 'INTERMEDIATE' },
+          { title: 'Cyber Security', level: 'INTERMEDIATE' },
+          { title: 'UI/UX', level: 'INTERMEDIATE' }
         ]
       },
       // Bundle packages
       {
-        packageIndex: 2, // Bundle Python + Data Science & AI
+        packageIndex: 2, // Bundle Python + Data Science & Artificial Intelligence
         courseFilters: [
-          { title: 'python', level: 'ENTRY' },
-          { title: 'data science', level: 'INTERMEDIATE' }
+          { title: 'Basic Python', level: 'ENTRY' },
+          { title: 'Data Science & Artificial Intelligence', level: 'INTERMEDIATE' }
         ]
       },
       {
         packageIndex: 3, // Bundle Web Development + Software Engineering
         courseFilters: [
-          { title: 'web dev', level: 'ENTRY' },
-          { title: 'software eng', level: 'INTERMEDIATE' }
+          { title: 'Web Development', level: 'ENTRY' },
+          { title: 'Software Engineering', level: 'INTERMEDIATE' }
         ]
       },
       {
-        packageIndex: 4, // Bundle Fundamental Cyber + Cybersecurity
+        packageIndex: 4, // Bundle Fundamental Cyber Security + Cyber Security
         courseFilters: [
-          { title: 'fundamental cyber', level: 'ENTRY' },
-          { title: 'cyber security', level: 'INTERMEDIATE' }
+          { title: 'Fundamental Cyber Security', level: 'ENTRY' },
+          { title: 'Cyber Security', level: 'INTERMEDIATE' }
         ]
       },
       {
         packageIndex: 5, // Bundle Graphic Design + UI/UX
         courseFilters: [
-          { title: 'graphic design', level: 'ENTRY' },
-          { title: 'ui/ux', level: 'INTERMEDIATE' }
+          { title: 'Graphic Design', level: 'ENTRY' },
+          { title: 'UI/UX', level: 'INTERMEDIATE' }
         ]
       }
     ];
     
     console.log('💾 Adding courses to packages...');
     // Add courses to each package
+    const mappingResults = [];
+    
     for (const mapping of packageCoursesMapping) {
       const packageId = createdPackages[mapping.packageIndex].id;
       const packageName = createdPackages[mapping.packageIndex].name;
       const packageType = createdPackages[mapping.packageIndex].type;
       
       console.log(`📚 Adding courses to ${packageName} (${packageType}):`);
-      
       // Find course IDs based on filters
       const courseIds = [];
+      const mappingResult = {
+        packageName,
+        packageType,
+        addedCourses: [],
+        failedCourses: []
+      };
+      
       for (const filter of mapping.courseFilters) {
         try {
           const courseId = findCourseId(filter.title, filter.level);
           courseIds.push(courseId);
           
-          // Create the relationship in the database
-          await prisma.packageCourse.create({
-            data: {
+          // Use upsert to prevent duplicates - will create or ignore based on unique constraint
+          await prisma.packageCourse.upsert({
+            where: {
+              packageId_courseId: {
+                packageId,
+                courseId
+              }
+            },
+            update: {}, // No updates needed if it exists
+            create: {
               packageId,
               courseId
             }
           });
           console.log(`  ✅ Added course ${courseId} to ${packageName}`);
+          mappingResult.addedCourses.push({ courseId, title: filter.title });
         } catch (error) {
           console.error(`  ❌ Failed to add course to ${packageName}:`, error.message);
+          mappingResult.failedCourses.push({ title: filter.title, error: error.message });
         }
       }
+      
+      mappingResults.push(mappingResult);
     }
     
     console.log('🌱 Seeding completed successfully!');
+    
+    // Return success result object
+    return {
+      success: true,
+      message: 'Package seeding completed successfully',
+      data: {
+        packages: createdPackages.length,
+        mappingResults
+      }
+    };
+    
   } catch (error) {
     console.error('❌ Seeding failed:', error);
-    process.exit(1);
-  } finally {
-    await prisma.$disconnect();
+    
+    // Return error result object instead of exiting process
+    return {
+      success: false,
+      message: `Seeding failed: ${error.message}`,
+      error
+    };  } finally {
+    // Don't disconnect here when used as a module
+    if (import.meta.url === `file://${process.cwd()}/prisma/seed.js`) {
+      await prisma.$disconnect();
+    }
   }
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+// Import fileURLToPath for ES modules script detection
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+
+// Run main function when script is executed directly
+if (import.meta.url === `file://${__filename}`) {
+  const options = {
+    force: process.argv.includes('--force')
+  };
+  
+  seedPackages(options)
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    })
+    .finally(async () => {
+      await prisma.$disconnect();
+      process.exit(0);
+    });
+}

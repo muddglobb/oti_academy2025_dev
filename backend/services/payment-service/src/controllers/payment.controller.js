@@ -441,26 +441,28 @@ export const approvePayment = async (req, res) => {
         ApiResponse.error('Payment is already approved')
       );
     }
-    
-    const updatedPayment = await PaymentService.approvePayment(id);
-    
-    // Get user info for the complete response
-    const userInfo = await PaymentService.getUserInfo(updatedPayment.userId);
-    
-    // Format detailed payment with all required information
-    const detailedPayment = await PaymentService.formatDetailedPayment(updatedPayment, userInfo);
-    
-    // Try to trigger course enrollment if applicable
-    try {
-      await createEnrollmentAfterPayment(updatedPayment, userInfo);
+      try {
+      // The entire approval process, including enrollment, happens in the service
+      const updatedPayment = await PaymentService.approvePayment(id);
+      
+      // Only if approval was successful (which means enrollment was successful too)
+      // Get user info for the complete response
+      const userInfo = await PaymentService.getUserInfo(updatedPayment.userId);
+      
+      // Format detailed payment with all required information
+      const detailedPayment = await PaymentService.formatDetailedPayment(updatedPayment, userInfo);
+      
+      res.status(200).json(
+        ApiResponse.success(detailedPayment, 'Payment approved successfully')
+      );
     } catch (enrollmentError) {
-      console.error('Error creating enrollment:', enrollmentError);
-      // Continue despite enrollment error - it will be handled later
+      console.error('Payment approval failed:', enrollmentError.message);
+      
+      // Return error response, keeping payment in PENDING state
+      return res.status(500).json(
+        ApiResponse.error(`Payment could not be approved: ${enrollmentError.message}`)
+      );
     }
-    
-    res.status(200).json(
-      ApiResponse.success(detailedPayment, 'Payment approved successfully')
-    );
   } catch (error) {
     console.error('Error approving payment:', error);
     throw error;

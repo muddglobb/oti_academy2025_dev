@@ -54,3 +54,73 @@ Setiap course di OTI Academy memiliki **total quota** (misalnya 100 seat) yang d
 - Saat ini data enrollment disimpan dalam file JSON di `enrollment-queue`
 - Ketika enrollment service sudah siap, file-file ini akan diproses
 - Function `checkEnrollmentStatus()` saat ini hanya mengecek apakah payment `APPROVED`
+
+
+
+enrollment Service - Node.js + Express + Prisma
+ * 
+ * Konteks:
+ * -------------
+ * Aplikasi ini memiliki sistem pembelian kelas (course) melalui payment service. 
+ * Ketika user membeli dan payment telah di-approve admin, maka user akan langsung 
+ * di-*enroll* ke course tersebut. Bisa satu course (entry/intermediate) atau beberapa 
+ * sekaligus (bundle). Tidak ada approval enrollment manual — enroll otomatis berdasarkan payment.
+ * 
+ * Kebutuhan:
+ * -------------
+ * - User hanya bisa enrolled 1x ke satu course (tidak duplikat)
+ * - Jika membeli bundle, akan langsung enroll ke semua course dalam bundle tersebut
+ * - Admin tidak perlu meng-approve enrollment
+ * - User bisa melihat semua enrollments miliknya
+ * - Frontend butuh tahu apakah user sudah enrolled di suatu course
+ * 
+ * Struktur Database (Prisma):
+ * -------------
+ * model Enrollment {
+ *   id         String   @id @default(uuid())
+ *   userId     String
+ *   courseId   String
+ *   packageId  String?
+ *   createdAt  DateTime @default(now())
+ *   updatedAt  DateTime @updatedAt
+ * 
+ *   user       User     @relation(fields: [userId], references: [id])
+ *   course     Course   @relation(fields: [courseId], references: [id])
+ *   package    Package? @relation(fields: [packageId], references: [id])
+ * 
+ *   @@unique([userId, courseId])
+ * }
+ * 
+ * Endpoint yang Dibutuhkan:
+ * -------------
+ * 1. POST /payment-approved
+ *    - Input: { userId, packageId, courseIds: string[] }
+ *    - Deskripsi: Enroll user ke semua course dalam courseIds setelah payment approved
+ *    - Catatan: Gunakan upsert agar tidak terjadi duplikat enrollment
+ * 
+ * 2. GET /me/enrollments
+ *    - Output: Daftar course yang sudah user enroll
+ *    - Deskripsi: Untuk keperluan menampilkan course yang sudah dimiliki user
+       - Di responsenya, buatkan juga status isEnrolled (boolean), true jika emang sudah terenroll, false jika belum
+ * 
+ * 3. GET /:courseId/enrollment-status
+ *    - Output: { isEnrolled: boolean }
+ *    - Deskripsi: Untuk menampilkan tombol "Already Enrolled" di UI jika sudah terdaftar
+ * 
+ * 4. (Opsional) GET /enrollments?courseId=...
+ *    - Output: Daftar user yang enroll di course tertentu
+ *    - Deskripsi: Untuk keperluan panel admin melihat siapa saja yang sudah enroll
+ * 
+ * Contoh Fungsi Service:
+ * -------------
+ * // Enroll user to a list of courses (ex: bundle)
+ * async function enrollUserToCourses(userId, packageId, courseIds) {
+ *   for (const courseId of courseIds) {
+ *     await prisma.enrollment.upsert({
+ *       where: { userId_courseId: { userId, courseId } },
+ *       update: {},
+ *       create: { userId, courseId, packageId },
+ *     });
+ *   }
+ * }
+ */

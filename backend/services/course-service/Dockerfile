@@ -10,11 +10,14 @@ WORKDIR /home/appuser/app
 RUN addgroup -g 1001 -S appuser && \
     adduser -u 1001 -S appuser -G appuser
 
-# Install dependencies
+# Copy package.json and prisma files first
 COPY package*.json ./
+COPY prisma ./prisma/
+
+# Install dependencies
 RUN npm ci --only=production
 
-# Copy app source
+# Copy the rest of the application files
 COPY --chown=appuser:appuser . .
 
 # Set NODE_PATH to include parent directories for module resolution
@@ -33,4 +36,4 @@ RUN npx prisma generate
 EXPOSE 8002
 
 # Start command with schema push for development (similar to auth-service)
-CMD sh -c "npx prisma db push && node src/index.js"
+CMD sh -c "npx prisma db push && node prisma/seed.js && node src/index.js"

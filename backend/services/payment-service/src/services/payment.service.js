@@ -371,8 +371,7 @@ export class PaymentService {
    * @param {string} courseId - ID course yang akan divalidasi
    * @param {string} packageType - Tipe package (ENTRY, INTERMEDIATE, BUNDLE)
    * @returns {Promise<Object>} Hasil validasi dengan status dan pesan
-   */
-  static async validateCourseAvailability(courseId, packageType) {
+   */  static async validateCourseAvailability(courseId, packageType) {
     try {
       // Import CourseService at the top level to avoid circular dependencies
       const { CourseService } = await import('./course.service.js');
@@ -381,6 +380,14 @@ export class PaymentService {
       const course = await CourseService.getCourseById(courseId);
       if (!course) {
         return { valid: false, message: 'Kelas tidak ditemukan' };
+      }
+      
+      // If trying to enroll in a bundle but course doesn't support bundles
+      if (packageType === 'BUNDLE' && course.bundleQuota === 0) {
+        return { 
+          valid: false, 
+          message: `Kursus "${course.title}" tidak tersedia dalam paket bundle` 
+        };
       }
       
       // Get total approved enrollments for this course
@@ -612,21 +619,208 @@ static async getAllCoursesEnrollmentCount() {
     
     return paymentsWithPackageInfo;
   }
-  
-  /**
+    /**
    * Approve payment
    * @param {string} id - Payment ID
    * @returns {Promise<Object>} Updated payment
-   */
-  static async approvePayment(id) {
-    const updatedPayment = await prisma.payment.update({
-      where: { id },
-      data: { status: 'APPROVED' }
+   */  
+static async approvePayment(id) {
+  // Gunakan transaction untuk memastikan atomicity
+  return prisma.$transaction(async (tx) => {
+    // First get the full payment details
+    const payment = await tx.payment.findUnique({
+      where: { id }
     });
-
-    // Enhance payment with price information
-    const [enhancedPayment] = await this.enhancePaymentsWithPrice([updatedPayment]);
-    return enhancedPayment;
+    
+    if (!payment) {
+      throw new Error('Payment not found');
+    }
+    
+    try {
+      // Get course IDs based on package type
+      let courseIds = [];
+      
+      // If this is a package, we need to determine which courses to enroll based on package type
+      if (payment.packageId) {
+        try {
+          const packageServiceURL = process.env.PACKAGE_SERVICE_URL || 'http://package-service-api:8005';
+          console.log('Package Service URL:', packageServiceURL);
+          const serviceToken = this.generateServiceToken();
+          console.log('JWT Token Generated:', serviceToken ? 'Yes' : 'No');
+          
+          // First get package info to determine type
+          console.log(`Making request to: ${packageServiceURL}/packages/${payment.packageId}`);
+          const packageResponse = await axios.get(
+            `${packageServiceURL}/packages/${payment.packageId}`,
+            { headers: { 'Authorization': `Bearer ${serviceToken}` } }
+          );
+          
+          const packageType = packageResponse.data?.data?.type;
+          console.log(`Package Type: ${packageType}`);
+          
+          // Only get all courses if it's a BUNDLE package
+          if (packageType === 'BUNDLE') {
+            console.log(`Getting all courses for BUNDLE package: ${payment.packageId}`);
+            const coursesInPackage = await this.getCoursesInPackage(payment.packageId);
+            
+            if (coursesInPackage && Array.isArray(coursesInPackage) && coursesInPackage.length > 0) {
+              console.log(`Found ${coursesInPackage.length} courses in bundle package ${payment.packageId}`);
+              courseIds = coursesInPackage.map(course => course.id);
+            } else {
+              console.warn(`No courses found in bundle package ${payment.packageId}`);
+            }
+          } else if (payment.courseId) {
+            // For ENTRY or INTERMEDIATE packages, use only the selected course
+            console.log(`Using selected course ${payment.courseId} for ${packageType} package`);
+            courseIds = [payment.courseId];
+          }
+        } catch (packageError) {
+          console.error('Error fetching package info:', packageError);
+          // Fallback: if it's a single course purchase, use the courseId directly
+          if (payment.courseId) {
+            courseIds = [payment.courseId];
+          }
+        }
+      } else if (payment.courseId) {
+        // Single course purchase without package
+        courseIds = [payment.courseId];
+      }
+      
+      // Get user info to include in logs
+      const userInfo = await this.getUserInfo(payment.userId);
+      console.log(`Making request to: http://auth-service-api:8001/users/${payment.userId}`);
+      
+      // For Game Development and Competitive Programming courses, make sure they are entry-only
+      for (const courseId of courseIds) {
+        console.log(`Making direct API call to course service for ID: ${courseId}`);
+        try {
+          const courseServiceURL = process.env.COURSE_SERVICE_URL || 'http://course-service-api:8002';
+          const courseResponse = await axios.get(
+            `${courseServiceURL}/courses/${courseId}`,
+            { headers: { 'x-service-api-key': process.env.SERVICE_API_KEY } }
+          );
+          
+          if (courseResponse.data && courseResponse.data.data) {
+            const courseTitle = courseResponse.data.data.title;
+            console.log(`Retrieved course title: ${courseTitle}`);
+            // Check if this is Game Development or Competitive Programming with a bundle package
+            if ((courseTitle === 'Game Development' || courseTitle === 'Competitive Programming') && 
+                payment.packageId) {
+              
+              const packageServiceURL = process.env.PACKAGE_SERVICE_URL || 'http://package-service-api:8005';
+              const newServiceToken = this.generateServiceToken();
+              console.log('Package Service URL:', packageServiceURL);
+              console.log('JWT Token Generated:', newServiceToken ? 'Yes' : 'No');
+              const packageInfo = await axios.get(
+                `${packageServiceURL}/packages/${payment.packageId}`,
+                { headers: { 'Authorization': `Bearer ${newServiceToken}` } }
+              );
+              
+              if (packageInfo.data && packageInfo.data.data && packageInfo.data.data.type === 'BUNDLE') {
+                throw new Error(`${courseTitle} courses cannot be purchased as part of a bundle package`);
+              }
+            }
+          }
+        } catch (courseError) {
+          console.error(`Error checking course details: ${courseError.message}`);
+          throw courseError;
+        }
+      }
+      
+      // CRITICAL: Enrollment service availability check
+      const enrollmentServiceURL = process.env.ENROLLMENT_SERVICE_URL || 'http://enrollment-service-api:8007';
+      console.log(`Checking enrollment service availability at ${enrollmentServiceURL}...`);
+      const enrollmentAvailable = await this.checkServiceAvailability(enrollmentServiceURL);
+      if (!enrollmentAvailable) {
+        console.error('❌ Enrollment service is not available! Payment approval aborted.');
+        throw new Error('Enrollment service is not available. Payment cannot be approved at this time. Please try again later.');
+      }
+      console.log('✅ Enrollment service is available. Proceeding with payment approval.');
+      
+      if (courseIds.length > 0) {
+        // Notify enrollment service about the approved payment BEFORE updating payment status
+        console.log(`Sending enrollment request to ${enrollmentServiceURL}/enrollments/payment-approved`);
+        
+        try {
+          const enrollmentResponse = await axios.post(
+            `${enrollmentServiceURL}/enrollments/payment-approved`,
+            {
+              userId: payment.userId,
+              packageId: payment.packageId,
+              courseIds: courseIds
+            },
+            { 
+              headers: { 
+                'x-service-api-key': process.env.SERVICE_API_KEY,
+                'Authorization': `Bearer ${this.generateServiceToken()}` 
+              },
+              timeout: 8000 // 8 seconds timeout
+            }
+          );
+          
+          console.log(`✅ Successfully notified enrollment service for payment ${id}. Response:`, 
+            enrollmentResponse.status, enrollmentResponse.statusText);
+          
+          if (enrollmentResponse.status !== 201) {
+            throw new Error(`Enrollment service returned non-success status: ${enrollmentResponse.status}`);
+          }
+        } catch (enrollError) {
+          console.error(`❌ Failed to communicate with enrollment service: ${enrollError.message}`);
+          throw new Error(`Enrollment failed: ${enrollError.message}`);
+        }
+      } else {
+        console.warn(`⚠️ No courses found for payment ${id}, skipping enrollment`);
+      }
+      
+      // ONLY after enrollment is confirmed successful, update payment status to APPROVED
+      const updatedPayment = await tx.payment.update({
+        where: { id },
+        data: { status: 'APPROVED' }
+      });
+    
+      // Enhance payment with price information
+      const [enhancedPayment] = await this.enhancePaymentsWithPrice([updatedPayment]);
+      return enhancedPayment;
+      
+    } catch (enrollmentError) {
+      console.error(`❌ Error notifying enrollment service: ${enrollmentError.message}`);
+      console.error(`❌ Failed to enroll user automatically. Payment will not be approved.`);
+      // Throw error to notify admin about the issue and rollback transaction
+      throw new Error(`Payment approval failed: ${enrollmentError.message}`);
+    }
+  });
+}
+    /**
+   * Check if a service is available/online
+   * @param {string} serviceUrl - URL of the service to check
+   * @returns {Promise<boolean>} Whether the service is available
+   */
+  static async checkServiceAvailability(serviceUrl) {
+    try {
+      // Try to reach the service's health endpoint
+      const healthEndpoint = `${serviceUrl}/health`;
+      console.log(`Checking service availability: ${healthEndpoint}`);
+      
+      // We use a short timeout to quickly fail if service is down
+      const response = await axios.get(healthEndpoint, { 
+        timeout: 2000,
+        validateStatus: status => status < 500 // Only HTTP 5xx errors are considered unavailable
+      });
+      
+      return response.status === 200;
+    } catch (error) {
+      console.error(`Service ${serviceUrl} is unavailable: ${error.message}`);
+      
+      // Try a second attempt with a more basic endpoint
+      try {
+        // Try to reach the service's root endpoint
+        const response = await axios.get(serviceUrl, { timeout: 2000 });
+        return response.status === 200;
+      } catch (secondError) {
+        console.error(`Service ${serviceUrl} is definitely unavailable: ${secondError.message}`);
+        return false;
+      }
+    }
   }
   
   /**
@@ -840,28 +1034,39 @@ static async getAllCoursesEnrollmentCount() {
    * Check enrollment status for a payment
    * @param {string} paymentId - Payment ID
    * @returns {Promise<Object>} Enrollment status
-   */
-  static async checkEnrollmentStatus(paymentId) {
+   */  static async checkEnrollmentStatus(paymentId) {
     try {
-      // If enrollment service is not yet available, check for enrollment record in queue
-      const enrollmentQueuePath = process.env.ENROLLMENT_QUEUE_PATH;
-      
-      if (!enrollmentQueuePath) {
-        // Default response when enrollment service is not available
+      if (!paymentId) {
+        console.error('Payment ID is required to check enrollment status');
         return { enrolled: false };
       }
       
-      // For now, just check if any files in enrollment-queue directory match this payment ID
-      // When enrollment service is ready, replace this with a call to enrollment service API
-      
-      // If payment is approved, consider it enrolled
+      // Get payment details first
       const payment = await this.getPaymentById(paymentId);
-      if (payment && payment.status === 'APPROVED') {
-        return { enrolled: true };
+      
+      if (!payment) {
+        console.error('Payment not found with ID:', paymentId);
+        return { enrolled: false };
       }
       
-      // Otherwise, not yet enrolled
-      return { enrolled: false };
+      if (payment.status !== 'APPROVED') {
+        // If payment is not approved, it's definitely not enrolled
+        return { enrolled: false };
+      }
+      
+      // For approved payments, check with enrollment service via the helper
+      const { checkEnrollmentStatus } = await import('../utils/enrollment-helper.js');
+      
+      if (payment.courseId) {
+        // For single course payments, check direct enrollment
+        const status = await checkEnrollmentStatus(payment.userId, payment.courseId);
+        return { enrolled: !!status.isEnrolled };
+      } else {
+        // For bundle payments, we would need to check each course
+        // This is simplified - in a real implementation you might want to check the package courses
+        // For now we'll consider an approved payment as enrolled
+        return { enrolled: true };
+      }
     } catch (error) {
       console.error('Error checking enrollment status:', error.message);
       return { enrolled: false };
@@ -981,4 +1186,10 @@ static async getAllCoursesEnrollmentCount() {
       paymentDate: payment.createdAt
     };
   }
+
+  /**
+   * Create enrollment queue file as backup mechanism
+   * @param {Object} payment - Payment object
+   * @returns {Promise<void>}
+   */
 }

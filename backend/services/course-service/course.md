@@ -208,7 +208,7 @@ Content-Type: application/json
 **Body:**
 ```json
 {
-  "title": "Data Science & Machine Learning",
+  "title": "Data Science & Artificial Intelligence & Machine Learning",
   "description": "Learn data analysis, machine learning fundamentals, and AI implementation with Python.",
   "level": "INTERMEDIATE",
   "quota": 100
@@ -222,7 +222,7 @@ Content-Type: application/json
   "message": "Course created successfully",
   "data": {
     "id": "550e8400-e29b-41d4-a716-446655440002",
-    "title": "Data Science & Machine Learning",
+    "title": "Data Science & Artificial Intelligence & Machine Learning",
     "description": "Learn data analysis, machine learning fundamentals, and AI implementation with Python.",
     "level": "INTERMEDIATE",
     "quota": 100,
@@ -262,7 +262,7 @@ Content-Type: application/json
 **Body:**
 ```json
 {
-  "title": "Advanced Data Science & Machine Learning",
+  "title": "Advanced Data Science & Artificial Intelligence & Machine Learning",
   "description": "Learn advanced data analysis, deep learning techniques, and AI model deployment.",
   "level": "INTERMEDIATE",
   "quota": 80
@@ -276,7 +276,7 @@ Content-Type: application/json
   "message": "Course updated successfully",
   "data": {
     "id": "550e8400-e29b-41d4-a716-446655440002",
-    "title": "Advanced Data Science & Machine Learning",
+    "title": "Advanced Data Science & Artificial Intelligence & Machine Learning",
     "description": "Learn advanced data analysis, deep learning techniques, and AI model deployment.",
     "level": "INTERMEDIATE",
     "quota": 80,
@@ -382,7 +382,7 @@ Content-Type: application/json
   "courseId": "550e8400-e29b-41d4-a716-446655440002",
   "startAt": "2025-05-20T14:00:00.000Z",
   "durationHrs": 2,
-  "description": "Introduction to Data Science"
+  "description": "Introduction to Data Science & Artificial Intelligence"
 }
 ```
 
@@ -396,7 +396,7 @@ Content-Type: application/json
     "courseId": "550e8400-e29b-41d4-a716-446655440002",
     "startAt": "2025-05-20T14:00:00.000Z",
     "durationHrs": 2,
-    "description": "Introduction to Data Science",
+    "description": "Introduction to Data Science & Artificial Intelligence",
     "createdAt": "2025-05-07T09:30:15.789Z",
     "updatedAt": "2025-05-07T09:30:15.789Z"
   }
@@ -420,7 +420,7 @@ Content-Type: application/json
 {
   "startAt": "2025-05-21T15:00:00.000Z",
   "durationHrs": 3,
-  "description": "Introduction to Data Science and Python"
+  "description": "Introduction to Data Science & Artificial Intelligence and Python"
 }
 ```
 
@@ -434,7 +434,7 @@ Content-Type: application/json
     "courseId": "550e8400-e29b-41d4-a716-446655440002",
     "startAt": "2025-05-21T15:00:00.000Z",
     "durationHrs": 3,
-    "description": "Introduction to Data Science and Python",
+    "description": "Introduction to Data Science & Artificial Intelligence and Python",
     "createdAt": "2025-05-07T09:30:15.789Z",
     "updatedAt": "2025-05-07T10:45:20.456Z"
   }

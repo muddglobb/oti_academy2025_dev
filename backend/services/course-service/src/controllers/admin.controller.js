@@ -17,11 +17,22 @@ export const createCourse = asyncHandler(async (req, res) => {
       ApiResponse.error('Please provide course title and description')
     );
   }
-  
-  // Set default quota values
+    // Set default quota values
   const totalQuota = quota || config.DEFAULT_COURSE_QUOTA;
-  const defaultEntryQuota = Math.floor(totalQuota * 0.7); // 70% of total quota
-  const defaultBundleQuota = Math.floor(totalQuota * 0.3); // 30% of total quota
+  
+  // Special handling for Game Dev and Competitive Programming
+  let defaultEntryQuota;
+  let defaultBundleQuota;
+  
+  if (title === 'Game Development' || title === 'Competitive Programming') {
+    // These courses have full quota for entry level and no bundle quota
+    defaultEntryQuota = totalQuota;
+    defaultBundleQuota = 0;
+  } else {
+    // Other courses have 110/140 (~78.6%) for entry level and 30/140 (~21.4%) for bundle
+    defaultEntryQuota = Math.floor(totalQuota * 0.786); // ~110/140
+    defaultBundleQuota = Math.floor(totalQuota * 0.214); // ~30/140
+  }
   
   // Create course
   const course = await CourseService.createCourse({
@@ -53,15 +64,24 @@ export const updateCourse = asyncHandler(async (req, res) => {
     if (title !== undefined) updateData.title = title;
     if (description !== undefined) updateData.description = description;
     if (level !== undefined) updateData.level = level;
-    
-    // Handle quota updates
+      // Handle quota updates
     if (quota !== undefined) {
       updateData.quota = quota;
       
+      // Get existing course to check title
+      const course = await CourseService.getCourseById(id);
+      
       // Recalculate entry and bundle quotas if they weren't explicitly provided
       if (entryQuota === undefined && bundleQuota === undefined) {
-        updateData.entryQuota = Math.floor(quota * 0.7);  // 70% of total quota
-        updateData.bundleQuota = Math.floor(quota * 0.3); // 30% of total quota
+        // Check if it's one of the special courses (or being updated to one)
+        if (title === 'Game Development' || title === 'Competitive Programming' || 
+            (title === undefined && (course.title === 'Game Development' || course.title === 'Competitive Programming'))) {
+          updateData.entryQuota = quota;  // All quota for entry level
+          updateData.bundleQuota = 0;     // No bundle quota
+        } else {
+          updateData.entryQuota = Math.floor(quota * 0.786);  // ~110/140 for entry level
+          updateData.bundleQuota = Math.floor(quota * 0.214); // ~30/140 for bundle
+        }
       }
     }
     

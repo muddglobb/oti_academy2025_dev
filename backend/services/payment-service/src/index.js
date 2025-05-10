@@ -38,16 +38,19 @@ const apiLimiter = createRateLimiter({
   max: 100 // limit each IP to 100 requests per windowMs
 });
 
-// Apply stricter rate limits for write operations
-const writeLimiter = createRateLimiter({
-  name: 'Write Operations',
+// Create admin-specific rate limiter with higher limits
+const adminLimiter = createRateLimiter({
+  name: 'Admin Operations',
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 30 // limit each IP to 30 write requests per hour
+  max: 500, // Higher limit for admins
+  // Skip this limiter for non-admin routes
+  // The check happens after authentication middleware sets req.user
+  skip: (req) => !(req.user && req.user.role === 'ADMIN')
 });
+export { adminLimiter };
 
 // Apply rate limiter to all routes
 app.use(Array.isArray(apiLimiter) ? apiLimiter : [apiLimiter]);
-
 // Routes
 app.use('/payments', paymentRoutes);
 

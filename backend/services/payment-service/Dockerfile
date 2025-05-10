@@ -4,33 +4,34 @@ FROM node:20-alpine
 RUN apk add --no-cache openssl
 
 # Create app directory
-WORKDIR /home/appuser/app
+WORKDIR /app
 
-# Create a non-root user
-RUN addgroup -g 1001 -S appuser && \
-    adduser -u 1001 -S appuser -G appuser
+# Create logs directory with proper permissions
+RUN mkdir -p /app/logs && chmod -R 777 /app/logs
 
 # Install dependencies
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci
 
 # Copy app source
-COPY --chown=appuser:appuser . .
-
-# Set NODE_PATH to include parent directories for module resolution
-ENV NODE_PATH=/home/appuser
-
-RUN mkdir -p /home/appuser/app/node_modules/.prisma
-RUN chown -R appuser:appuser /home/appuser/app/node_modules
-
-# Use non-root user
-USER appuser
+COPY . .
 
 # Generate Prisma client
 RUN npx prisma generate
 
+# Create fallback directory for enrollment fallback mechanism
+RUN mkdir -p /app/enrollment-fallback && chmod -R 777 /app/enrollment-fallback
+
+# Railway specific environment variables
+ENV NODE_ENV=production
+ENV PORT=8006
+
+# Define health check to ensure the service is ready for traffic
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -qO- http://localhost:8006/health || exit 1
+
 # Expose port
 EXPOSE 8006
 
-# Start command with schema push for development (similar to auth-service)
+# Start command with schema push
 CMD sh -c "npx prisma db push && node src/index.js"

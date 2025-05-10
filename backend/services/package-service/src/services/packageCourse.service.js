@@ -35,9 +35,13 @@ export const PackageCourseService = {
       }
       return { valid: true };
     }
-    
-    // Untuk package tipe BUNDLE, pengecekan khusus
+      // Untuk package tipe BUNDLE, pengecekan khusus
     if (package_.type === 'BUNDLE') {
+      // Check if trying to add a course without bundle quota to a bundle package
+      if (course.bundleQuota === 0) {
+        return { valid: false, message: `Course ${course.title} tidak dapat ditambahkan ke package bundle karena tidak mendukung kuota bundle` };
+      }
+      
       // Pertama, cek apakah course sudah ada dalam package
       const existingCourse = await prisma.packageCourse.findUnique({
         where: {

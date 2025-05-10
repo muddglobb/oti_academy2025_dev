@@ -1,13 +1,20 @@
 import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+
+// Add explicit initial log
+console.log('🌱🌱🌱 Course seed script starting execution...');
 
 // Load environment variables
 dotenv.config();
 
-// Total quota is 100 per course, with 70 for entry/intermediate and 30 for bundle
-const DEFAULT_TOTAL_QUOTA = 100;
-const DEFAULT_ENTRY_QUOTA = 70;
+// Total quota is 140 per course
+// Game Dev and Competitive Programming have 140 entry quota and 0 bundle quota
+// Other courses have 110 entry quota and 30 bundle quota
+const DEFAULT_TOTAL_QUOTA = 140;
+const DEFAULT_ENTRY_QUOTA = 110;
 const DEFAULT_BUNDLE_QUOTA = 30;
+const NO_BUNDLE_COURSES = ['Competitive Programming', 'Game Development'];
 
 const prisma = new PrismaClient();
 
@@ -18,14 +25,35 @@ const futureDate = (daysFromNow) => {
     return date;
 };
 
-async function main() {
+// Check if data already exists
+async function dataExists() {
+    const count = await prisma.course.count();
+    return count > 0;
+}
+
+// Export the seeding function for programmatic use
+export async function seedCourses(options = { force: false }) {
     try {
         console.log('Starting course service seeding process...');
         
-        // Hapus data yang ada untuk menghindari duplikasi
-        console.log('Cleaning existing data...');
-        await prisma.session.deleteMany({});
-        await prisma.course.deleteMany({});
+        // Check if data already exists and we're not forcing a reseed
+        if (!options.force) {
+            const exists = await dataExists();
+            if (exists) {
+                console.log('Courses already exist, skipping seed');
+                return { 
+                    success: true, 
+                    message: 'Courses already exist, seeding skipped' 
+                };
+            }
+        }
+        
+        // Hapus data yang ada jika perlu
+        if (options.force) {
+            console.log('Cleaning existing data...');
+            await prisma.session.deleteMany({});
+            await prisma.course.deleteMany({});
+        }
         
         console.log('Creating entry-level courses...');
         // Entry-level courses
@@ -35,8 +63,8 @@ async function main() {
                 description: 'Learn algorithms and data structures for competitive programming contests.',
                 level: 'ENTRY',
                 quota: DEFAULT_TOTAL_QUOTA,
-                entryQuota: DEFAULT_ENTRY_QUOTA,
-                bundleQuota: DEFAULT_BUNDLE_QUOTA,
+                entryQuota: DEFAULT_TOTAL_QUOTA, // Full quota for entry level
+                bundleQuota: 0, // No bundle quota
                 sessions: {
                     create: [
                         {
@@ -54,7 +82,7 @@ async function main() {
             },
             {
                 title: 'Graphic Design',
-                description: 'Master the basics of graphic design including color theory, typography, and composition.',
+                description: 'Master the basics of Graphic Design including color theory, typography, and composition.',
                 level: 'ENTRY',
                 quota: DEFAULT_TOTAL_QUOTA,
                 entryQuota: DEFAULT_ENTRY_QUOTA,
@@ -101,8 +129,8 @@ async function main() {
                 description: 'Introduction to game development concepts, engines, and basic implementation.',
                 level: 'ENTRY',
                 quota: DEFAULT_TOTAL_QUOTA,
-                entryQuota: DEFAULT_ENTRY_QUOTA,
-                bundleQuota: DEFAULT_BUNDLE_QUOTA,
+                entryQuota: DEFAULT_TOTAL_QUOTA, // Full quota for entry level
+                bundleQuota: 0, // No bundle quota
                 sessions: {
                     create: [
                         {
@@ -260,6 +288,13 @@ async function main() {
         // Create courses
         const createdEntryCourses = await Promise.all(
             entryCourses.map(async (courseData) => {
+                // For courses other than Game Dev and Competitive Programming, 
+                // update the entry and bundle quotas
+                if (!NO_BUNDLE_COURSES.includes(courseData.title)) {
+                    courseData.entryQuota = DEFAULT_ENTRY_QUOTA; // 110 for regular courses
+                    courseData.bundleQuota = DEFAULT_BUNDLE_QUOTA; // 30 for regular courses
+                }
+                
                 const course = await prisma.course.create({
                     data: courseData,
                     include: {
@@ -288,20 +323,49 @@ async function main() {
         console.log(`Created ${createdEntryCourses.length} entry-level courses.`);
         console.log(`Created ${createdIntermediateCourses.length} intermediate courses.`);
         console.log('Course service seeding completed successfully!');
+        
+        // Return success result object
+        return {
+            success: true,
+            message: 'Course seeding completed successfully',
+            data: {
+                entryCourses: createdEntryCourses.length,
+                intermediateCourses: createdIntermediateCourses.length,
+                totalCourses: createdEntryCourses.length + createdIntermediateCourses.length
+            }
+        };
 
     } catch (error) {
         console.error('❌ Seeding failed:', error);
-        process.exit(1);
-    } finally {
-        await prisma.$disconnect();
+        
+        // Return error result object instead of exiting process
+        return {
+            success: false,
+            message: `Seeding failed: ${error.message}`,
+            error
+        };    } finally {        // Don't disconnect here when used as a module
+        if (import.meta.url.endsWith('/prisma/seed.js') || import.meta.url.includes('/seed.js')) {
+            console.log('💡 Seed script running from CLI - will disconnect');
+            await prisma.$disconnect();
+        } else {
+            console.log('💡 Seed script imported as module - connection control delegated to importer');
+        }
     }
 }
 
-main()
-    .catch((e) => {
-        console.error(e);
-        process.exit(1);
-    })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+// Run main function when script is executed directly
+if (import.meta.url.endsWith('/prisma/seed.js') || import.meta.url.includes('/seed.js')) {
+    const options = {
+        force: process.argv.includes('--force')
+    };
+    
+    seedCourses(options)
+        .catch((e) => {
+            console.error(e);
+            process.exit(1);
+        })
+        .finally(async () => {
+            await prisma.$disconnect();
+            process.exit(0);
+        });
+}

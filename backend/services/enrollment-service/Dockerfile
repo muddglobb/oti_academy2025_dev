@@ -10,14 +10,11 @@ WORKDIR /home/appuser/app
 RUN addgroup -g 1001 -S appuser && \
     adduser -u 1001 -S appuser -G appuser
 
-# Copy package.json and prisma files first
-COPY package*.json ./
-COPY prisma ./prisma/
-
 # Install dependencies
-RUN npm ci --only=production
+COPY package*.json ./
+RUN npm install --production
 
-# Copy the rest of the application files
+# Copy app source
 COPY --chown=appuser:appuser . .
 
 # Set NODE_PATH to include parent directories for module resolution
@@ -33,7 +30,8 @@ USER appuser
 RUN npx prisma generate
 
 # Expose port
-EXPOSE 8005
+EXPOSE 8007
 
 # Start command with schema push for development (similar to auth-service)
-CMD sh -c "npx prisma db push && node prisma/seed.js && node src/index.js"
+# Force reset the database schema to remove relationships
+CMD sh -c "npx prisma db push --accept-data-loss && node src/index.js"

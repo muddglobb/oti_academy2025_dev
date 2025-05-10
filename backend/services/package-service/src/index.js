@@ -94,9 +94,6 @@ const startServer = async () => {
     await prisma.$connect();
     console.log('✅ Connected to database');
     
-    // Auto-seeding removed - seed will be run manually
-    console.log('ℹ️ Auto-seeding is disabled. To seed the database, run: npm run seed');
-    
     app.listen(PORT, () => {
       console.log(`🚀 Package service running on port ${PORT}`);
     });

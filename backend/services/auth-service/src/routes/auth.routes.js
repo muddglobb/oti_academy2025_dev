@@ -8,7 +8,8 @@ import {
   resetPassword,
   verifyResetToken,
   changePassword,
-  updateProfile
+  updateProfile,
+  validateToken
 } from '../controllers/auth.controller.js';
 import {
   validateRegistration,
@@ -36,7 +37,7 @@ router.post('/refresh-token', standardLimiter, validateRefreshToken, refreshToke
 router.post('/forgot-password', securityLimiter, validateForgotPassword, forgotPassword);
 router.post('/reset-password', securityLimiter, validateResetPassword, resetPassword);
 router.get('/verify-reset/:token', standardLimiter, verifyResetToken);
-router.post('/validate-token', validateTokenRequest, validateTokenRequest);
+router.post('/validate-token', validateTokenRequest, validateToken);
 
 // Protected routes
 router.post('/logout', authenticateJWT, logout);
