@@ -10,12 +10,15 @@ export default function LayoutWrapper({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const hideNavbar = ["/login", "/register", "/lupa-password", "/dashboard", "/dashboard/class-dashboard", "/dashboard/assignments", "/dashboard/help",].includes(pathname);
+  
+  // Cek apakah pathname mengandung '/dashboard' atau halaman login, register, lupa-password
+  const hideNavbarFooter = pathname.includes("/dashboard") || ["/login", "/register", "/lupa-password"].includes(pathname);
+
   return (
     <>
-      {!hideNavbar && <Navbar />}
+      {!hideNavbarFooter && <Navbar />}
       <main>{children}</main>
-      {!hideNavbar && <Footer />}
+      {!hideNavbarFooter && <Footer />}
     </>
   );
 }

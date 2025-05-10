@@ -1,12 +1,13 @@
 import React from "react";
 // import DashboardHeader from "@/components/dashboard/header";
-import WelcomeCard from "@/components/dashboard/welcome-card";
+// import WelcomeCard from "@/components/dashboard/welcome-card";
+import { WelcomeCard } from "@/components/dashboard/welcome-card";
 import SecondContent from "@/components/dashboard/second-content";
 
-const userData = {
-  name: "Regina Joan Medea Jati Laksono",
-  avatar: "/images/teacher/faris.jpg",
-};
+// const userData = {
+//   name: "Regina Joan Medea Jati Laksono",
+//   avatar: "/images/teacher/faris.jpg",
+// };
 const enrolledClassData = [
   {
     id: 1,
@@ -27,8 +28,9 @@ const enrolledClassData = [
 
 const Dashboard = () => {
   return (
-    <main className="p-6 min-h-screen">
-      <WelcomeCard data={userData} />
+    <main className="p-6 min-h-screen bg-neutral-900">
+      {/* <WelcomeCard data={userData} /> */}
+      <WelcomeCard />
       <SecondContent data={enrolledClassData} />
     </main>
   );
