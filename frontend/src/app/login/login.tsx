@@ -1,25 +1,51 @@
-
+"use client";
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Mail, Lock, ArrowLeft, Eye, EyeOff } from 'react-feather';
+import {useForm, SubmitHandler} from 'react-hook-form';
 
-export default function Register() {
-  const [formData, setFormData] = useState({
-    email: '',
-    name: '',
-    password: '',
-    confirmPassword: '',
-    gender: 'male',
-    nim: '',
-  });
+interface FormData {
+  email: string;
+  password: string;
+}
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
+export default function Login() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
+
+  const onSubmit: SubmitHandler<FormData> = async (formData) => {
+    try {
+      const res = await fetch('http://localhost:8000/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem('token', data.token);
+        alert('Login berhasil!');
+      } else {
+        if (data.message === 'User not found') {
+          setErrorMessage('Kamu belum punya akun. Silakan daftar terlebih dulu.');
+        } else if (data.message === 'Incorrect password') {
+          setErrorMessage('Password salah. Coba lagi.');
+        } else {
+          setErrorMessage(data.message || 'Login gagal.');
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMessage('Terjadi kesalahan saat login.');
+    }
+  };
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-black text-white px-4 overflow-hidden">
@@ -44,53 +70,81 @@ export default function Register() {
       <div className="p-20 rounded-md shadow-lg max-h-[110vh] overflow-hidden">
         <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 mt-5 text-center">Masuk OmahTI Academy</h1>
 
-        <form className="space-y-2 w-[140%] transform translate-x-[-15%] text-xs sm:text-xs md:text-sm">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 w-[140%] transform translate-x-[-15%] text-xs sm:text-xs md:text-sm">
         <div className="relative">
           <h2 className="font-bold mb-1 mt-3">Email</h2>
           <input
             type="text"
-            name="email"
             placeholder="omahtiacademy@gmail.com"
-            onChange={handleChange}
+            {...register('email', { required: 'Email wajib diisi', pattern: /^\S+@\S+$/i })}
             className="w-full bg-white text-black border-3 rounded-md px-10 py-2"
           />
-          <Mail className="absolute left-3 top-[65%] -translate-y-[45%] h-4 w-4 text-gray-600" size={20}/>
+          {errors.email && (
+            <p className="text-red-500 text-xs mt-1">{errors.email.message || 'Format email tidak valid'}</p>
+          )}
+          <Mail
+          className={`absolute left-3
+            ${errors.email
+              ? 'top-[50%] -translate-y-[45%] text-gray-600'
+              : 'top-[66%] -translate-y-[45%] text-gray-600'
+            }
+            h-4 w-4`} size={20}/>
         </div>
         
         <div className="relative">
           <div className="flex justify-between items-center mt-3">
-            <h2 className="font-bold mb-2">Password</h2>
+            <h2 className="font-bold mb-1">Password</h2>
             <Link href="/lupa-password" className="text-xs text-white hover:underline mb-1.5 text-[11px]">
               Lupa Password?
             </Link>
           </div>
           <input
             type={isPasswordVisible ? 'text' : 'password'}
-            name="new-password"
             placeholder="omahtiacademy"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            {...register('password', { required: 'Password wajib diisi' })}
             className="w-full bg-white text-black border-3 rounded-md px-10 py-2"
           />
-          <div className="absolute left-3 top-[67%] -translate-y-[45%]">
-            <Lock className="h-4 w-4 text-gray-600" size={20} />
+          <div>
+            <Lock className={`absolute left-3
+            ${errors.email
+              ? 'top-[50%] -translate-y-[45%] text-gray-600'
+              : 'top-[65%] -translate-y-[45%] text-gray-600'
+            }
+            h-4 w-4`} size={20} />
           </div>
-          <div className="absolute right-3 top-[67%] -translate-y-[45%] h-4 w-4 text-gray-600 cursor-pointer"
+          <div
             onClick={() => setIsPasswordVisible(!isPasswordVisible)}>
-            {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+            {isPasswordVisible ? <EyeOff className={`absolute right-3
+            ${errors.email
+              ? 'top-[50%] -translate-y-[45%] text-gray-600'
+              : 'top-[65%] -translate-y-[45%] text-gray-600'
+            }
+            h-4 w-4 cursor-pointer`} size={18} /> : <Eye className={`absolute right-3
+              ${errors.email
+                ? 'top-[50%] -translate-y-[45%] text-gray-600'
+                : 'top-[65%] -translate-y-[45%] text-gray-600'
+              }
+              h-4 w-4 cursor-pointer`} size={18} />}
           </div>
+          {errors.password && (
+            <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+          )}
         </div>
 
-          <button type="submit" className="w-full bg-blue-600 hover:bg-blue-800 py-2 rounded-md font-semibold mt-2 cursor-pointer">
-            Submit
-          </button>
+        <button type="submit" className="w-full bg-blue-600 hover:bg-blue-800 py-2 rounded-md font-semibold mt-2 cursor-pointer">
+          Submit
+        </button>
 
-          <p className="text-center text-sm mt-4">
-            Belum punya akun?{' '}
-            <Link href="/register" className="text-white underline">
-              Daftar
-            </Link>
-          </p>
+        {errorMessage && (
+          <p className="text-red-500 text-xs mt-3 text-center">{errorMessage}</p>
+        )}
+
+        <p className="text-center text-sm mt-4">
+          Belum punya akun?{' '}
+        <Link href="/register" className="text-white underline">
+          Daftar
+        </Link>
+        </p>
         </form>
       </div>
     </div>
