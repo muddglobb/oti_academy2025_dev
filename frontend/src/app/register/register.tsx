@@ -1,28 +1,79 @@
-
+"use client";
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { User, Mail, Lock, Database, ArrowLeft, Eye, EyeOff } from 'react-feather';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+
+interface FormData {
+  email: string;
+  name: string;
+  password: string;
+  confirmPassword: string;
+  nim: string;
+}
 
 export default function Register() {
-  const [formData, setFormData] = useState({
-    email: '',
-    name: '',
-    password: '',
-    confirmPassword: '',
-    gender: 'male',
-    nim: '',
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const [isDike, setIsDike] = useState<null | boolean>(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [password, setPassword] = useState('');
-  const [refill, setRefill] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isRefillVisible, setIsRefillVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+
+  const {
+      register,
+      handleSubmit,
+      watch,
+      formState: { errors },
+    } = useForm<FormData>();
+
+  const password = watch('password');
+
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    if (data.password !== data.confirmPassword) {
+      setErrorMessage("Password dan konfirmasi password tidak cocok.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setErrorMessage(null);
+
+      const response = await fetch("http://localhost:8000/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          name: data.name,
+          password: data.password,
+          nim: isDike ? data.nim : undefined,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.message || "Registrasi gagal.");
+      }
+
+      localStorage.setItem("token", responseData.token);
+      alert("Registrasi berhasil!");
+      router.push("/login");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Terjadi kesalahan saat registrasi.");
+      }
+}
+  };
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-black text-white px-4 overflow-hidden">
@@ -47,17 +98,30 @@ export default function Register() {
       <div className="p-20 rounded-md shadow-lg max-h-[110vh] overflow-hidden">
         <h1 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 mt-5 text-center">Daftar OmahTI Academy</h1>
 
-        <form className="space-y-2 w-[140%] transform translate-x-[-15%] text-xs sm:text-xs md:text-sm">
+        {errorMessage && (
+            <div className="mb-4 text-red-500 text-center font-semibold">
+              {errorMessage}
+            </div>
+          )}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 w-[140%] transform translate-x-[-15%] text-xs sm:text-xs md:text-sm">
         <div className="relative">
-          <h2 className="font-bold mb-1 mt-3">Email</h2>
+          <label htmlFor="email" className="font-bold mb-1 mt-3 block">Email</label>
           <input
             type="text"
-            name="email"
+            id="email"
             placeholder="omahtiacademy@gmail.com"
-            onChange={handleChange}
+            {...register("email", { required: "Email wajib diisi", pattern: { value: /^\S+@\S+$/i, message: "Format email tidak valid" } })}
             className="w-full bg-white text-black border-3 rounded-md px-10 py-2"
           />
-          <Mail className="absolute left-3 top-[65%] -translate-y-[45%] h-4 w-4 text-gray-600" size={20}/>
+          <Mail
+          className={`absolute left-3
+            ${errors.email
+              ? 'top-[50%] -translate-y-[45%] text-gray-600'
+              : 'top-[66%] -translate-y-[45%] text-gray-600'
+            }
+            h-4 w-4`} size={20}/>
+          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
         </div>
 
 
@@ -65,74 +129,131 @@ export default function Register() {
           <h2 className="font-bold mb-1 mt-3">Nama</h2>
           <input
             type="text"
-            name="nama"
+            id="nama"
             placeholder="omahtiacademy"
-            onChange={handleChange}
+            {...register("name", { required: "Nama wajib diisi" })}
             className="w-full bg-white text-black border-3 rounded-md px-10 py-2"
           />
-          <User className="absolute left-3 top-[65%] -translate-y-[45%] h-4 w-4 text-gray-600" size={20}/>
+          <User className={`absolute left-3
+            ${errors.name
+              ? 'top-[50%] -translate-y-[45%] text-gray-600'
+              : 'top-[66%] -translate-y-[45%] text-gray-600'
+            }
+            h-4 w-4`} size={20}/>
+          {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
         </div>
 
         <div className="relative">
           <h2 className="font-bold mb-1 mt-3">Password</h2>
           <input
             type={isPasswordVisible ? 'text' : 'password'}
-            name="new-password"
+            id="new-password"
             placeholder="omahtiacademy"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            {...register("password", {
+              required: "Password wajib diisi",
+              pattern: {
+              value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+[\]{}|\\;',./:<>?`~"-]{8,}$/,
+              message: "Password minimal 8 karakter dan mengandung angka",
+              },
+            })}
             className="w-full bg-white text-black border-3 rounded-md px-10 py-2"
           />
-          <div className="absolute left-3 top-[65%] -translate-y-[45%]">
-            <Lock className="h-4 w-4 text-gray-600" size={20} />
+          <div>
+            <Lock className={`absolute left-3
+            ${errors.password
+              ? 'top-[51%] -translate-y-[45%] text-gray-600'
+              : 'top-[65%] -translate-y-[45%] text-gray-600'
+            }
+            h-4 w-4`} size={20} />
           </div>
-          <div className="absolute right-3 top-[65%] -translate-y-[45%] h-4 w-4 text-gray-600 cursor-pointer"
+          <div
             onClick={() => setIsPasswordVisible(!isPasswordVisible)}>
-            {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+            {isPasswordVisible ? <EyeOff className={`absolute right-3
+            ${errors.password
+              ? 'top-[51%] -translate-y-[45%] text-gray-600'
+              : 'top-[65%] -translate-y-[45%] text-gray-600'
+            }
+            h-4 w-4 cursor-pointer`} size={18} /> : <Eye className={`absolute right-3
+              ${errors.password
+                ? 'top-[51%] -translate-y-[45%] text-gray-600'
+                : 'top-[65%] -translate-y-[45%] text-gray-600'
+              }
+              h-4 w-4 cursor-pointer`} size={18} />}
           </div>
+          {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
         </div>
 
         <div className="relative">
           <h2 className="font-bold mb-1 mt-3">Refill Password</h2>
           <input
             type={isRefillVisible ? 'text' : 'password'}
-            name="refill"
+            id="refill"
             placeholder="omahtiacademy"
-            value={refill} 
-            onChange={(e) => setRefill(e.target.value)}
+            {...register("confirmPassword", {
+              required: "Konfirmasi password wajib diisi",
+              validate: (value) => value === password || "Konfirmasi password tidak cocok",
+            })}
             className="w-full bg-white text-black border-3 rounded-md px-10 py-2"
           />
-          <div className="absolute left-3 top-[65%] -translate-y-[45%]">
-            <Lock className="h-4 w-4 text-gray-600" size={20} />
+          <div>
+            <Lock className={`absolute left-3
+            ${errors.confirmPassword
+              ? 'top-[51%] -translate-y-[45%] text-gray-600'
+              : 'top-[65%] -translate-y-[45%] text-gray-600'
+            }
+            h-4 w-4`} size={20} />
           </div>
-          <div className="absolute right-3 top-[65%] -translate-y-[45%] h-4 w-4 text-gray-600 cursor-pointer"
+          <div
             onClick={() => setIsRefillVisible(!isRefillVisible)}>
-            {isRefillVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+            {isRefillVisible ? <EyeOff className={`absolute right-3
+            ${errors.confirmPassword
+              ? 'top-[51%] -translate-y-[45%] text-gray-600'
+              : 'top-[65%] -translate-y-[45%] text-gray-600'
+            }
+            h-4 w-4 cursor-pointer`} size={18} /> : <Eye className={`absolute right-3
+              ${errors.confirmPassword
+                ? 'top-[51%] -translate-y-[45%] text-gray-600'
+                : 'top-[65%] -translate-y-[45%] text-gray-600'
+              }
+              h-4 w-4 cursor-pointer`} size={18} />}
           </div>
+          {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>}
         </div>
 
         <div className="flex items-center gap-10 mt-3">
           <button
             type="button"
-            className={`w-full ${isDike? 'cursor-pointer bg-blue-500 text-white hover:bg-blue-700 hover:border-blue-700' : 'bg-white text-blue-700'} cursor-pointer border-2 border-blue-500 rounded-lg px-6 py-1.5 font-bold`}
+            className={`w-full cursor-pointer border-2 border-blue-500 rounded-lg px-6 py-1.5 font-bold ${isDike == true ? 'cursor-pointer bg-blue-500 text-white hover:bg-blue-700 hover:border-blue-700' : 'bg-white text-blue-700'}`}
             onClick={() => setIsDike((prev) => !prev)}>DIKE</button>
           <button
             type="button"
-            className="cursor-pointer w-full bg-white text-blue-700 border-2 border-blue-500 rounded-md px-6 py-1.5 font-bold"
+            className={`w-full cursor-pointer border-2 border-blue-500 rounded-lg px-6 py-1.5 font-bold ${isDike == false ? 'cursor-pointer bg-blue-500 text-white hover:bg-blue-700 hover:border-blue-700' : 'bg-white text-blue-700'}`}
             onClick={() => setIsDike(false)}>UMUM</button>
         </div>
 
         {isDike && (
-          <div>
+          <div className="relative mt-3">
             <h2 className="font-bold mb-1 mt-3">NIM</h2>
             <input
               type="text"
-              name="nim"
+              id="nim"
               placeholder="00/000000/PA/000000"
-              onChange={handleChange}
+              {...register("nim", {
+                required: "NIM wajib diisi",
+                pattern: {
+                value: /^\d{2}\/\d{6}\/PA\/\d{5}$/,
+                message: "Format NIM tidak valid",
+                },
+              })}
               className="w-full bg-white text-black border-3 rounded-md px-10 py-2"
             />
-            <Database className="absolute left-3 top-[77.2%] -translate-y-[45%] h-4 w-4 text-gray-600" size={20}/>
+            <Database className={`absolute left-3
+            ${errors.nim
+              ? 'top-[51%] -translate-y-[45%] text-gray-600'
+              : 'top-[65%] -translate-y-[45%] text-gray-600'
+            }
+            h-4 w-4`} size={20} />
+            {errors.nim && <p className="text-red-500 text-xs mt-1">{errors.nim.message}</p>}
           </div>
         )}
 
@@ -148,7 +269,12 @@ export default function Register() {
             />
           </div> */}
 
-          <button type="submit" className="w-full bg-blue-600 hover:bg-blue-800 py-2 rounded-md font-semibold mt-2 cursor-pointer">
+          <button
+          type="submit"
+          className={`w-full py-2 rounded-md font-semibold mt-2 cursor-pointer ${
+            loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-800'
+            }`}
+            disabled={loading}>
             Submit
           </button>
 

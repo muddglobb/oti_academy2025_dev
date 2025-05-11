@@ -115,12 +115,12 @@ export default function Login() {
           <div
             onClick={() => setIsPasswordVisible(!isPasswordVisible)}>
             {isPasswordVisible ? <EyeOff className={`absolute right-3
-            ${errors.email
+            ${errors.password
               ? 'top-[50%] -translate-y-[45%] text-gray-600'
               : 'top-[65%] -translate-y-[45%] text-gray-600'
             }
             h-4 w-4 cursor-pointer`} size={18} /> : <Eye className={`absolute right-3
-              ${errors.email
+              ${errors.password
                 ? 'top-[50%] -translate-y-[45%] text-gray-600'
                 : 'top-[65%] -translate-y-[45%] text-gray-600'
               }
