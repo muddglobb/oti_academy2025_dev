@@ -7,20 +7,22 @@ import LandingPageBackground from '@/components/landing-page-background'
 import Harga from './modules/landing-page/harga'
 import Comments from './modules/landing-page/comments'
 import FAQ from './modules/landing-page/faq'
+import Mentor from './modules/landing-page/mentor'
 
 const page = () => {
   return (
-    <div className='bg-neutral-900 overflow-x-hidden relative'>
-      <div className='min-h-screen relative z-100'>
+    <div className='overflow-x-hidden relative'>
+      <div className='min-h-screen'>
         <Hero />
         <Kenali />
         <WhyUs />
         <PilihanKelas />
+        <Mentor />
         <Harga />
         <Comments />
         <FAQ />
       </div>
-      <div className='z-0'>
+      <div>
         <LandingPageBackground />
       </div>
     </div>
