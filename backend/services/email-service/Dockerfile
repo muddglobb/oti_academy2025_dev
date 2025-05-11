@@ -1,6 +1,5 @@
 FROM node:20-slim
 
-# Create app directory with proper permissions
 WORKDIR /app
 
 # Create non-root user for security
@@ -11,13 +10,13 @@ RUN mkdir -p /app/logs && chown -R appuser:appuser /app
 COPY package*.json ./
 
 # Install dependencies
-# Using npm install instead of npm ci to update the lock file
 RUN npm install --production
 
 # Copy app source
 COPY --chown=appuser:appuser . .
 
 # Create dist directory and run copy-templates script
+# Fixed path from /dist to /app/dist
 RUN mkdir -p /app/dist && npm run copy-templates
 
 # Switch to non-root user
