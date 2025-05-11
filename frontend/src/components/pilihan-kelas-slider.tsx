@@ -122,11 +122,11 @@ const PilihanKelasSlider =() => {
         slidesToShow: 4,
         responsive: [
             {
-                breakpoint: 1024,
+                breakpoint: 1400,
                 settings: {
                     slidesToShow: 3,
                     centerMode: true,
-                    centerPadding: "20px",
+                    centerPadding: "50px",
                 }
             },
             {
@@ -142,7 +142,7 @@ const PilihanKelasSlider =() => {
                 settings: {
                     slidesToShow: 1,
                     centerMode: true,
-                    centerPadding: "40px",
+                    centerPadding: "50px",
                 }
             }
         ]

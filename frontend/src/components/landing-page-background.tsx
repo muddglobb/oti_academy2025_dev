@@ -3,14 +3,7 @@ import Image from "next/image";
 
 const LandingPageBackground = () => {
   return (
-    <div className="absolute inset-0 z-10">
-      <Image
-        src="/images/stars-beginner-programs.png"
-        alt="Background with stars"
-        fill
-        className="absolute top-0 left-0 w-full object-cover -z-1000"
-        priority
-      />
+    <div className="absolute inset-0 -z-10">
       <div className="absolute w-full pointer-events-none left-[60%] md:left-[80%] top-[283px] md:top-[315px]">
         {/* bumi */}
         <Image
@@ -44,7 +37,7 @@ const LandingPageBackground = () => {
         />
       </div>
 
-      <div className="absolute w-full pointer-events-none left-[620px] top-[3862px]">
+      <div className="absolute w-full pointer-events-none left-[720px] top-[4530px]">
         {/* saturnus */}
         <Image
           src="/images/planet/saturnus.png"

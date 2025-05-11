@@ -54,7 +54,14 @@ const Sponsors =[
 
 const WhyUs = () => {
     return (
-        <Container className="z-100 items-center gap-4 lg:gap-10 bg-gradient-to-b from-neutral-900 to-neutral-900/10]">
+        <Container className="items-center gap-4 lg:gap-10 bg-gradient-to-b from-neutral-900 via-neutral-900 to-neutral-900/40">
+            <Image
+                src="/images/stars-hero-programs.png"
+                alt="stars"
+                layout="fill"
+                className="absolute left-0 max-h-screen object-cover -z-100"
+                style={{ top: "26%" }}
+            />
             <h1 className="pt-10 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
                 Mengapa Kami Pilihan Tepat untuk Kamu
             </h1>

@@ -97,9 +97,9 @@ const Comments = () => {
                 </h1>
 
                 {/* desktop */}
-                <div className="hidden lg:flex gap-8 mt-10 h-full">
+                <div className="hidden lg:flex 2xl:gap-8 gap-5 mt-10 h-full">
                     {/* kiri dua */}
-                    <div className="flex flex-col gap-10 w-104">
+                    <div className="flex flex-col 2xl:gap-10 gap-5 max-w-104">
                         <CommentCard
                             nama={CommentContents[0].name}
                             pic={CommentContents[0].pic}
@@ -115,7 +115,7 @@ const Comments = () => {
                     </div>
 
                     {/* tengah gede sendiri */}
-                    <div className="flex flex-col gap-10 w-104 justify-center">
+                    <div className="flex flex-col 2xl:gap-10 gap-5 max-w-104 justify-center">
                         <CommentCard
                             nama={CommentContents[2].name}
                             pic={CommentContents[2].pic}
@@ -125,7 +125,7 @@ const Comments = () => {
                     </div>
 
                     {/* kanan dua */}
-                    <div className="flex flex-col gap-10 w-104">
+                    <div className="flex flex-col 2xl:gap-10 gap-5 max-w-104">
                         <CommentCard
                             nama={CommentContents[3].name}
                             pic={CommentContents[3].pic}
