@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Confirmation - OmahTI Academy</title>
+<style>
+  /* Import Plus Jakarta Sans from Google Fonts */
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+  
+  /* Reset styles */
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: #f9f9f9 !important;
+    font-family: 'Plus Jakarta Sans', Arial, sans-serif !important;
+    -webkit-font-smoothing: antialiased !important;
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+    color: #333333 !important;
+    width: 100% !important;
+    -webkit-text-size-adjust: 100% !important;
+    -ms-text-size-adjust: 100% !important;
+  }
+  
+  /* Full table styles for better email client compatibility */
+  table {
+    border-spacing: 0 !important;
+    border-collapse: collapse !important;
+  }
+  
+  td {
+    padding: 0 !important;
+  }
+  
+  h1, h2, h3, h4, p {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  img {
+    -ms-interpolation-mode: bicubic !important;
+    border: 0 !important;
+  }
+  
+  /* Container */
+  .container {
+    width: 100% !important;
+    max-width: 600px !important;
+    margin: 0 auto !important;
+    background-color: #ffffff !important;
+  }
+  
+  .header {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: #09193B !important;
+    text-align: center !important;
+    width: 100% !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    display: block !important;
+  }
+  
+  .header img {
+    width: 100% !important;
+    max-width: 600px !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0 !important;
+    border: 0 !important;
+  }
+  
+  /* Content */
+  .content {
+    padding: 30px !important;
+    background: linear-gradient(to bottom, #FFFFFF, #ececec) !important;
+  }
+  
+  .content h1 {
+    color: #09193B !important;
+    margin-bottom: 20px !important;
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    word-break: break-word !important;
+  }
+  
+  .content p {
+    margin-bottom: 20px !important;
+    color: #333333 !important;
+    word-break: break-word !important;
+  }
+  
+  .receipt {
+    background-color: #f7f7f7 !important;
+    border-radius: 8px !important;
+    padding: 20px !important;
+    margin: 20px 0 !important;
+    overflow: hidden !important;
+  }
+  
+  /* Table-based receipt for better email compatibility */
+  .receipt-table {
+    width: 96% !important;
+    border-collapse: collapse !important;
+    margin: 0 auto !important;
+  }
+  
+  .receipt-table td {
+    padding: 10px 0 !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+  }
+  
+  .receipt-table tr:last-child td {
+    border-bottom: none !important;
+  }
+  
+  .receipt-table .label-cell {
+    font-weight: 600 !important;
+    color: #09193B !important;
+    width: 30% !important;
+    text-align: left !important;
+  }
+  
+  .receipt-table .value-cell {
+    width: 70% !important;
+    word-break: break-word !important;
+    text-align: right !important;
+  }
+  
+  .receipt-table .total-row td {
+    padding-top: 15px !important;
+    border-top: 2px solid #09193B !important;
+    font-weight: 700 !important;
+    font-size: 18px !important;
+    border-bottom: none !important;
+  }
+  
+  /* Button */
+  .button {
+    display: inline-block !important;
+    background-color: #09193B !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    padding: 12px 20px !important;
+    border-radius: 4px !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    margin: 20px 0 !important;
+  }
+  
+  /* Footer */
+  .footer {
+    padding: 20px 30px !important;
+    background-color: #09193B !important;
+    color: #ffffff !important;
+    text-align: center !important;
+    font-size: 14px !important;
+  }
+  
+  .footer p {
+    margin: 5px 0 !important;
+  }
+  
+  .footer a {
+    color: #ffffff !important;
+    text-decoration: none !important;
+  }
+  
+  /* Social icons styling */
+  .social-icons {
+    margin-top: 10px !important;
+    text-align: center !important;
+  }
+  
+  .social-icons a {
+    display: inline-block !important;
+    margin: 0 8px !important;
+    text-decoration: none !important;
+  }
+  
+  .social-icons a div {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  /* Responsive */
+  @media only screen and (max-width: 600px) {
+    /* Header needs special treatment for full width */
+    .header {
+      width: 100% !important;
+      padding: 0 !important;
+    }
+    
+    /* Content padding adjustments */
+    .content {
+      padding: 20px !important;
+      box-sizing: border-box !important; /* Ensure padding doesn't add to width */
+    }
+    
+    .content h1 {
+      font-size: 20px !important;
+    }
+    
+    .receipt {
+      padding: 15px !important; /* This provides the outer spacing for the receipt box */
+      margin: 20px 0 !important; /* Keep vertical margins */
+      background-color: #f7f7f7 !important;
+      border-radius: 8px !important;
+      overflow: hidden !important; /* Crucial to clip any internal overflow */
+      box-sizing: border-box !important; /* Ensure padding is included in width calculation */
+    }
+    
+    /* Revised full width rule for mobile: Be specific */
+    body, table.container, div, p { /* Removed generic 'table' and 'td' */
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important; /* Apply box-sizing globally within media query */
+    }
+    /* Ensure the main container table itself is full width */
+    table.container {
+        min-width: 100% !important; 
+    }
+    
+    /* Improve receipt display on mobile */
+    .receipt-table {
+      width: 100% !important; /* Make receipt table fill the .receipt div's content area */
+      border-collapse: collapse !important; /* Keep this */
+      box-sizing: border-box !important;
+      margin: 0 !important; /* Remove auto margins if width is 100% */
+    }
+    
+    /* Reset borders and padding for all TDs within receipt-table for mobile */
+    .receipt-table td {
+      border-bottom: none !important;
+      border-top: none !important;
+      padding: 0 !important; 
+      box-sizing: border-box !important;
+    }
+
+    .receipt-table .label-cell,
+    .receipt-table .value-cell {
+      display: block !important; /* Stack the cells */
+      width: 100% !important;   /* Make them full width of the .receipt-table */
+      text-align: left !important;
+      box-sizing: border-box !important;
+    }
+    
+    /* Styling for stacked label cells */
+    .receipt-table .label-cell {
+      padding: 10px 0 2px 0 !important; /* Adjust padding: Top, Right, Bottom, Left */
+      font-weight: 600 !important;
+      color: #09193B !important;
+    }
+    
+    /* Styling for stacked value cells */
+    .receipt-table .value-cell {
+      padding: 2px 0 10px 8px !important; /* Indent value slightly, adjust padding */
+      word-break: break-word !important;
+    }
+
+    /* Specific border placement for stacked mobile view */
+    /* Line after the course value */
+    .receipt-table tr:not(.total-row) .value-cell {
+      border-bottom: 1px solid #e0e0e0 !important;
+    }
+    
+    /* Thick line before "Total:" label */
+    .receipt-table tr.total-row .label-cell {
+      padding-top: 15px !important; /* Space above the border */
+      border-top: 2px solid #09193B !important;
+      font-weight: 700 !important; /* Inherit from .total-row td desktop style */
+      font-size: 18px !important;   /* Inherit from .total-row td desktop style */
+    }
+    
+    /* Ensure "Total" value also gets correct font styling */
+    .receipt-table tr.total-row .value-cell {
+      font-weight: 700 !important; 
+      font-size: 18px !important;
+      padding-top: 2px !important; /* Small padding above the total amount */
+    }
+
+    /* Improve button display */
+    .button {
+      display: block !important;
+      width: 100% !important;
+      text-align: center !important;
+      padding: 12px 0 !important; /* Vertical padding */
+      box-sizing: border-box !important;
+    }
+    
+    /* Fix social icons */
+    .social-icons a div {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 5px auto !important;
+    }
+    
+    /* Ensure proper spacing and word wrapping for text elements */
+    p, h1, h2, h3 {
+      max-width: 100% !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important; /* Add for more aggressive wrapping if needed */
+    }
+  }
+</style>
+</head>
+<body style="margin: 0; padding: 0;">
+  <table cellpadding="0" cellspacing="0" border="0" width="100%" style="min-width: 100%; width: 100%;">
+    <tr>
+      <td align="center" valign="top">
+        <table class="container" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width: 600px; width: 100%;">
+          <tr>
+            <td class="header" align="center" valign="top" style="background-color: #09193B; padding: 0; margin: 0;">
+              <img src="https://res.cloudinary.com/dyjvctxme/image/upload/v1746938429/Header_vrhzev.png" alt="OmahTI Academy Logo" width="600" style="border: 0; display: block; width: 100%; max-width: 600px; height: auto;">
+            </td>
+          </tr>
+          <tr>
+            <td class="content" style="padding: 30px; background: linear-gradient(to bottom, #FFFFFF, #ececec);">
+              <h1>Payment Confirmation</h1>
+              <p>Hello {{username}},</p>
+              <p>Thank you for your payment. We are pleased to confirm that your payment has been successfully processed.</p>
+              
+              <div class="receipt">
+                <table class="receipt-table" cellpadding="0" cellspacing="0" border="0" width="100%">
+                  <tr>
+                    <td class="label-cell">Course:</td>
+                    <td class="value-cell">{{courseName}}</td>
+                  </tr>
+                  <tr class="total-row">
+                    <td class="label-cell">Total:</td>
+                    <td class="value-cell">{{amount}}</td>
+                  </tr>
+                </table>
+              </div>
+              
+              <p>If your payment is not confirmed within 24 hours, please contact our admin via WhatsApp and send your transfer receipt to expedite the process:</p>
+              
+              <p><a href="https://wa.me/62xxxxxxxxxx" class="button" style="background-color: #09193B; color: #ffffff; text-decoration: none; padding: 12px 20px; border-radius: 4px; font-weight: 500; text-align: center; margin: 20px 0; display: inline-block;">Contact Admin</a></p>
+              
+              <p>Best regards,<br> OmahTI Academy</p>
+            </td>
+          </tr>
+          <tr>
+            <td class="footer" style="padding: 20px 30px; background-color: #09193B; color: #ffffff; text-align: center; font-size: 14px;">
+              <h3>OmahTI Academy 2025</h3>
+              
+              <!-- Social media icons -->
+              <div class="social-icons" style="margin-top: 10px; text-align: center;">
+                <a href="https://instagram.com/omahtiacademy_ugm" style="display: inline-block; margin: 0 8px; text-decoration: none;">
+                  <div style="display: flex; align-items: center; justify-content: center;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3955/3955024.png" alt="Instagram" width="20" height="20" style="border: none; margin-right: 5px;">
+                    <span style="color: #ffffff; font-size: 14px;">@omahtiacademy_ugm</span>
+                  </div>
+                </a>
+              </div>
+              
+              <p style="margin-top: 10px; font-size: 12px;">academy.omahti.web.id</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
