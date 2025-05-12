@@ -116,7 +116,14 @@ export const sendEnrollmentConfirmationEmail = async (payment, userInfo, package
     if (!userInfo || !userInfo.email) {
       console.error('Cannot send enrollment confirmation: Missing user information');
       return false;
-    }    // Map course names to their specific date ranges
+    }
+    
+    // Log inputs to help with debugging
+    console.log('Enrollment email - Payment:', payment ? payment.id : 'Not provided');
+    console.log('Enrollment email - Package:', packageInfo ? packageInfo.name : 'Not provided');
+    console.log('Enrollment email - CourseNames received:', courseNames);
+    
+    // Map course names to their specific date ranges
     const courseScheduleMap = {
       // INTERMEDIATE courses
       'UI/UX': '17–28 Juli 2025',
@@ -132,23 +139,64 @@ export const sendEnrollmentConfirmationEmail = async (payment, userInfo, package
       'Competitive Programming': '30 Juni–13 Juli 2025',
       'Basic Python': '30 Juni–21 Juli 2025'
     };
+    
+    // If courseNames is null or empty, try to fetch them
+    if (!courseNames || !Array.isArray(courseNames) || courseNames.length === 0 || 
+        courseNames.every(name => name === 'Unknown Course')) {
+      console.log('No valid course names provided, attempting to fetch course information');
+      
+      try {
+        // Import PaymentService dynamically to avoid circular dependencies
+        const { PaymentService } = await import('../services/payment.service.js');
+        
+        if (payment.courseId) {
+          // For single course payments
+          const courseInfo = await PaymentService.getCourseInfo(payment.courseId);
+          if (courseInfo && courseInfo.title) {
+            courseNames = [courseInfo.title];
+            console.log(`Fetched course title: ${courseInfo.title}`);
+          }
+        } else if (payment.packageId) {
+          // For bundle packages, get all courses in the package
+          const coursesInBundle = await PaymentService.getCoursesInPackage(payment.packageId);
+          if (coursesInBundle && Array.isArray(coursesInBundle) && coursesInBundle.length > 0) {
+            courseNames = coursesInBundle.map(course => course.title || course.name).filter(Boolean);
+            console.log(`Fetched ${courseNames.length} course names from bundle`);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching course information for email:', error.message);
+      }
+    }
 
-    // Build course name string
-    const courseName = Array.isArray(courseNames) && courseNames.length > 0
+    // Build course name string, with better fallbacks
+    const courseName = Array.isArray(courseNames) && courseNames.length > 0 && 
+                      !courseNames.every(name => name === 'Unknown Course')
       ? courseNames.join(', ')
       : (packageInfo?.name || 'Your course');
-
+      
     // Determine if this is a bundle (multiple courses)
     const isBundle = Array.isArray(courseNames) && courseNames.length > 1;
     
     // Format the start date
     let startDate;
     
+    // Log to debug course schedule mapping
+    console.log('Course names for schedule mapping:', courseNames);
+    
     if (isBundle) {
       // For bundles, show each course with its date
       const courseWithDates = courseNames.map(name => {
-        return courseScheduleMap[name] 
-          ? `${name}: ${courseScheduleMap[name]}` 
+        // Look for partial matches in courseScheduleMap keys for flexibility
+        const scheduleKey = Object.keys(courseScheduleMap).find(key => 
+          name.includes(key) || key.includes(name)
+        );
+        
+        const scheduleDate = scheduleKey ? courseScheduleMap[scheduleKey] : null;
+        console.log(`Bundle course: "${name}", matched with: "${scheduleKey}", date: ${scheduleDate}`);
+        
+        return scheduleDate 
+          ? `${name}: ${scheduleDate}` 
           : name;
       });
       startDate = courseWithDates.join(', ');
@@ -156,8 +204,15 @@ export const sendEnrollmentConfirmationEmail = async (payment, userInfo, package
       // For single course, just show the date
       const singleCourseName = Array.isArray(courseNames) ? courseNames[0] : packageInfo?.name;
       
-      if (singleCourseName && courseScheduleMap[singleCourseName]) {
-        startDate = courseScheduleMap[singleCourseName];
+      // Look for partial matches in courseScheduleMap keys
+      const scheduleKey = Object.keys(courseScheduleMap).find(key => 
+        singleCourseName && (singleCourseName.includes(key) || key.includes(singleCourseName))
+      );
+      
+      console.log(`Single course: "${singleCourseName}", matched with: "${scheduleKey}"`);
+      
+      if (scheduleKey && courseScheduleMap[scheduleKey]) {
+        startDate = courseScheduleMap[scheduleKey];
       } else {
         // Fallback to the original date format
         startDate = packageInfo?.startDate 
@@ -185,15 +240,19 @@ export const sendEnrollmentConfirmationEmail = async (payment, userInfo, package
     // Send email via circuit breaker pattern
     await executeWithCircuitBreaker('email', async () => {
       return await retryWithBackoff(async () => {
+        const emailPayload = {
+          email: userInfo.email,
+          username: userInfo.name || 'Student',
+          courseName: courseName,
+          startDate: startDate,
+          courseLink: courseLink
+        };
+        
+        console.log('Sending enrollment confirmation email with payload:', emailPayload);
+        
         return await axios.post(
           `${EMAIL_SERVICE_URL}/email/enrollment-confirmation`,
-          {
-            email: userInfo.email,
-            username: userInfo.name || 'Student',
-            courseName: courseName,
-            startDate: startDate,
-            courseLink: courseLink
-          },
+          emailPayload,
           {
             headers: {
               'x-api-key': process.env.SERVICE_API_KEY || 'default-key',
@@ -206,7 +265,7 @@ export const sendEnrollmentConfirmationEmail = async (payment, userInfo, package
       });
     });
     
-    console.log(`Enrollment confirmation email sent to: ${userInfo.email}`);
+    console.log(`Enrollment confirmation email sent to: ${userInfo.email} with course name: "${courseName}" and start date: "${startDate}"`);
     return true;
   } catch (error) {
     console.error('Failed to send enrollment confirmation email:', error.message);

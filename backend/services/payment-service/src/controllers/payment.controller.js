@@ -1,6 +1,5 @@
 import { PaymentService } from '../services/payment.service.js';
 import { ApiResponse } from '../utils/api-response.js';
-import { createEnrollmentAfterPayment } from '../utils/enrollment-helper.js';
 import { 
   createPaymentSchema, 
   paymentFilterSchema,
@@ -458,9 +457,10 @@ export const approvePayment = async (req, res) => {
         ApiResponse.error('Payment is already approved')
       );
     }
-    
-    try {      // The approval process is now optimized in the service
-      const updatedPayment = await PaymentService.approvePayment(id);
+      try {      
+      // The approval process now handles both payment approval and enrollment creation in a transaction
+      const result = await PaymentService.approvePayment(id);
+      const updatedPayment = result.payment || result;
       
       // Get user info for the complete response
       const userInfo = await PaymentService.getUserInfo(updatedPayment.userId);
@@ -496,6 +496,8 @@ export const approvePayment = async (req, res) => {
         console.error('❌ Error invalidating cache:', cacheError.message);
         // Non-critical error, continue with the payment approval flow
       }
+      
+      console.log('✅ Payment approved and enrollments created successfully');
       
       // Format detailed payment with all required information
       const detailedPayment = await PaymentService.formatDetailedPayment(updatedPayment, userInfo);

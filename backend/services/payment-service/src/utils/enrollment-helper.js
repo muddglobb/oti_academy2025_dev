@@ -6,10 +6,12 @@ import axios from 'axios';
 import http from 'http';
 import https from 'https';
 import { PaymentService } from '../services/payment.service.js';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 // URL and API key configuration for enrollment service
 // For Railway deployment, we use the public URL of the enrollment service
-const ENROLLMENT_SERVICE_URL = process.env.ENROLLMENT_SERVICE_URL || 'http://enrollment-service-api:8007';
 const SERVICE_API_KEY = process.env.SERVICE_API_KEY;
 const TOKEN_EXPIRY = 55 * 60 * 1000; // 55 minutes in ms
 
@@ -36,20 +38,6 @@ const rateLimitState = {
 
 // Token cache to avoid generating a new token for each request
 const tokenCache = new Map();
-
-// Create axios instance with connection pooling
-const enrollmentClient = axios.create({
-  baseURL: ENROLLMENT_SERVICE_URL,
-  timeout: 8000,
-  headers: {
-    'Content-Type': 'application/json',
-    'x-service-api-key': SERVICE_API_KEY
-  },
-  // Enable connection reuse
-  httpAgent: new http.Agent({ keepAlive: true }),
-  httpsAgent: new https.Agent({ keepAlive: true })
-});
-
 /**
  * Generate or retrieve a cached service token
  * @param {string} userId - User ID to include in the token
@@ -256,199 +244,6 @@ const retryOperation = async (fn, maxRetries = 3, delay = 1000) => {
 };
 
 /**
- * Mengirim notifikasi ke enrollment service via API untuk membuat pendaftaran baru
- * @param {Object} payment - Data pembayaran yang sudah disetujui
- * @param {Object} userInfo - Informasi user tambahan (opsional)
- * @returns {Promise<Object>} Status enrollment
- */
-export const createEnrollmentAfterPayment = async (payment, userInfo = null) => {
-  // First check if the payment is already approved
-  // If it is, then enrollment should have already been created in the transaction
-  if (payment.status === 'APPROVED') {
-  try {
-    // For direct enrollment, check specific course enrollment
-    if (payment.courseId) {
-      const status = await checkEnrollmentStatus(payment.userId, payment.courseId);
-      if (status.isEnrolled) {
-        console.log(`✅ User ${payment.userId} is already enrolled in course ${payment.courseId}`);
-        return {
-          status: 'verified',
-          message: 'User is already enrolled',
-          enrollments: []
-        };
-      }
-    } else {
-      // For bundle payments, we could check one of the courses in the bundle
-      // Getting the first course in the package as a representative
-      const packageInfo = await PaymentService.getPackageInfo(payment.packageId);
-      const isBundle = packageInfo && packageInfo.type === 'BUNDLE';
-      
-      if (isBundle) {
-        const coursesInBundle = await PaymentService.getCoursesInPackage(payment.packageId);
-        if (coursesInBundle && coursesInBundle.length > 0) {
-          const firstCourse = coursesInBundle[0];
-          const courseId = firstCourse.id || firstCourse.courseId;
-          
-          if (courseId) {
-            const status = await checkEnrollmentStatus(payment.userId, courseId);
-            if (status.isEnrolled) {
-              console.log(`✅ User ${payment.userId} is already enrolled in bundle course ${courseId}`);
-              return {
-                status: 'verified',
-                message: 'User is already enrolled in bundle',
-                enrollments: []
-              };
-            }
-          }
-        }
-      }
-    }
-  } catch (error) {
-    console.error(`❌ Error checking enrollment status: ${error.message}`);
-  }
-}
-  
-  try {
-    // Generate a service token for more secure service-to-service communication
-    const serviceToken = await getServiceToken(payment.userId);
-    
-    // Get package info to determine if it's a bundle
-    const packageInfo = await PaymentService.getPackageInfo(payment.packageId);
-    const isBundle = packageInfo && packageInfo.type === 'BUNDLE';
-    
-    let courseIds = [];
-
-  // Determine which courses to enroll based on package type
-    if (isBundle) {
-      // For bundle packages, get all courses in the package
-      const coursesInBundle = await PaymentService.getCoursesInPackage(payment.packageId);
-      
-      // Add debugging to see what's coming back from the package service
-      console.log(`Retrieved ${coursesInBundle ? coursesInBundle.length : 0} courses in bundle for package ${payment.packageId}`);
-      
-      if (coursesInBundle && Array.isArray(coursesInBundle)) {
-        // Try different property paths that might contain the ID
-        courseIds = coursesInBundle.map(course => {
-          // Log the first course to understand its structure
-          if (coursesInBundle.indexOf(course) === 0) {
-            console.log('First course in bundle structure:', JSON.stringify(course));
-          }
-          
-          // Try common property paths for course ID
-          return course.id || course.courseId || (course.course && course.course.id);
-        }).filter(id => id); // Remove any undefined/null values
-      }
-    } else {
-      // For ENTRY and INTERMEDIATE packages, use only the selected course
-      if (payment.courseId) {
-        courseIds = [payment.courseId];
-        console.log(`Using selected course ID: ${payment.courseId}`);
-      } else {
-        console.warn(`⚠️ Payment ${payment.id} has no courseId for a non-bundle package`);
-      }
-    }
-    
-    // Add a debug log to show the final courseIds
-    console.log(`Final courseIds for enrollment: ${JSON.stringify(courseIds)}`);
-    
-    // Skip API call if no courses to enroll (should never happen, but just in case)
-    if (courseIds.length === 0) {
-      console.warn(`⚠️ No courses found for payment ${payment.id}, skipping enrollment`);
-      return {
-        status: 'skipped',
-        message: 'No courses to enroll',
-        enrollments: []
-      };
-    }
-
-    // Prepare data for enrollment API call
-    const enrollmentData = {
-      userId: payment.userId,
-      packageId: payment.packageId,
-      courseIds: courseIds
-    };    // Call enrollment service API with retry mechanism
-    const response = await retryOperation(async () => {
-      return await axios.post(
-        `${ENROLLMENT_SERVICE_URL}/enrollments/payment-approved`,
-        enrollmentData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'x-service-api-key': SERVICE_API_KEY,
-            'Authorization': `Bearer ${serviceToken}` // Add token for better security
-          },
-          // Timeout to prevent long-hanging requests
-          timeout: 8000,
-          // Add retry logic for Railway deployment where network might be unstable
-          validateStatus: status => status < 500 // Only reject if the status code is 5xx
-        }
-      );
-    }, 3, 2000); // Try 3 times with 2 seconds delay between attempts
-
-    console.log(`✅ Enrollment created via API: User ${payment.userId} enrolled in ${courseIds.length} courses`);
-    
-    return {
-      status: 'enrolled',
-      message: 'User enrolled in courses successfully',
-      enrollments: response.data.data.enrollments
-    };
-      } catch (error) {
-    console.error('❌ Error creating enrollment via API:', error.message);
-    // More detailed error logging
-    if (error.response) {
-      console.error('Error response data:', error.response.data);
-      console.error('Error response status:', error.response.status);
-    }
-    
-    // Fallback: Save to local file for later processing if API calls fail
-    try {
-      const fs = await import('fs/promises');
-      const path = await import('path');
-      const { fileURLToPath } = await import('url');
-      
-      // Create a fallback directory
-      const __filename = fileURLToPath(import.meta.url);
-      const __dirname = path.dirname(__filename);
-      const fallbackDir = path.join(__dirname, '..', '..', 'enrollment-fallback');
-      
-      // Ensure the directory exists
-      await fs.mkdir(fallbackDir, { recursive: true });
-      
-      // Create a fallback file with timestamp
-      const fallbackFile = path.join(
-        fallbackDir, 
-        `fallback-${payment.id}-${Date.now()}.json`
-      );
-      
-      // Save enrollment data for later processing
-      await fs.writeFile(
-        fallbackFile,
-        JSON.stringify({
-          timestamp: new Date().toISOString(),
-          apiError: error.message,
-          enrollmentData,
-          payment
-        }, null, 2),
-        'utf-8'
-      );
-      
-      console.log(`⚠️ Enrollment API failed, saved fallback data to: ${fallbackFile}`);
-      
-      // Return partial success to prevent payment process from failing
-      return {
-        status: 'queued',
-        message: 'Enrollment queued via fallback system',
-        fallbackFile
-      };
-    } catch (fallbackError) {
-      console.error('❌ Even fallback enrollment storage failed:', fallbackError.message);
-      // Finally throw the original error if even the fallback fails
-      throw error;
-    }
-  }
-};
-
-/**
  * Get enrollment status for a specific user and course
  * @param {string} userId - ID of the user
  * @param {string} courseId - ID of the course
@@ -456,78 +251,29 @@ export const createEnrollmentAfterPayment = async (payment, userInfo = null) => 
  */
 export const checkEnrollmentStatus = async (userId, courseId) => {  
   try {
-    // Use cached or generate new service token
-    const serviceToken = await getServiceToken(userId);
+    console.log(`Checking enrollment status for user ${userId} in course ${courseId}`);
     
-    // Use retryOperation for enrollment status checks for better reliability
-    const response = await retryOperation(async () => {
-      console.log(`Checking enrollment status for user ${userId} in course ${courseId}`);
-      return await axios.get(
-        `${ENROLLMENT_SERVICE_URL}/enrollments/service/${courseId}/status`, 
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'x-service-api-key': SERVICE_API_KEY,
-            'Authorization': `Bearer ${serviceToken}`,
-            'x-user-id': userId // Include user ID in header as fallback
-          },
-          // Timeout to prevent long-hanging requests
-          timeout: 5000
-        }
-      );
-    }, 2, 1000); // 2 retries with 1 second initial delay
+    const enrollment = await prisma.enrollment.findFirst({
+      where: {
+        userId,
+        courseId,
+        status: 'ENROLLED'
+      }
+    });
     
-    console.log(`Enrollment status response: ${JSON.stringify(response.data)}`);
-    return response.data.data;
+    const result = {
+      isEnrolled: !!enrollment,
+      message: enrollment ? 'User is enrolled' : 'User is not enrolled',
+      enrollmentId: enrollment?.id || null,
+      createdAt: enrollment?.createdAt || null
+    };
+    
+    console.log(`Enrollment status result: ${JSON.stringify(result)}`);
+    return result;
   } catch (error) {
     console.error('❌ Error checking enrollment status:', error.message);
     // Return a default response instead of throwing the error
-    // This prevents the application from crashing if the enrollment service is down
     return { isEnrolled: false, message: 'Failed to verify enrollment status' };
   }
 };
 
-/**
- * Check enrollment status for multiple courses at once
- * @param {string} userId - User ID
- * @param {string[]} courseIds - Array of course IDs to check
- * @returns {Promise<Object>} Map of courseId to enrollment status
- */
-export const batchCheckEnrollmentStatus = async (userId, courseIds) => {
-  if (!courseIds || courseIds.length === 0) {
-    return {};
-  }
-  
-  // Filter out duplicates
-  const uniqueCourseIds = [...new Set(courseIds)];
-  const serviceToken = await getServiceToken(userId);
-  const results = {};
-  
-  // Use Promise.allSettled to continue even if some requests fail
-  const promises = uniqueCourseIds.map(courseId => 
-    axios.get(
-      `${ENROLLMENT_SERVICE_URL}/enrollments/service/${courseId}/status`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'x-service-api-key': SERVICE_API_KEY,
-          'Authorization': `Bearer ${serviceToken}`,
-          'x-user-id': userId
-        },
-        timeout: 5000
-      }
-    )
-    .then(response => {
-      results[courseId] = response.data.data;
-      return { courseId, success: true };
-    })
-    .catch(error => {
-      console.error(`Error checking enrollment for course ${courseId}:`, error.message);
-      results[courseId] = { isEnrolled: false, message: 'Failed to verify enrollment status' };
-      return { courseId, success: false, error: error.message };
-    })
-  );
-  
-  await Promise.allSettled(promises);
-  return results;
-};
