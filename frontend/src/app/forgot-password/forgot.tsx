@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
 //import { useRouter } from "next/navigation";
 import { Mail, ArrowLeft } from "react-feather";
+import axios from "axios";
 
 interface FormData {
   email: string;
@@ -15,30 +16,29 @@ export default function Forgot() {
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   //const router = useRouter();
 
   const onSubmit: SubmitHandler<FormData> = async (formData) => {
-    try {
-      setLoading(true);
-      setErrorMessage(null);
+    setLoading(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
 
-      const res = await fetch(`http://localhost:8000/auth/forgot-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+    try {
+      const res = await axios.post(`http://localhost:8000/auth/forgot-password`, {
+        email: formData.email
       });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        alert("Email reset password telah dikirim!");
-        // router.push("/auth/login");
-      } else {
-        setErrorMessage(data.message || "Terjadi kesalahan.");
+      if (res.status === 200) {
+        setSuccessMessage("Email reset password telah dikirim!");
+      // router.push("/auth/login");
       }
-    } catch (error) {
-      console.error(error);
-      setErrorMessage("Terjadi kesalahan saat mengirim permintaan.");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setErrorMessage(error.response?.data?.message || "Terjadi kesalahan saat mengirim permintaan.");
+      }else{
+        setErrorMessage("Terjadi kesalahan.");
+      }
     } finally {
       setLoading(false);
     }
@@ -77,17 +77,25 @@ export default function Forgot() {
                 {...register("email", { required: "Email wajib diisi" })}
                 className="w-full bg-white text-black border-3 rounded-md px-10 py-2"
               />
-              <Mail className="absolute left-3 top-[67%] -translate-y-[45%] h-4 w-4 text-gray-600" />
+              <Mail className={`absolute left-3
+              ${errors.email
+                ? 'top-[50%] -translate-y-[45%] text-gray-600'
+                : 'top-[66%] -translate-y-[45%] text-gray-600'
+              }
+              h-4 w-4`} size={20}/>
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
             </div>
 
             {errorMessage && (
               <div className="text-center text-xs text-red-500 mt-2">{errorMessage}</div>
             )}
-
+            {successMessage && (
+              <div className="text-center text-xs text-green-500 mt-2">{successMessage}</div>
+            )}
+            
             <button
               type="submit"
-              className={`w-full py-2 rounded-md font-semibold mt-2 ${
+              className={`w-full py-2 rounded-md font-semibold mt-2 cursor-pointer ${
                 loading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-800"
               }`}
               disabled={loading}
