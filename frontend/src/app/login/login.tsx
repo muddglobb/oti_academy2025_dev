@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Mail, Lock, ArrowLeft, Eye, EyeOff } from 'react-feather';
 import {useForm, SubmitHandler} from 'react-hook-form';
+import { useRouter } from 'next/navigation';
 
 interface FormData {
   email: string;
@@ -11,9 +12,10 @@ interface FormData {
 }
 
 export default function Login() {
+  const router = useRouter();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -22,6 +24,8 @@ export default function Login() {
 
   const onSubmit: SubmitHandler<FormData> = async (formData) => {
     try {
+      setLoading(true);
+      
       const res = await fetch('http://localhost:8000/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -32,6 +36,7 @@ export default function Login() {
       if (res.ok) {
         localStorage.setItem('token', data.token);
         alert('Login berhasil!');
+        router.push('/dashboard');
       } else {
         if (data.message === 'User not found') {
           setErrorMessage('Kamu belum punya akun. Silakan daftar terlebih dulu.');
@@ -94,7 +99,7 @@ export default function Login() {
         <div className="relative">
           <div className="flex justify-between items-center mt-3">
             <h2 className="font-bold mb-1">Password</h2>
-            <Link href="/lupa-password" className="text-xs text-white hover:underline mb-1.5 text-[11px]">
+            <Link href="/forgot-password" className="text-xs text-white hover:underline mb-1.5 text-[11px]">
               Lupa Password?
             </Link>
           </div>
@@ -131,9 +136,14 @@ export default function Login() {
           )}
         </div>
 
-        <button type="submit" className="w-full bg-blue-600 hover:bg-blue-800 py-2 rounded-md font-semibold mt-2 cursor-pointer">
-          Submit
-        </button>
+        <button
+          type="submit"
+          className={`w-full py-2 rounded-md font-semibold mt-2 cursor-pointer ${
+            loading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-800'
+            }`}
+            disabled={loading}>
+            Submit
+          </button>
 
         {errorMessage && (
           <p className="text-red-500 text-xs mt-3 text-center">{errorMessage}</p>
