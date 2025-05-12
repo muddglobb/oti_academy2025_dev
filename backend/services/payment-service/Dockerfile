@@ -19,9 +19,6 @@ COPY . .
 # Generate Prisma client
 RUN npx prisma generate
 
-# Create fallback directory for enrollment fallback mechanism
-RUN mkdir -p /app/enrollment-fallback && chmod -R 777 /app/enrollment-fallback
-
 # Railway specific environment variables
 ENV NODE_ENV=production
 ENV PORT=8006
@@ -32,6 +29,9 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 
 # Expose port
 EXPOSE 8006
+
+# Renamed to payment-enrollment-service
+LABEL service="payment-enrollment-service"
 
 # Start command with schema push
 CMD sh -c "npx prisma db push && node src/index.js"

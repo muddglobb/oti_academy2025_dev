@@ -4,15 +4,15 @@ import { jwtValidatorMiddleware } from '../middlewares/jwtValidator.js';
 
 const router = Router();
 
-// Get ENROLLMENT_SERVICE_URL with fallback
-const ENROLLMENT_SERVICE_URL = process.env.ENROLLMENT_SERVICE_URL || 'http://enrollment-service-api:8007';
-console.log('Using ENROLLMENT_SERVICE_URL:', ENROLLMENT_SERVICE_URL);
+// Get PAYMENT_SERVICE_URL with fallback (now serving enrollment endpoints)
+const PAYMENT_SERVICE_URL = process.env.PAYMENT_SERVICE_URL || 'http://payment-service-api:8006';
+console.log('Using PAYMENT_SERVICE_URL for enrollments:', PAYMENT_SERVICE_URL);
 
-// Route all enrollment requests to the Enrollment service
+// Route all enrollment requests to the Payment service (which now handles enrollments)
 router.use('/', createDirectHandler(
-  ENROLLMENT_SERVICE_URL,
+  PAYMENT_SERVICE_URL,
   '/enrollments',
-  false, // Requires authentication (handled by service)
+  true, // Requires authentication
   false, // Not optional auth
   jwtValidatorMiddleware // Use JWT validator middleware
 ));

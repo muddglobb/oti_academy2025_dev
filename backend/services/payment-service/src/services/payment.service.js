@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
+import { EnrollmentService } from './enrollment.service.js';
+import { sendPaymentConfirmationEmail } from '../utils/email-helper.js';
 
 const prisma = new PrismaClient();
 
@@ -657,399 +659,109 @@ static async getAllCoursesEnrollmentCount() {
     return paymentsWithPackageInfo;
   }
   /**
-   * Approve payment
+   * Approve payment and process enrollment 
    * @param {string} id - Payment ID
-   * @returns {Promise<Object>} Updated payment
-   */  
-static async approvePayment(id) {
-  // Step 1: Get payment details outside of transaction
-  const payment = await prisma.payment.findUnique({
-    where: { id }
-  });
-  
-  if (!payment) {
-    throw new Error('Payment not found');
-  }
-  
-  if (payment.status === 'APPROVED') {
-    // Return payment details if already approved
-    return this.getPaymentById(id);
-  }
-    // Step 2: Use a short transaction only for updating payment status
-  // This avoids long-running transactions that could time out
-  const updatedPayment = await prisma.$transaction(async (tx) => {
-    return await tx.payment.update({
-      where: { id },
-      data: { 
-        status: 'APPROVED',
-        updatedAt: new Date() // Use updatedAt instead of approvedAt which doesn't exist in schema
-      }
-    });
-  });
-  
-  // Step 3: Process enrollment and notifications outside of transaction
-  try {
-    // Get course IDs based on package type
-    const { courseIds, packageInfo, courseNames } = await this.getEnrollmentInfo(payment);
-    
-    // Get user info
-    const userInfo = await this.getUserInfo(payment.userId);
-      // Process enrollment if we have courses
-    if (courseIds.length > 0) {
-      // We're handling this separately from the DB transaction
-      await this.processEnrollment(payment, courseIds);
-
-      // Send enrollment confirmation email
-      const { sendEnrollmentConfirmationEmail } = await import('../utils/email-helper.js');
-      await sendEnrollmentConfirmationEmail(
-        payment,
-        userInfo,
-        packageInfo,
-        courseNames
-      );
-      
-      console.log(`✅ Enrollment confirmation email sent to ${userInfo.email}`);
-    } else {
-      // For bundle packages that might have placeholder courseId but no actual courses detected
-      if (payment.courseId === '00000000-0000-0000-0000-000000000000' && packageInfo?.type === 'BUNDLE') {
-        console.warn(`⚠️ Bundle package detected but no courses found. Attempting to get courses directly.`);
-        
-        // Try one more time to get courses directly from package service
-        const coursesInPackage = await this.getCoursesInPackage(payment.packageId);
-        
-        if (coursesInPackage && Array.isArray(coursesInPackage) && coursesInPackage.length > 0) {
-          console.log(`Found ${coursesInPackage.length} courses directly from package, proceeding with enrollment`);
-          
-          const validCourseIds = coursesInPackage
-            .map(course => course.id || course.courseId)
-            .filter(id => id && id !== '00000000-0000-0000-0000-000000000000');
-            
-          if (validCourseIds.length > 0) {
-            // Process enrollment with the recovered course IDs
-            await this.processEnrollment(payment, validCourseIds);
-            
-            // Get course names for email
-            const courseNamePromises = validCourseIds.map(id => this.getCourseTitle(id));
-            const recoveredCourseNames = (await Promise.all(courseNamePromises)).filter(Boolean);
-            
-            // Send enrollment confirmation email
-            const { sendEnrollmentConfirmationEmail } = await import('../utils/email-helper.js');
-            await sendEnrollmentConfirmationEmail(
-              payment,
-              userInfo,
-              packageInfo,
-              recoveredCourseNames
-            );
-            
-            console.log(`✅ Enrollment confirmation email sent to ${userInfo.email} after recovery`);
-          } else {
-            console.error(`❌ No valid course IDs found in bundle package ${payment.packageId}`);
-          }
-        } else {
-          console.warn(`⚠️ No courses found for bundle payment ${id}, skipping enrollment`);
-        }
-      } else {
-        console.warn(`⚠️ No courses found for payment ${id}, skipping enrollment`);
-      }
-    }
-  } catch (postApprovalError) {
-    // Log the error but don't fail the approval since payment is already approved
-    console.error(`⚠️ Post-approval processing error: ${postApprovalError.message}`);
-    console.error('Payment was approved, but enrollment or email notification had issues.');
-    
-    // Optional: Create a record of the failure for retry
-    try {
-      await this.createPostApprovalRetry(id, postApprovalError);
-    } catch (retryError) {
-      console.error('Failed to create retry record:', retryError);
-    }
-  }
-  
-  // Enhance payment with price information
-  const [enhancedPayment] = await this.enhancePaymentsWithPrice([updatedPayment]);
-  return enhancedPayment;
-}
-
-/**
- * Create a record for retrying post-approval tasks
- * @param {string} paymentId - Payment ID
- * @param {Error} error - Error that occurred
- */
-static async createPostApprovalRetry(paymentId, error) {
-  try {
-    // This is just logging to a file, but could be implemented as a database record
-    console.log(`Creating retry record for payment ${paymentId}: ${error.message}`);
-    // In a real implementation, you might create a record in a separate table for retries
-  } catch (error) {
-    console.error('Failed to create retry record:', error);
-  }
-}  /**
- * Get enrollment information for a payment
- * @param {Object} payment - Payment object
- * @returns {Promise<Object>} Course IDs, package info, and course names
- */
-/**
- * Get enrollment information for a payment
- * @param {Object} payment - Payment object
- * @returns {Promise<Object>} Course IDs, package info, and course names
- */
-static async getEnrollmentInfo(payment) {
-  let courseIds = [];
-  let courseNames = [];
-  let packageInfo = null;
-  
-  // If this is a package, we need to determine which courses to enroll based on package type
-  if (payment.packageId) {
-    try {
-      const packageServiceURL = process.env.PACKAGE_SERVICE_URL || 'http://package-service-api:8005';
-      console.log('Package Service URL:', packageServiceURL);
-      
-      // Import retryWithBackoff and executeWithCircuitBreaker
-      const { retryWithBackoff, executeWithCircuitBreaker } = await import('../utils/retry-helper.js');
-      
-      // Get package info with retry and circuit breaker
-      const packageResponse = await executeWithCircuitBreaker('package', async () => {
-        return await retryWithBackoff(async () => {
-          return await axios.get(
-            `${packageServiceURL}/packages/${payment.packageId}`,
-            { headers: { 'Authorization': `Bearer ${this.generateServiceToken()}` } }
-          );
-        }, 3, 1000);
-      });
-      
-      packageInfo = packageResponse.data?.data;
-      const packageType = packageInfo?.type;
-      console.log(`Package Type: ${packageType}`);
-      
-      // Only get all courses if it's a BUNDLE package
-      if (packageType === 'BUNDLE') {
-        // Bundle package handling stays the same
-        console.log(`Getting all courses for BUNDLE package: ${payment.packageId}`);
-        const coursesInPackage = await this.getCoursesInPackage(payment.packageId);
-        
-        if (coursesInPackage && Array.isArray(coursesInPackage) && coursesInPackage.length > 0) {
-          console.log(`Found ${coursesInPackage.length} courses in bundle package ${payment.packageId}`);
-          
-          // Extract course IDs and names
-          courseIds = [];
-          courseNames = [];
-          
-          for (const course of coursesInPackage) {
-            const courseId = course.id || course.courseId;
-            if (courseId && courseId !== '00000000-0000-0000-0000-000000000000') {
-              courseIds.push(courseId);
-              
-              // Try to get course name/title directly from the course object first
-              const courseTitle = course.title || await this.getCourseTitle(courseId);
-              if (courseTitle) courseNames.push(courseTitle);
-            }
-          }
-        }
-      } else if (payment.courseId && payment.courseId !== '00000000-0000-0000-0000-000000000000') {
-        // For ENTRY or INTERMEDIATE packages, use only the selected course
-        console.log(`Using selected course ${payment.courseId} for ${packageType} package`);
-        courseIds = [payment.courseId];
-        
-        // Fixed: Get the course title directly rather than using getCourseDetailsWithRetry
-        // which was returning just the title string, not an object
-        const courseTitle = await this.getCourseTitle(payment.courseId);
-        if (courseTitle) {
-          console.log(`Successfully fetched course title: ${courseTitle}`);
-          courseNames = [courseTitle];
-        } else {
-          console.warn(`⚠️ Failed to get title for course ${payment.courseId}, using fallback`);
-          // Fallback: Get course from package-service
-          const coursesInPackage = await this.getCoursesInPackage(payment.packageId);
-          const selectedCourse = coursesInPackage.find(
-            c => c.id === payment.courseId || c.courseId === payment.courseId
-          );
-          
-          if (selectedCourse && selectedCourse.title) {
-            courseNames = [selectedCourse.title];
-            console.log(`Using fallback course title from package: ${selectedCourse.title}`);
-          } else {
-            // Last resort fallback - use course ID if we can't get the title
-            console.warn(`⚠️ Could not get course title from any source, using ID as fallback`);
-            courseNames = [`Course ID: ${payment.courseId.substring(0, 8)}...`];
-          }
-        }
-      }
-    } catch (packageError) {
-      console.error('Error fetching package info:', packageError);
-      // Fallback: if it's a single course purchase, use the courseId directly
-      if (payment.courseId && payment.courseId !== '00000000-0000-0000-0000-000000000000') {
-        courseIds = [payment.courseId];
-        
-        // Try to get course name/title
-        try {
-          const courseTitle = await this.getCourseTitle(payment.courseId);
-          if (courseTitle) courseNames = [courseTitle];
-        } catch (error) {
-          console.error('Error getting course title:', error);
-        }
-      }
-    }
-  } else if (payment.courseId && payment.courseId !== '00000000-0000-0000-0000-000000000000') {
-    // Single course purchase without package
-    courseIds = [payment.courseId];
-    
-    // Try to get course name/title
-    try {
-      const courseTitle = await this.getCourseTitle(payment.courseId);
-      if (courseTitle) courseNames = [courseTitle];
-    } catch (error) {
-      console.error('Error getting course title:', error);
-    }
-  }
-  
-  console.log(`Final courseNames for email: ${JSON.stringify(courseNames)}`);
-  return { courseIds, packageInfo, courseNames };
-}
-
-static async getCourseDetailsWithRetry(courseId, maxRetries = 3) {
-  const { retryWithBackoff } = await import('../utils/retry-helper.js');
-  
-  try {
-    return await retryWithBackoff(async () => {
-      const title = await this.getCourseTitle(courseId);
-      if (!title) throw new Error('No course title returned');
-      return title;
-    }, maxRetries, 1000);
-  } catch (error) {
-    console.error(`Failed to get course title after ${maxRetries} attempts:`, error.message);
-    return null;
-  }
-}
-
-/**
- * Get course title by ID
- * @param {string} courseId - Course ID
- * @returns {Promise<string|null>} Course title or null if not found
- */
-static async getCourseTitle(courseId) {
-  try {
-    // Generate service token for authentication
-    const serviceToken = this.generateServiceToken();
-    
-    const courseServiceURL = process.env.COURSE_SERVICE_URL || 'http://course-service-api:8002';
-    console.log(`Fetching course title from ${courseServiceURL}/courses/${courseId}`);
-    
-    const response = await axios.get(
-      `${courseServiceURL}/courses/${courseId}`,
-      { 
-        headers: { 
-          'Authorization': `Bearer ${serviceToken}`,
-          'x-service-api-key': process.env.SERVICE_API_KEY 
-        },
-        timeout: 5000 // Increased timeout for reliability
-      }
-    );
-    
-    if (response.data && response.data.data && response.data.data.title) {
-      console.log(`✅ Retrieved course title: ${response.data.data.title}`);
-      return response.data.data.title;
-    }
-    console.warn(`⚠️ No title found in API response for course ${courseId}`);
-    return null;
-  } catch (error) {
-    console.error(`❌ Error fetching course details: ${error.message}`);
-    if (error.response) {
-      console.error('Error response:', error.response.status, error.response.data);
-    }
-    return null;
-  }
-}
-
-/**
- * Process enrollment for a payment
- * @param {Object} payment - Payment object
- * @param {string[]} courseIds - Course IDs to enroll
- * @returns {Promise<Object>} Enrollment response
- */
-static async processEnrollment(payment, courseIds) {
-  if (!courseIds || courseIds.length === 0) {
-    throw new Error('No course IDs provided for enrollment');
-  }
-  
-  // CRITICAL: Enrollment service availability check
-  const enrollmentServiceURL = process.env.ENROLLMENT_SERVICE_URL || 'http://enrollment-service-api:8007';
-  console.log(`Checking enrollment service availability at ${enrollmentServiceURL}...`);
-  
-  const enrollmentAvailable = await this.checkServiceAvailability(enrollmentServiceURL);
-  if (!enrollmentAvailable) {
-    console.error('❌ Enrollment service is not available!');
-    throw new Error('Enrollment service is not available. Will try again later.');
-  }
-  console.log('✅ Enrollment service is available. Proceeding with enrollment.');
-  
-  // Import retryWithBackoff and executeWithCircuitBreaker
-  const { retryWithBackoff, executeWithCircuitBreaker } = await import('../utils/retry-helper.js');
-  
-  // Process enrollment with retry and circuit breaker
-  return await executeWithCircuitBreaker('enrollment', async () => {
-    return await retryWithBackoff(async () => {
-      console.log(`Sending enrollment request to ${enrollmentServiceURL}/enrollments/payment-approved`);
-      
-      const response = await axios.post(
-        `${enrollmentServiceURL}/enrollments/payment-approved`,
-        {
-          userId: payment.userId,
-          packageId: payment.packageId,
-          courseIds: courseIds
-        },
-        { 
-          headers: { 
-            'x-service-api-key': process.env.SERVICE_API_KEY,
-            'Authorization': `Bearer ${this.generateServiceToken()}` 
-          },
-          timeout: 8000 // 8 seconds timeout
-        }
-      );
-      
-      console.log(`✅ Successfully notified enrollment service for payment ${payment.id}. Response:`, 
-        response.status, response.statusText);
-      
-      if (response.status !== 201) {
-        throw new Error(`Enrollment service returned non-success status: ${response.status}`);
-      }
-      
-      return response;
-    }, 3, 2000); // 3 retries, starting with 2 second delay
-  });
-}
-    /**
-   * Check if a service is available/online
-   * @param {string} serviceUrl - URL of the service to check
-   * @returns {Promise<boolean>} Whether the service is available
+   * @returns {Promise<Object>} Updated payment with enrollment status
    */
-  static async checkServiceAvailability(serviceUrl) {
+  static async approvePayment(id) {
     try {
-      // Try to reach the service's health endpoint
-      const healthEndpoint = `${serviceUrl}/health`;
-      console.log(`Checking service availability: ${healthEndpoint}`);
-      
-      // We use a short timeout to quickly fail if service is down
-      const response = await axios.get(healthEndpoint, { 
-        timeout: 2000,
-        validateStatus: status => status < 500 // Only HTTP 5xx errors are considered unavailable
+      // Use database transaction to ensure data consistency
+      return await prisma.$transaction(async (tx) => {
+        // Get payment first
+        const payment = await tx.payment.findUnique({
+          where: { id }
+        });
+        
+        if (!payment) {
+          throw new Error('Payment not found');
+        }
+        
+        if (payment.status === 'APPROVED') {
+          throw new Error('Payment is already approved');
+        }
+        
+        // Update payment to approved
+        const updatedPayment = await tx.payment.update({
+          where: { id },
+          data: {
+            status: 'APPROVED',
+            updatedAt: new Date()
+          }
+        });
+
+        // Get package information and user information for email
+        const packageInfo = await this.getPackageInfo(payment.packageId);
+        const userInfo = await this.getUserInfo(payment.userId);
+        
+        // Determine which courses to enroll based on package type
+        let courseIds = [];
+        
+        if (packageInfo && packageInfo.type === 'BUNDLE') {
+          // For bundle packages, get all courses in the package
+          const coursesInBundle = await this.getCoursesInPackage(payment.packageId);
+          
+          if (coursesInBundle && Array.isArray(coursesInBundle)) {
+            courseIds = coursesInBundle.map(course => course.id).filter(Boolean);
+          }
+        } else if (payment.courseId) {
+          // For ENTRY and INTERMEDIATE packages, use only the selected course
+          courseIds = [payment.courseId];
+        }
+        
+        // Create enrollments in the same transaction
+        const enrollmentsData = courseIds.map(courseId => ({
+          userId: payment.userId,
+          courseId,
+          paymentId: payment.id,
+          packageId: payment.packageId,
+          status: 'ENROLLED'
+        }));
+        
+        // Create all enrollments in the transaction
+        const enrollments = await Promise.all(
+          enrollmentsData.map(data => tx.enrollment.create({ data }))
+        );
+        
+        // Send payment confirmation email
+        try {
+          await sendPaymentConfirmationEmail(updatedPayment, userInfo, packageInfo);
+          console.log('Payment confirmation email sent successfully');
+        } catch (emailError) {
+          console.error('Failed to send payment confirmation email:', emailError.message);
+          // Continue anyway since payment was approved
+        }
+        
+        // Get course names for enrollment confirmation email
+        const courseNames = await Promise.all(courseIds.map(async (courseId) => {
+          try {
+            const courseInfo = await this.getCourseInfo(courseId);
+            return courseInfo?.title || 'Unknown Course';
+          } catch (error) {
+            return 'Unknown Course';
+          }
+        }));
+        
+        // Send enrollment confirmation email
+        try {
+          const { sendEnrollmentConfirmationEmail } = await import('../utils/email-helper.js');
+          await sendEnrollmentConfirmationEmail(updatedPayment, userInfo, packageInfo, courseNames);
+          console.log('Enrollment confirmation email sent successfully');
+        } catch (emailError) {
+          console.error('Failed to send enrollment confirmation email:', emailError.message);
+          // Continue anyway since enrollment was successful
+        }
+        
+        return {
+          ...updatedPayment,
+          enrollments
+        };
       });
-      
-      return response.status === 200;
     } catch (error) {
-      console.error(`Service ${serviceUrl} is unavailable: ${error.message}`);
-      
-      // Try a second attempt with a more basic endpoint
-      try {
-        // Try to reach the service's root endpoint
-        const response = await axios.get(serviceUrl, { timeout: 2000 });
-        return response.status === 200;
-      } catch (secondError) {
-        console.error(`Service ${serviceUrl} is definitely unavailable: ${secondError.message}`);
-        return false;
-      }
+      console.error('Error approving payment:', error.message);
+      throw error;
     }
   }
-  
+
   /**
    * Request back payment
    * @param {string} id - Payment ID
@@ -1268,6 +980,56 @@ static async processEnrollment(payment, courseIds) {
       
       // Return empty array as fallback
       return [];
+    }
+  }
+
+  /**
+   * Get course information by ID
+   * @param {string} courseId - Course ID
+   * @returns {Promise<Object>} Course information
+   */
+  static async getCourseInfo(courseId) {
+    try {
+      // Import CourseService to avoid circular dependencies
+      const { CourseService } = await import('./course.service.js');
+      
+      // Get course info using CourseService
+      const courseInfo = await CourseService.getCourseById(courseId);
+      
+      if (courseInfo) {
+        return courseInfo;
+      }
+      
+      // If CourseService fails, try getting info from package courses as backup
+      console.log(`Course not found with ID ${courseId}, trying to find in packages`);
+      
+      // Get all active payments to check their packages
+      const payments = await prisma.payment.findMany({
+        where: { status: 'APPROVED' },
+        distinct: ['packageId']
+      });
+      
+      // Try to find the course in any package
+      for (const payment of payments) {
+        const coursesInPackage = await this.getCoursesInPackage(payment.packageId);
+        const matchingCourse = coursesInPackage.find(c => c.id === courseId);
+        
+        if (matchingCourse) {
+          console.log(`Found course info in package ${payment.packageId}: ${matchingCourse.title}`);
+          return {
+            id: courseId,
+            title: matchingCourse.title,
+            description: matchingCourse.description || '',
+            level: matchingCourse.level || null
+          };
+        }
+      }
+      
+      console.error(`No information found for course ${courseId} in any service`);
+      return null;
+    } catch (error) {
+      console.error(`Error getting course info for ${courseId}:`, error.message);
+      return null;
     }
   }
 

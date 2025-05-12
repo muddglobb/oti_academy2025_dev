@@ -9,6 +9,7 @@ const config = {
   
   // Service URLs
   AUTH_SERVICE_URL: process.env.AUTH_SERVICE_URL || 'http://auth-service-api:8001',
+  PAYMENT_SERVICE_URL: process.env.PAYMENT_SERVICE_URL || 'http://payment-service-api:8006',
   
   // Security configuration
   JWT_SECRET: process.env.JWT_SECRET,

@@ -134,8 +134,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-  # PAYMENT SERVICE API
+      
+  # PAYMENT & ENROLLMENT SERVICE API
   payment-service-api:
     build: ./services/payment-service
     env_file:
@@ -144,48 +144,18 @@ services:
     volumes:
       - ./services/payment-service/logs:/home/appuser/app/logs
       - ./libs:/home/appuser/app/libs
-      - ./enrollment-queue:/home/appuser/app/enrollment-queue
     depends_on:
       payment-service-db:
         condition: service_healthy
     networks:
       - oti-network
-
-
-   # ENROLLMENT SERVICE DATABASE
-  enrollment-service-db:
-    image: postgres:17.4-alpine
-    env_file: 
-      - ./services/enrollment-service/.env
-    environment:
-    - POSTGRES_DB=enrollment_service_db
-    - POSTGRES_USER=${PG_USER}
-    - POSTGRES_PASSWORD=${PG_PASSWORD} 
-    volumes:
-      - enrollment-data:/var/lib/postgresql/data
-    networks:
-      - oti-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d enrollment_service_db"]
-      interval: 5s
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8006/health || exit 1"]
+      interval: 10s
       timeout: 5s
-      retries: 5
-  # ENROLLMENT SERVICE API
-  enrollment-service-api:
-    build: ./services/enrollment-service
-    env_file:
-      - ./services/enrollment-service/.env
-      - .env
-    volumes:
-      - ./services/enrollment-service/logs:/home/appuser/app/logs
-      - ./libs:/home/appuser/app/libs
-      - ./enrollment-queue:/home/appuser/app/enrollment-queue
-    depends_on:
-      enrollment-service-db:
-        condition: service_healthy
-    networks:
-      - oti-network   
-        # Redis cache service
+      retries: 3
+      start_period: 10s
+
   redis:
     container_name: redis
     image: redis:7-alpine

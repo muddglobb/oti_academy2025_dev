@@ -8,7 +8,7 @@ const router = Router();
 const PAYMENT_SERVICE_URL = process.env.PAYMENT_SERVICE_URL || 'http://payment-service-api:8006';
 console.log('Using PAYMENT_SERVICE_URL:', PAYMENT_SERVICE_URL);
 
-// Route all payment requests to the Payment service
+// Route all payment requests to the Payment & Enrollment service
 router.use('/', createDirectHandler(
   PAYMENT_SERVICE_URL,
   '/payments',

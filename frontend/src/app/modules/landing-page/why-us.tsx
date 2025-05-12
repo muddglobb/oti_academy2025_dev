@@ -54,7 +54,7 @@ const Sponsors =[
 
 const WhyUs = () => {
     return (
-        <Container className="items-center gap-4 lg:gap-10 bg-gradient-to-b from-neutral-900 via-neutral-900 to-neutral-900/40">
+        <Container className="items-center gap-4 lg:gap-10 bg-gradient-to-b from-neutral-900 via-neutral-900/70 to-neutral-900/50">
             <Image
                 src="/images/stars-hero-programs.png"
                 alt="stars"

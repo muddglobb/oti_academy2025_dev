@@ -17,26 +17,26 @@ const LandingPageMentorCard = ({
       className="
       flex 
       sm:flex-row 
-      sm:w-100
+      sm:w-123
 
       md:flex-col
       md:w-75
-      md:h-75
+      md:h-100
     bg-white rounded-lg"
     >
       <div
         className="
         w-[50%]
         h-auto
-        min-h-52
+        min-h-75
         mask-r-from-90%
 
         sm:w-60
         sm:h-auto
-        sm:min-h-60
+        sm:min-h-85
 
         md:w-75 
-        md:h-[284px] 
+        md:h-100
         md:mask-b-from-90%
         md:mask-r-from-100%
         rounded-lg  

@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 
 import paymentRoutes from './routes/payment.routes.js';
+import enrollmentRoutes from './routes/enrollment.routes.js';
 import { createRateLimiter } from './middlewares/rateLimiter.js';
 
 // Load environment variables
@@ -38,27 +39,17 @@ const apiLimiter = createRateLimiter({
   max: 100 // limit each IP to 100 requests per windowMs
 });
 
-// Create admin-specific rate limiter with higher limits
-const adminLimiter = createRateLimiter({
-  name: 'Admin Operations',
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 500, // Higher limit for admins
-  // Skip this limiter for non-admin routes
-  // The check happens after authentication middleware sets req.user
-  skip: (req) => !(req.user && req.user.role === 'ADMIN')
-});
-export { adminLimiter };
-
 // Apply rate limiter to all routes
 app.use(Array.isArray(apiLimiter) ? apiLimiter : [apiLimiter]);
 // Routes
 app.use('/payments', paymentRoutes);
+app.use('/enrollments', enrollmentRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'success',
-    message: 'Payment service is running'
+    message: 'Payment and enrollment service is running'
   });
 });
 
@@ -92,7 +83,7 @@ const startServer = async () => {
     console.log('✅ Connected to database');
     
     app.listen(PORT, () => {
-      console.log(`🚀 Payment service running on port ${PORT}`);
+      console.log(`🚀 Payment & Enrollment service running on port ${PORT}`);
     });
   } catch (err) {
     console.error('❌ Failed to start server:', err);

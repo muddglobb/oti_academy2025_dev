@@ -5,7 +5,8 @@ import config from '../config/index.js';
 export const checkHealth = async (req, res) => {
   const services = {
     gateway: { status: 'up' },
-    auth: { status: 'unknown' }
+    auth: { status: 'unknown' },
+    paymentEnrollment: { status: 'unknown' }
   };
   
   try {
@@ -17,6 +18,21 @@ export const checkHealth = async (req, res) => {
     };
   } catch (error) {
     services.auth = {
+      status: 'down',
+      message: error.message
+    };
+  }
+  
+  try {
+    // Check payment-enrollment service
+    const paymentServiceUrl = process.env.PAYMENT_SERVICE_URL || 'http://payment-service-api:8006';
+    const paymentRes = await axios.get(`${paymentServiceUrl}/health`, { timeout: 3000 });
+    services.paymentEnrollment = {
+      status: paymentRes.status === 200 ? 'up' : 'down',
+      message: paymentRes.data?.message || null
+    };
+  } catch (error) {
+    services.paymentEnrollment = {
       status: 'down',
       message: error.message
     };

@@ -5,7 +5,7 @@ import {
     AccordionItem,
     AccordionTrigger,
   } from "@/components/ui/faq-button"
-  
+import Image from "next/image";
 
 const AnswerQuestion = [
     {
@@ -32,8 +32,15 @@ const AnswerQuestion = [
 
 const FAQ = () => {
     return (
-        <Container>
-            <div className="pb-44">
+        <Container className="bg-gradient-to-b from-neutral-900/70 to-neutral-900/0">
+            <Image
+                src="/FAQ-background.png"
+                alt="stars"
+                fill
+                className="absolute left-0 max-h-fit object-cover -z-100"
+                style={{ top: "88%" }}
+            />
+            <div className="pb-44 z-100">
                 <h1 className="pt-44 px-4 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
                     Frequently Asked Questions
                 </h1>
@@ -47,7 +54,7 @@ const FAQ = () => {
                                 <AccordionContent>
                                     <div>
                                         <p className="text-[12px] lg:text-[14px] px-2 py-1 rounded-[5px]">{item.answer}</p>
-                                    </div>
+                                </div>
                                 </AccordionContent>
                             </AccordionItem>
                         ))}

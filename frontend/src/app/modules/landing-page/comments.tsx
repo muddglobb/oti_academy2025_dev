@@ -6,6 +6,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Container from "@/components/container";
 import CommentCard from "@/components/comment-card";
+import Image from "next/image";
 
 const CommentContents = [
     {
@@ -90,7 +91,42 @@ const Comments = () => {
     };
 
     return (
-        <Container className="px-0 bg-gradient-to-b from-neutral-900/90 to-neutral-900/39">
+        <Container className="px-0 bg-gradient-to-b from-neutral-900/90 to-neutral-900/70">
+            <Image
+                src="/images/stars-hero-programs.png"
+                alt="stars"
+                layout="fill"
+                className="absolute left-0 max-h-screen object-cover -z-100"
+                style={{ top: "65%" }}
+            />
+            {/* <Image
+                src="/images/stars-hero-programs.png"
+                alt="stars"
+                layout="fill"
+                className="absolute left-0 max-h-screen object-cover -z-100"
+                style={{ top: "80%" }}
+            /> */}
+            {/* <Image
+                src="/images/stars-hero-programs.png"
+                alt="stars"
+                layout="fill"
+                className="absolute left-0 max-h-fit object-cover -z-100"
+                style={{ top: "87%" }}
+            /> */}
+            {/* <Image
+                src="/images/stars-hero-programs.png"
+                alt="stars"
+                layout="fill"
+                className="absolute left-0 max-h-screen object-cover"
+                style={{ top: "56%" }}
+            /> */}
+            {/* <Image
+                src="/images/stars-hero-programs.png"
+                alt="stars"
+                layout="fill"
+                className="absolute left-0 max-h-screen object-cover"
+                style={{ top: "61%" }}
+            /> */}
             <div className="flex flex-col items-center justify-center w-full h-full py-20">
                 <h1 className="pt-44 px-4 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
                     Kata Mereka Tentang Program Kami

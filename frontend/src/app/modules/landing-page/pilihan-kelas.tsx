@@ -20,7 +20,7 @@ const PilihanKelas =() => {
                 <p className="pt-0 lg:px-24 px-9 text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[12px] sm:text-[18px]">
                     Online program ini mencakup <span className="font-bold">6 kelas untuk pemula</span> yang dirancang membangun pemahaman dasar IT dari <span className="font-bold">nol</span>, serta <span>4 kelas intermediate</span> untuk peserta yang ingin <span className="font-bold">mendalami keterampilan lebih lanjut</span>. Kelas berlangsung dari <span className="font-bold">1 Juni hingga 30 Juni 2025</span> dengan materi yang terstruktur dan mudah diikuti.
                 </p>
-                <div className="w-auto pt-0 md:pt-10 flex justify-center items-center pb-48">
+                <div className="w-full pt-0 md:pt-10 flex justify-center items-center pb-48">
                     <PilihanKelasSlider />
                 </div>
             </div>

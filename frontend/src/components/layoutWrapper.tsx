@@ -11,8 +11,7 @@ export default function LayoutWrapper({
 }) {
   const pathname = usePathname();
   
-  // Cek apakah pathname mengandung '/dashboard' atau halaman login, register, lupa-password
-  const hideNavbarFooter = pathname.includes("/dashboard") || ["/login", "/register", "/lupa-password"].includes(pathname);
+  const hideNavbarFooter = pathname.includes("/dashboard") || ["/login", "/register", "/forgot-password"].includes(pathname);
 
   return (
     <>
