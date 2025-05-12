@@ -7,19 +7,41 @@ import { ApiResponse } from '../utils/rbac/index.js';
  * @param {Object} res - Express response object
  */
 export async function processPaymentApproved(req, res) {
-  const { userId, packageId, courseIds } = req.body;
+  try {
+    console.log('Received payment approved request:', JSON.stringify(req.body, null, 2));
+    const { userId, packageId, courseIds } = req.body;
 
-  if (!userId || !courseIds || !Array.isArray(courseIds) || courseIds.length === 0) {
-    return res.status(400).json(
-      ApiResponse.error('Invalid request parameters. Required: userId and non-empty courseIds array.')
+    if (!userId || !courseIds || !Array.isArray(courseIds) || courseIds.length === 0) {
+      console.error('Invalid request parameters:', JSON.stringify(req.body));
+      return res.status(400).json(
+        ApiResponse.error('Invalid request parameters. Required: userId and non-empty courseIds array.')
+      );
+    }
+
+    // Filter out any placeholder IDs
+    const validCourseIds = courseIds.filter(id => id && id !== '00000000-0000-0000-0000-000000000000');
+    
+    if (validCourseIds.length === 0) {
+      console.error('No valid course IDs provided in request:', JSON.stringify(courseIds));
+      return res.status(400).json(
+        ApiResponse.error('No valid course IDs provided.')
+      );
+    }
+
+    console.log(`Processing enrollment for user ${userId} in courses: ${validCourseIds.join(', ')}`);
+    const enrollments = await enrollmentService.enrollUserToCourses(userId, packageId, validCourseIds);
+
+    console.log(`Successfully enrolled user ${userId} in ${enrollments.length} courses`);
+    return res.status(201).json(
+      ApiResponse.success('User enrolled in courses successfully', { enrollments })
+    );
+  } catch (error) {
+    console.error('Error processing payment approval:', error.message);
+    if (error.stack) console.error(error.stack);
+    return res.status(500).json(
+      ApiResponse.error(`Failed to enroll user in courses: ${error.message}`)
     );
   }
-
-  const enrollments = await enrollmentService.enrollUserToCourses(userId, packageId, courseIds);
-
-  return res.status(201).json(
-    ApiResponse.success('User enrolled in courses successfully', { enrollments })
-  );
 }
 
 /**

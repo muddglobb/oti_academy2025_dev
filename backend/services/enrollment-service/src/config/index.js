@@ -19,9 +19,9 @@ const config = {
   databaseUrl: process.env.DATABASE_URL,
   jwtSecret: process.env.JWT_SECRET || 'default-secret-for-dev-only',
   services: {
-    auth: process.env.AUTH_SERVICE_URL || 'http://localhost:3001',
-    course: process.env.COURSE_SERVICE_URL || 'http://localhost:3003',
-    package: process.env.PACKAGE_SERVICE_URL || 'http://localhost:3004',
+    auth: process.env.AUTH_SERVICE_URL || 'http://auth-service-api:8001',
+    course: process.env.COURSE_SERVICE_URL || 'http://course-service-api:8002',
+    package: process.env.PACKAGE_SERVICE_URL || 'http://package-service-api:8005',
   }
 };
 

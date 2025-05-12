@@ -157,21 +157,22 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   });
 
   const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
-
   // Try to send email but don't fail if email service is down
   try {
     if (process.env.EMAIL_SERVICE_URL) {
       // Get the email service URL
       const emailServiceUrl = process.env.EMAIL_SERVICE_URL;
-      
-      await axios.post(`${emailServiceUrl}/email/send`, {
-        to: user.email,
-        subject: 'OTI Academy - Reset Password',
-        text: `Silakan reset password Anda dengan mengklik link berikut: ${resetUrl}`,
-        html: `<p>Silakan reset password Anda dengan mengklik link berikut:</p>
-              <p><a href="${resetUrl}">Reset Password</a></p>
-              <p>Link ini akan kedaluwarsa dalam 15 menit.</p>`,
-        user_id: user.id
+      const serviceApiKey = process.env.SERVICE_API_KEY || 'default-api-key';
+        // Call our new email service
+      await axios.post(`${emailServiceUrl}/email/password-reset`, {
+        email: user.email,
+        resetLink: resetUrl,
+        username: user.name || user.email.split('@')[0]
+      }, {
+        headers: {
+          'x-api-key': serviceApiKey,
+          'Content-Type': 'application/json'
+        }
       });
       
       console.info(`Reset password email sent to: ${email}`);

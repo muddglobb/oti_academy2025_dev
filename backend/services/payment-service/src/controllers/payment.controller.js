@@ -7,6 +7,7 @@ import {
   completeBackSchema,
   updatePaymentSchema
 } from '../schemas/payment.schema.js';
+import axios from 'axios';
 
 /**
  * Create a new payment
@@ -167,8 +168,7 @@ export const createPayment = async (req, res) => {
       paymentData.backRecipient = validatedData.backRecipient;
       paymentData.backStatus = 'REQUESTED';
     }
-    
-    // Create payment with validated data
+      // Create payment with validated data
     const payment = await PaymentService.createPayment(paymentData);
     
     // Add package information to the response
@@ -178,6 +178,23 @@ export const createPayment = async (req, res) => {
       packageType: packageInfo.type,
       price: packageInfo.price
     };
+    
+    // Send payment confirmation email asynchronously
+    try {
+      const { sendPaymentConfirmationEmail } = await import('../utils/email-helper.js');
+      sendPaymentConfirmationEmail(payment, userInfo, packageInfo)
+        .then(success => {
+          if (success) {
+            console.log(`Payment confirmation email sent to: ${userInfo.email}`);
+          }
+        })
+        .catch(emailError => {
+          console.error('Async email sending error:', emailError);
+        });
+    } catch (emailError) {
+      console.error('Failed to initiate payment confirmation email:', emailError.message);
+      // Don't fail the payment creation if email fails
+    }
     
     res.status(201).json(
       ApiResponse.success(
@@ -441,31 +458,65 @@ export const approvePayment = async (req, res) => {
         ApiResponse.error('Payment is already approved')
       );
     }
-      try {
-      // The entire approval process, including enrollment, happens in the service
+    
+    try {      // The approval process is now optimized in the service
       const updatedPayment = await PaymentService.approvePayment(id);
       
-      // Only if approval was successful (which means enrollment was successful too)
       // Get user info for the complete response
       const userInfo = await PaymentService.getUserInfo(updatedPayment.userId);
+      
+      // Invalidate enrollment cache for the associated course and all courses in bundles
+      try {
+        const { invalidateCache } = await import('../utils/cache-helper.js');
+        
+        // If payment is associated with a specific course, invalidate its cache
+        if (updatedPayment.courseId) {
+          invalidateCache('enrollment', updatedPayment.courseId);
+        }
+        
+        // For bundle packages, invalidate cache for all included courses
+        if (updatedPayment.packageId) {
+          const packageInfo = await PaymentService.getPackageInfo(updatedPayment.packageId);
+          if (packageInfo?.type === 'BUNDLE') {
+            const coursesInBundle = await PaymentService.getCoursesInPackage(updatedPayment.packageId);
+            if (coursesInBundle && Array.isArray(coursesInBundle)) {
+              for (const course of coursesInBundle) {
+                if (course.id) {
+                  invalidateCache('enrollment', course.id);
+                }
+              }
+            }
+          }
+        }
+        
+        // Also invalidate all-enrollments cache
+        invalidateCache('all-enrollments', 'all-enrollments');
+        console.log('✅ Enrollment cache invalidated after payment approval');
+      } catch (cacheError) {
+        console.error('❌ Error invalidating cache:', cacheError.message);
+        // Non-critical error, continue with the payment approval flow
+      }
       
       // Format detailed payment with all required information
       const detailedPayment = await PaymentService.formatDetailedPayment(updatedPayment, userInfo);
       
+      // Success response
       res.status(200).json(
         ApiResponse.success(detailedPayment, 'Payment approved successfully')
       );
-    } catch (enrollmentError) {
-      console.error('Payment approval failed:', enrollmentError.message);
+    } catch (approvalError) {
+      console.error('Payment approval failed:', approvalError.message);
       
       // Return error response, keeping payment in PENDING state
       return res.status(500).json(
-        ApiResponse.error(`Payment could not be approved: ${enrollmentError.message}`)
+        ApiResponse.error(`Payment could not be approved: ${approvalError.message}`)
       );
     }
   } catch (error) {
     console.error('Error approving payment:', error);
-    throw error;
+    res.status(500).json(
+      ApiResponse.error('An unexpected error occurred while processing the payment approval')
+    );
   }
 };
 
