@@ -266,38 +266,47 @@ export class PaymentService {
    */
   static async getPackageInfo(packageId) {
     try {
-      // Validasi URL dan tentukan default jika environment variable tidak ada
-      const packageServiceUrl = process.env.PACKAGE_SERVICE_URL || 'http://package-service-api:8005';
-      const jwtSecret = process.env.JWT_SECRET;
+      // Use the cache helper to get or set package info
+      const { getPackageInfoCached } = await import('../utils/cache-helper.js');
+        // Import circuit breaker utilities
+      const { executeWithCircuitBreaker, retryWithBackoff } = await import('../utils/circuit-breaker.js');
       
-      // Pastikan URL dan JWT Secret valid sebelum memanggil API
-      if (!packageServiceUrl) {
-        console.error('PACKAGE_SERVICE_URL is not defined');
-        return null;
-      }
-      
-      if (!jwtSecret) {
-        console.error('JWT_SECRET is not defined');
-        return null;
-      }
-      
-      // Generate a valid JWT token for service-to-service communication
-      const serviceToken = this.generateServiceToken();
-      
-      // Untuk debugging
-      console.log('Package Service URL:', packageServiceUrl);
-      console.log('JWT Token Generated:', serviceToken ? 'Yes' : 'No');
-      
-      // Setup headers dengan JWT token yang valid
-      const headers = {
-        'Authorization': `Bearer ${serviceToken}`
-      };
-      
-      console.log('Making request to:', `${packageServiceUrl}/packages/${packageId}`);
-      
-      // Call to Package Service API to get package info with valid JWT token
-      const response = await axios.get(`${packageServiceUrl}/packages/${packageId}`, { headers });
-      return response.data.data;
+      return await getPackageInfoCached(packageId, async () => {
+        // This function only runs on cache miss
+        // Validasi URL dan tentukan default jika environment variable tidak ada
+        const packageServiceUrl = process.env.PACKAGE_SERVICE_URL || 'http://package-service-api:8005';
+        const jwtSecret = process.env.JWT_SECRET;
+        
+        // Pastikan URL dan JWT Secret valid sebelum memanggil API
+        if (!packageServiceUrl) {
+          console.error('PACKAGE_SERVICE_URL is not defined');
+          return null;
+        }
+        
+        if (!jwtSecret) {
+          console.error('JWT_SECRET is not defined');
+          return null;
+        }
+        
+        // Generate a valid JWT token for service-to-service communication
+        const serviceToken = this.generateServiceToken();
+        
+        // Setup headers dengan JWT token yang valid
+        const headers = {
+          'Authorization': `Bearer ${serviceToken}`
+        };
+        
+        console.log('Cache miss - making request to:', `${packageServiceUrl}/packages/${packageId}`);
+        
+        // Call to Package Service API with circuit breaker and retry
+        return executeWithCircuitBreaker('package', async () => {
+          const response = await retryWithBackoff(async () => {
+            return await axios.get(`${packageServiceUrl}/packages/${packageId}`, { headers });
+          }, 3, 1000);
+          
+          return response.data.data;
+        });
+      });
     } catch (error) {
       console.error('Error fetching package info:', error.message);
       // Log detail error untuk debugging
@@ -424,29 +433,81 @@ export class PaymentService {
  */
 static async getCourseEnrollmentCount(courseId) {
   try {
-    // Create a package type cache to avoid redundant API calls
-    const packageTypeCache = new Map();
-    const bundleCourseCache = new Map();
+    // Use cache helper to get or calculate enrollment count
+    const { getCourseEnrollmentCountCached, batchPreloadPackageInfo } = await import('../utils/cache-helper.js');
     
-    // 1. Get direct enrollments (non-bundle) for this course
-    const directPayments = await prisma.payment.findMany({
-      where: {
-        courseId,
-        status: 'APPROVED'
-      },
-      select: {
-        id: true,
-        packageId: true
+    return await getCourseEnrollmentCountCached(courseId, async () => {
+      console.log(`Cache miss - calculating enrollment count for course ${courseId}`);
+      
+      // In-memory cache for this calculation session
+      const packageTypeCache = new Map();
+      const bundleCourseCache = new Map();
+      
+      // 1. Get direct enrollments (non-bundle) for this course
+      const directPayments = await prisma.payment.findMany({
+        where: {
+          courseId,
+          status: 'APPROVED'
+        },
+        select: {
+          id: true,
+          packageId: true,
+          userId: true 
+        }
+      });
+      
+      // 2. Process direct payments with batch package info retrieval
+      const uniquePackageIds = [...new Set(directPayments.map(p => p.packageId))];
+      let entryIntermediateCount = 0;
+      
+      // Batch fetch package info for direct payments
+      if (uniquePackageIds.length > 0) {
+        // First, try to preload all package info at once
+        await batchPreloadPackageInfo(uniquePackageIds, async (packageId) => {
+          return await this.getPackageInfo(packageId);
+        });
+        
+        // Get package types from already cached info
+        await Promise.all(uniquePackageIds.map(async (packageId) => {
+          if (!packageTypeCache.has(packageId)) {
+            const packageInfo = await this.getPackageInfo(packageId);
+            if (packageInfo) {
+              packageTypeCache.set(packageId, packageInfo.type);
+            }
+          }
+        }));
+        
+        // Count non-bundle enrollments
+        for (const payment of directPayments) {
+          const packageType = packageTypeCache.get(payment.packageId);
+          if (packageType && packageType !== 'BUNDLE') {
+            entryIntermediateCount++;
+          }
+        }
       }
-    });
-    
-    // 2. Process direct payments with batch package info retrieval
-    const uniquePackageIds = [...new Set(directPayments.map(p => p.packageId))];
-    let entryIntermediateCount = 0;
-    
-    // Batch fetch package info for direct payments
-    if (uniquePackageIds.length > 0) {
-      await Promise.all(uniquePackageIds.map(async (packageId) => {
+      
+      // 3. Get bundle enrollments more efficiently by using cached data and batching queries
+      const bundlePayments = await prisma.payment.findMany({
+        where: {
+          status: 'APPROVED'
+        },
+        select: {
+          id: true,
+          packageId: true,
+          userId: true 
+        }
+      });
+      
+      // Get unique package IDs from all payments
+      const allPackageIds = [...new Set(bundlePayments.map(p => p.packageId))];
+      
+      // Preload all package info at once
+      await batchPreloadPackageInfo(allPackageIds, async (packageId) => {
+        return await this.getPackageInfo(packageId);
+      });
+      
+      // Fetch package info for all packages in one batch (using cached data when available)
+      await Promise.all(allPackageIds.map(async (packageId) => {
         if (!packageTypeCache.has(packageId)) {
           const packageInfo = await this.getPackageInfo(packageId);
           if (packageInfo) {
@@ -455,72 +516,40 @@ static async getCourseEnrollmentCount(courseId) {
         }
       }));
       
-      // Count non-bundle enrollments
-      for (const payment of directPayments) {
+      // Filter to only bundle payments
+      const bundlePackageIds = allPackageIds.filter(
+        packageId => packageTypeCache.get(packageId) === 'BUNDLE'
+      );
+      
+      // Batch fetch courses for all bundle packages (will use cache when available)
+      let bundleCount = 0;
+      await Promise.all(bundlePackageIds.map(async (packageId) => {
+        try {
+          const coursesInBundle = await this.getCoursesInPackage(packageId);
+          bundleCourseCache.set(packageId, coursesInBundle);
+        } catch (error) {
+          console.error(`Error fetching courses for bundle ${packageId}:`, error.message);
+        }
+      }));
+      
+      // Count bundle enrollments
+      for (const payment of bundlePayments) {
         const packageType = packageTypeCache.get(payment.packageId);
-        if (packageType && packageType !== 'BUNDLE') {
-          entryIntermediateCount++;
+        if (packageType === 'BUNDLE') {
+          const coursesInBundle = bundleCourseCache.get(payment.packageId) || [];
+          const isCourseInBundle = coursesInBundle.some(c => String(c.id) === String(courseId));
+          if (isCourseInBundle) {
+            bundleCount++;
+          }
         }
       }
-    }
-    
-    // 3. Get bundle enrollments more efficiently (only fetch bundle packages)
-    const bundlePayments = await prisma.payment.findMany({
-      where: {
-        status: 'APPROVED'
-      },
-      select: {
-        id: true,
-        packageId: true
-      }
+      
+      return {
+        total: entryIntermediateCount + bundleCount,
+        bundleCount,
+        entryIntermediateCount
+      };
     });
-    
-    // Get unique package IDs from all payments
-    const allPackageIds = [...new Set(bundlePayments.map(p => p.packageId))];
-    
-    // Fetch package info for all packages in one batch
-    await Promise.all(allPackageIds.map(async (packageId) => {
-      if (!packageTypeCache.has(packageId)) {
-        const packageInfo = await this.getPackageInfo(packageId);
-        if (packageInfo) {
-          packageTypeCache.set(packageId, packageInfo.type);
-        }
-      }
-    }));
-    
-    // Filter to only bundle payments
-    const bundlePackageIds = allPackageIds.filter(
-      packageId => packageTypeCache.get(packageId) === 'BUNDLE'
-    );
-    
-    // Batch fetch courses for all bundle packages
-    let bundleCount = 0;
-    await Promise.all(bundlePackageIds.map(async (packageId) => {
-      try {
-        const coursesInBundle = await this.getCoursesInPackage(packageId);
-        bundleCourseCache.set(packageId, coursesInBundle);
-      } catch (error) {
-        console.error(`Error fetching courses for bundle ${packageId}:`, error.message);
-      }
-    }));
-    
-    // Count bundle enrollments
-    for (const payment of bundlePayments) {
-      const packageType = packageTypeCache.get(payment.packageId);
-      if (packageType === 'BUNDLE') {
-        const coursesInBundle = bundleCourseCache.get(payment.packageId) || [];
-        const isCourseInBundle = coursesInBundle.some(c => String(c.id) === String(courseId));
-        if (isCourseInBundle) {
-          bundleCount++;
-        }
-      }
-    }
-    
-    return {
-      total: entryIntermediateCount + bundleCount,
-      bundleCount,
-      entryIntermediateCount
-    };
   } catch (error) {
     console.error('Error getting course enrollment count:', error.message);
     return {
@@ -537,51 +566,59 @@ static async getCourseEnrollmentCount(courseId) {
  */
 static async getAllCoursesEnrollmentCount() {
   try {
-    // Dapatkan semua kursus dari course-service
-    const { CourseService } = await import('./course.service.js');
-    const allCourses = await CourseService.getAllCourses();
+    // Use cache helper to get or calculate all enrollment counts
+    const { getAllCoursesEnrollmentCountCached } = await import('../utils/cache-helper.js');
     
-    if (!allCourses || !Array.isArray(allCourses) || allCourses.length === 0) {
-      return {
-        success: false,
-        message: 'Tidak dapat mendapatkan daftar kursus',
-        data: []
-      };
-    }
-    
-    // Dapatkan jumlah pendaftaran untuk setiap kursus secara paralel
-    const enrollmentCountsPromises = allCourses.map(async (course) => {
-      const enrollmentCount = await this.getCourseEnrollmentCount(course.id);
+    // Use a distinct cache key for the entire result
+    return await getAllCoursesEnrollmentCountCached('all-enrollments', async () => {
+      console.log('Cache miss - calculating enrollment counts for all courses');
+      
+      // Dapatkan semua kursus dari course-service
+      const { CourseService } = await import('./course.service.js');
+      const allCourses = await CourseService.getAllCourses();
+      
+      if (!allCourses || !Array.isArray(allCourses) || allCourses.length === 0) {
+        return {
+          success: false,
+          message: 'Tidak dapat mendapatkan daftar kursus',
+          data: []
+        };
+      }
+      
+      // Dapatkan jumlah pendaftaran untuk setiap kursus secara paralel
+      // This will use cached getCourseEnrollmentCount results when available
+      const enrollmentCountsPromises = allCourses.map(async (course) => {
+        const enrollmentCount = await this.getCourseEnrollmentCount(course.id);
+        
+        return {
+          id: course.id,
+          title: course.title,
+          level: course.level,
+          quota: {
+            total: course.quota || 0,
+            entryQuota: course.entryQuota || 0,
+            bundleQuota: course.bundleQuota || 0
+          },
+          enrollment: {
+            total: enrollmentCount.total || 0,
+            entryIntermediateCount: enrollmentCount.entryIntermediateCount || 0,
+            bundleCount: enrollmentCount.bundleCount || 0
+          },
+          remaining: {
+            entryIntermediate: (course.entryQuota || 0) - (enrollmentCount.entryIntermediateCount || 0),
+            bundle: (course.bundleQuota || 0) - (enrollmentCount.bundleCount || 0)
+          }
+        };
+      });
+      
+      const enrollmentCounts = await Promise.all(enrollmentCountsPromises);
       
       return {
-        id: course.id,
-        title: course.title,
-        level: course.level,
-        quota: {
-          total: course.quota || 0,
-          entryQuota: course.entryQuota || 0,
-          bundleQuota: course.bundleQuota || 0
-        },
-        enrollment: {
-          total: enrollmentCount.total || 0,
-          entryIntermediateCount: enrollmentCount.entryIntermediateCount || 0,
-          bundleCount: enrollmentCount.bundleCount || 0
-        },
-        remaining: {
-          entryIntermediate: (course.entryQuota || 0) - (enrollmentCount.entryIntermediateCount || 0),
-          bundle: (course.bundleQuota || 0) - (enrollmentCount.bundleCount || 0)
-        }
+        success: true,
+        message: 'Data jumlah pendaftaran semua kursus berhasil didapatkan',
+        data: enrollmentCounts
       };
     });
-    
-    const enrollmentCounts = await Promise.all(enrollmentCountsPromises);
-    
-    return {
-      success: true,
-      message: 'Data jumlah pendaftaran semua kursus berhasil didapatkan',
-      data: enrollmentCounts
-    };
-    
   } catch (error) {
     console.error('Error getting all courses enrollment count:', error.message);
     return {
@@ -1159,54 +1196,68 @@ static async processEnrollment(payment, courseIds) {
    */
   static async getCoursesInPackage(packageId) {
     try {
-      // Generate JWT token for service-to-service communication
-      const serviceToken = this.generateServiceToken();
+      // Use the cache helper to get or set courses in package
+      const { getCoursesInPackageCached } = await import('../utils/cache-helper.js');
+        // Import circuit breaker utilities
+      const { executeWithCircuitBreaker, retryWithBackoff } = await import('../utils/circuit-breaker.js');
       
-      // Set up headers with token
-      const headers = {
-        'Authorization': `Bearer ${serviceToken}`
-      };
-      
-      // URL for package-service API
-      const packageServiceUrl = process.env.PACKAGE_SERVICE_URL || 'http://package-service-api:8005';
-      
-      // Call to Package Service API to get courses in package
-      const response = await axios.get(`${packageServiceUrl}/packages/${packageId}/courses`, { headers });
-      
-      // Extract courses from response based on package type
-      let courses = [];
-      
-      const responseData = response.data.data;
-      
-      if (!responseData) {
-        return [];
-      }
-      
-      // Format response depends on package type
-      if (responseData.courses) {
-        // For ENTRY or INTERMEDIATE packages
-        courses = responseData.courses.map(course => ({
-          id: course.courseId,
-          title: course.title || 'Untitled Course',
-          description: course.description || null,
-          level: course.level || null
-        }));
-      } else if (responseData.bundlePairs) {
-        // For BUNDLE packages
-        responseData.bundlePairs.forEach(pair => {
-          if (pair.courses) {
-            const mappedCourses = pair.courses.map(course => ({
-              id: course.courseId,
-              title: course.title || 'Untitled Course',
-              description: course.description || null,
-              level: course.level || null
-            }));
-            courses = courses.concat(mappedCourses);
-          }
+      return await getCoursesInPackageCached(packageId, async () => {
+        // This function only runs on cache miss
+        // Generate JWT token for service-to-service communication
+        const serviceToken = this.generateServiceToken();
+        
+        // Set up headers with token
+        const headers = {
+          'Authorization': `Bearer ${serviceToken}`
+        };
+        
+        // URL for package-service API
+        const packageServiceUrl = process.env.PACKAGE_SERVICE_URL || 'http://package-service-api:8005';
+        
+        console.log('Cache miss - fetching courses for package:', packageId);
+        
+        // Call to Package Service API with circuit breaker and retry
+        const response = await executeWithCircuitBreaker('package', async () => {
+          return await retryWithBackoff(async () => {
+            return await axios.get(`${packageServiceUrl}/packages/${packageId}/courses`, { headers });
+          }, 3, 1000);
         });
-      }
-      
-      return courses;
+        
+        // Extract courses from response based on package type
+        let courses = [];
+        
+        const responseData = response.data.data;
+        
+        if (!responseData) {
+          return [];
+        }
+        
+        // Format response depends on package type
+        if (responseData.courses) {
+          // For ENTRY or INTERMEDIATE packages
+          courses = responseData.courses.map(course => ({
+            id: course.courseId,
+            title: course.title || 'Untitled Course',
+            description: course.description || null,
+            level: course.level || null
+          }));
+        } else if (responseData.bundlePairs) {
+          // For BUNDLE packages
+          responseData.bundlePairs.forEach(pair => {
+            if (pair.courses) {
+              const mappedCourses = pair.courses.map(course => ({
+                id: course.courseId,
+                title: course.title || 'Untitled Course',
+                description: course.description || null,
+                level: course.level || null
+              }));
+              courses = courses.concat(mappedCourses);
+            }
+          });
+        }
+        
+        return courses;
+      });
     } catch (error) {
       console.error('Error fetching courses in package:', error.message);
       // Log detailed error for debugging

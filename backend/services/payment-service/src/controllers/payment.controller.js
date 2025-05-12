@@ -459,12 +459,43 @@ export const approvePayment = async (req, res) => {
       );
     }
     
-    try {
-      // The approval process is now optimized in the service
+    try {      // The approval process is now optimized in the service
       const updatedPayment = await PaymentService.approvePayment(id);
       
       // Get user info for the complete response
       const userInfo = await PaymentService.getUserInfo(updatedPayment.userId);
+      
+      // Invalidate enrollment cache for the associated course and all courses in bundles
+      try {
+        const { invalidateCache } = await import('../utils/cache-helper.js');
+        
+        // If payment is associated with a specific course, invalidate its cache
+        if (updatedPayment.courseId) {
+          invalidateCache('enrollment', updatedPayment.courseId);
+        }
+        
+        // For bundle packages, invalidate cache for all included courses
+        if (updatedPayment.packageId) {
+          const packageInfo = await PaymentService.getPackageInfo(updatedPayment.packageId);
+          if (packageInfo?.type === 'BUNDLE') {
+            const coursesInBundle = await PaymentService.getCoursesInPackage(updatedPayment.packageId);
+            if (coursesInBundle && Array.isArray(coursesInBundle)) {
+              for (const course of coursesInBundle) {
+                if (course.id) {
+                  invalidateCache('enrollment', course.id);
+                }
+              }
+            }
+          }
+        }
+        
+        // Also invalidate all-enrollments cache
+        invalidateCache('all-enrollments', 'all-enrollments');
+        console.log('✅ Enrollment cache invalidated after payment approval');
+      } catch (cacheError) {
+        console.error('❌ Error invalidating cache:', cacheError.message);
+        // Non-critical error, continue with the payment approval flow
+      }
       
       // Format detailed payment with all required information
       const detailedPayment = await PaymentService.formatDetailedPayment(updatedPayment, userInfo);
