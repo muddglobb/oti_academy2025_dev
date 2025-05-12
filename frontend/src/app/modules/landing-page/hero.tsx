@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 const Hero = () => {
     return (
-        <Container className="bg-gradient-to-b from-neutral-900/0 via-neutral-900/70 to-neutral-900">
+        <Container className="bg-gradient-to-b from-neutral-900/0 via-neutral-900/20 to-neutral-900">
             <Image
                 src="/images/stars-hero-programs.png"
                 alt="stars"

@@ -116,7 +116,7 @@ const PilihanKelasSlider =() => {
         arrows: true,
         infinite: true,
         autoplay: true,
-        autoplaySpeed: 5000,
+        autoplaySpeed: 10000,
         nextArrow: <NextArrow/>,
         prevArrow: <PrevArrow/>,
         slidesToShow: 4,

@@ -45,18 +45,25 @@ const Details = [
 
 const Harga = () => {
     return (
-        <Container className="flex flex-col items-end px-4 gap-4 lg:gap-10 bg-gradient-to-b from-neutral-900 via-neutral-900 to-neutral-900/90">
+        <Container className="flex flex-col items-end px-4 gap-4 lg:gap-10 bg-gradient-to-b from-neutral-900/70 via-neutral-900/70 to-neutral-900/90">
             <Image
                 src="/images/stars-hero-programs.png"
                 alt="stars"
                 layout="fill"
-                className="absolute left-0 max-h-screen sm:max-h-fit object-cover -z-100"
-                style={{ top: "53%" }}
+                className="absolute left-0 max-h-screen sm:max-h-fit object-cover -z-10"
+                style={{ top: "61%" }}
             />
-            <h1 className="pt-10 w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
-                Harga Program Kami
-            </h1>
+            <Image
+                src="/images/stars-hero-programs.png"
+                alt="stars"
+                layout="fill"
+                className="absolute left-0 max-h-screen sm:max-h-fit object-cover -z-10"
+                style={{ top: "66%" }}
+            />
             <div className="relative w-full mx-auto items-end">
+                <h1 className="pt-10 w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold pb-10">
+                    Harga Program Kami
+                </h1>
                 <div className="flex flex-col md:flex-row justify-center items-end gap-4 md:gap-5 ">
                     {/* putih kiri */}
                     <div className="relative border bg-neutral-50 rounded-[10px] max-w-105 p-5 flex flex-col items-center justify-between w-full">
