@@ -17,7 +17,7 @@ const DEFAULT_BUNDLE_QUOTA = 30;
 const NO_BUNDLE_COURSES = ['Competitive Programming', 'Game Development'];
 
 const prisma = new PrismaClient({
-  enableTracing: false
+  log: ['query', 'info', 'warn', 'error']
 });
 
 // Helper untuk membuat tanggal
