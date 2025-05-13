@@ -121,7 +121,19 @@ export const getEnrollmentById = async (req, res) => {
 export const checkEnrollmentStatus = async (req, res) => {
   try {
     const { courseId } = req.params;
-    const userId = req.user.id;
+    
+    // Cek apakah request berasal dari layanan internal (service-to-service)
+    // Jika ya, ambil userId dari header khusus, jika tidak, dari token user
+    let userId;
+    
+    if (req.user.role === 'SERVICE' && req.headers['x-user-id']) {
+      // Untuk request antar service, ambil userId dari header khusus
+      userId = req.headers['x-user-id'];
+      console.log(`Service-to-service request: Checking enrollment for user ${userId} in course ${courseId}`);
+    } else {
+      // Untuk request biasa dari frontend, gunakan user ID dari token JWT
+      userId = req.user.id;
+    }
     
     const isEnrolled = await EnrollmentService.isUserEnrolled(userId, courseId);
     

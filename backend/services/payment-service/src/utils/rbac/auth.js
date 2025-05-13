@@ -31,6 +31,15 @@ export const authenticate = (req, res, next) => {
     
     // Add user info to request object
     req.user = decoded;
+
+    // Jika ini adalah request dari service lain (token service dengan role SERVICE),
+    // kita memastikan header X-User-ID dapat digunakan
+    if (decoded.role === 'SERVICE' && decoded.service) {
+      req.isServiceRequest = true;
+      // Pastikan controller bisa mengakses informasi ini nanti
+      console.log(`Service request from ${decoded.service} using X-User-ID: ${req.headers['x-user-id']}`);
+    }
+    
     next();
   } catch (error) {
     if (error.name === 'TokenExpiredError') {

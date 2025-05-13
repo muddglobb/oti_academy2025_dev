@@ -17,7 +17,6 @@
   "author": "OTI Academy",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^5.22.0",
     "axios": "^1.9.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -32,6 +31,7 @@
     "zod": "^3.24.4"
   },
   "devDependencies": {
+    "@prisma/client": "^6.7.0",
     "nodemon": "^2.0.22",
     "prisma": "^5.22.0"
   }
