@@ -16,7 +16,9 @@ const DEFAULT_ENTRY_QUOTA = 110;
 const DEFAULT_BUNDLE_QUOTA = 30;
 const NO_BUNDLE_COURSES = ['Competitive Programming', 'Game Development'];
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  enableTracing: false
+});
 
 // Helper untuk membuat tanggal
 const futureDate = (daysFromNow) => {
