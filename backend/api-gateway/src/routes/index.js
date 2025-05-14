@@ -5,6 +5,8 @@ import packageRoutes from './package.routes.js';
 import paymentRoutes from './payment.routes.js';
 import courseRoutes from './course.routes.js';
 import enrollmentRoutes from './enrollment.routes.js';
+import assignmentRoutes from './assignment.routes.js';
+import submissionRoutes from './submission.routes.js';
 import { checkHealth } from '../controllers/health.controller.js';
 
 const router = Router();
@@ -19,5 +21,7 @@ router.use('/packages', packageRoutes);
 router.use('/payments', paymentRoutes);
 router.use('/courses', courseRoutes);
 router.use('/enrollments', enrollmentRoutes);
+router.use('/assignments', assignmentRoutes);
+router.use('/submissions', submissionRoutes);
 
 export default router;

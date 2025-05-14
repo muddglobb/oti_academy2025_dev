@@ -10,7 +10,7 @@ import logger from '../utils/logger.js';
  */
 export const jwtValidatorMiddleware = async (req, res, next) => {
   // Pertama cek apakah token ada di cookie (prioritas utama)
-  let token = req.cookies?.accessToken;
+  let token = req.cookies?.access_token;
   
   // Jika tidak ada di cookie, coba ambil dari header
   if (!token) {
@@ -78,7 +78,7 @@ export const jwtValidatorMiddleware = async (req, res, next) => {
  */
 export const optionalJwtValidator = async (req, res, next) => {
   // Pertama cek apakah token ada di cookie (prioritas utama)
-  let token = req.cookies?.accessToken;
+  let token = req.cookies?.access_token;
   
   // Jika tidak ada di cookie, coba ambil dari header
   if (!token) {

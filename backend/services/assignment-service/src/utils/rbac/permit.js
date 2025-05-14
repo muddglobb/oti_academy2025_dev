@@ -10,9 +10,7 @@ import { ApiResponse } from '../api-response.js';
 export const permit = (...roles) => {
   return (req, res, next) => {
     authenticate(req, res, () => {
-      // Menambahkan izin khusus untuk request dari service lain
-      // Service lain diizinkan mengakses jika mereka menggunakan token valid service
-      if (!roles.length || roles.includes(req.user.role) || req.user.role === 'SERVICE') {
+      if (!roles.length || roles.includes(req.user.role)) {
         next();
       } else {
         res.status(403).json(

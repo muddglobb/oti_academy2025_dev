@@ -37,31 +37,36 @@ class AuthService {
    * @param {string} tokenType - Type of token ('access' or 'refresh')
    * @returns {Object} Cookie options
    */
-  getCookieOptions(tokenType) {
-    const isProduction = process.env.NODE_ENV === 'production';
-    
-    // Base options for all cookies
-    const options = {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? 'strict' : 'lax',
-      path: '/',
-    };
-    
-    // Add domain if configured in environment
-    if (process.env.COOKIE_DOMAIN) {
-      options.domain = process.env.COOKIE_DOMAIN;
-    }
-    
-    // Add expiration based on token type
-    if (tokenType === 'refresh') {
-      options.maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
-    } else {
-      options.maxAge = parseInt(process.env.JWT_EXPIRES_IN_MS || '3600000'); // Default to 1 hour
-    }
-    
-    return options;
+getCookieOptions(tokenType) {
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  console.log(`Cookie options requested for ${tokenType} token`);
+  
+  // Base options for all cookies
+  const options = {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'strict' : 'lax',
+    path: '/',
+  };
+  
+  // Add domain if configured in environment
+  if (process.env.COOKIE_DOMAIN) {
+    options.domain = process.env.COOKIE_DOMAIN;
+    console.log(`Setting domain: ${options.domain}`);
   }
+  
+  // Add expiration based on token type
+  if (tokenType === 'refresh') {
+    options.maxAge = 7 * 24 * 60 * 60 * 1000; // 7 days
+    console.log(`Refresh token maxAge: ${options.maxAge}ms`);
+  } else {
+    options.maxAge = parseInt(process.env.JWT_EXPIRES_IN_MS || '3600000'); // Default to 1 hour
+    console.log(`Access token maxAge: ${options.maxAge}ms`);
+  }
+  
+  return options;
+}
 
   /**
    * Register a new user

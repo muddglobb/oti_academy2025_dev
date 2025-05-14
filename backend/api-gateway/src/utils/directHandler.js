@@ -207,6 +207,13 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
           
           circuitBreaker.recordSuccess();
           logger.info(`Response from ${baseUrl}: ${response.status}`);
+
+          // Handle cookies properly - Forward any Set-Cookie headers
+          if (response.headers['set-cookie']) {
+            res.setHeader('Set-Cookie', response.headers['set-cookie']);
+            logger.debug(`Forwarding cookies: ${response.headers['set-cookie'].length} cookies found`);
+          }
+
           return res.status(response.status).json(response.data);
         } else {
           // Regular JSON request
@@ -230,6 +237,13 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
           
           circuitBreaker.recordSuccess();
           logger.info(`Response from ${baseUrl}: ${response.status}`);
+          
+          // FIXED: Properly handle and forward Set-Cookie headers
+          if (response.headers['set-cookie']) {
+            res.setHeader('Set-Cookie', response.headers['set-cookie']);
+            logger.debug(`Forwarding cookies: ${response.headers['set-cookie'].length} cookies found`);
+          }
+          
           return res.status(response.status).json(response.data);
         }
       } catch (error) {

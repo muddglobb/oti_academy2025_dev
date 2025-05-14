@@ -1,99 +1,30 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
-import cookieParser from 'cookie-parser';
-import { PrismaClient } from '@prisma/client';
-import config from './config/index.js';
+/**
+ * RBAC (Role-Based Access Control) library untuk OTI Academy Payment Service
+ */
 
-// Import routes
-import assignmentRoutes from './routes/assignment.routes.js';
+import { Roles, Permissions, hasPermission, isStudent } from './roles.js';
+import { authenticate, authorizeStudents } from './auth.js';
+import { permit, permitWithPermission, permitSelfOrAdmin } from './permit.js';
+import { ApiResponse } from '../api-response.js';
 
-// Initialize Express app
-const app = express();
-const prisma = new PrismaClient();
-
-// Middleware
-app.use(helmet());
-app.use(cors({
-  origin: config.CORS_ORIGIN || '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true // Enable credentials (cookies, auth headers)
-}));
-app.use(express.json());
-app.use(cookieParser()); // Parse cookies
-app.use(morgan('dev'));
-
-// Create uploads directory for file uploads if using local storage
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const uploadsDir = path.join(__dirname, '../uploads');
-
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-  console.log('✅ Created uploads directory');
-}
-
-// Routes
-app.use('/api/assignments', assignmentRoutes);
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    message: 'Assignment service is running',
-    timestamp: new Date().toISOString()
-  });
-});
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    status: 'error',
-    message: `Not found - ${req.originalUrl}`
-  });
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal server error';
+export {
+  // Role and permission constants
+  Roles,
+  Permissions,
   
-  res.status(statusCode).json({
-    status: 'error',
-    message,
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
-  });
-});
-
-// Start server
-const startServer = async () => {
-  try {
-    await prisma.$connect();
-    console.log('✅ Connected to database');
-    
-    const PORT = config.PORT || 8005;
-    app.listen(PORT, () => {
-      console.log(`🚀 Assignment service running on port ${PORT}`);
-    });
-  } catch (err) {
-    console.error('❌ Failed to start server:', err);
-    process.exit(1);
-  }
+  // Permission utility
+  hasPermission,
+  isStudent,
+  
+  // Authentication middleware
+  authenticate,
+  authorizeStudents,
+  
+  // Authorization middlewares
+  permit,              // Role-based authorization
+  permitWithPermission, // Permission-based authorization
+  permitSelfOrAdmin,   // Self or admin authorization
+  
+  // API response formatter
+  ApiResponse
 };
-
-startServer();
-
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-  console.error('UNHANDLED REJECTION:', err);
-  process.exit(1);
-});
-
-export default app;

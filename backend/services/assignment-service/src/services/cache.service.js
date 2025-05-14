@@ -35,6 +35,31 @@ const deleteCacheByPattern = (pattern) => {
  */
 export class CacheService {
   /**
+   * Menyimpan data ke cache
+   * @param {string} key - Cache key
+   * @param {any} data - Data yang akan disimpan
+   * @param {number} ttl - Time-to-live dalam detik
+   * @returns {boolean} Status keberhasilan operasi
+   */
+  static set(key, data, ttl = 3600) {
+    return setCache(key, data, ttl);
+  }
+  
+  /**
+   * Menghapus cache berdasarkan key atau pattern
+   * @param {string} keyOrPattern - Key atau pattern cache yang akan dihapus
+   * @param {boolean} isPattern - Jika true, akan menghapus semua key yang cocok dengan pattern
+   * @returns {number} Jumlah key yang dihapus
+   */
+  static invalidate(keyOrPattern, isPattern = false) {
+    console.log(`🗑️ Invalidating cache for key: ${keyOrPattern}`);
+    if (isPattern) {
+      return deleteCacheByPattern(keyOrPattern);
+    }
+    return deleteCache(keyOrPattern);
+  }
+  
+  /**
    * Mendapatkan cache untuk sebuah key, atau menyimpan hasil dari callback jika cache tidak ada
    * @param {string} key - Cache key
    * @param {Function} callback - Async function yang akan dipanggil jika cache tidak ada
@@ -100,7 +125,7 @@ export const cacheMiddleware = (key, ttl = 3600) => {
     }
     
     // Generate a cache key based on the provided key and request params/query
-    const cacheKey = `${key}-${req.originalUrl}`;
+    const cacheKey = `${key}:${req.originalUrl}`;
     
     try {
       const cachedData = getCache(cacheKey);
@@ -110,10 +135,16 @@ export const cacheMiddleware = (key, ttl = 3600) => {
         return res.json(cachedData);
       }
       
+      console.log(`🔍 Cache miss for ${cacheKey}`);
+      
       // Modify res.json to cache the response before sending
       const originalJson = res.json;
       res.json = function(data) {
-        setCache(cacheKey, data, ttl);
+        try {
+          setCache(cacheKey, data, ttl);
+        } catch (err) {
+          console.error(`Error setting cache: ${err.message}`);
+        }
         return originalJson.call(this, data);
       };
       
@@ -135,8 +166,11 @@ export const invalidateCache = (pattern) => {
     res.send = function() {
       // Only invalidate on successful operations (2xx status)
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        CacheService.invalidate(pattern, true)
-          .catch(err => console.error(`Error invalidating cache: ${err.message}`));
+        try {
+          CacheService.invalidate(pattern, true);
+        } catch (err) {
+          console.error(`Error invalidating cache: ${err.message}`);
+        }
       }
       
       // Call the original send method

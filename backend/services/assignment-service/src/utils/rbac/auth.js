@@ -1,9 +1,6 @@
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
-import { ApiResponse } from './api-response.js';
+import { ApiResponse } from '../api-response.js';
 import { isStudent } from './roles.js';
-
-const prisma = new PrismaClient();
 
 /**
  * JWT authentication middleware
@@ -32,16 +29,10 @@ export const authenticate = (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Set user data in request - normalize ID field
-    req.user = {
-      id: decoded.id || decoded.userId || decoded.sub,
-      role: decoded.role
-    };
-    
+    // Add user info to request object
+    req.user = decoded;
     next();
   } catch (error) {
-    console.error('JWT Verification Error:', error.message);
-    
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json(
         ApiResponse.error('Token expired. Please login again.')
@@ -49,26 +40,25 @@ export const authenticate = (req, res, next) => {
     }
     
     return res.status(401).json(
-      ApiResponse.error('Invalid token')
+      ApiResponse.error('Invalid token.')
     );
   }
 };
 
 /**
- * Middleware untuk membatasi akses hanya untuk student (DIKE atau UMUM)
+ * Middleware to authorize students (DIKE or UMUM)
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @param {Function} next - Express next function
  */
 export const authorizeStudents = (req, res, next) => {
-  if (!req.user) {
-    return res.status(401).json(
-      ApiResponse.error('Authentication required')
-    );
-  }
-  
-  if (!isStudent(req.user.role)) {
-    return res.status(403).json(
-      ApiResponse.error('Access denied. Only students can access this resource')
-    );
-  }
-  
-  next();
+  authenticate(req, res, () => {
+    if (isStudent(req.user.role)) {
+      next();
+    } else {
+      res.status(403).json(
+        ApiResponse.error('Access denied. Student role required.')
+      );
+    }
+  });
 };

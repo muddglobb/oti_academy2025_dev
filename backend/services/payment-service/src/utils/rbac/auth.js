@@ -10,7 +10,7 @@ import { isStudent } from './roles.js';
  */
 export const authenticate = (req, res, next) => {
   // Pertama cek apakah token ada di cookie (prioritas utama)
-  let token = req.cookies?.accessToken;
+  let token = req.cookies?.access_token;
   
   // Jika tidak ada di cookie, coba ambil dari header (backwards compatibility)
   if (!token) {
@@ -31,6 +31,15 @@ export const authenticate = (req, res, next) => {
     
     // Add user info to request object
     req.user = decoded;
+
+    // Jika ini adalah request dari service lain (token service dengan role SERVICE),
+    // kita memastikan header X-User-ID dapat digunakan
+    if (decoded.role === 'SERVICE' && decoded.service) {
+      req.isServiceRequest = true;
+      // Pastikan controller bisa mengakses informasi ini nanti
+      console.log(`Service request from ${decoded.service} using X-User-ID: ${req.headers['x-user-id']}`);
+    }
+    
     next();
   } catch (error) {
     if (error.name === 'TokenExpiredError') {

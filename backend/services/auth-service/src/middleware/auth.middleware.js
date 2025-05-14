@@ -11,7 +11,7 @@ import { ApiResponse } from '../utils/api-response.js';
  */
 export const authenticateJWT = (req, res, next) => {
   // First try to get token from cookies
-  let token = req.cookies?.accessToken;
+  let token = req.cookies?.access_token;
 
   // If not in cookies, try getting token from header
   if (!token) {

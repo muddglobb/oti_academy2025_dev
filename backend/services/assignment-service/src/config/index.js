@@ -5,7 +5,7 @@ dotenv.config();
 
 export default {
   // Server configuration
-  PORT: process.env.PORT || 8005,
+  PORT: process.env.PORT || 8004,
   NODE_ENV: process.env.NODE_ENV || 'development',
   
   // Database configuration
@@ -13,11 +13,10 @@ export default {
   
   // JWT configuration
   JWT_SECRET: process.env.JWT_SECRET,
-  
-  // Service URLs for inter-service communication
-  AUTH_SERVICE_URL: process.env.AUTH_SERVICE_URL || 'http://auth-service:8001',
-  COURSE_SERVICE_URL: process.env.COURSE_SERVICE_URL || 'http://course-service:8002',
-  ENROLLMENT_SERVICE_URL: process.env.ENROLLMENT_SERVICE_URL || 'http://enrollment-service:8007',
+    // Service URLs for inter-service communication
+  AUTH_SERVICE_URL: process.env.AUTH_SERVICE_URL || 'http://auth-service-api:8001',
+  COURSE_SERVICE_URL: process.env.COURSE_SERVICE_URL || 'http://course-service-api:8002',
+  PAYMENT_SERVICE_URL: process.env.PAYMENT_SERVICE_URL || 'http://payment-service-api:8006', // Payment service now handles enrollments
   
   // CORS configuration
   CORS_ORIGIN: process.env.CORS_ORIGIN || '*',
