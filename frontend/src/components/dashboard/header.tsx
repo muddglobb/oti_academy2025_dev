@@ -1,17 +1,9 @@
 import React from "react";
 import Image from "next/image";
-import { UsersType } from "@/types/users-type";
-import { getUsers } from "@/lib/fetch-users";
+import { getUsers } from "@/lib/auth/fetch-users";
 
-// type UserData = {
-//   name: string;
-//   avatar: string;
-// };
-
-// const DashboardHeader = ({ data }: { data: UserData }) => {
 export async function DashboardHeader() {
-  // const { name, avatar } = data;
-  const users: UsersType = await getUsers();
+  const users = await getUsers();
 
   return (
     <header className="sticky top-0 z-50 bg-neutral-900 flex justify-between items-center py-4 px-6 border-b border-gray-800">
