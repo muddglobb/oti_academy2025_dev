@@ -9,7 +9,7 @@ import { Roles } from '../utils/rbac/roles.js';
  */
 export const authenticate = async (req, res, next) => {
   // First check for token in cookies (priority)
-  let token = req.cookies?.accessToken;
+  let token = req.cookies?.access_token;
   
   // If not in cookies, try to get from Authorization header
   if (!token) {

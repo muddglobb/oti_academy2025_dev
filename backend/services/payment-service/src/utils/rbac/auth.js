@@ -10,7 +10,7 @@ import { isStudent } from './roles.js';
  */
 export const authenticate = (req, res, next) => {
   // Pertama cek apakah token ada di cookie (prioritas utama)
-  let token = req.cookies?.accessToken;
+  let token = req.cookies?.access_token;
   
   // Jika tidak ada di cookie, coba ambil dari header (backwards compatibility)
   if (!token) {
