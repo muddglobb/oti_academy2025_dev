@@ -9,7 +9,8 @@ const Page = () => {
     <div
       className="     
       relative 
-      overflow-x-hidden
+      
+      
       "
     >
 
