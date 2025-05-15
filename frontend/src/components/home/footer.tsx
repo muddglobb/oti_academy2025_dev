@@ -28,7 +28,7 @@ const Footer = () => {
       <div
         className="
         w-full
-        h-auto
+        h-screen
 
         bg-cover 
         bg-center
@@ -37,12 +37,10 @@ const Footer = () => {
         flex-col
         justify-between
         
-        bg-[linear-gradient(0deg,rgba(5,12,26,1.0)_0%,rgba(5,12,26,0.3)_100%)]
+        bg-[linear-gradient(0deg,rgba(5,12,26,1.0)_0%,rgba(5,12,26,0.6)_100%)]
         relative
       "
       >
-        {/* bg-[url('/images/footer-background.png')]  */}
-
         <Image
           src="/images/stars-footer.png"
           alt="stars"
@@ -54,8 +52,7 @@ const Footer = () => {
           lg:top-0"
         ></Image>
 
-        <div className="flex flex-col items-center justify-center 
-        mb-15
+        <div className="flex flex-col items-center justify-center h-full
         px-[30px]
         md:px-[100px]">
           <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center font-bold

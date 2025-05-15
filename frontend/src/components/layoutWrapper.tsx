@@ -16,7 +16,7 @@ export default function LayoutWrapper({
   return (
     <>
       {!hideNavbarFooter && <Navbar />}
-      {!hideNavbarFooter && <main className="pt-34">{children}</main>}
+      {!hideNavbarFooter && <main className="">{children}</main>}
       {hideNavbarFooter && <main>{children}</main>}
       {!hideNavbarFooter && <Footer />}
     </>
