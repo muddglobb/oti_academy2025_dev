@@ -393,8 +393,12 @@ export class PaymentService {
         return { valid: false, message: 'Kelas tidak ditemukan' };
       }
       
+      // Use env variables with fallback to new quota values
+      const entryQuota = parseInt(process.env.ENTRY_QUOTA || '30'); // New entry/intermediate quota
+      const bundleQuota = parseInt(process.env.BUNDLE_QUOTA || '30'); // New bundle quota
+      
       // If trying to enroll in a bundle but course doesn't support bundles
-      if (packageType === 'BUNDLE' && course.bundleQuota === 0) {
+      if (packageType === 'BUNDLE' && bundleQuota === 0) {
         return { 
           valid: false, 
           message: `Kursus "${course.title}" tidak tersedia dalam paket bundle` 
@@ -403,20 +407,19 @@ export class PaymentService {
       
       // Get total approved enrollments for this course
       const enrollmentCounts = await this.getCourseEnrollmentCount(courseId);
-      
-      // Check against the relevant quota based on package type
+        // Check against the relevant quota based on package type
       if (packageType === 'BUNDLE') {
-        if (enrollmentCounts.bundleCount >= course.bundleQuota) {
+        if (enrollmentCounts.bundleCount >= bundleQuota) {
           return { 
             valid: false, 
-            message: `Kuota kelas bundle untuk "${course.title}" sudah penuh (${enrollmentCounts.bundleCount}/${course.bundleQuota})` 
+            message: `Kuota kelas bundle untuk "${course.title}" sudah penuh (${enrollmentCounts.bundleCount}/${bundleQuota}). Total kuota minimal: ${entryQuota + bundleQuota}` 
           };
         }
       } else { // ENTRY or INTERMEDIATE
-        if (enrollmentCounts.entryIntermediateCount >= course.entryQuota) {
+        if (enrollmentCounts.entryIntermediateCount >= entryQuota) {
           return { 
             valid: false, 
-            message: `Kuota kelas ${packageType.toLowerCase()} untuk "${course.title}" sudah penuh (${enrollmentCounts.entryIntermediateCount}/${course.entryQuota})` 
+            message: `Kuota kelas ${packageType.toLowerCase()} untuk "${course.title}" sudah penuh (${enrollmentCounts.entryIntermediateCount}/${entryQuota}). Total kuota minimal: ${entryQuota + bundleQuota}` 
           };
         }
       }
@@ -722,15 +725,6 @@ static async getAllCoursesEnrollmentCount() {
           enrollmentsData.map(data => tx.enrollment.create({ data }))
         );
         
-        // Send payment confirmation email
-        try {
-          await sendPaymentConfirmationEmail(updatedPayment, userInfo, packageInfo);
-          console.log('Payment confirmation email sent successfully');
-        } catch (emailError) {
-          console.error('Failed to send payment confirmation email:', emailError.message);
-          // Continue anyway since payment was approved
-        }
-        
         // Get course names for enrollment confirmation email
         const courseNames = await Promise.all(courseIds.map(async (courseId) => {
           try {
@@ -741,7 +735,7 @@ static async getAllCoursesEnrollmentCount() {
           }
         }));
         
-        // Send enrollment confirmation email
+        // Send ONLY enrollment confirmation email
         try {
           const { sendEnrollmentConfirmationEmail } = await import('../utils/email-helper.js');
           await sendEnrollmentConfirmationEmail(updatedPayment, userInfo, packageInfo, courseNames);

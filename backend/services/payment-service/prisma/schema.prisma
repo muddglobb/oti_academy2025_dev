@@ -12,18 +12,6 @@ enum PaymentStatus {
   APPROVED
 }
 
-enum BackStatus {
-  REQUESTED
-  COMPLETED
-}
-
-enum BackPaymentMethod {
-  BNI
-  GOPAY
-  OVO
-  DANA
-}
-
 enum UserType {
   DIKE
   UMUM
@@ -42,11 +30,6 @@ model Payment {
   type              UserType
   proofLink         String
   status            PaymentStatus     @default(PAID)
-  backPaymentMethod BackPaymentMethod?
-  backAccountNumber String?
-  backRecipient     String?
-  backStatus        BackStatus?       @default(REQUESTED)
-  backCompletedAt   DateTime?
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   

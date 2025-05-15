@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Section model untuk mengelompokkan materi
+model Section {
+  id          String      @id @default(uuid())
+  courseId    String      // ID dari course di course-service
+  title       String      @db.VarChar(255)
+  description String?     @db.Text
+  order       Int         // Urutan section dalam course
+  materials   Material[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([courseId])
+}
+
+// Model untuk berbagai jenis materi pembelajaran
+model Material {
+  id          String       @id @default(uuid())
+  section     Section      @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  sectionId   String
+  title       String       @db.VarChar(255)
+  description String?      @db.Text
+  type        MaterialType
+  content     String?      @db.Text      // Untuk teks atau HTML
+  fileUrl     String?                    // URL file yang diupload
+  externalUrl String?                    // URL eksternal (YouTube, dll)
+  order       Int                        // Urutan dalam section
+  duration    Int?                       // Durasi dalam menit (untuk video)
+  status      Status       @default(ACTIVE)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([sectionId])
+  @@index([type])
+}
+
+// Jenis material yang didukung
+enum MaterialType {
+  TEXT
+  PDF
+  VIDEO
+  LINK
+  QUIZ
+  CODE
+}
+
+// Status material
+enum Status {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
