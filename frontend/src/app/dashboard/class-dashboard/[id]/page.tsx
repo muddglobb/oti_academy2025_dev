@@ -2,6 +2,7 @@ import React from "react";
 import ClassCapacity from "@/components/dashboard/class-capacity";
 import ClassInfo from "@/components/dashboard/class-info";
 import VideoTeaser from "@/components/dashboard/video-teaser";
+import TeacherCard from "@/components/dashboard/teacher-card";
 
 const classInfo: [
   string,
@@ -41,6 +42,23 @@ const classInfo: [
   ],
 ];
 
+const teacherCard: [string, string, string, string, string][] = [
+  [
+    "Kevin Antonio",
+    "Mentor",
+    "/person-placeholder.jpeg",
+    "https://www.linkedin.com/in/kevinantonio/",
+    "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Et, provident? Repudiandae repellat itaque aliquam accusantium. Qui vitae tenetur beatae hic quisquam eligendi molestiae minus nostrum, culpa, quam iusto dolor reprehenderit.",
+  ],
+  [
+    "Dhimas Putra",
+    "Teaching Assistant",
+    "/person-placeholder.jpeg",
+    "https://www.linkedin.com/in/dhimasputra/",
+    "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Et, provident? Repudiandae repellat itaque aliquam accusantium. Qui vitae tenetur beatae hic quisquam eligendi molestiae minus nostrum, culpa, quam iusto dolor reprehenderit.",
+  ],
+];
+
 const classes = [
   {
     slug: "web-development",
@@ -76,7 +94,7 @@ export default async function Page({
     );
   }
   return (
-    <div className="bg-neutral-900">
+    <div className="bg-neutral-900 flex flex-col justify-center items-center gap-4 my-4">
       <ClassCapacity
         ClassName={classData.title}
         ClassDesc={classData.desc}
@@ -85,6 +103,7 @@ export default async function Page({
         <ClassInfo classInfo={classInfo}></ClassInfo>
         <VideoTeaser />
       </div>
+      <TeacherCard teacherCard={teacherCard} />
     </div>
   );
 }
