@@ -272,3 +272,30 @@ export const sendEnrollmentConfirmationEmail = async (payment, userInfo, package
     return false;
   }
 };
+
+// Add this deduplication helper function
+export async function preventDuplicateEmail(key, emailSendingFn, ttlSeconds = 300) {
+  try {
+    // You can use Redis or a simple in-memory cache for this
+    const { cache } = await import('./cache-helper.js');
+    
+    // Check if this email was recently sent
+    const alreadySent = await cache.get(key);
+    if (alreadySent) {
+      console.log(`Preventing duplicate email with key: ${key}`);
+      return false;
+    }
+    
+    // Email hasn't been sent recently, proceed
+    await emailSendingFn();
+    
+    // Mark this email as sent in the cache
+    await cache.set(key, true, ttlSeconds);
+    return true;
+  } catch (error) {
+    console.error('Error in deduplication check:', error);
+    // If deduplication fails, proceed with sending anyway
+    await emailSendingFn();
+    return true;
+  }
+}

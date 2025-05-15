@@ -146,8 +146,7 @@ export const createPayment = async (req, res) => {
         );
       }
     }
-    
-    // Prepare payment data based on user type
+      // Prepare payment data
     let paymentData = {
       userId: userId, // Use userId from JWT token
       packageId: validatedData.packageId,
@@ -158,14 +157,6 @@ export const createPayment = async (req, res) => {
     // Only include courseId for non-bundle packages
     if (!isBundle && validatedData.courseId) {
       paymentData.courseId = validatedData.courseId;
-    }
-    
-    // Add back payment fields only for DIKE users
-    if (validatedData.type === 'DIKE') {
-      paymentData.backPaymentMethod = validatedData.backPaymentMethod;
-      paymentData.backAccountNumber = validatedData.backAccountNumber;
-      paymentData.backRecipient = validatedData.backRecipient;
-      paymentData.backStatus = 'REQUESTED';
     }
       // Create payment with validated data
     const payment = await PaymentService.createPayment(paymentData);

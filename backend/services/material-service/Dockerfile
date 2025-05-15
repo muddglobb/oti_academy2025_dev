@@ -34,7 +34,7 @@ RUN chown -R appuser:appgroup /usr/src/app
 USER appuser
 
 # Port yang digunakan oleh aplikasi
-EXPOSE 8006
+EXPOSE 8003
 
 # Command untuk menjalankan aplikasi
 CMD ["node", "src/index.js"]
