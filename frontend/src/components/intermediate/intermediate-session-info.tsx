@@ -87,7 +87,7 @@ const IntermediateSessionInfo = ({ sessions }: { sessions: SessionData[] }) => {
                 >
                   {/* Titik bulat */}
                   {/* <div className="absolute left-1 flex h-5 w-5 -translate-x-1/2 -translate-y-0 items-center justify-center rounded-full ring-2 ring-white bg-neutral-800 z-10"></div> */}
-                  <div className="absolute left-1 top-[2px] flex h-5 w-5 -translate-x-1/2 items-center justify-center rounded-full ring-2 ring-white bg-neutral-800 z-10"></div>
+                  <div className="absolute left-1 top-[2px] flex h-5 w-5 -translate-x-1/2 items-center justify-center rounded-full ring-2 ring-white bg-neutral-800 z-1"></div>
 
                   {/* Garis hanya jika bukan elemen terakhir */}
                   {index !== sessions.length - 1 && (

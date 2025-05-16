@@ -19,7 +19,7 @@ const Navbar = () => {
   };
 
   return (
-    <main className="fixed inset-x-0 top-0 z-1000 backdrop-blur-md">
+    <main className="w-full fixed z-10 backdrop-blur-md">
       <div className="bg-[#06163c] text-white text-center text-sm px-5 py-4">
         <div className="lg:hidden pt-10 w-full">
           <span className="text-left inline-block">

@@ -13,7 +13,7 @@ const Hero = () => {
                 layout="fill"
                 className="absolute left-0 max-h-screen sm:max-h-fit object-cover -z-100"
             />
-            <div className="py-50 max-h-screen flex flex-col items-center justify-center z-10">
+            <div className="py-50 max-h-screen flex flex-col items-center justify-center z-0">
                 <div className="flex flex-row gap-5 md:flex-col lg:pt-0 pb-7">
                     <div className="justify-center items-center flex lg:pt-3">
                         <Link href="https://omahti.web.id/" aria-label="Visit OmahTI Website">

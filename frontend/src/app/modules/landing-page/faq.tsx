@@ -40,7 +40,7 @@ const FAQ = () => {
                 className="absolute left-0 max-h-fit object-cover -z-100"
                 style={{ top: "88%" }}
             />
-            <div className="pb-44 z-100">
+            <div className="pb-44 z-0">
                 <h1 className="pt-44 px-4 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
                     Frequently Asked Questions
                 </h1>

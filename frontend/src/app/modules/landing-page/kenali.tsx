@@ -6,7 +6,7 @@ const Kenali = () => {
     return (
         <div className='bg-gradient-to-b from-neutral-900 to-neutral-900 z-100'>
             <Container className="flex flex-col items-center justify-center pb-20 md:pb-41">
-                <h1 className="pt-10 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold z-30">
+                <h1 className="pt-10 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold z-0">
                     Kenali Lebih Dekat OmahTI Academy
                 </h1>
                 <div className="pt-0 md:pt-10 flex flex-col xl:flex-row justify-center items-center">
