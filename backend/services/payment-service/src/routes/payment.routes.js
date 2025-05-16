@@ -98,14 +98,6 @@ router.patch(
   asyncHandler(controller.approvePayment)
 );
 
-router.patch(
-  '/:id/back/complete',
-  authenticate,
-  permit('ADMIN'),
-  adminLimiter,
-  asyncHandler(controller.completeBack)
-);
-
 router.get(
   '/my-payments',
   authenticate,

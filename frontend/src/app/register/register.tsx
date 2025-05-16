@@ -53,6 +53,7 @@ export default function Register() {
           email: data.email,
           name: data.name,
           password: data.password,
+          type: isDike? "DIKE" : "UMUM",
           nim: isDike ? data.nim : undefined,
         }),
       });

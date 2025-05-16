@@ -19,8 +19,9 @@ export const register = asyncHandler(async (req, res) => {
     const result = await authService.register({ name, email, password, type, nim });
     
     // Set HTTP-only cookies for both tokens
-    res.cookie('accessToken', result.accessToken, authService.getCookieOptions('access'));
-    res.cookie('refreshToken', result.refreshToken, authService.getCookieOptions('refresh'));
+    res.cookie('access_token', result.accessToken, authService.getCookieOptions('access'));
+    res.cookie('refresh_token', result.refreshToken, authService.getCookieOptions('refresh'));
+    
     
     res.status(201).json(
       ApiResponse.success({
@@ -46,22 +47,28 @@ export const login = asyncHandler(async (req, res) => {
   try {
     const result = await authService.login(email, password);
     
-    // Set HTTP-only cookies for both tokens
-    res.cookie('accessToken', result.accessToken, authService.getCookieOptions('access'));
-    res.cookie('refreshToken', result.refreshToken, authService.getCookieOptions('refresh'));
+    // Add debug logging
+    console.log('Setting access_token cookie with options:', authService.getCookieOptions('access'));
+    console.log('Setting refresh_token cookie with options:', authService.getCookieOptions('refresh'));
     
-    res.status(200).json(
+    // Set cookies in explicit order with explicit options
+    const accessOptions = authService.getCookieOptions('access');
+    const refreshOptions = authService.getCookieOptions('refresh');
+    
+    // IMPORTANT: Use consistent cookie names throughout the application
+    res.cookie('access_token', result.accessToken, accessOptions);
+    res.cookie('refresh_token', result.refreshToken, refreshOptions);
+    
+    // Return response after cookies are set
+    return res.status(200).json(
       ApiResponse.success({
         user: result.user,
-        // Still include tokens in response for backwards compatibility
-        accessToken: result.accessToken, 
+        accessToken: result.accessToken,
         refreshToken: result.refreshToken
       }, 'Logged in successfully')
     );
   } catch (error) {
-    res.status(401).json(
-      ApiResponse.error('Invalid credentials')
-    );
+    res.status(400).json(ApiResponse.error(error.message));
   }
 });
 
@@ -70,15 +77,15 @@ export const login = asyncHandler(async (req, res) => {
 // @access  Private
 export const logout = asyncHandler(async (req, res) => {
   // Get token from cookie or body
-  const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
-  const accessToken = req.cookies?.accessToken || req.headers.authorization?.split(' ')[1];
+  const refreshToken = req.cookies?.refresh_token || req.body.refreshToken;
+  const accessToken = req.cookies?.access_token || req.headers.authorization?.split(' ')[1];
   
   try {
     await authService.logout(refreshToken, accessToken);
     
     // Clear cookies with the same options used when setting them
-    res.clearCookie('accessToken', authService.getCookieOptions('access'));
-    res.clearCookie('refreshToken', authService.getCookieOptions('refresh'));
+  res.clearCookie('access_token', authService.getCookieOptions('access'));
+  res.clearCookie('refresh_token', authService.getCookieOptions('refresh'));
     
     res.status(200).json(
       ApiResponse.success(null, 'Logged out successfully')
@@ -95,7 +102,7 @@ export const logout = asyncHandler(async (req, res) => {
 // @access  Public
 export const refreshToken = asyncHandler(async (req, res) => {
   // Get token from cookie or body
-  const refreshToken = req.cookies?.refreshToken || req.body.refreshToken;
+  const refreshToken = req.cookies?.refresh_token || req.body.refreshToken;
   
   if (!refreshToken) {
     return res.status(400).json(
@@ -107,7 +114,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
     const result = await authService.refreshAccessToken(refreshToken);
     
     // Set HTTP-only cookie for the new access token
-    res.cookie('accessToken', result.accessToken, authService.getCookieOptions('access'));
+    res.cookie('access_token', result.accessToken, authService.getCookieOptions('access'));
     
     res.status(200).json(
       ApiResponse.success({

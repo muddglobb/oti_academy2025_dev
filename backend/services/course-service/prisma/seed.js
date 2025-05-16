@@ -11,12 +11,14 @@ dotenv.config();
 // Total quota is 140 per course
 // Game Dev and Competitive Programming have 140 entry quota and 0 bundle quota
 // Other courses have 110 entry quota and 30 bundle quota
-const DEFAULT_TOTAL_QUOTA = 140;
-const DEFAULT_ENTRY_QUOTA = 110;
+const DEFAULT_TOTAL_QUOTA = 60;
+const DEFAULT_ENTRY_QUOTA = 30;
 const DEFAULT_BUNDLE_QUOTA = 30;
 const NO_BUNDLE_COURSES = ['Competitive Programming', 'Game Development'];
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  log: ['query', 'info', 'warn', 'error']
+});
 
 // Helper untuk membuat tanggal
 const futureDate = (daysFromNow) => {

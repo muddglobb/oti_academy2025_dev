@@ -74,6 +74,45 @@ services:
       retries: 5
       start_period: 10s
 
+        # ASSIGNMENT SERVICE DATABASE
+  assignment-service-db:
+    image: postgres:17.4-alpine
+    env_file: 
+      - ./services/assignment-service/.env
+    environment:
+    - POSTGRES_DB=assignment_service_db
+    - POSTGRES_USER=${PG_USER}
+    - POSTGRES_PASSWORD=${PG_PASSWORD} 
+    volumes:
+      - assignment-data:/var/lib/postgresql/data
+    networks:
+      - oti-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d assignment_service_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  # assignment SERVICE API
+  assignment-service-api:
+    build: ./services/assignment-service
+    env_file:
+      - ./services/assignment-service/.env
+      - .env
+    volumes:
+      - ./services/assignment-service/logs:/home/appuser/app/logs
+      - ./libs:/home/appuser/app/libs
+    depends_on:
+      assignment-service-db:
+        condition: service_healthy
+    networks:
+      - oti-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8004/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
 
   # PACKAGE SERVICE DATABASE
   package-service-db:
@@ -246,6 +285,7 @@ networks:
 volumes:
   auth-data:
   course-data:
+  assignment-data:
   package-data:
   payment-data:
   enrollment-data:

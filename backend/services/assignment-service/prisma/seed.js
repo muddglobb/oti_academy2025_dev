@@ -43,14 +43,14 @@ function generateServiceToken() {
 async function fetchCoursesFromCourseService(maxRetries = 3, retryDelay = 3000) {
   console.log('🔍 Fetching courses from course-service...');
   
-  const courseServiceUrl = process.env.COURSE_SERVICE_URL || 'http://course-service:8002';
+  const courseServiceUrl = process.env.COURSE_SERVICE_URL || 'http://course-service-api:8002';
   const serviceToken = generateServiceToken();
   
   let attempts = 0;
   
   while (attempts < maxRetries) {
     try {
-      const response = await axios.get(`${courseServiceUrl}/api/courses`, {
+      const response = await axios.get(`${courseServiceUrl}/courses`, {
         headers: {
           'Authorization': `Bearer ${serviceToken}`
         },
@@ -83,14 +83,14 @@ async function fetchCoursesFromCourseService(maxRetries = 3, retryDelay = 3000) 
 async function fetchUsersFromAuthService(maxRetries = 3, retryDelay = 3000) {
   console.log('🔍 Fetching users from auth-service...');
   
-  const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://auth-service:8001';
+  const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://auth-service-api:8001';
   const serviceToken = generateServiceToken();
   
   let attempts = 0;
   
   while (attempts < maxRetries) {
     try {
-      const response = await axios.get(`${authServiceUrl}/api/users`, {
+      const response = await axios.get(`${authServiceUrl}/users`, {
         headers: {
           'Authorization': `Bearer ${serviceToken}`
         },
@@ -124,44 +124,13 @@ async function fetchUsersFromAuthService(maxRetries = 3, retryDelay = 3000) {
   }
 }
 
-// Sample assignment templates to create assignments for various courses
-const assignmentTemplates = [
-  {
-    title: 'Introduction Assignment',
-    description: 'Submit a brief introduction about yourself and your expectations for this course.',
-    points: 10,
-    daysFromNow: 7,
-    durationDays: 7
-  },
-  {
-    title: 'Research Paper',
-    description: 'Research and write a paper on a topic related to the course material. Minimum 1000 words with citations.',
-    points: 30,
-    daysFromNow: 14,
-    durationDays: 14
-  },
-  {
-    title: 'Group Project',
-    description: 'Work in groups of 3-5 to develop a solution to the provided problem statement.',
-    points: 50,
-    daysFromNow: 21,
-    durationDays: 21
-  },
-  {
-    title: 'Practical Exercise',
-    description: 'Complete the practical exercise in the attached worksheet and submit your solutions.',
-    points: 20,
-    daysFromNow: 10,
-    durationDays: 5
-  },
-  {
-    title: 'Final Project',
-    description: 'Create a comprehensive final project that demonstrates your understanding of all course concepts.',
-    points: 100,
-    daysFromNow: 30,
-    durationDays: 14
-  }
-];
+// Single assignment template for each course
+const assignmentTemplate = {
+  title: 'Course Project',
+  description: 'Create a comprehensive project that demonstrates your understanding of the course content. Submit a link to your project repository or documentation.',
+  points: 100,
+  dueDate: new Date('2025-06-30') // Fixed due date instead of dynamic calculation
+};
 
 /**
  * Main seeding function
@@ -173,20 +142,19 @@ export async function seedAssignments(options = { force: false }) {
     // Check if data already exists
     const existingAssignments = await prisma.assignment.count();
     
-    if (existingAssignments > 0 && !options.force) {
-      console.log('💡 Assignments already exist in the database, skipping seed');
-      return {
-        success: true,
-        message: 'Assignments already exist, seeding skipped',
-        data: { existingCount: existingAssignments }
-      };
-    }
-    
-    // Clean existing data if force option is set
-    if (options.force) {
-      console.log('🧹 Force option set, cleaning existing data...');
-      await prisma.submission.deleteMany({});
-      await prisma.assignment.deleteMany({});
+    if (existingAssignments > 0) {
+      console.log(`💡 Found ${existingAssignments} existing assignments`);
+      
+      if (!options.force) {
+        console.log('ℹ️ Using upsert to add any missing data without duplicates');
+        // We'll continue with upsert to ensure data consistency
+      } else {
+        console.log('🧹 Force option set, cleaning existing data...');
+        await prisma.submission.deleteMany({});
+        await prisma.assignment.deleteMany({});
+      }
+    } else {
+      console.log('📝 No existing assignments found, creating fresh data');
     }
     
     // Fetch courses from course service
@@ -200,66 +168,84 @@ export async function seedAssignments(options = { force: false }) {
     
     // Fetch users from auth service for submissions
     const students = await fetchUsersFromAuthService();
+      console.log(`🧑‍🎓 Retrieved ${students.length} students for sample submissions`);
     
-    console.log(`🧑‍🎓 Retrieved ${students.length} students for sample submissions`);
-    
-    // Create assignments for each course
+    // Create assignments for each course - only one assignment per course
     const createdAssignments = [];
     
-    for (const course of (courses.length ? courses : [{ id: 'placeholder-course-1', title: 'Placeholder Course' }])) {
-      // Create 2-3 random assignments per course
-      const assignmentCount = Math.floor(Math.random() * 2) + 2; // 2 to 3 assignments
+    for (const course of (courses.length ? courses : [{ id: 'placeholder-course-1', title: 'Placeholder Course' }])) {      console.log(`📝 Creating single assignment for course: ${course.title}`);
+      // Use the fixed due date from template
+      const dueDate = assignmentTemplate.dueDate;
       
-      console.log(`📝 Creating ${assignmentCount} assignments for course: ${course.title}`);
+      // Create one assignment per course
+      const assignmentTitle = `Project - ${course.title}`;
       
-      for (let i = 0; i < assignmentCount; i++) {
-        // Select a random assignment template
-        const template = assignmentTemplates[Math.floor(Math.random() * assignmentTemplates.length)];
-        
-        // Calculate due date
-        const dueDate = futureDate(template.daysFromNow);
-        
-        // Create the assignment
-        const assignment = await prisma.assignment.create({
-          data: {
-            title: `${template.title} - ${course.title}`,
-            description: template.description,
-            courseId: course.id,
-            dueDate,
-            points: template.points,
-            status: 'ACTIVE'
-          }
-        });
-        
-        console.log(`✅ Created assignment: ${assignment.title}`);
-        createdAssignments.push(assignment);
-        
-        // Create some sample submissions (for assignments with "past" due dates)
-        if (students.length && Math.random() > 0.5) {
-          const submissionCount = Math.floor(Math.random() * 3) + 1; // 1 to 3 submissions
+      // Create the assignment using upsert to prevent duplicates
+      const assignment = await prisma.assignment.upsert({
+        where: {
+          // Use course ID as a unique identifier since there's only one assignment per course
+          id: `${course.id}`
+        },
+        update: {
+          title: assignmentTitle,
+          description: assignmentTemplate.description,
+          dueDate,
+          points: assignmentTemplate.points,
+          status: 'ACTIVE',
+          resourceUrl: `https://drive.google.com/drive/folders/${Buffer.from(course.id).toString('hex').substring(0, 15)}`
+        },
+        create: {
+          id: `${course.id}`,
+          title: assignmentTitle,
+          description: assignmentTemplate.description,
+          courseId: course.id,
+          dueDate,
+          points: assignmentTemplate.points,
+          status: 'ACTIVE',
+          resourceUrl: `https://drive.google.com/drive/folders/${Buffer.from(course.id).toString('hex').substring(0, 15)}`
+        }
+      });      console.log(`✅ Created assignment: ${assignment.title}`);
+      createdAssignments.push(assignment);
+      
+      // Create one submission per student (ensuring each student has only one submission per assignment)
+      if (students.length) {
+        // Create a submission for each student (max one submission per student per assignment)
+        for (const student of students) {
+          // 60% chance of a student having submitted the assignment
+          const isSubmitted = Math.random() < 0.6;
           
-          for (let j = 0; j < submissionCount; j++) {
-            // Select a random student
-            const student = students[Math.floor(Math.random() * students.length)];
+          if (isSubmitted) {
+            const submissionContent = `This is a project submission from ${student.name} for "${assignment.title}"`;
+            const submissionStatus = 'SUBMITTED'; // Using only SUBMITTED status as per requirements
+            const submittedAt = pastDate(Math.floor(Math.random() * 5) + 1); // 1-5 days ago
+            // Use only GitHub URL format for consistency
+            const fileUrl = `https://github.com/${student.id}/${course.title.toLowerCase().replace(/\s+/g, '-')}-project`;
             
-            const isSubmitted = Math.random() > 0.3; // 70% chance of being submitted
-            
-            if (isSubmitted) {
-              // Create submission
-              const submission = await prisma.submission.create({
-                data: {
+            const submission = await prisma.submission.upsert({
+              where: {
+                // Using the unique constraint on assignmentId and userId
+                assignmentId_userId: {
                   assignmentId: assignment.id,
-                  userId: student.id,
-                  content: `This is a sample submission from ${student.name} for the assignment "${assignment.title}"`,
-                  submittedAt: pastDate(Math.floor(Math.random() * 5) + 1), // 1-5 days ago
-                  status: Math.random() > 0.5 ? 'SUBMITTED' : 'GRADED',
-                  score: Math.random() > 0.5 ? Math.floor(Math.random() * 100) + 1 : null, // 50% chance of being graded
-                  feedback: Math.random() > 0.5 ? 'Good job!' : null
+                  userId: student.id
                 }
-              });
-              
-              console.log(`📄 Created submission from ${student.name} for "${assignment.title}"`);
-            }
+              },
+              update: {
+                content: submissionContent,
+                submittedAt: submittedAt,
+                status: submissionStatus,
+                fileUrl: fileUrl
+              },
+              create: {
+                assignmentId: assignment.id,
+                userId: student.id,
+                content: submissionContent,
+                submittedAt: submittedAt,
+                status: submissionStatus,
+                fileUrl: fileUrl
+              }
+            });
+            
+            console.log(`📄 Created submission from ${student.name} for "${assignment.title}"`);
           }
         }
       }

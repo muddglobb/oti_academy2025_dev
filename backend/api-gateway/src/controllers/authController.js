@@ -26,8 +26,7 @@ export const handleLogout = async (req, res, next) => {
       return next();
     }
     
-    // Invalidasi token di cache dan tambahkan ke blacklist
-    await authCacheManager.invalidateToken(token);
+    await authCacheManager.blacklistToken(token);
     
     // Tambahkan data ke request untuk diproses oleh auth service
     req.logoutData = { token };

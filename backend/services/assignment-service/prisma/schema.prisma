@@ -17,6 +17,7 @@ model Assignment {
   courseId    String
   dueDate     DateTime?
   points      Int          @default(100)
+  resourceUrl String?      // Link to Google Drive or other detailed resources
   status      AssignmentStatus @default(ACTIVE)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
@@ -31,13 +32,9 @@ model Submission {
   assignment   Assignment       @relation(fields: [assignmentId], references: [id])
   assignmentId String
   userId       String
-  content      String?          @db.Text
-  fileUrl      String?
+  fileUrl      String
   submittedAt  DateTime         @default(now())
-  score        Float?
-  feedback     String?          @db.Text
   status       SubmissionStatus @default(SUBMITTED)
-  gradedAt     DateTime?
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @updatedAt
 
@@ -57,7 +54,6 @@ enum AssignmentStatus {
 // Status values for submission
 enum SubmissionStatus {
   SUBMITTED
-  GRADED
-  RETURNED
+  NOT_SUBMITTED
   LATE
 }

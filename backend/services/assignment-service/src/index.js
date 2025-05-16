@@ -7,6 +7,7 @@ import config from './config/index.js';
 
 // Import routes
 import assignmentRoutes from './routes/assignment.routes.js';
+import submissionRoutes from './routes/submission.routes.js';
 
 // Initialize Express app
 const app = express();
@@ -23,7 +24,8 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // Routes
-app.use('/api/assignments', assignmentRoutes);
+app.use('/assignments', assignmentRoutes);
+app.use('/submissions', submissionRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

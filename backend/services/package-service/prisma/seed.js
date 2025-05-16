@@ -27,32 +27,32 @@ const packages = [
   {
     name: 'Paket Entry',
     type: 'ENTRY',
-    price: 100000
+    price: 49000
   },
   {
     name: 'Paket Intermediate',
     type: 'INTERMEDIATE',
-    price: 150000
+    price: 90000
   },
   {
     name: 'Bundle Python + Data Science & Artificial Intelligence',
     type: 'BUNDLE',
-    price: 200000
+    price: 130000
   },
   {
     name: 'Bundle Web Development + Software Engineering',
     type: 'BUNDLE',
-    price: 200000
+    price: 130000
   },
   {
     name: 'Bundle Fundamental Cyber Security + Cyber Security',
     type: 'BUNDLE',
-    price: 200000
+    price: 130000
   },
   {
     name: 'Bundle Graphic Design + UI/UX',
     type: 'BUNDLE',
-    price: 200000
+    price: 130000
   }
 ];
 
