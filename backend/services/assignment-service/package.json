@@ -18,9 +18,8 @@
     "setup": "node prisma/setup.js",
     "setup:force": "node prisma/setup.js --force",
     "deploy": "npm run prisma:deploy && npm run seed"
-  },
-  "dependencies": {
-    "@prisma/client": "^6.8.0-dev.47",
+  },  "dependencies": {
+    "@prisma/client": "^6.7.0",
     "axios": "^1.6.2",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",

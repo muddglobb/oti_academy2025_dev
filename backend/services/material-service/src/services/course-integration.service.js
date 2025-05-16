@@ -11,36 +11,27 @@ export class CourseIntegrationService {
    * Validate that a course exists
    * @param {string} courseId - Course ID to validate
    * @returns {Promise<boolean>} True if course exists
-   */
-  static async validateCourseExists(courseId) {
+   */    static async validateCourseExists(courseId) {
     try {
       // Try to get from cache first
       const cacheKey = `course:${courseId}:exists`;
       return await CacheService.getOrSet(cacheKey, async () => {
-        const response = await this.callCourseService(`/courses/${courseId}`);
-        return response && response.status === 'success' && response.data;
+        // Make sure we're using the correct endpoint format
+        const response = await this.callCourseService(`courses/${courseId}`);
+        
+        // Add more detailed logs to debug the response
+        console.log(`Course validation response:`, {
+          status: response.status,
+          data: JSON.stringify(response.data)
+        });
+        
+        // Check if we got a successful HTTP response (200) - that's enough to know the course exists
+        // The course service is returning 200 when the course exists
+        return response && response.status === 200;
       });
     } catch (error) {
       console.error('Error validating course exists:', error.message);
       return false;
-    }
-  }
-
-  /**
-   * Get course details by ID
-   * @param {string} courseId - Course ID
-   * @returns {Promise<Object>} Course details
-   */
-  static async getCourseDetails(courseId) {
-    try {
-      const cacheKey = `course:${courseId}:details`;
-      return await CacheService.getOrSet(cacheKey, async () => {
-        const response = await this.callCourseService(`/courses/${courseId}`);
-        return response.data;
-      });
-    } catch (error) {
-      console.error('Error getting course details:', error.message);
-      throw new Error(`Could not get details for course ${courseId}: ${error.message}`);
     }
   }
 
@@ -50,32 +41,67 @@ export class CourseIntegrationService {
    * @param {string} method - HTTP method
    * @param {Object} data - Request data
    * @returns {Promise<Object>} Response data
-   */
-  static async callCourseService(endpoint, method = 'GET', data = null) {
+   */    static async callCourseService(endpoint, method = 'GET', data = null) {
     try {
       const token = this.generateServiceToken();
-      const url = `${config.COURSE_SERVICE_URL}${endpoint}`;
+      // Ensure correct URL formation with baseUrl and endpoint
+      const baseUrl = config.COURSE_SERVICE_URL.endsWith('/') 
+        ? config.COURSE_SERVICE_URL.slice(0, -1) 
+        : config.COURSE_SERVICE_URL;
       
-      const response = await axios({
+      // Fix endpoint to ensure it's correct format
+      const formattedEndpoint = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
+      
+      const url = `${baseUrl}${formattedEndpoint}`;
+      
+      console.log(`Making request to course service: ${url}`);
+      
+      // Do not send null data for GET requests
+      const options = {
         method,
         url,
-        data,
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
-      });
+        },
+        // Add timeout to prevent hanging requests
+        timeout: 5000
+      };
       
-      return response.data;
+      // Only add data for non-GET requests
+      if (method !== 'GET' && data !== null) {
+        options.data = data;
+      }
+      
+      const response = await axios(options);
+      
+      return response;
     } catch (error) {
       console.error(`Error calling course service at ${endpoint}:`, error.message);
       
       if (error.response) {
-        console.error('Error response:', error.response.data);
-        console.error('Error status:', error.response.status);
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
       }
       
       throw error;
+    }
+  }
+
+  /**
+   * Get course details by ID
+   * @param {string} courseId - Course ID
+   * @returns {Promise<Object>} Course details
+   */    static async getCourseDetails(courseId) {
+    try {
+      const cacheKey = `course:${courseId}:details`;
+      return await CacheService.getOrSet(cacheKey, async () => {
+        const response = await this.callCourseService(`courses/${courseId}`);
+        return response.data;
+      });
+    } catch (error) {
+      console.error('Error getting course details:', error.message);
+      throw new Error(`Could not get details for course ${courseId}: ${error.message}`);
     }
   }
 

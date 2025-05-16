@@ -7,7 +7,7 @@ import { PrismaClient } from '@prisma/client';
 import config from './config/index.js';
 
 // Import routes
-import routes from './routes/index.js';
+import materialRoutes from './routes/material.routes.js';
 
 // Initialize Express app
 const app = express();
@@ -24,22 +24,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(morgan('dev'));
 
-// Create uploads directory for file uploads if using local storage
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const uploadsDir = path.join(__dirname, '../uploads');
-
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-  console.log('✅ Created uploads directory');
-}
-
 // Routes
-app.use('/api', routes);
+app.use('/materials', materialRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -77,7 +63,7 @@ const startServer = async () => {
     await prisma.$connect();
     console.log('✅ Connected to database');
     
-    const PORT = config.PORT || 8006;
+    const PORT = config.PORT || 8003;
     app.listen(PORT, () => {
       console.log(`🚀 Material service running on port ${PORT}`);
     });

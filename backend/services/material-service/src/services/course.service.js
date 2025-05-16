@@ -1,6 +1,7 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import config from '../config/index.js';
+import { CourseIntegrationService } from './course-integration.service.js';
 
 export class CourseService {
   /**
@@ -8,14 +9,13 @@ export class CourseService {
    * @returns {string} JWT token
    */
   static generateServiceToken() {
-    const payload = {
-      service: 'material-service',
-      role: 'SERVICE'
-    };
-    
-    return jwt.sign(payload, config.JWT_SECRET, { expiresIn: '1h' });
+    return jwt.sign(
+      { service: 'material-service', role: 'SERVICE' },
+      config.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
   }
-  
+
   /**
    * Check if a course exists by communicating with course-service
    * @param {string} courseId - Course ID to check
@@ -23,62 +23,51 @@ export class CourseService {
    */
   static async checkCourseExists(courseId) {
     try {
-      const courseServiceUrl = config.COURSE_SERVICE_URL;
-      const token = this.generateServiceToken();
-      
-      const response = await axios.get(
-        `${courseServiceUrl}/api/courses/${courseId}/exists`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          timeout: 5000
-        }
-      );
-      
-      if (response.data && response.data.status === 'success') {
-        return response.data.data.exists;
-      }
-      
-      return false;
+      // Use the CourseIntegrationService instead of duplicating code
+      return await CourseIntegrationService.validateCourseExists(courseId);
     } catch (error) {
       console.error('Error checking course existence:', error.message);
-      // In case of communication error, we can either:
-      // 1. Assume the course doesn't exist (safer)
-      // 2. Assume it exists and proceed (more permissive)
-      // For now, let's be safe and assume it doesn't exist
       return false;
+    }
+  }
+
+  /**
+   * Validate that a course exists, throwing an error if it doesn't
+   * @param {string} courseId - Course ID to validate
+   * @throws {Error} If course doesn't exist
+   */
+  static async validateCourseExists(courseId) {
+    try {
+      const exists = await this.checkCourseExists(courseId);
+      
+      if (!exists) {
+        console.error(`Course with ID ${courseId} does not exist or validation failed`);
+        throw new Error(`Course with ID ${courseId} does not exist`);
+      }
+      
+      return true;
+    } catch (error) {
+      if (error.message.includes('does not exist')) {
+        throw error; // Re-throw the custom error
+      } else {
+        // Wrap other errors with more context
+        throw new Error(`Failed to validate course existence: ${error.message}`);
+      }
     }
   }
   
   /**
    * Get course details from course-service
-   * @param {string} courseId - Course ID
-   * @returns {Promise<Object|null>} Course details or null if not found
+   * @param {string} courseId - Course ID to get details for
+   * @returns {Promise<Object>} Course details
    */
   static async getCourseDetails(courseId) {
     try {
-      const courseServiceUrl = config.COURSE_SERVICE_URL;
-      const token = this.generateServiceToken();
-      
-      const response = await axios.get(
-        `${courseServiceUrl}/api/courses/${courseId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          timeout: 5000
-        }
-      );
-      
-      if (response.data && response.data.status === 'success') {
-        return response.data.data;
-      }
-      
-      return null;
+      // Use the CourseIntegrationService instead of duplicating code
+      return await CourseIntegrationService.getCourseDetails(courseId);
     } catch (error) {
-      console.error('Error fetching course details:', error.message);
-      return null;
+      console.error('Error getting course details:', error.message);
+      throw new Error(`Failed to get course details: ${error.message}`);
     }
   }
 }

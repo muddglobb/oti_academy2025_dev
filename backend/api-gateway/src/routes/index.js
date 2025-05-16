@@ -7,6 +7,7 @@ import courseRoutes from './course.routes.js';
 import enrollmentRoutes from './enrollment.routes.js';
 import assignmentRoutes from './assignment.routes.js';
 import submissionRoutes from './submission.routes.js';
+import materialRoutes from './material.routes.js';
 import { checkHealth } from '../controllers/health.controller.js';
 
 const router = Router();
@@ -23,5 +24,6 @@ router.use('/courses', courseRoutes);
 router.use('/enrollments', enrollmentRoutes);
 router.use('/assignments', assignmentRoutes);
 router.use('/submissions', submissionRoutes);
+router.use('/materials', materialRoutes);
 
 export default router;

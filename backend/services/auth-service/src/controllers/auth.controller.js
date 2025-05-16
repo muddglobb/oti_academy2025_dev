@@ -61,11 +61,8 @@ export const login = asyncHandler(async (req, res) => {
     
     // Return response after cookies are set
     return res.status(200).json(
-      ApiResponse.success({
-        user: result.user,
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken
-      }, 'Logged in successfully')
+      ApiResponse.success(
+        null, 'Logged in successfully')
     );
   } catch (error) {
     res.status(400).json(ApiResponse.error(error.message));

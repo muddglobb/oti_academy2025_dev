@@ -1,40 +1,39 @@
 FROM node:20-alpine
 
-# Buat direktori aplikasi
-WORKDIR /usr/src/app
-
-# Install required packages for Prisma and OpenSSL
+# Install OpenSSL explicitly to fix Prisma OpenSSL detection issue
 RUN apk add --no-cache openssl
 
-# Buat user non-root untuk keamanan
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Create app directory
+WORKDIR /home/appuser/app
 
-# Salin file package.json dan package-lock.json
+# Create a non-root user
+RUN addgroup -g 1001 -S appuser && \
+    adduser -u 1001 -S appuser -G appuser
+
+# Copy package.json and prisma files first
 COPY package*.json ./
+COPY prisma ./prisma/
 
-# Install dependencies with correct permissions
-RUN npm ci && \
-    mkdir -p node_modules/@prisma/engines && \
-    chmod -R 777 node_modules/@prisma
+# Install dependencies
+RUN npm install
 
-# Salin kode aplikasi
-COPY --chown=appuser:appgroup . .
+# Copy the rest of the application files
+COPY --chown=appuser:appuser . .
 
-# Buat direktori log dan uploads dengan perizinan yang tepat
-RUN mkdir -p logs && chown -R appuser:appgroup logs
-RUN mkdir -p uploads && chown -R appuser:appgroup uploads
+# Set NODE_PATH to include parent directories for module resolution
+ENV NODE_PATH=/home/appuser
 
-# Generate Prisma client as root to avoid permissions issues
-RUN npx prisma generate
+RUN mkdir -p /home/appuser/app/node_modules/.prisma
+RUN chown -R appuser:appuser /home/appuser/app/node_modules
 
-# Make directories writable for the non-root user
-RUN chown -R appuser:appgroup /usr/src/app
-
-# Switch to non-root user
+# Use non-root user
 USER appuser
 
-# Port yang digunakan oleh aplikasi
+# Generate Prisma client
+RUN npx prisma generate
+
+# Expose port
 EXPOSE 8003
 
-# Command untuk menjalankan aplikasi
-CMD ["node", "src/index.js"]
+# Start command with schema push for development (similar to auth-service)
+CMD sh -c "npx prisma db push && node src/index.js"

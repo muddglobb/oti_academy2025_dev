@@ -1,77 +1,82 @@
-import { authenticate } from './auth.js';
 import { hasPermission } from './roles.js';
-import { ApiResponse } from '../api-response.js';
+import { ApiResponse } from './api-response.js';
 
 /**
- * Role-based authorization middleware
- * @param {...string} roles - Allowed roles
- * @returns {Function} Express middleware
+ * Creates a middleware for role-based authorization
+ * @param {...string} allowedRoles - Array of allowed roles for this route
+ * @returns {Function} Express middleware that enforces role requirements
  */
-export const permit = (...roles) => {
+export const permit = (...allowedRoles) => {
   return (req, res, next) => {
-    authenticate(req, res, () => {
-      // Add special permission for service-to-service requests
-      if (!roles.length || roles.includes(req.user.role) || req.user.role === 'SERVICE') {
-        next();
-      } else {
-        res.status(403).json(
-          ApiResponse.error('Access denied. Insufficient privileges.')
-        );
-      }
-    });
-  };
-};
+    // Check if user is authenticated
+    if (!req.user) {
+      return res.status(401).json(
+        ApiResponse.error('Authentication required before authorization')
+      );
+    }
 
-/**
- * Permission-based authorization middleware
- * @param {string} permission - Required permission
- * @returns {Function} Express middleware
- */
-export const permitWithPermission = (permission) => {
-  return (req, res, next) => {
-    authenticate(req, res, () => {
-      if (hasPermission(req.user.role, permission)) {
-        next();
-      } else {
-        res.status(403).json(
-          ApiResponse.error(`Access denied. Required permission: ${permission}`)
-        );
-      }
-    });
-  };
-};
-
-/**
- * Middleware that allows access if user is requesting their own resource or is admin
- * @param {Function} getResourceUserId - Function that returns the user ID of the resource owner
- * @returns {Function} Express middleware
- */
-export const permitSelfOrAdmin = (getResourceUserId) => {
-  return async (req, res, next) => {
-    authenticate(req, res, async () => {
-      // Admin always has access
-      if (req.user.role === 'ADMIN') {
-        return next();
-      }
+    // Check if user's role is allowed
+    if (!allowedRoles.includes(req.user.role)) {
+      // Log unauthorized access attempt
+      console.warn(`Unauthorized access attempt: User ID ${req.user.id} with role ${req.user.role} tried to access a route requiring ${allowedRoles.join(', ')}`);
       
-      try {
-        // Get the user ID of the resource owner
-        const resourceUserId = await getResourceUserId(req);
-        
-        // Check if user is accessing their own resource
-        if (req.user.id === resourceUserId) {
-          return next();
-        }
-        
-        // Otherwise deny access
-        res.status(403).json(
-          ApiResponse.error('Access denied. You can only access your own resources.')
-        );
-      } catch (error) {
-        res.status(500).json(
-          ApiResponse.error('Error validating resource ownership')
-        );
-      }
-    });
+      return res.status(403).json(
+        ApiResponse.error(`Access denied. Role '${req.user.role}' is not permitted to perform this action.`)
+      );
+    }
+
+    next();
   };
+};
+
+/**
+ * Creates a middleware for permission-based authorization
+ * @param {string} requiredPermission - Permission required for this route
+ * @returns {Function} Express middleware that enforces permission requirements
+ */
+export const permitWithPermission = (requiredPermission) => {
+  return (req, res, next) => {
+    // Check if user is authenticated
+    if (!req.user) {
+      return res.status(401).json(
+        ApiResponse.error('Authentication required before authorization')
+      );
+    }
+
+    // Check if user's role has the required permission
+    if (!hasPermission(req.user.role, requiredPermission)) {
+      // Log unauthorized access attempt
+      console.warn(`Permission denied: User ID ${req.user.id} with role ${req.user.role} tried to access a route requiring permission ${requiredPermission}`);
+      
+      return res.status(403).json(
+        ApiResponse.error(`Access denied. Your role does not have the '${requiredPermission}' permission.`)
+      );
+    }
+
+    next();
+  };
+};
+
+/**
+ * Authorize self or admin
+ * Requires :id param in route
+ */
+export const permitSelfOrAdmin = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json(
+      ApiResponse.error('Authentication required')
+    );
+  }
+  
+  const resourceId = parseInt(req.params.id, 10);
+  const isOwnResource = req.user.id === resourceId;
+  const isAdmin = req.user.role === 'ADMIN';
+  
+  if (!isOwnResource && !isAdmin) {
+    return res.status(403).json(
+      ApiResponse.error('Access denied. You can only access your own resources')
+    );
+  }
+  
+  next();
 };
