@@ -59,13 +59,13 @@ const WhyUs = () => {
                 src="/images/stars-hero-programs.png"
                 alt="stars"
                 layout="fill"
-                className="absolute left-0 max-h-screen object-cover -z-100"
+                className="absolute left-0 max-h-screen object-cover -z-10"
                 style={{ top: "26%" }}
             />
             <h1 className="pt-10 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
                 Mengapa Kami Pilihan Tepat untuk Kamu
             </h1>
-            <div className="z-100 flex flex-col justify-center gap-2 lg:gap-6 pb-6 lg:pb-15">
+            <div className="z-0 flex flex-col justify-center gap-2 lg:gap-6 pb-6 lg:pb-15">
                 {WhyUsContent.map((item, index) => {
                     const Icon = item.icon;
                     return (

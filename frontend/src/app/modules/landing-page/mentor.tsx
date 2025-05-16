@@ -73,7 +73,7 @@ const Mentor = () => {
                 className="absolute left-0 max-h-screen sm:max-h-fit object-cover -z-100"
                 style={{ top: "63%" }}
             />
-            <div className="z-100 flex flex-col items-center justify-center py-10">
+            <div className="z-0 flex flex-col items-center justify-center py-10">
                 <div className="flex flex-col gap-2">
                     <h1 className="pt-10 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">Kenali Para Mentor Inspiratif yang Akan Mendampingimu</h1>
                     <p className="pt-0 lg:px-24 px-9 text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[12px] sm:text-[18px] pb-10">

@@ -4,25 +4,19 @@ import ClassBundle from "@/app/modules/programs/class-bundle";
 import BeginnerClass from "@/app/modules/programs/beginner-class";
 import IntermediateClass from "@/app/modules/programs/intermediate-class";
 // import BeginnerSlider from "./beginner-slider";
-// import Image from "next/image";
+import Image from "next/image";
 
 const ProgramsPage = () => {
   return (
     <div className="relative overflow-x-hidden">
+      <ProgramsHero></ProgramsHero>
+
       <div>
-        <ProgramsHero></ProgramsHero>
-        <div>
-          <div>
-            <ClassBundle></ClassBundle>
-            <BeginnerClass></BeginnerClass>
-
-          </div>
-
-          <IntermediateClass></IntermediateClass>
-
-          {/* <BeginnerSlider></BeginnerSlider> */}
-        </div>
+        <ClassBundle></ClassBundle>
+        <BeginnerClass></BeginnerClass>
       </div>
+
+      <IntermediateClass></IntermediateClass>
     </div>
   );
 };

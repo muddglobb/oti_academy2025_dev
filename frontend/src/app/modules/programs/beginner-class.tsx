@@ -1,120 +1,46 @@
-// import Card from "@/components/card";
 import React from "react";
 import Image from "next/image";
 import BeginnerSlider from "@/components/beginner-slider";
 
-// const beginnerData = [
-//   {
-//     type: "Beginner",
-//     image: "/images/class-profile/hako.jpg",
-//     teacher1: "/images/teacher/faris.jpg",
-//     teacher2: "/images/teacher/faris.jpg",
-//     title: "Dasar Pemrograman",
-//     href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-//     description:
-//       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
-//   },
-//   {
-//     type: "Beginner",
-//     image: "/images/class-profile/hako.jpg",
-//     teacher1: "/images/teacher/faris.jpg",
-//     teacher2: "/images/teacher/faris.jpg",
-//     title: "Dasar Pemrograman",
-//     href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-//     description:
-//       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
-//   },
-//   {
-//     type: "Beginner",
-//     image: "/images/class-profile/hako.jpg",
-//     teacher1: "/images/teacher/faris.jpg",
-//     teacher2: "/images/teacher/faris.jpg",
-//     title: "Dasar Pemrograman",
-//     href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-//     description:
-//       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
-//   },
-//   {
-//     type: "Beginner",
-//     image: "/images/class-profile/hako.jpg",
-//     teacher1: "/images/teacher/faris.jpg",
-//     teacher2: "/images/teacher/faris.jpg",
-//     title: "Dasar Pemrograman",
-//     href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-//     description:
-//       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
-//   },
-//   {
-//     type: "Beginner",
-//     image: "/images/class-profile/hako.jpg",
-//     teacher1: "/images/teacher/faris.jpg",
-//     teacher2: "/images/teacher/faris.jpg",
-//     title: "Dasar Pemrograman",
-//     href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-//     description:
-//       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
-//   },
-//   {
-//     type: "Beginner",
-//     image: "/images/class-profile/hako.jpg",
-//     teacher1: "/images/teacher/faris.jpg",
-//     teacher2: "/images/teacher/faris.jpg",
-//     title: "Dasar Pemrograman",
-//     href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-//     description:
-//       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
-//   },
-// ];
 const BeginnerClass = () => {
+  // bg-[url('/images/background-programs.png')]
   return (
     <div
-      className="     
-        w-full
-        h-191
-        flex flex-col        
-        px-14
-        gap-11
-
-        justify-center
+      className="w-full h-screen bg-cover bg-center flex flex-col items-center justify-center
         bg-[linear-gradient(0deg,rgba(5,12,26,0.9)_0%,rgba(5,12,26,0.6)_100%)]
         relative
       "
     >
-      <Image
-        src="/images/stars-beginner-programs.png"
-        alt="stars"
-        fill
-        className="absolute top-0 left-0 w-full object-cover -z-10"
-      ></Image>
-      <div>
-        <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[32px] font-bold">
-          Kelas Pemula untuk Memulai Perjalanan Belajarmu
-        </p>
-        <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[18px]">
-          Kelas pemula dengan materi esensial buat langkah pertamamu dari{" "}
-          <span className="font-bold">1 juni - 15 juni 2025</span>
-        </p>
-      </div>
+      <div className="flex-col items-center justify-center px-[250px]">
+        {/* bintang dan planet */}
+        <>
+          <Image
+            src="/images/stars-beginner-programs.png"
+            // src="/images/tes_bg.jpg"
+            alt="stars"
+            fill
+            className="absolute top-0 left-0 w-full object-cover -z-1"
+          ></Image>
+          
+        </>
 
-      {/* <div className="flex items-center flex-wrap gap-10 justify-center">
-        {beginnerData.map((card, index) => (
-          <Card
-            key={index}
-            type={card.type}
-            image={card.image}
-            teacher1={card.teacher1}
-            teacher2={card.teacher2}
-            title={card.title}
-            href={card.href}
-            description={card.description}
-          />
-        ))}
-      </div> */}
-
-      <div className="flex items-center justify-center">
-        <div className="">
-          <BeginnerSlider></BeginnerSlider>
-        </div>
+        {/* isi */}
+        <>
+          <div className="mb-11">
+            <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[32px] font-bold">
+              Kelas Pemula untuk Memulai Perjalanan Belajarmu
+            </p>
+            <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[18px]">
+              Kelas pemula dengan materi esensial buat langkah pertamamu dari{" "}
+              <span className="font-bold">1 juni - 15 juni 2025</span>
+            </p>
+          </div>
+          <div className="flex items-center justify-center">
+            <div className="">
+              <BeginnerSlider />
+            </div>
+          </div>
+        </>
       </div>
     </div>
   );

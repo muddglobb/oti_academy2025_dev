@@ -11,7 +11,7 @@ import PrevArrow from "./prev-arrow";
 
 const bundleData = [
   {
-    type: "Beginner",
+    type: "Bundle",
     image: "/images/class-profile/hako.jpg",
     teacher1: "/images/teacher/faris.jpg",
     teacher2: "/images/teacher/faris.jpg",
@@ -21,31 +21,31 @@ const bundleData = [
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
   },
   {
-    type: "Beginner",
+    type: "Bundle",
     image: "/images/class-profile/hako.jpg",
     teacher1: "/images/teacher/faris.jpg",
     teacher2: "/images/teacher/faris.jpg",
-    title: "Dasar Pemrograman",
+    title: "Graphic Design + Dipukul Melinda",
     href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
   },
   {
-    type: "Beginner",
+    type: "Bundle",
     image: "/images/class-profile/hako.jpg",
     teacher1: "/images/teacher/faris.jpg",
     teacher2: "/images/teacher/faris.jpg",
-    title: "Dasar Pemrograman",
+    title: "Graphic Design + Dipukul Melinda",
     href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
   },
   {
-    type: "Beginner",
+    type: "Bundle",
     image: "/images/class-profile/hako.jpg",
     teacher1: "/images/teacher/faris.jpg",
     teacher2: "/images/teacher/faris.jpg",
-    title: "Dasar Pemrograman",
+    title: "Graphic Design + Dipukul Melinda",
     href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
     description:
       "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
@@ -62,13 +62,10 @@ const BundleSlider = () => {
   };
 
   return (
-      <div className="relative xl:max-w-332 lg:max-w-250 md:max-w-200 sm: max-w-180">
+    <div className="relative xl:max-w-332 lg:max-w-250 md:max-w-200 sm: max-w-180">
       <Slider {...settings}>
         {bundleData.map((card, index) => (
-          <div
-            key={index}
-            className="!w-[297px] mr-11"
-          >
+          <div key={index} className="!w-[297px] mr-11">
             <Card
               key={index}
               type={card.type}
