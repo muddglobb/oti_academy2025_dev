@@ -18,6 +18,10 @@ RUN npm ci --only=production
 # Salin kode aplikasi dan prisma
 COPY --chown=appuser:appgroup . .
 
+# Tambahkan setelah npm install/ci dan sebelum npx prisma generate
+RUN mkdir -p node_modules/.prisma node_modules/@prisma/engines
+RUN chmod -R 777 node_modules/.prisma node_modules/@prisma
+
 # Generate Prisma client
 RUN npx prisma generate
 

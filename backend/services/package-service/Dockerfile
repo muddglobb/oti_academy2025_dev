@@ -26,6 +26,10 @@ ENV NODE_PATH=/home/appuser
 RUN mkdir -p /home/appuser/app/node_modules/.prisma
 RUN chown -R appuser:appuser /home/appuser/app/node_modules
 
+# Tambahkan setelah npm install/ci dan sebelum npx prisma generate
+RUN mkdir -p node_modules/.prisma node_modules/@prisma/engines
+RUN chmod -R 777 node_modules/.prisma node_modules/@prisma
+
 # Use non-root user
 USER appuser
 
