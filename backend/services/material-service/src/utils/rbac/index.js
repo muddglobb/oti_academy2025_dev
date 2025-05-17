@@ -1,11 +1,11 @@
 /**
- * RBAC (Role-Based Access Control) library untuk OTI Academy Material Service
+ * RBAC (Role-Based Access Control) library untuk OTI Academy Package Service
  */
 
 import { Roles, Permissions, hasPermission, isStudent } from './roles.js';
 import { authenticate, authorizeStudents } from './auth.js';
 import { permit, permitWithPermission, permitSelfOrAdmin } from './permit.js';
-import { ApiResponse } from '../api-response.js';
+import { ApiResponse } from './api-response.js';
 
 export {
   // Role and permission constants

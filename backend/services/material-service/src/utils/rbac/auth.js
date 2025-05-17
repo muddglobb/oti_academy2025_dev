@@ -1,7 +1,9 @@
 import jwt from 'jsonwebtoken';
-import { ApiResponse } from '../api-response.js';
+import { PrismaClient } from '@prisma/client';
+import { ApiResponse } from './api-response.js';
 import { isStudent } from './roles.js';
-import config from '../../config/index.js';
+
+const prisma = new PrismaClient();
 
 /**
  * JWT authentication middleware
@@ -10,10 +12,10 @@ import config from '../../config/index.js';
  * @param {Function} next - Express next function
  */
 export const authenticate = (req, res, next) => {
-  // First check if token is in cookie (priority)
+  // Pertama cek apakah token ada di cookie (prioritas utama)
   let token = req.cookies?.access_token;
   
-  // If not in cookie, try from header (backwards compatibility)
+  // Jika tidak ada di cookie, coba ambil dari header (backwards compatibility)
   if (!token) {
     const authHeader = req.headers.authorization;
     
@@ -28,17 +30,18 @@ export const authenticate = (req, res, next) => {
   
   try {
     // Verify token
-    const decoded = jwt.verify(token, config.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // Add user info to request object
+    // Set user data in request - normalize ID field
     req.user = {
       id: decoded.id || decoded.userId || decoded.sub,
-      role: decoded.role,
-      email: decoded.email
+      role: decoded.role
     };
     
     next();
   } catch (error) {
+    console.error('JWT Verification Error:', error.message);
+    
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json(
         ApiResponse.error('Token expired. Please login again.')
@@ -46,16 +49,13 @@ export const authenticate = (req, res, next) => {
     }
     
     return res.status(401).json(
-      ApiResponse.error('Invalid token.')
+      ApiResponse.error('Invalid token')
     );
   }
 };
 
 /**
- * Middleware to authorize students (DIKE or UMUM)
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next function
+ * Middleware untuk membatasi akses hanya untuk student (DIKE atau UMUM)
  */
 export const authorizeStudents = (req, res, next) => {
   if (!req.user) {

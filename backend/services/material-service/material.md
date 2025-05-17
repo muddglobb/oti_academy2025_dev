@@ -38,12 +38,12 @@ if (pm.response.code === 200) {
 
 ## 2. Endpoint Material Service
 
-### 2.1. Section Management
+### 2.1. Material Management
 
-#### 2.1.1. Membuat Section Baru (Create Section) - Admin Only
+#### 2.1.1. Membuat Material Baru (Create Material) - Admin Only
 
 ```
-POST {{baseUrl}}/sections
+POST {{baseUrl}}/materials
 ```
 
 **Headers:**
@@ -56,256 +56,14 @@ Content-Type: application/json
 ```json
 {
   "courseId": "550e8400-e29b-41d4-a716-446655440001",
-  "title": "Introduction to HTML & CSS",
-  "description": "Basic HTML structure and fundamental CSS styling",
-  "order": 1
-}
-```
-
-**Response (201):**
-```json
-{
-  "status": "success",
-  "message": "Section created successfully",
-  "data": {
-    "id": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
-    "courseId": "550e8400-e29b-41d4-a716-446655440001",
-    "title": "Introduction to HTML & CSS",
-    "description": "Basic HTML structure and fundamental CSS styling",
-    "order": 1,
-    "createdAt": "2025-05-10T08:15:30.123Z",
-    "updatedAt": "2025-05-10T08:15:30.123Z"
-  }
-}
-```
-
-#### 2.1.2. Mendapatkan Semua Section untuk Course Tertentu
-
-```
-GET {{baseUrl}}/sections/course/:courseId
-```
-
-**Headers:**
-```
-Authorization: Bearer {{accessToken}}
-```
-
-**Response (200):**
-```json
-{
-  "status": "success",
-  "message": "Sections retrieved successfully",
-  "data": [
-    {
-      "id": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
-      "courseId": "550e8400-e29b-41d4-a716-446655440001",
-      "title": "Introduction to HTML & CSS",
-      "description": "Basic HTML structure and fundamental CSS styling",
-      "order": 1,
-      "createdAt": "2025-05-10T08:15:30.123Z",
-      "updatedAt": "2025-05-10T08:15:30.123Z",
-      "materials": [
-        {
-          "id": "a1b2c3d4-e5f6-4g7h-8i9j-k0l1m2n3o4p5",
-          "title": "HTML Structure Basics",
-          "description": "Learn the fundamentals of HTML document structure",
-          "type": "TEXT",
-          "content": "<h1>HTML Basics</h1><p>HTML stands for HyperText Markup Language...</p>",
-          "order": 1
-        },
-        {
-          "id": "b2c3d4e5-f6g7-5h8i-9j0k-l1m2n3o4p5q6",
-          "title": "CSS Introduction",
-          "description": "Introduction to styling web pages with CSS",
-          "type": "VIDEO",
-          "externalUrl": "https://www.youtube.com/watch?v=example",
-          "order": 2
-        }
-      ]
-    },
-    {
-      "id": "8g5ef43f-9c3b-5d30-a7f2-g1edc0f4b3e2",
-      "courseId": "550e8400-e29b-41d4-a716-446655440001",
-      "title": "JavaScript Fundamentals",
-      "description": "Introduction to JavaScript programming language",
-      "order": 2,
-      "createdAt": "2025-05-10T09:20:45.456Z",
-      "updatedAt": "2025-05-10T09:20:45.456Z",
-      "materials": [
-        {
-          "id": "c3d4e5f6-g7h8-6i9j-0k1l-m2n3o4p5q6r7",
-          "title": "Variables and Data Types",
-          "description": "Understanding JavaScript variables and data types",
-          "type": "TEXT",
-          "content": "<h1>Variables in JavaScript</h1><p>In JavaScript, variables are containers for storing data...</p>",
-          "order": 1
-        }
-      ]
-    }
-  ]
-}
-```
-
-#### 2.1.3. Mendapatkan Detail Section Berdasarkan ID
-
-```
-GET {{baseUrl}}/sections/:id
-```
-
-**Headers:**
-```
-Authorization: Bearer {{accessToken}}
-```
-
-**Response (200):**
-```json
-{
-  "status": "success",
-  "message": "Section retrieved successfully",
-  "data": {
-    "id": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
-    "courseId": "550e8400-e29b-41d4-a716-446655440001",
-    "title": "Introduction to HTML & CSS",
-    "description": "Basic HTML structure and fundamental CSS styling",
-    "order": 1,
-    "createdAt": "2025-05-10T08:15:30.123Z",
-    "updatedAt": "2025-05-10T08:15:30.123Z",
-    "materials": [
-      {
-        "id": "a1b2c3d4-e5f6-4g7h-8i9j-k0l1m2n3o4p5",
-        "title": "HTML Structure Basics",
-        "description": "Learn the fundamentals of HTML document structure",
-        "type": "TEXT",
-        "content": "<h1>HTML Basics</h1><p>HTML stands for HyperText Markup Language...</p>",
-        "order": 1,
-        "sectionId": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
-        "createdAt": "2025-05-10T08:30:15.789Z",
-        "updatedAt": "2025-05-10T08:30:15.789Z"
-      },
-      {
-        "id": "b2c3d4e5-f6g7-5h8i-9j0k-l1m2n3o4p5q6",
-        "title": "CSS Introduction",
-        "description": "Introduction to styling web pages with CSS",
-        "type": "VIDEO",
-        "externalUrl": "https://www.youtube.com/watch?v=example",
-        "order": 2,
-        "sectionId": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
-        "createdAt": "2025-05-10T08:45:20.456Z",
-        "updatedAt": "2025-05-10T08:45:20.456Z"
-      }
-    ]
-  }
-}
-```
-
-#### 2.1.4. Mengupdate Section (Update Section) - Admin Only
-
-```
-PUT {{baseUrl}}/sections/:id
-```
-
-**Headers:**
-```
-Authorization: Bearer {{accessToken}}
-Content-Type: application/json
-```
-
-**Body:**
-```json
-{
-  "title": "Updated: HTML & CSS Fundamentals",
-  "description": "Comprehensive introduction to HTML structure and CSS styling basics",
-  "order": 1
-}
-```
-
-**Response (200):**
-```json
-{
-  "status": "success",
-  "message": "Section updated successfully",
-  "data": {
-    "id": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
-    "courseId": "550e8400-e29b-41d4-a716-446655440001",
-    "title": "Updated: HTML & CSS Fundamentals",
-    "description": "Comprehensive introduction to HTML structure and CSS styling basics",
-    "order": 1,
-    "createdAt": "2025-05-10T08:15:30.123Z",
-    "updatedAt": "2025-05-10T10:25:40.567Z"
-  }
-}
-```
-
-#### 2.1.5. Menghapus Section (Delete Section) - Admin Only
-
-```
-DELETE {{baseUrl}}/sections/:id
-```
-
-**Headers:**
-```
-Authorization: Bearer {{accessToken}}
-```
-
-**Response (200):**
-```json
-{
-  "status": "success",
-  "message": "Section deleted successfully",
-  "data": null
-}
-```
-
-### 2.2. Material Management
-
-#### 2.2.1. Membuat Material Baru (Create Material) - Admin Only
-
-```
-POST {{baseUrl}}/materials
-```
-
-**Headers:**
-```
-Authorization: Bearer {{accessToken}}
-Content-Type: application/json
-```
-
-**Body (TEXT type):**
-```json
-{
-  "sectionId": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
   "title": "HTML Structure Basics",
   "description": "Learn the fundamentals of HTML document structure",
-  "type": "TEXT",
-  "content": "<h1>HTML Basics</h1><p>HTML stands for HyperText Markup Language...</p>",
-  "order": 1
+  "resourceUrl": "https://storage.googleapis.com/learning-materials/html-basics.pdf",
+  "unlockDate": "2025-05-20T00:00:00+07:00"
 }
 ```
 
-**Body (VIDEO type):**
-```json
-{
-  "sectionId": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
-  "title": "CSS Introduction",
-  "description": "Introduction to styling web pages with CSS",
-  "type": "VIDEO",
-  "externalUrl": "https://www.youtube.com/watch?v=example",
-  "duration": 45,
-  "order": 2
-}
-```
-
-**Body (PDF type):**
-```json
-{
-  "sectionId": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
-  "title": "JavaScript Cheat Sheet",
-  "description": "A comprehensive cheat sheet for JavaScript",
-  "type": "PDF",
-  "order": 3
-}
-```
-Note: For PDF type, fileUrl should be added via file upload.
+**Note:** `unlockDate` harus dalam format ISO 8601 dan dalam zona waktu WIB (UTC+7).
 
 **Response (201):**
 ```json
@@ -314,26 +72,21 @@ Note: For PDF type, fileUrl should be added via file upload.
   "message": "Material created successfully",
   "data": {
     "id": "a1b2c3d4-e5f6-4g7h-8i9j-k0l1m2n3o4p5",
-    "sectionId": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
+    "courseId": "550e8400-e29b-41d4-a716-446655440001",
     "title": "HTML Structure Basics",
     "description": "Learn the fundamentals of HTML document structure",
-    "type": "TEXT",
-    "content": "<h1>HTML Basics</h1><p>HTML stands for HyperText Markup Language...</p>",
-    "fileUrl": null,
-    "externalUrl": null,
-    "order": 1,
-    "duration": null,
-    "status": "ACTIVE",
-    "createdAt": "2025-05-10T08:30:15.789Z",
-    "updatedAt": "2025-05-10T08:30:15.789Z"
+    "resourceUrl": "https://storage.googleapis.com/learning-materials/html-basics.pdf",
+    "unlockDate": "2025-05-20T00:00:00+07:00",
+    "createdAt": "2025-05-16T08:30:15.789Z",
+    "updatedAt": "2025-05-16T08:30:15.789Z"
   }
 }
 ```
 
-#### 2.2.2. Upload Material File - Admin Only
+#### 2.1.2. Mendapatkan Semua Material (Admin Only)
 
 ```
-POST {{baseUrl}}/materials/upload
+GET {{baseUrl}}/materials
 ```
 
 **Headers:**
@@ -341,23 +94,86 @@ POST {{baseUrl}}/materials/upload
 Authorization: Bearer {{accessToken}}
 ```
 
-**Form Data:**
-```
-file: (file binary)
-```
-
 **Response (200):**
 ```json
 {
-  "status": "success",
-  "message": "File uploaded successfully",
-  "data": {
-    "fileUrl": "/uploads/f7e6d5c4-b3a2-4912-8765-0987654321fe.pdf"
-  }
+    "status": "success",
+    "message": "All materials retrieved successfully",
+    "data": [
+        {
+            "id": "76746ee0-0fa0-44ac-9d5c-a06fc1176af4",
+            "courseId": "347a1af4-abfa-4802-9782-a6429ab9d7f0",
+            "title": "tes2",
+            "description": "Learn the fundamentals of HTML document structure",
+            "resourceUrl": "https://storage.googleapis.com/learning-materials/html-basics.pdf",
+            "unlockDate": {
+                "utc": {
+                    "iso": "2025-05-16T16:25:00.000Z",
+                    "timestamp": 1747412700000
+                },
+                "wib": {
+                    "iso": "2025-05-16T23:25:00.000Z",
+                    "timestamp": 1747437900000
+                }
+            },
+            "createdAt": "2025-05-16T16:21:05.354Z",
+            "updatedAt": "2025-05-16T16:21:05.354Z",
+            "unlocked": true,
+            "course": {
+                "title": "Course information not included"
+            }
+        },
+        {
+            "id": "2a9f5bf3-e6ab-424e-ad4e-932f940b4e10",
+            "courseId": "347a1af4-abfa-4802-9782-a6429ab9d7f0",
+            "title": "tes3",
+            "description": "Learn the fundamentals of HTML document structure",
+            "resourceUrl": "https://storage.googleapis.com/learning-materials/html-basics.pdf",
+            "unlockDate": {
+                "utc": {
+                    "iso": "2025-05-16T16:39:00.000Z",
+                    "timestamp": 1747413540000
+                },
+                "wib": {
+                    "iso": "2025-05-16T23:39:00.000Z",
+                    "timestamp": 1747438740000
+                }
+            },
+            "createdAt": "2025-05-16T16:37:26.493Z",
+            "updatedAt": "2025-05-16T16:37:26.493Z",
+            "unlocked": true,
+            "course": {
+                "title": "Course information not included"
+            }
+        },
+        {
+            "id": "501ed2d4-b475-4ed0-b781-b11576653629",
+            "courseId": "347a1af4-abfa-4802-9782-a6429ab9d7f0",
+            "title": "HTML Structure Basics",
+            "description": "Learn the fundamentals of HTML document structure",
+            "resourceUrl": "https://storage.googleapis.com/learning-materials/html-basics.pdf",
+            "unlockDate": {
+                "utc": {
+                    "iso": "2025-05-17T13:00:00.000Z",
+                    "timestamp": 1747486800000
+                },
+                "wib": {
+                    "iso": "2025-05-17T20:00:00.000Z",
+                    "timestamp": 1747512000000
+                }
+            },
+            "createdAt": "2025-05-16T14:49:30.986Z",
+            "updatedAt": "2025-05-16T14:49:30.986Z",
+            "unlocked": true,
+            "course": {
+                "title": "Course information not included"
+            }
+        }
+    ]
 }
 ```
 
-#### 2.2.3. Mendapatkan Material Berdasarkan ID
+#### 2.1.3. Mendapatkan Material Berdasarkan ID
 
 ```
 GET {{baseUrl}}/materials/:id
@@ -371,35 +187,35 @@ Authorization: Bearer {{accessToken}}
 **Response (200):**
 ```json
 {
-  "status": "success",
-  "message": "Material retrieved successfully",
-  "data": {
-    "id": "a1b2c3d4-e5f6-4g7h-8i9j-k0l1m2n3o4p5",
-    "sectionId": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
-    "title": "HTML Structure Basics",
-    "description": "Learn the fundamentals of HTML document structure",
-    "type": "TEXT",
-    "content": "<h1>HTML Basics</h1><p>HTML stands for HyperText Markup Language...</p>",
-    "fileUrl": null,
-    "externalUrl": null,
-    "order": 1,
-    "duration": null,
-    "status": "ACTIVE",
-    "createdAt": "2025-05-10T08:30:15.789Z",
-    "updatedAt": "2025-05-10T08:30:15.789Z",
-    "section": {
-      "id": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
-      "courseId": "550e8400-e29b-41d4-a716-446655440001",
-      "title": "Introduction to HTML & CSS"
+    "status": "success",
+    "message": "Material retrieved successfully",
+    "data": {
+        "id": "501ed2d4-b475-4ed0-b781-b11576653629",
+        "courseId": "347a1af4-abfa-4802-9782-a6429ab9d7f0",
+        "title": "HTML Structure Basics",
+        "description": "Learn the fundamentals of HTML document structure",
+        "resourceUrl": "https://storage.googleapis.com/learning-materials/html-basics.pdf",
+        "unlockDate": {
+            "utc": {
+                "iso": "2025-05-17T13:00:00.000Z",
+                "timestamp": 1747486800000
+            },
+            "wib": {
+                "iso": "2025-05-17T20:00:00.000Z",
+                "timestamp": 1747512000000
+            }
+        },
+        "createdAt": "2025-05-16T14:49:30.986Z",
+        "updatedAt": "2025-05-16T14:49:30.986Z",
+        "unlocked": true
     }
-  }
 }
 ```
 
-#### 2.2.4. Mendapatkan Semua Material untuk Section Tertentu
+#### 2.1.4. Mendapatkan Semua Material untuk Course Tertentu
 
 ```
-GET {{baseUrl}}/materials/section/:sectionId
+GET {{baseUrl}}/materials/course/:courseId
 ```
 
 **Headers:**
@@ -410,44 +226,75 @@ Authorization: Bearer {{accessToken}}
 **Response (200):**
 ```json
 {
-  "status": "success",
-  "message": "Materials retrieved successfully",
-  "data": [
-    {
-      "id": "a1b2c3d4-e5f6-4g7h-8i9j-k0l1m2n3o4p5",
-      "sectionId": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
-      "title": "HTML Structure Basics",
-      "description": "Learn the fundamentals of HTML document structure",
-      "type": "TEXT",
-      "content": "<h1>HTML Basics</h1><p>HTML stands for HyperText Markup Language...</p>",
-      "fileUrl": null,
-      "externalUrl": null,
-      "order": 1,
-      "duration": null,
-      "status": "ACTIVE",
-      "createdAt": "2025-05-10T08:30:15.789Z",
-      "updatedAt": "2025-05-10T08:30:15.789Z"
-    },
-    {
-      "id": "b2c3d4e5-f6g7-5h8i-9j0k-l1m2n3o4p5q6",
-      "sectionId": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
-      "title": "CSS Introduction",
-      "description": "Introduction to styling web pages with CSS",
-      "type": "VIDEO",
-      "content": null,
-      "fileUrl": null,
-      "externalUrl": "https://www.youtube.com/watch?v=example",
-      "order": 2,
-      "duration": 45,
-      "status": "ACTIVE",
-      "createdAt": "2025-05-10T08:45:20.456Z",
-      "updatedAt": "2025-05-10T08:45:20.456Z"
-    }
-  ]
+    "status": "success",
+    "message": "Materials retrieved successfully",
+    "data": [
+        {
+            "id": "76746ee0-0fa0-44ac-9d5c-a06fc1176af4",
+            "courseId": "347a1af4-abfa-4802-9782-a6429ab9d7f0",
+            "title": "tes2",
+            "description": "Learn the fundamentals of HTML document structure",
+            "resourceUrl": "https://storage.googleapis.com/learning-materials/html-basics.pdf",
+            "unlockDate": {
+                "utc": {
+                    "iso": "2025-05-16T16:25:00.000Z",
+                    "timestamp": 1747412700000
+                },
+                "wib": {
+                    "iso": "2025-05-16T23:25:00.000Z",
+                    "timestamp": 1747437900000
+                }
+            },
+            "createdAt": "2025-05-16T16:21:05.354Z",
+            "updatedAt": "2025-05-16T16:21:05.354Z",
+            "unlocked": true
+        },
+        {
+            "id": "2a9f5bf3-e6ab-424e-ad4e-932f940b4e10",
+            "courseId": "347a1af4-abfa-4802-9782-a6429ab9d7f0",
+            "title": "tes3",
+            "description": "Learn the fundamentals of HTML document structure",
+            "resourceUrl": "https://storage.googleapis.com/learning-materials/html-basics.pdf",
+            "unlockDate": {
+                "utc": {
+                    "iso": "2025-05-16T16:39:00.000Z",
+                    "timestamp": 1747413540000
+                },
+                "wib": {
+                    "iso": "2025-05-16T23:39:00.000Z",
+                    "timestamp": 1747438740000
+                }
+            },
+            "createdAt": "2025-05-16T16:37:26.493Z",
+            "updatedAt": "2025-05-16T16:37:26.493Z",
+            "unlocked": true
+        },
+        {
+            "id": "501ed2d4-b475-4ed0-b781-b11576653629",
+            "courseId": "347a1af4-abfa-4802-9782-a6429ab9d7f0",
+            "title": "HTML Structure Basics",
+            "description": "Learn the fundamentals of HTML document structure",
+            "resourceUrl": null,
+            "unlockDate": {
+                "utc": {
+                    "iso": "2025-05-17T13:00:00.000Z",
+                    "timestamp": 1747486800000
+                },
+                "wib": {
+                    "iso": "2025-05-17T20:00:00.000Z",
+                    "timestamp": 1747512000000
+                }
+            },
+            "createdAt": "2025-05-16T14:49:30.986Z",
+            "updatedAt": "2025-05-16T14:49:30.986Z",
+            "unlocked": false,
+            "availableFrom": "2025-05-17T20:00:00.000Z"
+        }
+    ]
 }
 ```
 
-#### 2.2.5. Mengupdate Material (Update Material) - Admin Only
+#### 2.1.4. Mengupdate Material (Update Material) - Admin Only
 
 ```
 PUT {{baseUrl}}/materials/:id
@@ -464,10 +311,12 @@ Content-Type: application/json
 {
   "title": "Updated: HTML Document Structure",
   "description": "Comprehensive guide to HTML document structure with examples",
-  "content": "<h1>HTML Document Structure</h1><p>Every HTML document should start with a proper structure...</p>",
-  "order": 1
+  "resourceUrl": "https://storage.googleapis.com/learning-materials/html-complete.pdf",
+  "unlockDate": "2025-05-18T00:00:00+07:00"
 }
 ```
+
+**Note:** `unlockDate` harus dalam format ISO 8601 dan dalam zona waktu WIB (UTC+7).
 
 **Response (200):**
 ```json
@@ -476,23 +325,18 @@ Content-Type: application/json
   "message": "Material updated successfully",
   "data": {
     "id": "a1b2c3d4-e5f6-4g7h-8i9j-k0l1m2n3o4p5",
-    "sectionId": "7f4df32e-8a2b-4b29-982c-f0dce9e3c8d1",
+    "courseId": "550e8400-e29b-41d4-a716-446655440001",
     "title": "Updated: HTML Document Structure",
     "description": "Comprehensive guide to HTML document structure with examples",
-    "type": "TEXT",
-    "content": "<h1>HTML Document Structure</h1><p>Every HTML document should start with a proper structure...</p>",
-    "fileUrl": null,
-    "externalUrl": null,
-    "order": 1,
-    "duration": null,
-    "status": "ACTIVE",
-    "createdAt": "2025-05-10T08:30:15.789Z",
-    "updatedAt": "2025-05-10T11:15:30.123Z"
+    "resourceUrl": "https://storage.googleapis.com/learning-materials/html-complete.pdf",
+    "unlockDate": "2025-05-18T00:00:00+07:00",
+    "createdAt": "2025-05-16T08:30:15.789Z",
+    "updatedAt": "2025-05-16T11:15:30.123Z"
   }
 }
 ```
 
-#### 2.2.6. Menghapus Material (Delete Material) - Admin Only
+#### 2.1.5. Menghapus Material (Delete Material) - Admin Only
 
 ```
 DELETE {{baseUrl}}/materials/:id
@@ -516,15 +360,10 @@ Authorization: Bearer {{accessToken}}
 
 | Endpoint                   | Admin | DIKE | UMUM | USER |
 |----------------------------|-------|------|------|------|
-| Create Section             | ✅    | ❌   | ❌   | ❌   |
-| Get Section by Course      | ✅    | ✅   | ✅   | ✅   |
-| Get Section by ID          | ✅    | ✅   | ✅   | ✅   |
-| Update Section             | ✅    | ❌   | ❌   | ❌   |
-| Delete Section             | ✅    | ❌   | ❌   | ❌   |
 | Create Material            | ✅    | ❌   | ❌   | ❌   |
-| Upload Material File       | ✅    | ❌   | ❌   | ❌   |
+| Get All Materials          | ✅    | ❌   | ❌   | ❌   |
 | Get Material by ID         | ✅    | ✅   | ✅   | ✅   |
-| Get Materials by Section   | ✅    | ✅   | ✅   | ✅   |
+| Get Materials by Course    | ✅    | ✅   | ✅   | ✅   |
 | Update Material            | ✅    | ❌   | ❌   | ❌   |
 | Delete Material            | ✅    | ❌   | ❌   | ❌   |
 
@@ -533,22 +372,25 @@ Authorization: Bearer {{accessToken}}
 Material Service terintegrasi dengan layanan lain di OTI Academy sebagai berikut:
 
 1. **Auth Service**: Untuk validasi token dan otorisasi
-2. **Course Service**: Untuk validasi keberadaan course sebelum membuat section
+2. **Course Service**: Untuk validasi keberadaan course sebelum membuat material
 
-## 5. Format Material yang Didukung
+## 5. Penanganan Timezone 
 
-Material Service mendukung berbagai jenis konten pembelajaran:
+Material Service mengimplementasikan penanganan timezone untuk field `unlockDate`:
 
-| Tipe Material | Deskripsi                                   | Field yang Diperlukan            |
-|---------------|---------------------------------------------|----------------------------------|
-| TEXT          | Konten teks atau HTML formatif              | content                          |
-| PDF           | Dokumen PDF                                 | fileUrl (via upload)             |
-| VIDEO         | Video pembelajaran                          | fileUrl atau externalUrl, duration|
-| LINK          | Link eksternal ke sumber belajar            | externalUrl                      |
-| QUIZ          | Kuis interaktif                             | content (format JSON)            |
-| CODE          | Contoh kode dengan syntax highlighting      | content                          |
+- Semua input `unlockDate` dari user dianggap dalam format WIB (UTC+7)
+- Data disimpan ke database dalam format UTC
+- Data yang ditampilkan ke user dikonversi kembali ke WIB
 
-## 6. Response Error
+## 6. Akses Material Berdasarkan Tanggal
+
+Material Service mengimplementasikan akses berbasis tanggal:
+
+- Material hanya akan tersedia untuk diakses oleh non-admin users (DIKE, UMUM, USER) setelah tanggal `unlockDate`
+- Admin dapat mengakses semua material tanpa batasan waktu
+- Jika user mencoba mengakses material yang belum waktunya dibuka, akan menerima respons error 403
+
+## 7. Response Error
 
 ### Error Format
 ```json
@@ -579,8 +421,8 @@ Material Service mendukung berbagai jenis konten pembelajaran:
       "message": "Title must be at least 3 characters"
     },
     {
-      "field": "type",
-      "message": "Invalid material type. Allowed types: TEXT, PDF, VIDEO, LINK, QUIZ, CODE"
+      "field": "resourceUrl",
+      "message": "Resource URL must be a valid URL"
     }
   ]
 }
@@ -602,10 +444,18 @@ Material Service mendukung berbagai jenis konten pembelajaran:
 }
 ```
 
+**Material Not Yet Available (403):**
+```json
+{
+  "status": "error",
+  "message": "This material is not yet available."
+}
+```
+
 **Not Found (404):**
 ```json
 {
   "status": "error",
-  "message": "Section not found"
+  "message": "Material not found"
 }
 ```

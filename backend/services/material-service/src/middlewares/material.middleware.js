@@ -2,138 +2,64 @@ import { z } from 'zod';
 import { ApiResponse } from '../utils/api-response.js';
 
 /**
- * Validate material creation data
+ * Validate material creation and update data
+ * Note: unlockDate should be provided in WIB timezone (UTC+7)
  */
 export const validateMaterialData = (req, res, next) => {
   try {
-    // Define schema based on material type
-    const commonSchema = {
-      title: z.string().min(3, 'Title must be at least 3 characters').max(255),
-      description: z.string().optional(),
-      type: z.enum(['TEXT', 'PDF', 'VIDEO', 'LINK', 'QUIZ', 'CODE']),
-      sectionId: z.string().uuid('Invalid section ID'),
-      order: z.number().int().nonnegative().optional()
-    };
-
-    // Additional fields based on type
-    let schema;
-    
-    switch (req.body.type) {
-      case 'TEXT':
-        schema = z.object({
-          ...commonSchema,
-          content: z.string().min(1, 'Content is required for TEXT type')
-        });
-        break;
-      case 'PDF':
-        // For PDF we'll validate file in upload middleware
-        schema = z.object({
-          ...commonSchema,
-          fileUrl: z.string().optional() // May be populated by upload middleware
-        });
-        break;
-      case 'VIDEO':
-        schema = z.object({
-          ...commonSchema,
-          externalUrl: z.string().url('Invalid video URL').optional(),
-          fileUrl: z.string().optional(),
-          duration: z.number().int().positive().optional()
-        }).refine(data => data.externalUrl || data.fileUrl, {
-          message: 'Either externalUrl or fileUrl must be provided for VIDEO type'
-        });
-        break;
-      case 'LINK':
-        schema = z.object({
-          ...commonSchema,
-          externalUrl: z.string().url('Invalid URL')
-        });
-        break;
-      case 'QUIZ':
-        schema = z.object({
-          ...commonSchema,
-          content: z.string().min(1, 'Quiz content is required')
-        });
-        break;
-      case 'CODE':
-        schema = z.object({
-          ...commonSchema,
-          content: z.string().min(1, 'Code content is required')
-        });
-        break;
-      default:
-        schema = z.object(commonSchema);
-    }
-
-    schema.parse(req.body);
-    next();
-  } catch (error) {
-    const errors = error.errors?.map(e => ({
-      field: e.path.join('.'),
-      message: e.message
-    })) || [];
-
-    return res.status(400).json(
-      ApiResponse.error('Validation failed', errors)
-    );
-  }
-};
-
-/**
- * Validate section creation data
- */
-export const validateSectionData = (req, res, next) => {
-  try {
-    const schema = z.object({
-      title: z.string().min(3, 'Title must be at least 3 characters').max(255),
-      description: z.string().optional(),
+    // Simple schema for Material model
+    const materialSchema = z.object({
       courseId: z.string().uuid('Invalid course ID'),
-      order: z.number().int().nonnegative().optional()
+      title: z.string().min(3, 'Title must be at least 3 characters').max(255),
+      description: z.string().optional(),
+      resourceUrl: z.string().url('Resource URL must be a valid URL'),
+      unlockDate: z.string().refine(
+        (value) => {
+          try {
+            // The date should be parsable
+            const dateObj = new Date(value);
+            const isValidDate = !isNaN(dateObj.getTime());
+            
+            // Additionally, we could add more specific validations for WIB format if needed
+            
+            return isValidDate;
+          } catch (e) {
+            return false;
+          }
+        },
+        { message: 'Invalid date format for unlockDate. Expected format: YYYY-MM-DDTHH:MM:SS (in WIB timezone)' }
+      )
     });
 
-    schema.parse(req.body);
-    next();
-  } catch (error) {
-    const errors = error.errors?.map(e => ({
-      field: e.path.join('.'),
-      message: e.message
-    })) || [];
+    // For update requests, all fields are optional
+    const schema = req.method === 'PUT' 
+      ? materialSchema.partial() // Make all fields optional for updates
+      : materialSchema;          // Keep required fields for creation
 
-    return res.status(400).json(
-      ApiResponse.error('Validation failed', errors)
-    );
-  }
-};
+    // Validate request body
+    const validation = schema.safeParse(req.body);
 
-/**
- * Verify if section exists and belongs to a course
- */
-export const verifySectionExists = async (req, res, next) => {
-  try {
-    const sectionId = req.params.id || req.body.sectionId;
-    
-    if (!sectionId) {
+    if (!validation.success) {
+      const errors = validation.error.errors.map(err => ({
+        field: err.path.join('.'),
+        message: err.message
+      }));
+      
       return res.status(400).json(
-        ApiResponse.error('Section ID is required')
+        ApiResponse.error('Invalid material data', errors)
       );
     }
 
-    const section = await prisma.section.findUnique({
-      where: { id: sectionId }
-    });
-    
-    if (!section) {
-      return res.status(404).json(
-        ApiResponse.error('Section not found')
-      );
+    // Add a note to the request to indicate that date conversion is needed
+    if (req.body.unlockDate) {
+      req.needsDateConversion = true;
     }
 
-    // Add section to request for later use
-    req.section = section;
     next();
   } catch (error) {
-    console.error('Error verifying section:', error);
-    return res.status(500).json(
-      ApiResponse.error('Internal server error during section verification')
+    console.error('Error validating material data:', error);
+    res.status(500).json(
+      ApiResponse.error('Server error validating material data')
     );
   }
 };

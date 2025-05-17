@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
-import { SectionService } from './section.service.js';
 import { CacheService } from './cache.service.js';
+import { CourseService } from './course.service.js';
+import { convertWibToUtc, formatDateObject } from '../utils/date-helper.js';
 
 const prisma = new PrismaClient();
 
@@ -12,39 +13,26 @@ export class MaterialService {
    * Create a new material
    * @param {Object} data - Material data
    * @returns {Promise<Object>} Created material
-   */
-  static async createMaterial(data) {
+   */  static async createMaterial(data) {
     try {
-      // Validate if section exists
-      const section = await SectionService.getSectionById(data.sectionId);
-      if (!section) {
-        throw new Error(`Section with ID ${data.sectionId} not found`);
-      }
+      // Validate course exists using an integration service
+      await CourseService.validateCourseExists(data.courseId);
       
-      // Check if order is provided, otherwise get max order + 1
-      if (!data.order) {
-        const maxOrder = await this.getMaxMaterialOrder(data.sectionId);
-        data.order = maxOrder + 1;
-      }
-
+      // Convert WIB date to UTC for storage
+      const utcUnlockDate = convertWibToUtc(data.unlockDate);
+      
       const material = await prisma.material.create({
         data: {
-          sectionId: data.sectionId,
+          courseId: data.courseId,
           title: data.title,
           description: data.description,
-          type: data.type,
-          content: data.content,
-          fileUrl: data.fileUrl,
-          externalUrl: data.externalUrl,
-          order: data.order,
-          duration: data.duration,
-          status: data.status || 'ACTIVE'
+          resourceUrl: data.resourceUrl,
+          unlockDate: utcUnlockDate
         }
       });
 
       // Invalidate cache
-      await CacheService.invalidate(`course:${section.courseId}:sections`);
-      await CacheService.invalidate(`section:${data.sectionId}:materials`);
+      await CacheService.invalidate(`course:${data.courseId}:materials`);
       
       return material;
     } catch (error) {
@@ -52,44 +40,82 @@ export class MaterialService {
       throw error;
     }
   }
+  /**
+   * Format material data for response
+   * @param {Object} material - Raw material data from database
+   * @returns {Object} Formatted material data with proper date format
+   */
+  static formatMaterialResponse(material) {
+    if (!material) return null;
+    
+    return {
+      ...material,
+      unlockDate: formatDateObject(material.unlockDate)
+    };
+  }
 
   /**
-   * Get all materials for a section
-   * @param {string} sectionId - Section ID
-   * @returns {Promise<Array>} Materials in the section
-   */
-  static async getMaterialsBySection(sectionId) {
+   * Get all materials for a course
+   * @param {string} courseId - Course ID
+   * @returns {Promise<Array>} Materials for the course
+   */  static async getMaterialsByCourse(courseId) {
     try {
       // Try to get from cache first
-      const cacheKey = `section:${sectionId}:materials`;
-      return await CacheService.getOrSet(cacheKey, async () => {
+      const cacheKey = `course:${courseId}:materials`;
+      const materials = await CacheService.getOrSet(cacheKey, async () => {
         const materials = await prisma.material.findMany({
-          where: { sectionId },
-          orderBy: { order: 'asc' }
+          where: { courseId },
+          orderBy: { unlockDate: 'asc' }
         });
         
         return materials;
       });
+      
+      // Format dates for response
+      return materials.map(material => this.formatMaterialResponse(material));
     } catch (error) {
-      console.error(`Error getting materials for section ${sectionId}:`, error);
+      console.error(`Error getting materials for course ${courseId}:`, error);
       throw error;
     }
   }
-
   /**
    * Get material by ID
    * @param {string} id - Material ID
    * @returns {Promise<Object>} Material
-   */
-  static async getMaterialById(id) {
+   */  static async getMaterialById(id) {
     try {
       const material = await prisma.material.findUnique({
         where: { id }
       });
       
-      return material;
+      return this.formatMaterialResponse(material);
     } catch (error) {
       console.error(`Error getting material ${id}:`, error);
+      throw error;
+    }
+  }
+  /**
+   * Get all materials
+   * @returns {Promise<Array>} All materials
+   */  static async getAllMaterials() {
+    try {
+      // Try to get from cache first
+      const cacheKey = 'all:materials';
+      const materials = await CacheService.getOrSet(cacheKey, async () => {
+        const materials = await prisma.material.findMany({
+          orderBy: [
+            { courseId: 'asc' },
+            { unlockDate: 'asc' }
+          ]
+        });
+        
+        return materials;
+      });
+      
+      // Format dates for response
+      return materials.map(material => this.formatMaterialResponse(material));
+    } catch (error) {
+      console.error('Error getting all materials:', error);
       throw error;
     }
   }
@@ -107,28 +133,18 @@ export class MaterialService {
       if (!existingMaterial) {
         throw new Error(`Material with ID ${id} not found`);
       }
-      
-      // Get section to invalidate course cache
-      const section = await SectionService.getSectionById(existingMaterial.sectionId);
-      
-      const material = await prisma.material.update({
+        const material = await prisma.material.update({
         where: { id },
         data: {
-          title: data.title,
-          description: data.description,
-          type: data.type,
-          content: data.content,
-          fileUrl: data.fileUrl,
-          externalUrl: data.externalUrl,
-          order: data.order,
-          duration: data.duration,
-          status: data.status
+          title: data.title !== undefined ? data.title : undefined,
+          description: data.description !== undefined ? data.description : undefined,
+          resourceUrl: data.resourceUrl !== undefined ? data.resourceUrl : undefined,
+          unlockDate: data.unlockDate !== undefined ? convertWibToUtc(data.unlockDate) : undefined
         }
       });
 
       // Invalidate cache
-      await CacheService.invalidate(`course:${section.courseId}:sections`);
-      await CacheService.invalidate(`section:${existingMaterial.sectionId}:materials`);
+      await CacheService.invalidate(`course:${existingMaterial.courseId}:materials`);
       
       return material;
     } catch (error) {
@@ -150,35 +166,17 @@ export class MaterialService {
         throw new Error(`Material with ID ${id} not found`);
       }
       
-      // Get section to invalidate course cache
-      const section = await SectionService.getSectionById(material.sectionId);
-      
       const deletedMaterial = await prisma.material.delete({
         where: { id }
       });
 
       // Invalidate cache
-      await CacheService.invalidate(`course:${section.courseId}:sections`);
-      await CacheService.invalidate(`section:${material.sectionId}:materials`);
+      await CacheService.invalidate(`course:${material.courseId}:materials`);
       
       return deletedMaterial;
     } catch (error) {
       console.error(`Error deleting material ${id}:`, error);
       throw error;
     }
-  }
-
-  /**
-   * Get the highest order number for materials in a section
-   * @param {string} sectionId - Section ID
-   * @returns {Promise<number>} Max order value or 0
-   */
-  static async getMaxMaterialOrder(sectionId) {
-    const result = await prisma.material.aggregate({
-      where: { sectionId },
-      _max: { order: true }
-    });
-    
-    return result._max.order || 0;
   }
 }

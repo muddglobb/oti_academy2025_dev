@@ -6,10 +6,10 @@ const config = {
   // Server configuration
   PORT: process.env.PORT || 4000,
   NODE_ENV: process.env.NODE_ENV || 'development',
-  
   // Service URLs
   AUTH_SERVICE_URL: process.env.AUTH_SERVICE_URL || 'http://auth-service-api:8001',
   PAYMENT_SERVICE_URL: process.env.PAYMENT_SERVICE_URL || 'http://payment-service-api:8006',
+  MATERIAL_SERVICE_URL: process.env.MATERIAL_SERVICE_URL || 'http://material-service-api:8003',
   
   // Security configuration
   JWT_SECRET: process.env.JWT_SECRET,
