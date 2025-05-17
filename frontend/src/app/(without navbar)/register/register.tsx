@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
-import { User, Mail, Lock, Database, ArrowLeft, Eye, EyeOff } from 'react-feather';
+import { User, Mail, Lock, ArrowLeft, Eye, EyeOff } from 'react-feather';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 
@@ -16,7 +16,7 @@ interface FormData {
 
 export default function Register() {
 
-  const [isDike, setIsDike] = useState<null | boolean>(null);
+  //const [isDike, setIsDike] = useState<null | boolean>(null);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isRefillVisible, setIsRefillVisible] = useState(false);
@@ -53,8 +53,9 @@ export default function Register() {
           email: data.email,
           name: data.name,
           password: data.password,
-          type: isDike? "DIKE" : "UMUM",
-          nim: isDike ? data.nim : undefined,
+          type: "UMUM",
+          //nim: isDike ? data.nim : undefined,
+
         }),
       });
 
@@ -221,7 +222,7 @@ export default function Register() {
           {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>}
         </div>
 
-        <div className="flex items-center gap-10 mt-3">
+        {/*<div className="flex items-center gap-10 mt-3">
           <button
             type="button"
             className={`w-full cursor-pointer border-2 border-blue-500 rounded-lg px-6 py-1.5 font-bold ${isDike == true ? 'cursor-pointer bg-blue-500 text-white hover:bg-blue-700 hover:border-blue-700' : 'bg-white text-blue-700'}`}
@@ -256,19 +257,7 @@ export default function Register() {
             h-4 w-4`} size={20} />
             {errors.nim && <p className="text-red-500 text-xs mt-1">{errors.nim.message}</p>}
           </div>
-        )}
-
-
-          {/* <div>
-            <h2 className="font-bold mb-2">NIM</h2>
-            <input
-              type="text"
-              name="nim"
-              placeholder="00/000000/PA/000000"
-              onChange={handleChange}
-              className="w-full bg-white text-black border-3 border-gray-400 rounded-lg px-6 py-3"
-            />
-          </div> */}
+        )}*/}
 
           <button
           type="submit"
