@@ -1,0 +1,13 @@
+name: oti-academy-assignment
+services:
+  assignment-service:
+    container_name: assignment-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: oti-academy/assignment-service:latest    
+    ports:
+      - "8004:8004"
+    env_file:
+      - .env
+    restart: unless-stopped

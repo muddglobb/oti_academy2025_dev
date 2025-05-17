@@ -1,0 +1,13 @@
+name: oti-academy-auth
+services:
+  auth-service:
+    container_name: auth-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: oti-academy/auth-service:latest    
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    restart: unless-stopped

@@ -1,0 +1,13 @@
+name: oti-academy-email
+services:
+  email-service:
+    container_name: email-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: oti-academy/email-service:latest    
+    ports:
+      - "8008:8008"
+    env_file:
+      - .env
+    restart: unless-stopped
