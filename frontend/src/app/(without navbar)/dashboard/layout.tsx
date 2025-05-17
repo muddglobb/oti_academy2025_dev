@@ -1,14 +1,13 @@
-// app/troll/layout.tsx
+import type { Metadata } from "next";
 import React from "react";
 import Sidebar from "@/components/dashboard/sidebar";
 import MiniSidebar from "@/components/dashboard/mini-sidebar";
-// import DashboardHeader from "@/components/dashboard/header";
 import { DashboardHeader } from "@/components/dashboard/header";
 
-// const userData = {
-//   name: "Regina Joan Medea Jati Laksono",
-//   avatar: "/images/teacher/faris.jpg",
-// };
+export const metadata: Metadata = {
+  title: "Dashboard OmahTI Academy",
+  description: "keren",
+};
 
 export default function TrollLayout({
   children,

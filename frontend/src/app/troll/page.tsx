@@ -1,6 +1,6 @@
 import React from "react";
-import ProgramsHero from "@/app/modules/programs/programs-hero-section";
-import ClassBundle from "../modules/programs/class-bundle";
+import ProgramsHero from "@/components/programs/programs-hero-section";
+import ClassBundle from "../../components/programs/class-bundle";
 import ProgramsPageBackground from "@/components/programs-page-background";
 
 const page = () => {

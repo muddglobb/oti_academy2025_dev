@@ -1,9 +1,7 @@
 import React from "react";
-import EntryClassInfo from "@/components/entry/entry-classinfo";
-// import EntryHero from "@/components/entry/entry-hero";
-import Hero from "@/components/intermediate/intermediate-hero";
-// import EntrySessionInfo from "@/components/entry/entry-sessioninfo";
-import SessionInfo from "@/components/intermediate/intermediate-session-info";
+import EntryClassInfo from "@/components/programs/entry/entry-classinfo";
+import Hero from "@/components/programs/intermediate/intermediate-hero";
+import SessionInfo from "@/components/programs/intermediate/intermediate-session-info";
 
 const hero: [string, string, string] = [
   "Web Development",

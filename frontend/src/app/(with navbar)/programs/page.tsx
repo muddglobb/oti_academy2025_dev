@@ -1,5 +1,5 @@
 import React from "react";
-import ProgramsPage from "@/components/programs-page";
+import ProgramsPage from "@/components/programs/programs-page";
 
 const Page = () => {
   return (

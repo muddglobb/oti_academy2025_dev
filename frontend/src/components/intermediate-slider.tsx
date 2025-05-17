@@ -6,8 +6,8 @@ import React from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import NextArrow from "./next-arrow";
-import PrevArrow from "./prev-arrow";
+import NextArrow from "./ui/next-arrow";
+import PrevArrow from "./ui/prev-arrow";
 
 const bundleData = [
   {

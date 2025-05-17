@@ -6,8 +6,8 @@ import React from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import NextArrow from "@/components/next-arrow";
-import PrevArrow from "@/components/prev-arrow";
+import NextArrow from "@/components/ui/next-arrow";
+import PrevArrow from "@/components/ui/prev-arrow";
 
 const beginnerData = [
   {

@@ -1,13 +1,13 @@
 import React from 'react'
-import Hero from '@/app/modules/landing-page/hero'
-import Kenali from '@/app/modules/landing-page/kenali'
-import WhyUs from './modules/landing-page/why-us'
-import PilihanKelas from './modules/landing-page/pilihan-kelas'
+import Hero from '@/components/landing-page/hero'
+import Kenali from '@/components/landing-page/kenali'
+import WhyUs from '../../components/landing-page/why-us'
+import PilihanKelas from '../../components/landing-page/pilihan-kelas'
 import LandingPageBackground from '@/components/landing-page-background'
-import Harga from './modules/landing-page/harga'
-import Comments from './modules/landing-page/comments'
-import FAQ from './modules/landing-page/faq'
-import Mentor from './modules/landing-page/mentor'
+import Harga from '../../components/landing-page/harga'
+import Comments from '../../components/landing-page/comments'
+import FAQ from '../../components/landing-page/faq'
+import Mentor from '../../components/landing-page/mentor'
 
 const page = () => {
   return (

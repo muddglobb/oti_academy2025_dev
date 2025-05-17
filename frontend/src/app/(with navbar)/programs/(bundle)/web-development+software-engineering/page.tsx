@@ -1,8 +1,7 @@
 import React from "react";
-import BundleClassInfo from "@/components/bundle/bundle-classinfo";
-import Hero from "@/components/intermediate/intermediate-hero";
-// import BundleSessionInfo from "@/components/bundle/bundle-sessioninfo";
-import SessionInfo from "@/components/intermediate/intermediate-session-info";
+import BundleClassInfo from "@/components/programs/bundle/bundle-classinfo";
+import Hero from "@/components/programs/intermediate/intermediate-hero";
+import SessionInfo from "@/components/programs/intermediate/intermediate-session-info";
 
 const hero: [string, string, string] = [
   "Web Development + Software Engineering",

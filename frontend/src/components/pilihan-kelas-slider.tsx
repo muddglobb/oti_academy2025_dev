@@ -5,8 +5,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Card from "./card";
-import NextArrow from "./next-arrow";
-import PrevArrow from "./prev-arrow";
+import NextArrow from "./ui/next-arrow";
+import PrevArrow from "./ui/prev-arrow";
 
 const Kelas = [
     {

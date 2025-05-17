@@ -1,7 +1,7 @@
 import React from "react";
-import IntermediateHero from "@/components/intermediate/intermediate-hero";
-import IntermediateClassInfo from "@/components/intermediate/intermediate-class-info";
-import IntermediateSessionInfo from "@/components/intermediate/intermediate-session-info";
+import IntermediateHero from "./intermediate-hero";
+import IntermediateClassInfo from "./intermediate-class-info";
+import IntermediateSessionInfo from "./intermediate-session-info";
 
 const hero: [string, string, string] = [
   "Software Engineering",
