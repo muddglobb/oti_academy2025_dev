@@ -9,11 +9,8 @@ import {
 import { type CarouselApi } from "@/components/ui/carousel";
 import Image from "next/image";
 
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick";
-import NextArrow from "@/components/ui/next-arrow";
-import PrevArrow from "@/components/ui/prev-arrow";
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 // type SessionTypes = {
 //   id: string;
@@ -56,95 +53,37 @@ const AllClassSlider = ({ data }: any) => {
     });
   }, [api]);
 
-  const settings = {
-    arrows: true,
-    infinite: true,
-    speed: 500,
-    variableWidth: true,
-    slidesToShow: 3, // tampilkan 3 item per layar (ubah sesuai kebutuhan)
-    slidesToScroll: 1,
-    nextArrow: <NextArrow></NextArrow>,
-    prevArrow: <PrevArrow></PrevArrow>,
-  };
-
   return (
     <div>
-      {/* <main>
-        <Carousel setApi={setApi}>
-          <CarouselContent>
-            {data.map((course: any) => (
-            <CarouselItem key={course.id} className="basis-1/3">
-              <div className="p-4 bg-white rounded shadow">
-                <div className="font-bold mb-2 text-black">{course.title}</div>
-                <div className="text-sm text-gray-600">{course.description}</div>
-              </div>
-            </CarouselItem>
-          ))}
-          </CarouselContent>
-        </Carousel>
-
-        <div className="flex-col ">
-          <div
-            className="cusor-pointer"
-            onClick={() => api?.scrollTo(current - 1)}
-          >
-            <div className=" cursor-pointer p-3 bg-[var(--color-primary-800)] rounded-lg flex items-center gap-2 mt-2">
-              <Image
-                src="/icons/backarrow-icon.svg"
-                alt="MUNDUR"
-                width={20}
-                height={20}
-                // className="transform rotate-180"
-              ></Image>
-              <p className="text-[var(--color-neutral-50)] text-sm">Previous</p>
-            </div>
-          </div>
-
-          <div
-            className="cusor-pointer"
-            onClick={() => api?.scrollTo(current + 1)}
-          >
-            <div className="cursor-pointer p-3 bg-[var(--color-primary-800)] rounded-lg flex items-center gap-2 mt-2">
-              <p className="text-[var(--color-neutral-50)] text-sm">Next</p>
-              <Image
-                src="/icons/backarrow-icon.svg"
-                alt="MAJU"
-                width={20}
-                height={20}
-                className="transform rotate-180"
-              ></Image>
-            </div>
-          </div>
-        </div>
-      </main> */}
-
       <main className="w-full overflow-hidden">
         <Carousel setApi={setApi}>
           <CarouselContent>
             {data.map((course: any) => (
               <CarouselItem
                 key={course.id}
-                className="w-10 md:basis-1/2 lg:basis-1/3"
+                className="w-8 md:basis-1/2 lg:basis-1/3"
               >
                 <div className="bg-white rounded-md h-full">
                   <div>
-                    {/* <div className="h-50 bg-red-500 rounded-t-md flex justify-center items-center"
-                    style={{ backgroundImage: 'url("/images/teacher/faris.jpg")' }}>
-                      <Image src="/images/teacher/faris.jpg" alt="logo kelas" width={200} height={200}></Image>
-                      <div className="z-1">
+                    <div className="p-5 h-50 bg-black rounded-t-md bg-[url('/images/teacher/faris.jpg')] bg-center bg-contain bg-no-repeat">
+                      <div className="text-white font-bold text-sm bg-primary-500 inline-block px-3 py-1 rounded">
                         {course.level}
                       </div>
-                    </div> */}
-                    
+                    </div>
                   </div>
 
                   <div className="p-5">
-                    <div>
-                      <p className="font-bold mb-2 text-black w-[70%]">
+                    <div className="flex justify-between">
+                      <p className="font-bold text-black w-[70%]">
                         {course.title}
                       </p>
+                      <Link href={`/dashboard/class-dashboard/${course.id}`}>
+                        <button className="bg-primary-500 p-1 rounded self-start">
+                          <ArrowUpRight />
+                        </button>
+                      </Link>
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-gray-600 mt-2">
                       {course.description}
                     </div>
                     <div />
@@ -185,24 +124,6 @@ const AllClassSlider = ({ data }: any) => {
         </div>
       </main>
 
-      {/* <main>
-        <div className="">
-          <Slider {...settings}>
-            {data.map((course: any) => (
-              <div key={course.id}>
-                <div className="p-4 bg-white rounded shadow">
-                  <div className="font-bold mb-2 text-black">
-                    {course.title}
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    {course.description}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </Slider>
-        </div>
-      </main> */}
     </div>
   );
 };
