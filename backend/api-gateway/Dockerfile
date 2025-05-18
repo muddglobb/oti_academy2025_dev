@@ -27,7 +27,7 @@ RUN mkdir -p temp-uploads && chown -R appuser:appgroup temp-uploads
 USER appuser
 
 # Port yang digunakan oleh aplikasi
-EXPOSE 8000
+EXPOSE ${PORT}
 
 # Jalankan aplikasi
 CMD ["node", "src/index.js"]

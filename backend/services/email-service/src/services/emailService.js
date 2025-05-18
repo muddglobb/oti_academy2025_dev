@@ -4,9 +4,20 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import config from '../config/index.js';
 import logger from '../utils/logger.js';
+import dotenv from 'dotenv';
+import { google } from 'googleapis';
+
+// Load environment variables
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// OAuth2 configuration
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET ;
+const REDIRECT_URI = process.env.REDIRECT_URI ;
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN ;
 
 /**
  * Email Service for OmahTI Academy
@@ -14,17 +25,44 @@ const __dirname = path.dirname(__filename);
  */
 class EmailService {
   constructor() {
-    // Create nodemailer transporter
-    this.transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: config.email.user,
-        pass: config.email.password,
-      },
-      tls: {
-        rejectUnauthorized: config.env === 'production',
-      },
-    });
+    this.setupTransporter();
+  }
+  // Setup OAuth2 client and create transporter using Gmail API (HTTPS)
+  async setupTransporter() {
+    try {
+      const oAuth2Client = new google.auth.OAuth2(
+        CLIENT_ID,
+        CLIENT_SECRET,
+        REDIRECT_URI
+      );
+
+      oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+      
+      // Get access token
+      const accessToken = await oAuth2Client.getAccessToken();
+      
+      // Create nodemailer transporter with OAuth2 using service: 'gmail'
+      // This will use Gmail API via HTTPS (port 443) instead of SMTP
+      this.transporter = nodemailer.createTransport({
+        service: 'gmail',  // Uses Gmail API instead of direct SMTP
+        auth: {
+          type: 'OAuth2',
+          user: process.env.EMAIL_USER,
+          clientId: CLIENT_ID,
+          clientSecret: CLIENT_SECRET,
+          refreshToken: REFRESH_TOKEN,
+          accessToken: accessToken.token
+        },
+        // Increase timeout for API connections
+        connectionTimeout: 10000,
+        greetingTimeout: 10000
+      });
+      
+      logger.info('Gmail API transporter set up successfully');
+    } catch (error) {
+      logger.error(`Error setting up Gmail API transporter: ${error.message}`);
+      // Don't throw here, we'll handle it in verification
+    }
     
     // Use more flexible path resolution for templates
     // Check if we're in development or production mode
@@ -37,22 +75,24 @@ class EmailService {
     }
     
     logger.info(`Templates path set to: ${this.templatesBasePath}`);
-    this.from = '"OmahTI Academy 2025" <noreply-omahti-academy@omahti.web.id>';
+    this.from = '"OmahTI Academy 2025" <noreply@academy.omahti.web.id>';
 
     // Verify connection
     this.verifyConnection();
   }
-
   /**
    * Verify connection to email server
    */
   async verifyConnection() {
     try {
       await this.transporter.verify();
-      logger.info('Email server connection established successfully');
+      logger.info('Gmail API connection established successfully');
     } catch (error) {
-      logger.error('Failed to establish connection to email server:', error);
-      throw error;
+      logger.error('Failed to establish connection to Gmail API:', error);
+      // Don't crash the service, we'll retry later
+      logger.info('Will retry connection on first email send attempt');
+      // If we can't verify, we'll set up a retry mechanism
+      this.needsReconnect = true;
     }
   }
 
@@ -130,7 +170,6 @@ class EmailService {
 
     return result;
   }
-
   /**
    * Send an email using a template
    * 
@@ -141,6 +180,13 @@ class EmailService {
     const { to, subject, templateName, variables } = options;
 
     try {
+      // Check if we need to reconnect
+      if (this.needsReconnect || !this.transporter) {
+        logger.info('Trying to reconnect to Gmail API before sending email');
+        await this.setupTransporter();
+        this.needsReconnect = false;
+      }
+
       // Load template
       const template = await this.loadTemplate(templateName);
       
@@ -155,7 +201,7 @@ class EmailService {
         html,
       });
 
-      logger.info(`Email sent successfully: ${info.messageId}`, { 
+      logger.info(`Email sent successfully via Gmail API: ${info.messageId}`, { 
         templateName,
         subject,
         recipients: to
@@ -164,6 +210,16 @@ class EmailService {
       return info;
     } catch (error) {
       logger.error('Failed to send email:', error);
+      
+      // If authentication error, try to refresh transporter
+      if (error.message.includes('auth') || 
+          error.message.includes('credentials') ||
+          error.message.includes('ETIMEDOUT')) {
+        logger.info('Will try to reconnect on next email attempt');
+        this.needsReconnect = true;
+      }
+      
+      // Don't crash the entire service, but do throw so the message can be retried
       throw new Error(`Email sending failed: ${error.message}`);
     }
   }
