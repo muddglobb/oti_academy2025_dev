@@ -1,0 +1,13 @@
+name: oti-academy-material
+services:
+  material-service:
+    container_name: material-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: oti-academy/material-service:latest    
+    ports:
+      - "8003:8003"
+    env_file:
+      - .env
+    restart: unless-stopped

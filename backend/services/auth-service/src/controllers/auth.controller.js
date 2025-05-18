@@ -24,12 +24,7 @@ export const register = asyncHandler(async (req, res) => {
     
     
     res.status(201).json(
-      ApiResponse.success({
-        user: result.user,
-        // Still include tokens in response for backwards compatibility
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken
-      }, 'User registered successfully')
+      ApiResponse.success({ user: result.user }, 'User registered successfully')
     );
   } catch (error) {
     res.status(400).json(
@@ -62,7 +57,7 @@ export const login = asyncHandler(async (req, res) => {
     // Return response after cookies are set
     return res.status(200).json(
       ApiResponse.success(
-        null, 'Logged in successfully')
+        { user: result.user }, 'Logged in successfully')
     );
   } catch (error) {
     res.status(400).json(ApiResponse.error(error.message));

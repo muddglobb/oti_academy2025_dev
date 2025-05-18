@@ -11,11 +11,13 @@ import { initializeRabbitMQ } from './services/rabbitmqService.js';
 
 // Create Express application
 const app = express();
+app.set('trust proxy', 1);
 
 // Apply security middlewares
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
+
 
 // Rate limiting
 const limiter = rateLimit({

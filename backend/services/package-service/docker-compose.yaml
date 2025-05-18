@@ -1,0 +1,13 @@
+name: oti-academy-package
+services:
+  package-service:
+    container_name: package-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: oti-academy/package-service:latest    
+    ports:
+      - "8005:8005"
+    env_file:
+      - .env
+    restart: unless-stopped

@@ -13,6 +13,9 @@ const config = {
   email: {
     user: process.env.EMAIL_USER || 'noreply-omahti-academy@omahti.web.id',
     password: process.env.EMAIL_PASSWORD || '',
+    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.EMAIL_PORT || '587', 10),
+    secure: process.env.EMAIL_SECURE === 'true',
   },
   apiKey: process.env.API_KEY || 'default-api-key-for-dev-only',  rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10), // default 15 minutes (900000 ms)

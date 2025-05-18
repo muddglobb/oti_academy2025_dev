@@ -679,20 +679,7 @@ Authorization: Bearer {{accessToken}}
 ```
 
 
-## 3. Perbedaan User UMUM dan DIKE
-
-### User UMUM:
-- Tidak memerlukan informasi back payment
-- Field-field `backPaymentMethod`, `backAccountNumber`, `backRecipient` akan bernilai `null`
-- Tidak dapat melakukan request back payment
-
-### User DIKE:
-- Harus menyertakan informasi back payment (`backPaymentMethod`, `backAccountNumber`, `backRecipient`)
-- Pilihan `backPaymentMethod`: `BNI`, `GOPAY`, `OVO`, `DANA`
-- Dapat melakukan request back payment setelah pembayaran dibuat
-- Nilai default `backStatus` adalah `REQUESTED`
-
-## 4. Integrasi dengan Enrollment Service
+## 3. Integrasi dengan Enrollment Service
 
 Saat pembayaran diapprove oleh admin (status = `APPROVED`), enrollment service akan menangani pendaftaran course untuk pengguna:
 
@@ -704,7 +691,7 @@ Saat pembayaran diapprove oleh admin (status = `APPROVED`), enrollment service a
    - Course yang dipilih saat pembayaran hanya digunakan sebagai referensi dan validasi untuk paket non-bundle
    - Ini memungkinkan bundle berisi multiple courses tapi menggunakan model payment yang konsisten
 
-## 5. Aturan Validasi Penting
+## 4. Aturan Validasi Penting
 
 1. **Validasi Tipe User dan Tipe Payment:**
    - User dengan tipe DIKE hanya dapat membuat pembayaran dengan tipe DIKE

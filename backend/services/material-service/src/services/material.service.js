@@ -84,9 +84,12 @@ export class MaterialService {
    * @returns {Promise<Object>} Material
    */  static async getMaterialById(id) {
     try {
-      const material = await prisma.material.findUnique({
+    const cacheKey = `material:${id}`;
+    const material = await CacheService.getOrSet(cacheKey, async () => {
+      return prisma.material.findUnique({
         where: { id }
       });
+    });
       
       return this.formatMaterialResponse(material);
     } catch (error) {
