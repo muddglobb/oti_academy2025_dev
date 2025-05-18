@@ -3,6 +3,7 @@ import React from "react";
 // import WelcomeCard from "@/components/dashboard/welcome-card";
 import { WelcomeCard } from "@/components/dashboard/welcome-card";
 import SecondContent from "@/components/dashboard/second-content";
+import SelectClass from "@/components/dashboard/select-class";
 
 // const userData = {
 //   name: "Regina Joan Medea Jati Laksono",
@@ -28,10 +29,11 @@ const enrolledClassData = [
 
 const Dashboard = () => {
   return (
-    <main className="p-6 min-h-screen bg-neutral-900">
+    <main className="p-6 bg-neutral-900">
       {/* <WelcomeCard data={userData} /> */}
       <WelcomeCard />
       <SecondContent data={enrolledClassData} />
+      <SelectClass />
     </main>
   );
 };
