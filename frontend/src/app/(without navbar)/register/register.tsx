@@ -11,7 +11,7 @@ interface FormData {
   name: string;
   password: string;
   confirmPassword: string;
-  nim: string;
+  //nim: string;
 }
 
 export default function Register() {
