@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Container from "@/components/container";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import Logo from "./logo";
 import { ArrowRight } from "lucide-react";
+import Image from "next/image";
+import Cookies from "js-cookie";
 
 const navbarItems = [
   { name: "About Us", href: "/about" },
@@ -14,6 +15,15 @@ const navbarItems = [
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/token")
+      .then((res) => res.json())
+      .then((data) => setToken(data.token || null));
+  }, []);
+
+  console.log("cek: " + token);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -22,20 +32,6 @@ const Navbar = () => {
   return (
     <main className="w-full fixed z-10 backdrop-blur-md">
       <div className="bg-[#06163c] text-white text-center text-sm px-5 py-4">
-        {/* <div className="lg:hidden w-[90%] flex items-center justify-between">
-          <span className="text-left inline-block">
-            <strong>Special Class Bundling</strong> berakhir setelah{" "}
-            <strong>kuota terpenuhi</strong>, jangan sampai ketinggalan!
-          </span>
-
-          <ArrowRight />
-        </div> */}
-        {/* <div className="absolute top-13 right-5 cursor-pointer lg:hidden">
-          <a href="#kembali" className="text-white text-xl">
-            →
-          </a>
-        </div> */}
-
         <div className="flex justify-center items-center gap-2">
           <span>
             <strong>Special Class Bundling</strong> berakhir setelah{" "}
@@ -59,13 +55,20 @@ const Navbar = () => {
               <ArrowRight />
             </Link>
           </button>
-        </div>  
+        </div>
       </div>
 
       <Container className="flex-row items-center justify-between py-4">
         <div className="flex items-end">
-          <Link href="/">
-            <Logo />
+          <Link href={"/"}>
+            <div className="">
+              <Image
+                src={"/images/logo/oti-academy.webp"}
+                width={150}
+                height={40}
+                alt="OmahTI Academy"
+              />
+            </div>
           </Link>
         </div>
         <div className="flex items-end">
@@ -79,16 +82,24 @@ const Navbar = () => {
                 {item.name}
               </a>
             ))}
-            <Link
-              href="/login"
-              className="text-white text-base hover:bg-neutral-200/20 rounded-md lg:px-3 lg:py-2 active:font-bold"
-            >
-              Log In
-            </Link>
+            {!token && (
+              <Link
+                href="/login"
+                className="text-white text-base hover:bg-neutral-200/20 rounded-md lg:px-3 lg:py-2 active:font-bold"
+              >
+                Log In
+              </Link>
+            )}
 
-            <Link href="/register">
-              <Button>Get Started</Button>
-            </Link>
+            {token ? (
+              <Link href="/dashboard">
+                <Button>Dashboard</Button>
+              </Link>
+            ) : (
+              <Link href="/login">
+                <Button>Get Started</Button>
+              </Link>
+            )}
           </nav>
 
           <button

@@ -4,7 +4,6 @@ import "../globals.css";
 import Navbar from "@/components/home/navbar";
 import Footer from "@/components/home/footer";
 
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -31,7 +30,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en">
       <body

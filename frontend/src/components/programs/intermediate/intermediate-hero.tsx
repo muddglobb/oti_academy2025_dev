@@ -49,6 +49,7 @@ const IntermediateHero = ({ hero }: HeroProps) => {
         relative
         w-full
         mt-25
+        xl:mt-14
       "
       >
         {/* bg-[linear-gradient(0deg,rgba(5,12,26,0.8)_0%,rgba(5,12,26,0.2)_100%)] */}

@@ -11,7 +11,7 @@ const EntryClassInfo = ({ classInfo }: ClassInfoProps) => {
 
   return (
     <>
-      <div className="relative w-full h-200 overflow-x-hidden bg-[linear-gradient(0deg,rgba(5,12,26,0.8)_0%,rgba(5,12,26,0.2)_100%)]">
+      <div className="relative w-full h-200 overflow-hidden bg-[linear-gradient(0deg,rgba(5,12,26,0.8)_0%,rgba(5,12,26,0.2)_100%)]">
         <div
           className="absolute inset-0 bg-repeat bg-center -z-10"
           style={{ backgroundImage: "url('/images/space-background.png')" }}
