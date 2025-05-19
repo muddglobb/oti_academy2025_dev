@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const getAccessToken = async () => {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   return cookieStore.get("access_token")?.value || "";
   // return cookies().get("access_token")?.value ?? "";
 };

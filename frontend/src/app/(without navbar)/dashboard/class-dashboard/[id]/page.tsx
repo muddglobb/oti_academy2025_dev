@@ -1,8 +1,29 @@
-import React from "react";
 import ClassCapacity from "@/components/dashboard/class-capacity";
 import ClassInfo from "@/components/dashboard/class-info";
 import VideoTeaser from "@/components/dashboard/video-teaser";
 import TeacherCard from "@/components/dashboard/teacher-card";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+
+type CourseStat = {
+  id: string;
+  title: string;
+  level: string;
+  quota: {
+    total: number;
+    entryQuota: number;
+    bundleQuota: number;
+  };
+  enrollment: {
+    total: number;
+    entryIntermediateCount: number;
+    bundleCount: number;
+  };
+  remaining: {
+    entryIntermediate: number;
+    bundle: number;
+  };
+};
 
 const classInfo: [
   string,
@@ -29,10 +50,22 @@ const classInfo: [
     "10 Modul",
   ],
   [
-    "Web Development",
+    "Software Engineering",
+    "Kevin Antonio | Mentor",
+    "6 Sesi",
+    "Prerequisites",
+    "1 - 15 Juni 2025",
+    "",
+    "Dhimas Putra | Teaching Assistant",
+    "2 Jam/Sesi",
+    "1 - 15 Juni 2025",
+    "10 Modul",
+  ],
+  [
+    "Software Engineering",
     "Dhimas Putra",
     "6 Sesi",
-    "HTML, CSS, JavaScript",
+    "Prerequisites included di Entry",
     "",
     "Beginner",
     "Kevin Antonio",
@@ -64,16 +97,25 @@ const classes = [
     slug: "web-development",
     title: "Web Development",
     desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
-  },
-  {
-    slug: "web-development+software-engineering",
-    title: "Web Development + Software Engineering",
-    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    classInfo: [classInfo[0]],
+    teacherCard: [teacherCard[0]],
+    ClassLevel: "Beginner",
   },
   {
     slug: "software-engineering",
     title: "Software Engineering",
     desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    classInfo: [classInfo[1]],
+    teacherCard: [teacherCard[1]],
+    ClassLevel: "Intermediate",
+  },
+  {
+    slug: "web-development+software-engineering",
+    title: "Web Development + Software Engineering",
+    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    classInfo: [classInfo[0], classInfo[2]],
+    teacherCard: [teacherCard[0], teacherCard[1]],
+    ClassLevel: "Bundle",
   },
 ];
 
@@ -93,17 +135,51 @@ export default async function Page({
       </div>
     );
   }
+
+  const res = await fetch("http://localhost:8000/courses", {
+    cache: "no-store",
+  });
+
+  const courseData = await res.json();
+
+  const findCourseID = Array.isArray(courseData.data)
+    ? (courseData.data as CourseStat[]).find(
+        (course) => course.title === classData.title
+      )
+    : undefined;
+  const courseID = findCourseID ? findCourseID.id : "";
+
   return (
-    <div className="bg-neutral-900 flex flex-col justify-center items-center gap-4 my-4">
-      <ClassCapacity
-        ClassName={classData.title}
-        ClassDesc={classData.desc}
-      ></ClassCapacity>
-      <div className="flex flex-row gap-6 justify-center">
-        <ClassInfo classInfo={classInfo}></ClassInfo>
-        <VideoTeaser />
+    <div
+      className="relative"
+      style={{
+        backgroundImage: "url('/images/space-background.png')",
+        backgroundRepeat: "repeat",
+      }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-neutral-900/80 via-neutral-900/80 to-black/60 pointer-events-none z-0"></div>
+
+      <div className="relative z-10 w-full flex flex-col items-center justify-center py-4 gap-4">
+        <Link
+          href="/dashboard/class-dashboard"
+          className="flex gap-2 bg-primary-900 text-sm font-bold px-3.5 py-2 rounded-[8px] w-fit z-20 self-start ml-10"
+        >
+          <ArrowLeft size={20} color="white" />
+          <p className="text-white">Kembali</p>
+        </Link>
+
+        <ClassCapacity
+          ClassName={classData.title}
+          ClassDesc={classData.desc}
+          ClassLevel={classData.ClassLevel}
+          CourseID={courseID}
+        />
+        <div className="flex flex-row gap-6 justify-center">
+          <ClassInfo classInfo={classData.classInfo} />
+          <VideoTeaser />
+        </div>
+        <TeacherCard teacherCard={classData.teacherCard} />
       </div>
-      <TeacherCard teacherCard={teacherCard} />
     </div>
   );
 }
