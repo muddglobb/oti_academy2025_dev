@@ -33,7 +33,7 @@ const BundleClassInfo = ({
 }: BundleClassInfoProps) => {
   return (
     <>
-      <div className="relative w-full overflow-hidden">
+      <div className="relative w-full overflow-hidden bg-[linear-gradient(0deg,rgba(5,12,26,0.8)_0%,rgba(5,12,26,0.2)_100%)]">
         <div
           className="absolute inset-0 bg-repeat bg-center -z-10"
           style={{ backgroundImage: "url('/images/space-background.png')" }}
@@ -45,7 +45,11 @@ const BundleClassInfo = ({
           style={{ backgroundImage: "url(/images/planet/saturnus.png)" }}
         ></div>
         <section className="flex flex-col gap-7.5  justify-center items-center py-10 bg-no-repeat bg-cover w-full">
-          <p className="text-[2rem] text-center font-bold bg-gradient-to-b from-gray-300 to-gray-400 bg-clip-text text-transparent">
+          <p className="text-center font-bold bg-gradient-to-b from-gray-300 to-gray-400 bg-clip-text text-transparent
+          text-[22px]
+          sm:text-[26px]
+          md:text-[30px]
+          lg:text-[32px]">
             Detailed Information About Our Class
           </p>
           <div className="md:w-4xl w-sm">

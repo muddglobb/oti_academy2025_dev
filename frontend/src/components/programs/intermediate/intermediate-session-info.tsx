@@ -16,7 +16,7 @@ const IntermediateSessionInfo = ({ sessions }: { sessions: SessionData[] }) => {
         items-center
         justify-center
         
-        bg-[linear-gradient(0deg,rgba(5,12,26,0.3)_0%,rgba(5,12,26,0.5)_100%)]
+        bg-[linear-gradient(0deg,rgba(5,12,26,0.8)_0%,rgba(5,12,26,0.8)_100%)]
         relative
     "
     >
