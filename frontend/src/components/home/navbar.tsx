@@ -5,6 +5,7 @@ import Container from "@/components/container";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import Logo from "./logo";
+import { ArrowRight } from "lucide-react";
 
 const navbarItems = [
   { name: "About Us", href: "/about" },
@@ -21,30 +22,44 @@ const Navbar = () => {
   return (
     <main className="w-full fixed z-10 backdrop-blur-md">
       <div className="bg-[#06163c] text-white text-center text-sm px-5 py-4">
-        <div className="lg:hidden pt-10 w-full">
+        {/* <div className="lg:hidden w-[90%] flex items-center justify-between">
           <span className="text-left inline-block">
             <strong>Special Class Bundling</strong> berakhir setelah{" "}
             <strong>kuota terpenuhi</strong>, jangan sampai ketinggalan!
           </span>
-        </div>
-        <div className="absolute top-13 right-5 cursor-pointer lg:hidden">
+
+          <ArrowRight />
+        </div> */}
+        {/* <div className="absolute top-13 right-5 cursor-pointer lg:hidden">
           <a href="#kembali" className="text-white text-xl">
             →
           </a>
-        </div>
+        </div> */}
 
-        <div className="hidden lg:flex justify-center items-center gap-2">
+        <div className="flex justify-center items-center gap-2">
           <span>
             <strong>Special Class Bundling</strong> berakhir setelah{" "}
             <strong>kuota terpenuhi </strong>, jangan sampai ketinggalan!
           </span>
-          <Link
-            href="/special-class"
-            className="underline font-semibold hover:text-blue-300 transition"
-          >
-            Learn More →
-          </Link>
-        </div>
+          <button>
+            <Link
+              href="/programs"
+              className="hidden lg:flex underline font-semibold hover:text-blue-300 transition items-center"
+            >
+              Learn More
+              <ArrowRight />
+            </Link>
+          </button>
+
+          <button>
+            <Link
+              href="/programs"
+              className="lg:hidden underline font-semibold hover:text-blue-300 transition"
+            >
+              <ArrowRight />
+            </Link>
+          </button>
+        </div>  
       </div>
 
       <Container className="flex-row items-center justify-between py-4">

@@ -11,7 +11,9 @@ const ProgramsHero = () => {
         pt-31
       "
     >
-      <div className="flex-col items-center justify-center px-[250px]">
+      <div className="flex-col items-center justify-center 
+      px-10
+      lg:px-60">
         {/* bintang dan planet */}
         <>
           <Image
@@ -47,10 +49,17 @@ const ProgramsHero = () => {
 
         {/* isi */}
         <>
-          <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[46px] font-bold">
+          <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center font-bold
+          text-[22px]
+          sm:text-[28px]
+          md:text-[32px]
+          xl:text-[44px]">
             Jelajahi Beragam Program yang Kami Tawarkan
           </p>
-          <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[27px]">
+          <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center 
+          text-[14px]
+          sm:text-[16px]
+          lg:text-[18px]">
             Dari <span className="font-bold">Beginner hingga Intermediate</span>
             , kami menawarkan program yang mencakup keduanya, lengkap{" "}
             <span className="font-bold">

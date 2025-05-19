@@ -6,12 +6,14 @@ const ClassBundle = () => {
   // bg-[url('/images/background-programs.png')]
   return (
     <div
-      className="w-full h-screen bg-cover bg-center flex flex-col items-center justify-center
+      className="w-full h-200 bg-cover bg-center flex flex-col items-center justify-center
         bg-[linear-gradient(0deg,rgba(5,12,26,0.6)_0%,rgba(5,12,26,0.9)_100%)]
         relative
       "
     >
-      <div className="flex-col items-center justify-center px-[250px]">
+      <div className="flex-col items-center justify-center 
+      px-10
+      lg:px-60">
         {/* bintang dan planet */}
         <>
           <Image
@@ -37,10 +39,14 @@ const ClassBundle = () => {
         {/* isi */}
         <>
           <div className="mb-11">
-            <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[32px] font-bold">
+            <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center 
+            text-[22px]
+            lg:text-[32px] font-bold">
               Nikmati Dua Keuntungan Sekaligus dengan Bundling Kelas Kami
             </p>
-            <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[18px]">
+            <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center 
+            text-[14px]
+            lg:text-[18px]">
               Tingkatkan kemampuanmu dengan paket belajar pemula hingga
               intermediate dari{" "}
               <span className="font-bold">1 Juni - 30 Juni 2025</span>
