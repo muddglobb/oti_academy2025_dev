@@ -6,7 +6,6 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
-import Cookies from "js-cookie";
 
 const navbarItems = [
   { name: "About Us", href: "/about" },
@@ -23,7 +22,7 @@ const Navbar = () => {
       .then((data) => setToken(data.token || null));
   }, []);
 
-  console.log("cek: " + token);
+  // console.log("cek: " + token);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -63,9 +62,9 @@ const Navbar = () => {
           <Link href={"/"}>
             <div className="">
               <Image
-                src={"/images/logo/oti-academy.webp"}
-                width={150}
-                height={40}
+                src={"/images/logo/oti-academy-logo.webp"}
+                width={30}
+                height={30}
                 alt="OmahTI Academy"
               />
             </div>
