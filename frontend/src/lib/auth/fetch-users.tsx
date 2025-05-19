@@ -13,7 +13,7 @@ export async function getUsers() {
     if (!accessToken) {
       redirect("/login"); // ⬅️ langsung redirect jika tidak ada access token
     }
-    const res = await fetch("http://localhost:8000/users/me", {
+    const res = await fetch(`${process.env.BASE_URL}/users/me`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
