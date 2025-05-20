@@ -565,6 +565,29 @@ static async getCourseEnrollmentCount(courseId) {
   }
 }
 
+static async getTotalPaymentsCount(){
+  try {
+    const totalPayments = await prisma.payment.count({
+      where: {
+        status: 'APPROVED' || 'PAID' 
+      }
+    });
+    
+    return {
+      success: true,
+      message: 'Total payments count retrieved successfully',
+      data: totalPayments
+    };
+  } catch (error) {
+    console.error('Error getting total payments count:', error.message);
+    return {
+      success: false,
+      message: 'Failed to get total payments count',
+      data: 0
+    };
+  }
+}
+
 /**
  * Mendapatkan jumlah pendaftaran untuk semua courses
  * @returns {Promise<Object>} Jumlah pendaftaran per course dengan detailnya
@@ -589,11 +612,142 @@ static async getAllCoursesEnrollmentCount() {
           data: []
         };
       }
+        // Get all payments with PAID status (pending approval) that have a direct courseId
+      const directPendingCounts = await prisma.payment.groupBy({
+        by: ['courseId'],
+        where: {
+          status: 'PAID',
+          courseId: {
+            not: null,
+            not: '00000000-0000-0000-0000-000000000000'
+          }
+        },
+        _count: {
+          _all: true
+        }
+      });
+      
+      // Initialize pending counts map with direct course payments
+      const pendingCountsByCourse = new Map();
+      
+      // Process direct course counts and initialize map
+      for (const { courseId, _count } of directPendingCounts) {
+        pendingCountsByCourse.set(courseId, {
+          total: _count._all,
+          entryIntermediateCount: 0,
+          bundleCount: 0
+        });
+      }
+      
+      // Get all direct pending payments to categorize by package type
+      const pendingDirectPayments = await prisma.payment.findMany({
+        where: {
+          status: 'PAID',
+          courseId: {
+            not: null,
+            not: '00000000-0000-0000-0000-000000000000'
+          }
+        },
+        select: {
+          courseId: true,
+          packageId: true
+        }
+      });      // Get bundle pending payments with zero UUID courseId
+      // For bundles, courseId is '00000000-0000-0000-0000-000000000000', not null
+      const bundlePendingPayments = await prisma.payment.findMany({
+        where: {
+          status: 'PAID',
+          courseId: '00000000-0000-0000-0000-000000000000'
+        },
+        select: {
+          id: true,
+          packageId: true
+        }
+      });
+      
+      // Get all relevant package IDs for batch processing
+      const allPackageIds = [
+        ...new Set([
+          ...pendingDirectPayments.map(p => p.packageId),
+          ...bundlePendingPayments.map(p => p.packageId)
+        ])
+      ];
+      
+      // Batch fetch package info
+      const { batchPreloadPackageInfo } = await import('../utils/cache-helper.js');
+      await batchPreloadPackageInfo(allPackageIds, async (packageId) => {
+        return await this.getPackageInfo(packageId);
+      });
+      
+      // Process direct payments by package type
+      for (const payment of pendingDirectPayments) {
+        const packageInfo = await this.getPackageInfo(payment.packageId);
+        const isBundle = packageInfo?.type === 'BUNDLE';
+        
+        // Get existing count or initialize if not exists
+        if (!pendingCountsByCourse.has(payment.courseId)) {
+          pendingCountsByCourse.set(payment.courseId, {
+            total: 1,
+            entryIntermediateCount: 0,
+            bundleCount: 0
+          });
+        }
+        
+        const counts = pendingCountsByCourse.get(payment.courseId);
+        
+        // Update type-specific count
+        if (isBundle) {
+          counts.bundleCount += 1;
+        } else {
+          counts.entryIntermediateCount += 1;
+        }
+      }
+      
+      // Process bundle payments
+      for (const payment of bundlePendingPayments) {
+        const packageInfo = await this.getPackageInfo(payment.packageId);
+        
+        if (packageInfo?.type === 'BUNDLE') {
+          // Get all courses in the bundle
+          const coursesInBundle = await this.getCoursesInPackage(payment.packageId);
+          
+          if (coursesInBundle && Array.isArray(coursesInBundle) && coursesInBundle.length > 0) {
+            // Increment counts for each course in the bundle
+            for (const course of coursesInBundle) {
+              if (course && course.id) {
+                // Initialize or update count for this course
+                if (!pendingCountsByCourse.has(course.id)) {
+                  pendingCountsByCourse.set(course.id, {
+                    total: 1,
+                    entryIntermediateCount: 0,
+                    bundleCount: 1
+                  });
+                } else {
+                  const counts = pendingCountsByCourse.get(course.id);
+                  counts.total += 1;
+                  counts.bundleCount += 1;
+                }
+              }
+            }
+          } else {
+            console.log(`No courses found in bundle package ${payment.packageId}`);
+          }
+        }
+      }
+      
+      // Get total payments count
+      const totalPaymentsResult = await this.getTotalPaymentsCount();
+      const totalPayments = totalPaymentsResult.success ? totalPaymentsResult.data : 0;
       
       // Dapatkan jumlah pendaftaran untuk setiap kursus secara paralel
       // This will use cached getCourseEnrollmentCount results when available
       const enrollmentCountsPromises = allCourses.map(async (course) => {
         const enrollmentCount = await this.getCourseEnrollmentCount(course.id);
+        const pendingCount = pendingCountsByCourse.get(course.id) || {
+          total: 0,
+          entryIntermediateCount: 0,
+          bundleCount: 0
+        };
         
         return {
           id: course.id,
@@ -609,6 +763,16 @@ static async getAllCoursesEnrollmentCount() {
             entryIntermediateCount: enrollmentCount.entryIntermediateCount || 0,
             bundleCount: enrollmentCount.bundleCount || 0
           },
+          pendingPayment: {
+            total: pendingCount.total,
+            entryIntermediateCount: pendingCount.entryIntermediateCount,
+            bundleCount: pendingCount.bundleCount
+          },
+          totalPayment: {
+            total: (enrollmentCount.total || 0) + pendingCount.total,
+            entryIntermediateCount: (enrollmentCount.entryIntermediateCount || 0) + pendingCount.entryIntermediateCount,
+            bundleCount: (enrollmentCount.bundleCount || 0) + pendingCount.bundleCount
+          },
           remaining: {
             entryIntermediate: (course.entryQuota || 0) - (enrollmentCount.entryIntermediateCount || 0),
             bundle: (course.bundleQuota || 0) - (enrollmentCount.bundleCount || 0)
@@ -621,7 +785,8 @@ static async getAllCoursesEnrollmentCount() {
       return {
         success: true,
         message: 'Data jumlah pendaftaran semua kursus berhasil didapatkan',
-        data: enrollmentCounts
+        data: enrollmentCounts,
+        totalPayments: totalPayments
       };
     });
   } catch (error) {
@@ -629,7 +794,8 @@ static async getAllCoursesEnrollmentCount() {
     return {
       success: false,
       message: 'Gagal mendapatkan data jumlah pendaftaran',
-      data: []
+      data: [],
+      totalPayments: 0
     };
   }
 }
