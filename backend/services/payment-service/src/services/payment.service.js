@@ -382,54 +382,155 @@ export class PaymentService {
    * @param {string} courseId - ID course yang akan divalidasi
    * @param {string} packageType - Tipe package (ENTRY, INTERMEDIATE, BUNDLE)
    * @returns {Promise<Object>} Hasil validasi dengan status dan pesan
-   */  static async validateCourseAvailability(courseId, packageType) {
-    try {
-      // Import CourseService at the top level to avoid circular dependencies
-      const { CourseService } = await import('./course.service.js');
-      
-      // Get course information including quota details
-      const course = await CourseService.getCourseById(courseId);
-      if (!course) {
-        return { valid: false, message: 'Kelas tidak ditemukan' };
-      }
-      
-      // Use env variables with fallback to new quota values
-      const entryQuota = parseInt(process.env.ENTRY_QUOTA || '30'); // New entry/intermediate quota
-      const bundleQuota = parseInt(process.env.BUNDLE_QUOTA || '30'); // New bundle quota
-      
-      // If trying to enroll in a bundle but course doesn't support bundles
-      if (packageType === 'BUNDLE' && bundleQuota === 0) {
+   */  
+static async validateCourseAvailability(courseId, packageType) {
+  try {
+    // Import CourseService at the top level to avoid circular dependencies
+    const { CourseService } = await import('./course.service.js');
+    
+    // Get course information including quota details
+    const course = await CourseService.getCourseById(courseId);
+    if (!course) {
+      return { valid: false, message: 'Kelas tidak ditemukan' };
+    }
+    
+    // Use env variables with fallback to new quota values
+    const entryQuota = parseInt(process.env.ENTRY_QUOTA || '30'); // New entry/intermediate quota
+    const bundleQuota = parseInt(process.env.BUNDLE_QUOTA || '30'); // New bundle quota
+    
+    // If trying to enroll in a bundle but course doesn't support bundles
+    if (packageType === 'BUNDLE' && bundleQuota === 0) {
+      return { 
+        valid: false, 
+        message: `Kursus "${course.title}" tidak tersedia dalam paket bundle` 
+      };
+    }
+    
+    // Get both approved and pending enrollment counts for this course
+    const approvedCounts = await this.getCourseEnrollmentCount(courseId);
+    
+    // Also check pending payments (status 'PAID')
+    const pendingCounts = await this.getCoursePendingEnrollmentCount(courseId);
+    
+    // Total counts including pending payments
+    const totalCounts = {
+      total: approvedCounts.total + pendingCounts.total,
+      bundleCount: approvedCounts.bundleCount + pendingCounts.bundleCount,
+      entryIntermediateCount: approvedCounts.entryIntermediateCount + pendingCounts.entryIntermediateCount
+    };
+    
+    // Check against the relevant quota based on package type
+    if (packageType === 'BUNDLE') {
+      if (totalCounts.bundleCount >= bundleQuota) {
         return { 
           valid: false, 
-          message: `Kursus "${course.title}" tidak tersedia dalam paket bundle` 
+          message: `Kuota kelas bundle untuk "${course.title}" sudah penuh (${totalCounts.bundleCount}/${bundleQuota}). Total kuota minimal: ${entryQuota + bundleQuota}` 
         };
       }
-      
-      // Get total approved enrollments for this course
-      const enrollmentCounts = await this.getCourseEnrollmentCount(courseId);
-        // Check against the relevant quota based on package type
-      if (packageType === 'BUNDLE') {
-        if (enrollmentCounts.bundleCount >= bundleQuota) {
-          return { 
-            valid: false, 
-            message: `Kuota kelas bundle untuk "${course.title}" sudah penuh (${enrollmentCounts.bundleCount}/${bundleQuota}). Total kuota minimal: ${entryQuota + bundleQuota}` 
-          };
-        }
-      } else { // ENTRY or INTERMEDIATE
-        if (enrollmentCounts.entryIntermediateCount >= entryQuota) {
-          return { 
-            valid: false, 
-            message: `Kuota kelas ${packageType.toLowerCase()} untuk "${course.title}" sudah penuh (${enrollmentCounts.entryIntermediateCount}/${entryQuota}). Total kuota minimal: ${entryQuota + bundleQuota}` 
-          };
+    } else { // ENTRY or INTERMEDIATE
+      if (totalCounts.entryIntermediateCount >= entryQuota) {
+        return { 
+          valid: false, 
+          message: `Kuota kelas ${packageType.toLowerCase()} untuk "${course.title}" sudah penuh (${totalCounts.entryIntermediateCount}/${entryQuota}). Total kuota minimal: ${entryQuota + bundleQuota}` 
+        };
+      }
+    }
+    
+    return { valid: true };
+  } catch (error) {
+    console.error('Error validating course availability:', error.message);
+    return { valid: false, message: 'Gagal validasi ketersediaan kelas' };
+  }
+}
+
+/**
+ * Mendapatkan jumlah pending payment untuk suatu course berdasarkan tipe package
+ * @param {string} courseId - ID course
+ * @returns {Promise<Object>} Jumlah pending payment per tipe package
+ */
+static async getCoursePendingEnrollmentCount(courseId) {
+  try {
+    // Similar to getCourseEnrollmentCount but for 'PAID' status
+    const packageTypeCache = new Map();
+    const bundleCourseCache = new Map();
+    
+    // 1. Get direct pending payments for this course
+    const directPayments = await prisma.payment.findMany({
+      where: {
+        courseId,
+        status: 'PAID'
+      },
+      select: {
+        id: true,
+        packageId: true,
+        userId: true 
+      }
+    });
+    
+    // 2. Process direct payments
+    const uniquePackageIds = [...new Set(directPayments.map(p => p.packageId))];
+    let entryIntermediateCount = 0;
+    
+    // Get package types
+    await Promise.all(uniquePackageIds.map(async (packageId) => {
+      if (!packageTypeCache.has(packageId)) {
+        const packageInfo = await this.getPackageInfo(packageId);
+        if (packageInfo) {
+          packageTypeCache.set(packageId, packageInfo.type);
         }
       }
-      
-      return { valid: true };
-    } catch (error) {
-      console.error('Error validating course availability:', error.message);
-      return { valid: false, message: 'Gagal validasi ketersediaan kelas' };
+    }));
+    
+    // Count non-bundle pending payments
+    for (const payment of directPayments) {
+      const packageType = packageTypeCache.get(payment.packageId);
+      if (packageType && packageType !== 'BUNDLE') {
+        entryIntermediateCount++;
+      }
     }
+    
+    // 3. Get bundle pending payments
+    const bundlePayments = await prisma.payment.findMany({
+      where: {
+        status: 'PAID',
+        courseId: '00000000-0000-0000-0000-000000000000'
+      },
+      select: {
+        id: true,
+        packageId: true,
+        userId: true 
+      }
+    });
+    
+    // Count pending bundle enrollments
+    let bundleCount = 0;
+    
+    for (const payment of bundlePayments) {
+      const packageType = packageTypeCache.get(payment.packageId) || await this.getPackageType(payment.packageId);
+      
+      if (packageType === 'BUNDLE') {
+        const coursesInBundle = await this.getCoursesInPackage(payment.packageId);
+        const isCourseInBundle = coursesInBundle.some(c => String(c.id) === String(courseId));
+        if (isCourseInBundle) {
+          bundleCount++;
+        }
+      }
+    }
+    
+    return {
+      total: entryIntermediateCount + bundleCount,
+      bundleCount,
+      entryIntermediateCount
+    };
+  } catch (error) {
+    console.error('Error getting course pending enrollment count:', error.message);
+    return {
+      total: 0,
+      bundleCount: 0,
+      entryIntermediateCount: 0
+    };
   }
+}
 
 /**
  * Mendapatkan jumlah pendaftaran untuk suatu course berdasarkan tipe package
