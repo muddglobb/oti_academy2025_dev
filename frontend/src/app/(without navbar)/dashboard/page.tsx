@@ -27,7 +27,8 @@ const enrolledClassData = [
   },
 ];
 
-const Dashboard = () => {
+const Dashboard = async () => {
+  // console.log(users.data.role);
   return (
     <main className="p-6 bg-neutral-900">
       {/* <WelcomeCard data={userData} /> */}

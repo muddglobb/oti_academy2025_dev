@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Container from "@/components/container";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import Logo from "./logo";
+import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 const navbarItems = [
   { name: "About Us", href: "/about" },
@@ -13,6 +14,15 @@ const navbarItems = [
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/token")
+      .then((res) => res.json())
+      .then((data) => setToken(data.token || null));
+  }, []);
+
+  // console.log("cek: " + token);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -21,36 +31,43 @@ const Navbar = () => {
   return (
     <main className="w-full fixed z-10 backdrop-blur-md">
       <div className="bg-[#06163c] text-white text-center text-sm px-5 py-4">
-        <div className="lg:hidden pt-10 w-full">
-          <span className="text-left inline-block">
-            <strong>Special Class Bundling</strong> berakhir setelah{" "}
-            <strong>kuota terpenuhi</strong>, jangan sampai ketinggalan!
-          </span>
-        </div>
-        <div className="absolute top-13 right-5 cursor-pointer lg:hidden">
-          <a href="#kembali" className="text-white text-xl">
-            →
-          </a>
-        </div>
-
-        <div className="hidden lg:flex justify-center items-center gap-2">
+        <div className="flex justify-center items-center gap-2">
           <span>
             <strong>Special Class Bundling</strong> berakhir setelah{" "}
             <strong>kuota terpenuhi </strong>, jangan sampai ketinggalan!
           </span>
-          <Link
-            href="/special-class"
-            className="underline font-semibold hover:text-blue-300 transition"
-          >
-            Learn More →
-          </Link>
+          <button>
+            <Link
+              href="/programs"
+              className="hidden lg:flex underline font-semibold hover:text-blue-300 transition items-center"
+            >
+              Learn More
+              <ArrowRight />
+            </Link>
+          </button>
+
+          <button>
+            <Link
+              href="/programs"
+              className="lg:hidden underline font-semibold hover:text-blue-300 transition"
+            >
+              <ArrowRight />
+            </Link>
+          </button>
         </div>
       </div>
 
       <Container className="flex-row items-center justify-between py-4">
         <div className="flex items-end">
-          <Link href="/">
-            <Logo />
+          <Link href={"/"}>
+            <div className="">
+              <Image
+                src={"/images/logo/oti-academy-logo.webp"}
+                width={30}
+                height={30}
+                alt="OmahTI Academy"
+              />
+            </div>
           </Link>
         </div>
         <div className="flex items-end">
@@ -64,16 +81,24 @@ const Navbar = () => {
                 {item.name}
               </a>
             ))}
-            <Link
-              href="/login"
-              className="text-white text-base hover:bg-neutral-200/20 rounded-md lg:px-3 lg:py-2 active:font-bold"
-            >
-              Log In
-            </Link>
+            {!token && (
+              <Link
+                href="/login"
+                className="text-white text-base hover:bg-neutral-200/20 rounded-md lg:px-3 lg:py-2 active:font-bold"
+              >
+                Log In
+              </Link>
+            )}
 
-            <Link href="/register">
-              <Button>Get Started</Button>
-            </Link>
+            {token ? (
+              <Link href="/dashboard">
+                <Button>Dashboard</Button>
+              </Link>
+            ) : (
+              <Link href="/login">
+                <Button>Get Started</Button>
+              </Link>
+            )}
           </nav>
 
           <button

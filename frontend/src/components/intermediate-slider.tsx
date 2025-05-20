@@ -62,7 +62,7 @@ const IntermediateSlider = () => {
   };
 
   return (
-    <div className="relative xl:max-w-332 lg:max-w-250 md:max-w-200 sm: max-w-180">
+    <div className="relative max-w-90 sm:max-w-140 md:max-w-180 lg:max-w-245 xl:max-w-300 2xl:max-w-330">
       <Slider {...settings}>
         {bundleData.map((card, index) => (
           <div key={index} className="!w-[297px] mr-11">

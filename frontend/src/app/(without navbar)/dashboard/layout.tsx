@@ -3,6 +3,8 @@ import React from "react";
 import Sidebar from "@/components/dashboard/sidebar";
 import MiniSidebar from "@/components/dashboard/mini-sidebar";
 import { DashboardHeader } from "@/components/dashboard/header";
+import { redirect } from "next/navigation";
+import { notAdmin } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Dashboard OmahTI Academy",
@@ -14,6 +16,15 @@ export default function TrollLayout({
 }: {
   children: React.ReactNode;
 }) {
+  //mencegah admin akses dashboard siswa
+  try{
+    notAdmin();
+    } catch (err) {
+      if ((err as Error).message === "NO_TOKEN") {
+        return redirect("/login");
+      }
+      return redirect("/admin-page");
+    }
   return (
     <div className="flex text-white">
       {/* <Sidebar /> */}

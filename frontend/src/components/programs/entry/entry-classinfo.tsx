@@ -1,18 +1,6 @@
 import React from "react";
 import Image from "next/legacy/image";
 import MentorCard from "@/components/programs/intermediate/mentor-card";
-// import EntrySessionInfo from "./entry-sessioninfo";
-
-// type EntryClassInfoProps = {
-//   date: string;
-//   sesi: string;
-//   jam: string;
-//   modul: string;
-//   mentor: string;
-//   mentorImage: string;
-//   mentorDesc: string;
-//   mentorLink: string;
-// };
 type ClassInfoProps = {
   classInfo: [string, string, string, string, string, string, string, string];
 };
@@ -23,7 +11,7 @@ const EntryClassInfo = ({ classInfo }: ClassInfoProps) => {
 
   return (
     <>
-      <div className="relative w-full overflow-hidden">
+      <div className="relative w-full h-200 overflow-hidden bg-[linear-gradient(0deg,rgba(5,12,26,0.8)_0%,rgba(5,12,26,0.2)_100%)]">
         <div
           className="absolute inset-0 bg-repeat bg-center -z-10"
           style={{ backgroundImage: "url('/images/space-background.png')" }}
@@ -31,11 +19,13 @@ const EntryClassInfo = ({ classInfo }: ClassInfoProps) => {
           <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 via-neutral-900/10 to-neutral-900/50 -z-20"></div>
         </div>
         <div
-          className="absolute w-3/4 h-3/4 top-2 right-0 bg-right -mr-[40%] -mt-[10%] bg-contain bg-no-repeat -z-10 scale-x-[-1] rotate-[-35deg] brightness-30"
+          className="absolute w-3/4 h-3/4 top-2 right-0 bg-right -mr-[40%] -mt-[5%] bg-contain bg-no-repeat -z-10 scale-x-[-1] rotate-[-35deg] brightness-30"
           style={{ backgroundImage: "url(/images/planet/saturnus.png)" }}
         ></div>
         <section className="flex flex-col gap-7.5  justify-center items-center py-10 bg-no-repeat bg-cover w-full">
-          <p className="text-[2rem] text-center font-bold bg-gradient-to-b from-gray-300 to-gray-400 bg-clip-text text-transparent w-md md:w-full">
+          <p className="text-center font-bold bg-gradient-to-b from-gray-300 to-gray-400 bg-clip-text text-transparent w-md md:w-full
+          text-[22px]
+          md:text-[32px]">
             Detailed Information About Our Class
           </p>
           <div className="md:w-4xl w-sm">

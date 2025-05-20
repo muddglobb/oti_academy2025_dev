@@ -5,7 +5,7 @@ import { getAccessToken } from "../auth/fetch-users";
 export async function getCourses() {
   try {
     const accessToken = await getAccessToken();
-    const res = await fetch("http://localhost:8000/courses", {
+    const res = await fetch(`${process.env.BASE_URL}/courses`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
