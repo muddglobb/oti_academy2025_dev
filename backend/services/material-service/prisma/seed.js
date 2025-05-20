@@ -48,12 +48,7 @@ async function fetchCoursesFromCourseService() {
     // Try multiple potential service URLs
   const possibleServiceUrls = [
     process.env.COURSE_SERVICE_URL,
-    'http://course-service-api:8002',
-    'http://course-service:8002',
-    'http://localhost:8002',
-    'http://host.docker.internal:8002',  // For Docker on Windows/Mac
-    'http://172.18.0.13:8002',           // Direct IP address if discovered from docker network
-    'http://course-service.default.svc.cluster.local:8002' // Kubernetes service DNS
+    'http://course-service-api:8002', 
   ].filter(Boolean); // Remove undefined values
   
   const serviceToken = generateServiceToken();

@@ -40,4 +40,4 @@ RUN npx prisma generate
 EXPOSE 8003
 
 # Start command with schema push for development (similar to auth-service)
-CMD sh -c "npx prisma db push && node prisma/seed.js  && node src/index.js"
+CMD sh -c "npx prisma db push --accept-data-loss && node prisma/seed.js  && node src/index.js"

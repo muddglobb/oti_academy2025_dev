@@ -8,7 +8,7 @@ export const CACHE_CONFIG = {
   ttl: {
     packages: 15 * 60, // 15 minutes
     courses: 15 * 60, // 15 minutes
-    enrollments: 5 * 60, // 5 minutes
+    enrollments: 1 * 60, // 1 minutes
     users: 30 * 60, // 30 minutes
     default: 5 * 60 // 5 minutes default
   },
