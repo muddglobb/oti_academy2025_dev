@@ -1,9 +1,8 @@
-import React from 'react'
-
-const PAGE = () => {
+export default function AdminPage() {
   return (
-    <div className="text-white">PAGE</div>
+    <div className="p-8">
+      <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
+      {/* konten admin */}
+    </div>
   )
 }
-
-export default PAGE
