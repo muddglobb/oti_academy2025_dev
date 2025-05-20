@@ -29,7 +29,8 @@ const ClassCapacity = async ({
 
   const currentCount = apiData.data?.enrollments?.entryIntermediateCount ?? 0;
   const capacity = apiData.data?.quota?.entryIntermediateQuota ?? 1;
-  const percentage = apiData.data?.percentageFilled ?? 0;
+  const percentage =
+    capacity > 0 ? Math.round((currentCount / capacity) * 100) : 0;
 
   return (
     <div className="flex flex-col gap-[5px] ">
@@ -37,7 +38,7 @@ const ClassCapacity = async ({
         Class {"> "} {ClassName}
       </p>
       <div
-        className="w-270 h-58 border-sol border-2 border-neutral-500 rounded-[20px] p-5 flex flex-col gap-3"
+        className="border-sol border-2 border-neutral-500 rounded-[20px] p-5 flex flex-col gap-3"
         style={{
           backgroundImage: "url('/images/background-class-capacity.png')",
           backgroundSize: "cover",

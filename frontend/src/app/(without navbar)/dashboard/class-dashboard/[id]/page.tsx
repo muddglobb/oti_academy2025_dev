@@ -215,7 +215,7 @@ export default async function Page({
 
   return (
     <div
-      className="relative"
+      className="relative mx-4"
       style={{
         backgroundImage: "url('/images/space-background.png')",
         backgroundRepeat: "repeat",
@@ -238,25 +238,32 @@ export default async function Page({
           ClassLevel={classData.ClassLevel}
           CourseID={courseID}
         />
-
-        {classData.classInfo.length > 1 && (
-          <>
-            <div className="flex flex-row gap-6">
-              <ClassInfo classInfo={classData.classInfo} />
+        <div className="hidden sm:block">
+          {classData.classInfo.length > 1 && (
+            <>
+              <div className="flex flex-row gap-6">
+                <ClassInfo classInfo={classData.classInfo} />
+                <VideoTeaser />
+              </div>
+              <TeacherCard teacherCard={classData.teacherCard} />
+            </>
+          )}
+          {classData.classInfo.length === 1 && (
+            <div className="flex flex-row gap-6 items-stretch">
+              <div className="flex flex-col gap-3">
+                <ClassInfo classInfo={classData.classInfo} />
+                <TeacherCard teacherCard={classData.teacherCard} />
+              </div>
               <VideoTeaser />
             </div>
-            <TeacherCard teacherCard={classData.teacherCard} />
-          </>
-        )}
-        {classData.classInfo.length === 1 && (
-          <div className="flex flex-row gap-6 items-stretch">
-            <div className="flex flex-col gap-3">
-              <ClassInfo classInfo={classData.classInfo} />
-              <TeacherCard teacherCard={classData.teacherCard} />
-            </div>
-            <VideoTeaser />
-          </div>
-        )}
+          )}
+        </div>
+
+        <div className="sm:hidden flex flex-col gap-6">
+          <VideoTeaser />
+          <ClassInfo classInfo={classData.classInfo} />
+          <TeacherCard teacherCard={classData.teacherCard} />
+        </div>
       </div>
     </div>
   );
