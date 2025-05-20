@@ -26,23 +26,28 @@ export default function Login() {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:8000/auth/login", {
+      // const res = await fetch("http://localhost:8000/auth/login", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
         credentials: "include", // cookie HTTP-only
       });
 
-      console.log("RES", res)
+      const data = await res.json(); // ambil pesan error
+      // console.log(data.data.user.role);
+      const ROLE = data.data.user.role;
+      // console.log("RES", res)
       if (res.ok) {
-        console.log("CEKKKK" + res.headers);
-        console.log("Login berhasil!");
-        router.push("/dashboard");
+        // console.log("CEKKKK" + res.headers);
+        // console.log("Login berhasil!");\
+        if(ROLE === "ADMIN") router.push("/admin-page");
+        else router.push("/dashboard");
         return;
       }
 
-      const data = await res.json(); // ambil pesan error
-      console.log(data);
+      // const data = await res.json(); // ambil pesan error
+      // console.log(data);
       if (data.message === "User not found") {
         setErrorMessage("Kamu belum punya akun. Silakan daftar terlebih dulu.");
       } else if (data.message === "Incorrect password") {

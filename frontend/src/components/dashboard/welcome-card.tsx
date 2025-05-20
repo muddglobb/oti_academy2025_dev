@@ -4,7 +4,7 @@ import { getUsers } from "@/lib/auth/fetch-users";
 
 export async function WelcomeCard() {
   const users = await getUsers();
-  console.log("Data pengguna:", users);
+  // console.log("Data pengguna:", users);
 
   return (
     <div>

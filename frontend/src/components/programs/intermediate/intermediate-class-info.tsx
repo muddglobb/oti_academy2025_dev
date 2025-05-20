@@ -39,7 +39,7 @@ const IntermediateClassInfo = ({ classInfo }: ClassInfoProps) => {
   return (
     <div
       className="
-        relative w-full overflow-hidden
+        relative w-full overflow-hidden bg-[linear-gradient(0deg,rgba(5,12,26,0.8)_0%,rgba(5,12,26,0.2)_100%)]
       "
     >
       <div
@@ -76,11 +76,6 @@ const IntermediateClassInfo = ({ classInfo }: ClassInfoProps) => {
         <div className="px-4">
           <div className="flex gap-6 flex-wrap justify-center mb-6">
             <MentorCard
-              // name="Faris Alamsyah"
-              // imageUrl="/images/teacher/faris.jpg"
-              // role="Mentor"
-              // description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?"
-              // linkedin="https://www.linkedin.com/in/dhimas-sulistio/"
               name={mentor}
               imageUrl={mentorImage}
               role="Mentor"
@@ -89,11 +84,6 @@ const IntermediateClassInfo = ({ classInfo }: ClassInfoProps) => {
             />
 
             <MentorCard
-              // name="Hafidz Wahfi"
-              // imageUrl="/images/class-profile/hako.jpg"
-              // role="Teaching Assistant"
-              // description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?"
-              // linkedin="https://www.linkedin.com/in/dhimas-sulistio/"
               name={TA}
               imageUrl={TAImage}
               role="Teaching Assistant"
@@ -104,8 +94,12 @@ const IntermediateClassInfo = ({ classInfo }: ClassInfoProps) => {
 
           <div
             className="text-white flex flex-col gap-2.5 w-auto
-          text-[12px]
-          md:text-[14px]
+            px-37
+            md:px-15
+            lg:px-46
+            xl:px-108
+            text-[12px]
+            md:text-[14px]
           "
           >
             <div className="flex flex-col gap-2.5">

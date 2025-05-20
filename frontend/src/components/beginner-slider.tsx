@@ -87,7 +87,7 @@ const BeginnerSlider = () => {
   return (
     // <div className="flex items-center flex-wrap gap-10 justify-center">
     // <div className="relative w-full px-5">
-      <div className="relative xl:max-w-332 lg:max-w-250 md:max-w-200 sm: max-w-180">
+      <div className="relative max-w-90 sm:max-w-140 md:max-w-180 lg:max-w-245 xl:max-w-300 2xl:max-w-330">
       <Slider {...settings}>
         {beginnerData.map((card, index) => (
           <div
