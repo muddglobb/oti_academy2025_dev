@@ -3,11 +3,34 @@
 import React from "react";
 import { LogOut, Clipboard, House, Book, Info } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 
 const Sidebar = () => {
+  const router = useRouter();
   const pathname = usePathname();
+
+const handleLogout = async () => {
+  try {
+    const res = await fetch("/api/logout", {
+      method: "POST",
+      credentials: "include", 
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    
+    if (res.ok) {
+      console.log("Logout sukses");
+      router.push("/");
+    } else {
+      const errorData = await res.json();
+      console.error("Logout gagal:", res.status, errorData.message);
+    }
+  } catch (err) {
+    console.error("Error saat logout:", err);
+  }
+};
 
   return (
     <div className="w-62 bg-gray-950 flex flex-col border-r border-gray-800 fixed top-0 left-0 h-screen items-center">
@@ -90,7 +113,9 @@ const Sidebar = () => {
       </nav>
 
       <div className="mt-auto p-2 w-full">
-        <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-600 text-gray-400 rounded hover:bg-gray-800">
+        <button 
+        onClick={handleLogout}
+        className="w-full flex items-center justify-center px-4 py-2 border border-gray-600 text-gray-400 rounded hover:bg-gray-800 cursor-pointer">
           <LogOut size={16} className="mr-2" />
           Log Out
         </button>
