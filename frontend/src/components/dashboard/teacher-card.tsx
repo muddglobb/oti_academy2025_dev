@@ -18,10 +18,10 @@ const TeacherCard = ({ teacherCard }: { teacherCard: TeacherCardData[] }) => {
       <p className="text-lg text-success-50 border-b-2 border-neutral-500 pb-2">
         Teaching Assistant & Mentor
       </p>
-      <div className="flex flex-row gap-4 mt-4">
+      <div className="flex flex-row gap-15 mt-2">
         {teacherCard.map(([name, role, imageUrl, linkedin, desc], index) => (
           <div key={index}>
-            <div className="w-128 h-34 flex flex-row gap-4 bg-neutral-50 text-neutral-900 rounded-[10px]">
+            <div className="w-122 h-34 flex flex-row gap-4 bg-neutral-50 text-neutral-900 rounded-[10px]">
               <div
                 className="w-34 h-34 bg-cover bg-center bg-no-repeat flex rounded-l-[10px]"
                 style={{

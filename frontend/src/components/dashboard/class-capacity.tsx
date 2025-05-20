@@ -27,8 +27,8 @@ const ClassCapacity = async ({
   });
   const apiData = await res.json();
 
-  const currentCount = apiData.data?.enrollments?.total ?? 0;
-  const capacity = apiData.data?.quota?.total ?? 1;
+  const currentCount = apiData.data?.enrollments?.entryIntermediateCount ?? 0;
+  const capacity = apiData.data?.quota?.entryIntermediateQuota ?? 1;
   const percentage = apiData.data?.percentageFilled ?? 0;
 
   return (

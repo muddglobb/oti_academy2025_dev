@@ -110,6 +110,70 @@ const classes = [
     ClassLevel: "Intermediate",
   },
   {
+    slug: "data-science&artificial-intelligence",
+    title: "Data Science & Artificial Intelligence",
+    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    classInfo: [classInfo[1]],
+    teacherCard: [teacherCard[1]],
+    ClassLevel: "Intermediate",
+  },
+  {
+    slug: "ui-ux",
+    title: "UI/UX",
+    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    classInfo: [classInfo[1]],
+    teacherCard: [teacherCard[1]],
+    ClassLevel: "Intermediate",
+  },
+  {
+    slug: "cyber-security",
+    title: "Cyber Security",
+    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    classInfo: [classInfo[1]],
+    teacherCard: [teacherCard[1]],
+    ClassLevel: "Intermediate",
+  },
+  {
+    slug: "basic-python",
+    title: "Basic Python",
+    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    classInfo: [classInfo[1]],
+    teacherCard: [teacherCard[1]],
+    ClassLevel: "Entry",
+  },
+  {
+    slug: "competitive-programming",
+    title: "Competitive Programming",
+    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    classInfo: [classInfo[1]],
+    teacherCard: [teacherCard[1]],
+    ClassLevel: "Intermediate",
+  },
+  {
+    slug: "game-development",
+    title: "Game Development",
+    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    classInfo: [classInfo[1]],
+    teacherCard: [teacherCard[1]],
+    ClassLevel: "Entry",
+  },
+  {
+    slug: "fundamental-cyber-security",
+    title: "Fundamental Cyber Security",
+    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    classInfo: [classInfo[1]],
+    teacherCard: [teacherCard[1]],
+    ClassLevel: "Intermediate",
+  },
+  {
+    slug: "graphic-design",
+    title: "Graphic Design",
+    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    classInfo: [classInfo[1]],
+    teacherCard: [teacherCard[1]],
+    ClassLevel: "Entry",
+  },
+  {
     slug: "web-development+software-engineering",
     title: "Web Development + Software Engineering",
     desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
@@ -174,11 +238,25 @@ export default async function Page({
           ClassLevel={classData.ClassLevel}
           CourseID={courseID}
         />
-        <div className="flex flex-row gap-6 justify-center">
-          <ClassInfo classInfo={classData.classInfo} />
-          <VideoTeaser />
-        </div>
-        <TeacherCard teacherCard={classData.teacherCard} />
+
+        {classData.classInfo.length > 1 && (
+          <>
+            <div className="flex flex-row gap-6">
+              <ClassInfo classInfo={classData.classInfo} />
+              <VideoTeaser />
+            </div>
+            <TeacherCard teacherCard={classData.teacherCard} />
+          </>
+        )}
+        {classData.classInfo.length === 1 && (
+          <div className="flex flex-row gap-6 items-stretch">
+            <div className="flex flex-col gap-3">
+              <ClassInfo classInfo={classData.classInfo} />
+              <TeacherCard teacherCard={classData.teacherCard} />
+            </div>
+            <VideoTeaser />
+          </div>
+        )}
       </div>
     </div>
   );
