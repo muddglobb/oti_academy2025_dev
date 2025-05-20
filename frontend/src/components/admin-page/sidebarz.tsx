@@ -33,7 +33,7 @@ const Sidebarz = () => {
   };
 
   return (
-    <div className="w-62 bg-neutral-50 flex flex-col border-r h-screen items-center">
+    <div className="w-62 bg-neutral-50 flex flex-col border-r fixed h-screen items-center">
       <Link href={"/"}>
         <div className="pt-6.5">
           {/* <h1 className="text-xl font-bold">OmahTI</h1>
