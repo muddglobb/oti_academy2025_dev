@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import React from "react";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
+import Sidebarz from "@/components/admin-page/sidebarz";
+import { Headerz } from "@/components/admin-page/headerz";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard OmahTI Academy",
@@ -22,5 +24,19 @@ export default function TrollLayout({
     }
     return redirect("/");
   }
-  return <div className="flex text-white">{children}</div>;
+  return (
+    <div className="flex">
+      <aside className="w-62">
+        <Sidebarz />
+      </aside>
+      <main className="bg-neutral-200 flex-1">
+        <div className="flex text-neutral-900">
+          <div className="flex-grow">
+            <Headerz />
+            {children}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
 }
