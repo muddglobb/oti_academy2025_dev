@@ -2,6 +2,7 @@ import { fetchPackage , fetchCourse} from "@/lib/package/fetch-package";
 import React from "react";
 import PackageCard from "@/components/dashboard/package-card";
 import BundleCard from "@/components/dashboard/bundle-card";
+import Container from "@/components/container";
 
 // Define the PackageType interface
 type PackageType = {
@@ -71,45 +72,49 @@ export default async function ClassDashboard() {
       });
 
     return (
-      <div className="container mx-auto p-6">
+      <Container className="">
         <div>
-          <div className="flex flex-col border rounded-lg p-4 mb-4 grid gap-6 grid-cols-2">
-          {/* Filter and render bundle packages using BundleCard */}
-          {modifiedPackages
-            .filter(pkg => pkg.type === "BUNDLE")
-            .map(bundlePkg => (
-              <BundleCard 
-                key={bundlePkg.id} 
-                pkg={bundlePkg} 
-                course={{
-                  packageId: bundlePkg.id,
-                  courseId: bundlePkg.courses?.[0]?.courseId || "",
-                  title: bundlePkg.courses?.[0]?.title || bundlePkg.name,
-                  description: bundlePkg.courses?.[0]?.description || "",
-                  level: "ENTRY"
-                }} 
-              />
-            ))}
+          <div className="flex flex-col border-2 rounded-[20px] border-neutral-500 p-5">
+            <h1 className="font-bold text-[18px] border-b-2 border-neutral-500 pb-3">Bundle Class</h1>
+          <div className="grid gap-5 grid-cols-1 xl:grid-cols-2 pt-4">
+            {/* Filter and render bundle packages using BundleCard */}
+            {modifiedPackages
+              .filter(pkg => pkg.type === "BUNDLE")
+              .map(bundlePkg => (
+                <BundleCard 
+                  key={bundlePkg.id} 
+                  pkg={bundlePkg} 
+                  course={{
+                    packageId: bundlePkg.id,
+                    courseId: bundlePkg.courses?.[0]?.courseId || "",
+                    title: bundlePkg.courses?.[0]?.title || bundlePkg.name,
+                    description: bundlePkg.courses?.[0]?.description || "",
+                    level: "ENTRY"
+                  }} 
+                />
+              ))}
+            </div>
           </div>
-            
-          {/* Filter and render non-bundle packages using PackageCard */}
-          {modifiedPackages
-            .filter(pkg => pkg.type !== "BUNDLE")
-            .map((pkg) => (
-              <PackageCard 
-                key={pkg.id} 
-                pkg={pkg} 
-                course={{
-                  packageId: "",
-                  courseId: "",
-                  title: "",
-                  description: "",
-                  level: "ENTRY"
-                }} 
-              />
-            ))}
-        </div>
-      </div>
+              
+              
+            {/* Filter and render non-bundle packages using PackageCard */}
+            {modifiedPackages
+              .filter(pkg => pkg.type !== "BUNDLE")
+              .map((pkg) => (
+                <PackageCard 
+                  key={pkg.id} 
+                  pkg={pkg} 
+                  course={{
+                    packageId: "",
+                    courseId: "",
+                    title: "",
+                    description: "",
+                    level: "ENTRY"
+                  }} 
+                />
+              ))}
+          </div>
+      </Container>
     );
   } catch (error) {
     console.error("Error fetching packages:", error);
