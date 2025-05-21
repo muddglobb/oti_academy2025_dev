@@ -666,25 +666,72 @@ static async getCourseEnrollmentCount(courseId) {
   }
 }
 
-static async getTotalPaymentsCount(){
+// Get total payments count with optimized performance
+static async getPaymentsCounts() {
   try {
-    const totalPayments = await prisma.payment.count({
-      where: {
-        status: 'APPROVED' || 'PAID' 
+    // 1. Fetch all payments with their packageId in one query
+    const payments = await prisma.payment.findMany({
+      select: {
+        status: true,
+        packageId: true
       }
     });
-    
+
+    // 2. Extract unique package IDs to batch fetch package info
+    const uniquePackageIds = [...new Set(payments.map(p => p.packageId))];
+    const packageTypeMap = new Map();
+
+    // 3. Batch preload package info to minimize API calls
+    const { batchPreloadPackageInfo } = await import('../utils/cache-helper.js');
+    await batchPreloadPackageInfo(uniquePackageIds, async (packageId) => {
+      return await this.getPackageInfo(packageId);
+    });
+
+    // 4. Load package types into map (will use cache from previous step)
+    await Promise.all(uniquePackageIds.map(async (packageId) => {
+      const packageInfo = await this.getPackageInfo(packageId);
+      if (packageInfo) {
+        packageTypeMap.set(packageId, packageInfo.type);
+      }
+    }));
+
+    // 5. Count with optimized logic
+    let totalCount = 0;
+    let approvedCount = 0;
+    let pendingCount = 0;
+
+    for (const payment of payments) {
+      const packageType = packageTypeMap.get(payment.packageId);
+      const weightFactor = packageType === 'BUNDLE' ? 2 : 1;
+
+      totalCount += weightFactor;
+      
+      if (payment.status === 'APPROVED') {
+        approvedCount += weightFactor;
+      } else if (payment.status === 'PAID') {
+        pendingCount += weightFactor;
+      }
+    }
+
     return {
       success: true,
-      message: 'Total payments count retrieved successfully',
-      data: totalPayments
+      message: 'Payment counts retrieved successfully',
+      data: {
+        total: totalCount,
+        approved: approvedCount,
+        pending: pendingCount
+      }
     };
   } catch (error) {
-    console.error('Error getting total payments count:', error.message);
+    console.error('Error getting payment counts:', error.message);
     return {
       success: false,
-      message: 'Failed to get total payments count',
-      data: 0
+      message: 'Failed to get payment counts',
+      data: {
+        total: 0,
+        approved: 0,
+        pending: 0
+      }
     };
   }
 }
@@ -836,9 +883,14 @@ static async getAllCoursesEnrollmentCount() {
         }
       }
       
-      // Get total payments count
-      const totalPaymentsResult = await this.getTotalPaymentsCount();
-      const totalPayments = totalPaymentsResult.success ? totalPaymentsResult.data : 0;
+
+            // Get payment counts using the getPaymentsCounts function
+      const paymentCountsResult = await this.getPaymentsCounts();
+      const paymentCounts = paymentCountsResult.success ? paymentCountsResult.data : {
+        total: 0,
+        approved: 0,
+        pending: 0
+      };
       
       // Dapatkan jumlah pendaftaran untuk setiap kursus secara paralel
       // This will use cached getCourseEnrollmentCount results when available
@@ -887,7 +939,7 @@ static async getAllCoursesEnrollmentCount() {
         success: true,
         message: 'Data jumlah pendaftaran semua kursus berhasil didapatkan',
         data: enrollmentCounts,
-        totalPayments: totalPayments
+        paymentCounts: paymentCounts  
       };
     });
   } catch (error) {
@@ -896,10 +948,30 @@ static async getAllCoursesEnrollmentCount() {
       success: false,
       message: 'Gagal mendapatkan data jumlah pendaftaran',
       data: [],
-      totalPayments: 0
+      paymentCounts: 0
     };
   }
 }
+
+  static async getNeedToApprovePayments() {
+    try {
+      // Get all payments that are pending approval
+      const payments = await prisma.payment.findMany({
+        where: {
+          status: 'PAID'
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      });
+
+      // Enhance payments with package info and price
+      return this.enhancePaymentsWithPrice(payments);
+    } catch (error) {
+      console.error('Error getting payments to approve:', error.message);
+      return [];
+    }
+  }
 
   /**
    * Get user's existing payments with package information

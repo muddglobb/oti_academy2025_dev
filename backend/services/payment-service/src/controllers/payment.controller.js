@@ -663,10 +663,13 @@ export const getAllCoursesEnrollmentStats = async (req, res) => {
         ApiResponse.error(enrollmentStats.message)
       );
     }
-    
-    // Return successful response
+      // Return successful response with payment counts in meta
     res.status(200).json(
-      ApiResponse.success(enrollmentStats.data, enrollmentStats.message)
+      ApiResponse.success(
+        enrollmentStats.data, 
+        enrollmentStats.message, 
+        { paymentCounts: enrollmentStats.paymentCounts }
+      )
     );
   } catch (error) {
     console.error('Error getting all courses enrollment stats:', error);
@@ -675,3 +678,24 @@ export const getAllCoursesEnrollmentStats = async (req, res) => {
     );
   }
 };
+
+export const getNeedToApprovePayments = async (req, res) => {
+  try{
+    const payments = await PaymentService.getNeedToApprovePayments();
+    
+    if (!payments) {
+      return res.status(404).json(
+        ApiResponse.error('No payments found')
+      );
+    }
+    
+    res.status(200).json(
+      ApiResponse.success(payments, 'Payments retrieved successfully')
+    );
+  } catch (error) {
+    console.error('Error fetching payments:', error);
+    res.status(500).json(
+      ApiResponse.error('An unexpected error occurred while processing the request')
+    );
+  }
+}
