@@ -30,21 +30,6 @@ const getCourseImage = (title: string): string => {
     }
 };
 
-const getBundleImage = (name: string): string => {
-    switch (name) {
-        case "Bundle Python + Data Science & Artificial Intelligence":
-            return "/logo.jpeg";
-        case "Bundle Graphic Design + UI/UX":
-            return "/images/class-profile/hako.jpg";
-        case "Bundle Fundamental Cyber Security + Cyber Security":
-            return "/logo.jpeg";
-        case "Bundle Web Development + Software Engineering":
-            return "/logo.jpeg";
-        default:
-            return "/images/course-placeholder.jpg";
-    }
-};
-
 const getTeacherPic = (title: string): string => {
     switch (title) {
         case "Basic Python":
@@ -77,30 +62,15 @@ const getMentorPic = (title: string): string => {
     switch (title) {
         // intermediate
         case "Software Engineering":
-            return "/images/teacher/faris.jpg";
+            return "/images/class-profile/hako.jpg";
         case "Data Science & Artificial Intelligence":
-            return "/images/teacher/faris.jpg";
+            return "/images/class-profile/hako.jpg";
         case "UI/UX":
-            return "/images/teacher/faris.jpg";
+            return "/images/class-profile/hako.jpg";
         case "Cyber Security":
-            return "/images/teacher/faris.jpg";
+            return "/images/class-profile/hako.jpg";
         default:
-            return "/images/teacher/faris.jpg"; 
-    }
-};
-
-const getBundleDesc = (name: string): string => {
-    switch (name) {
-        case "Bundle Python + Data Science & Artificial Intelligence":
-            return "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti";
-        case "Bundle Graphic Design + UI/UX":
-            return "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.";
-        case "Bundle Fundamental Cyber Security + Cyber Security":
-            return "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.";
-        case "Bundle Web Development + Software Engineering":
-            return "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable.";
-        default:
-            return "/images/course-placeholder.jpg";
+            return "/images/class-profile/hako.jpg"; 
     }
 };
 
@@ -126,97 +96,104 @@ type PackageType = {
 export default function PackageCard({ pkg , course }: { pkg: PackageType, course: CourseType }) {
     if (pkg.type === "BUNDLE") return;
   return (
-    <div className="flex flex-col border rounded-lg p-4 mb-4 grid gap-6 grid-cols-2">
-        {pkg.type === "ENTRY" && 
-            pkg.courses.map((course) => (
-            <div
-                key={course.courseId}
-                className="flex flex-col border rounded-lg shadow-sm bg-white mb-4"
-            >
-                <div className="border-4 rounded-lg">
+    <div>
+        <div className="flex flex-col border-2 border-neutral-500 rounded-[20px] p-5 my-10">
+            <h1 className="font-bold text-[18px] border-b-2 border-neutral-500 pb-3">{pkg.type.charAt(0)+pkg.type.substring(1).toLowerCase()} Class</h1>
+            <div className="grid gap-5 grid-cols-1 xl:grid-cols-2 pt-4">                
+                {pkg.type === "ENTRY" && 
+                    pkg.courses.map((course) => (
+                    <div
+                        key={course.courseId}
+                        className="flex flex-col border-2 rounded-[12px] border-neutral-500 bg-white w-full"
+                    >
+                        
+                        <div>
+                            <div className="flex flex-row">
+                            <Image
+                                src={getCourseImage(course.title)}
+                                alt={course.title}
+                                width={165}
+                                height={165}
+                                className="rounded-l-[10px]"
+                            />
+
+                                <div className="flex flex-col mx-5 my-4 justify-between w-full">
+                                    <div>
+                                        <div className="flex flex-row justify-between items-center">
+                                            <h2 className="text-[14px] font-bold text-neutral-900">{course.title}</h2>
+                                                <div className="bg-primary-500 rounded-[5px] self-start">
+                                                    <Link href={`/dashboard/class-dashboard/${pkg.id}`}>
+                                                        <ArrowUpRight className="p-[5px]" size={25} />
+                                                    </Link>
+                                                </div>
+                                        </div>
+                                        <p className="text-neutral-900 my-3 text-[12px]">{course.description}</p>
+                                    </div>
+                                        <Image
+                                            src={getTeacherPic(course.title)}
+                                            alt="Teacher"
+                                            width={30}
+                                            height={30}
+                                            className="rounded-full"
+                                        />      
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                }
+            </div>
+        
+        <div className="grid gap-5 grid-cols-1 xl:grid-cols-2">     
+            {pkg.type === "INTERMEDIATE" && 
+                pkg.courses.map((course) => (
+                <div
+                    key={course.courseId}
+                    className="flex flex-col border-2 rounded-[12px] border-neutral-500 bg-white w-full"
+                >
                     <div className="flex flex-row">
                     <Image
                         src={getCourseImage(course.title)}
                         alt={course.title}
-                        width={200}
-                        height={150}
-                        className="rounded-l-lg"
-                        placeholder="blur"
-                        blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+                        width={165}
+                        height={165}
+                        className="rounded-l-[10px]"
                     />
 
-                        <div className="flex flex-col">
-                            <div className="flex flex-row justify-between items-center">
-                                <h2 className="text-xl font-bold text-gray-900">{course.title}</h2>
-                                    <div className="bg-[var(--color-primary-500)] rounded-[5px] self-start">
-                                        <Link href={`/dashboard/class-dashboard/${pkg.id}`}>
-                                            <ArrowUpRight className="text-[var(--color-neutral-50)] p-[5px]" size={25} />
-                                        </Link>
-                                    </div>
-                            </div>
-                            <p className="text-gray-600 mt-2">{course.description}</p>
-                            <Image
-                                src={getTeacherPic(course.title)}
-                                alt="Teacher"
-                                width={30}
-                                height={30}
-                                className="rounded-full mt-4"
-                            />      
-                        </div>
-                    </div>
-                    </div>
-                </div>
-            ))
-        }
-
-        {pkg.type === "INTERMEDIATE" && 
-            pkg.courses.map((course) => (
-            <div
-                key={course.courseId}
-                className="flex flex-col border rounded-lg p-4 shadow-sm bg-white mb-4"
-            >
-                <div className="flex flex-row">
-                <Image
-                    src={getCourseImage(course.title)}
-                    alt={course.title}
-                    width={200}
-                    height={150}
-                    className="rounded-md"
-                    placeholder="blur"
-                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
-                />
-
-                    <div className="flex flex-col">
-                        <div className="flex flex-row justify-between items-center">
-                            <h2 className="text-xl font-bold text-gray-900">{course.title}</h2>
-                                <div className="bg-[var(--color-primary-500)] rounded-[5px] self-start">
-                                    <Link href={`/dashboard/class-dashboard/${pkg.id}`}>
-                                        <ArrowUpRight className="text-[var(--color-neutral-50)] p-[5px]" size={25} />
-                                    </Link>
+                        <div className="flex flex-col mx-5 my-4 justify-between w-full">
+                            <div>
+                                <div className="flex flex-row justify-between items-center">
+                                    <h2 className="text-[14px] font-bold text-neutral-900">{course.title}</h2>
+                                        <div className="bg-primary-500 rounded-[5px] self-start">
+                                            <Link href={`/dashboard/class-dashboard/${pkg.id}`}>
+                                                <ArrowUpRight className="p-[5px]" size={25} />
+                                            </Link>
+                                        </div>
                                 </div>
+                                <p className="text-neutral-900 my-3 text-[12px]">{course.description}</p>
+                            </div>
+                                <div className="flex flex-row gap-2">
+                                    <Image
+                                        src={getTeacherPic(course.title)}
+                                        alt="Teacher"
+                                        width={30}
+                                        height={30}
+                                        className="rounded-full"
+                                    />
+                                    <Image
+                                        src={getMentorPic(course.title)}
+                                        alt="Mentor"
+                                        width={30}
+                                        height={30}
+                                        className="rounded-full"
+                                    />
+                                </div>  
                         </div>
-                        <p className="text-gray-600 mt-2">{course.description}</p>
-                        <div className="flex flex-row gap-2">
-                            <Image
-                                src={getTeacherPic(course.title)}
-                                alt="Teacher"
-                                width={30}
-                                height={30}
-                                className="rounded-full mt-4"
-                            />
-                            <Image
-                                src={getMentorPic(course.title)}
-                                alt="Mentor"
-                                width={30}
-                                height={30}
-                                className="rounded-full mt-4"
-                            />
-                        </div>  
                     </div>
-                </div>
-                </div>
-            ))
-        }
+                    </div>
+                ))}
+            </div>
+        </div>
     </div>
   );
 }
