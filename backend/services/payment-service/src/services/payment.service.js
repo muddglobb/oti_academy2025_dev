@@ -1218,18 +1218,40 @@ static async getAllCoursesEnrollmentCount() {
         // Get package info to get price
         const packageInfo = await this.getPackageInfo(payment.packageId);
         
+        // Get course info for direct course enrollment
+        let courseName = null;
+        if (payment.courseId && payment.courseId !== '00000000-0000-0000-0000-000000000000') {
+          // Import CourseService at the point of use to prevent circular dependencies
+          const { CourseService } = await import('./course.service.js');
+          const courseInfo = await CourseService.getCourseById(payment.courseId);
+          if (courseInfo) {
+            courseName = courseInfo.title;
+          }
+        } else if (packageInfo?.type === 'BUNDLE') {
+          // For bundle payments, get all courses in the bundle
+          const coursesInBundle = await this.getCoursesInPackage(payment.packageId);
+          if (coursesInBundle && Array.isArray(coursesInBundle) && coursesInBundle.length > 0) {
+            // Create a comma-separated list of course names
+            courseName = coursesInBundle.map(course => course.title).join(', ');
+          }
+        }
+        
         // If package info is available, add price to payment
         if (packageInfo) {
           return {
             ...payment,
             packageName: packageInfo.name,
             packageType: packageInfo.type,
-            price: packageInfo.price
+            price: packageInfo.price,
+            courseName: courseName || 'Unknown Course'
           };
         }
         
         // Return original payment if package info not available
-        return payment;
+        return {
+          ...payment,
+          courseName: courseName || 'Unknown Course'
+        };
       })
     );
   }
