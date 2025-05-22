@@ -26,11 +26,10 @@ const LandingPageMentorCard = ({
     >
       <div
         className="
-        w-[50%]
-        h-auto
-        min-h-75
+        min-h-42
         mask-r-from-90%
 
+        w-full
         sm:w-60
         sm:h-auto
         sm:min-h-85
@@ -39,7 +38,7 @@ const LandingPageMentorCard = ({
         md:h-100
         md:mask-b-from-90%
         md:mask-r-from-100%
-        rounded-lg  
+        rounded-lg
         bg-cover
         "
         style={{ backgroundImage: `url(${pic})` }}
@@ -61,7 +60,7 @@ const LandingPageMentorCard = ({
                 </p>
               </div>
               <div className="inline-block">
-                <p className="bg-primary-800 rounded-[5px] text-[12px] p-1 mt-0.5">
+                <p className="bg-primary-800 rounded-[5px] text-[12px] p-1 m-1">
                   {job}
                 </p>
               </div>
@@ -82,11 +81,10 @@ const LandingPageMentorCard = ({
 
       <div
         className="
-          w-[50%]
           md:w-full
       "
       >
-        <div className="flex justify-between p-3 md:hidden">
+        <div className="flex justify-between mt-3 mx-3 md:hidden">
           <div className="text-[var(--color-neutral-50)] w-auto max-w-[75%]">
             <div className="font-bold h-auto">
               <p className="bg-primary-800 rounded-[5px] text-[18px] p-1 break-words">
