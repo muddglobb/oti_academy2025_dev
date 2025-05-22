@@ -115,6 +115,8 @@ export default function BundleCard({ pkg , course }: { pkg: PackageType, course:
                     </div>
                     <p className="text-neutral-900 my-3 text-[12px]">{getBundleDesc(pkg.name)}</p>
                 </div>
+
+                <div className="flex flex-row justify-between items-center">
                     <div className="flex flex-row gap-2">
                         <Image
                             src={getBundleMentorPic(course.title).mentor}
@@ -130,7 +132,9 @@ export default function BundleCard({ pkg , course }: { pkg: PackageType, course:
                             height={30}
                             className="rounded-full"
                         />
-                    </div>      
+                    </div>
+                    <p className="text-neutral-900 text-[12px]">4 Jam/Session</p>      
+                </div>
             </div>
         </div>
         </div>

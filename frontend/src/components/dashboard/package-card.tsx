@@ -129,13 +129,16 @@ export default function PackageCard({ pkg , course }: { pkg: PackageType, course
                                         </div>
                                         <p className="text-neutral-900 my-3 text-[12px]">{course.description}</p>
                                     </div>
-                                        <Image
-                                            src={getTeacherPic(course.title)}
-                                            alt="Teacher"
-                                            width={30}
-                                            height={30}
-                                            className="rounded-full"
-                                        />      
+                                        <div className="flex flex-row justify-between items-center">
+                                            <Image
+                                                src={getTeacherPic(course.title)}
+                                                alt="Teacher"
+                                                width={30}
+                                                height={30}
+                                                className="rounded-full"
+                                            />
+                                            <p className="text-neutral-900 text-[12px]">4 Jam/Session</p>      
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -172,6 +175,8 @@ export default function PackageCard({ pkg , course }: { pkg: PackageType, course
                                 </div>
                                 <p className="text-neutral-900 my-3 text-[12px]">{course.description}</p>
                             </div>
+
+                            <div className="flex flex-row justify-between items-center">
                                 <div className="flex flex-row gap-2">
                                     <Image
                                         src={getTeacherPic(course.title)}
@@ -187,7 +192,9 @@ export default function PackageCard({ pkg , course }: { pkg: PackageType, course
                                         height={30}
                                         className="rounded-full"
                                     />
-                                </div>  
+                                </div>
+                                <p className="text-neutral-900 text-[12px]">4 Jam/Session</p>      
+                            </div>
                         </div>
                     </div>
                     </div>
