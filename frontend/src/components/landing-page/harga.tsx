@@ -6,19 +6,17 @@ import Image from "next/image";
 
 const Header = [
     {
-        title: "DIKE UGM",
-        offer: "Exclusive Offer",
-        price: "00.000,-"
+        title: "Level Entry",
+        price: "49.000,-"
     },
     {
         title: "Bundling Package",
         offer: "Most Popular",
-        price: "00.000,-"
+        price: "130.000,-"
     },
     {
-        title: "Single Class",
-        offer: "Standard Offer",
-        price: "00.000,-" 
+        title: "Level Intermediate",
+        price: "90.000,-" 
     }
 ]
 
@@ -71,7 +69,6 @@ const Harga = () => {
                         <div className="flex flex-col gap-5 justify-around w-full">
                             <div className="flex flex-row items-center justify-between w-full">                        
                                 <h2 className="text-[18px] lg:text-[22px] font-bold justify-start">{Header[0].title}</h2>
-                                <p className="text-[12px] lg:text-[14px] px-4 py-1 bg-neutral-200 rounded-[5px]">{Header[0].offer}</p>
                             </div>
                             <div>
                                 <p className="text-[38px] lg:text-[46px] font-bold"><span className="font-normal">Rp</span>{Header[0].price}</p>
@@ -125,7 +122,6 @@ const Harga = () => {
                         <div className="flex flex-col gap-5 justify-around w-full">
                             <div className="flex flex-row items-center justify-between w-full">                        
                                 <h2 className="text-[18px] lg:text-[22px] font-bold justify-start">{Header[2].title}</h2>
-                                <p className="text-[12px] lg:text-[14px] px-4 py-1 bg-neutral-200 rounded-[5px]">{Header[2].offer}</p>
                             </div>
                             <div>
                                 <p className="text-[38px] lg:text-[46px] font-bold"><span className="font-normal">Rp</span>{Header[2].price}</p>
