@@ -8,6 +8,7 @@ import Harga from '../../components/landing-page/harga'
 import Comments from '../../components/landing-page/comments'
 import FAQ from '../../components/landing-page/faq'
 import Mentor from '../../components/landing-page/mentor'
+import ComingSoon from '@/components/landing-page/coming-soon'
 
 const page = () => {
   return (
@@ -17,7 +18,8 @@ const page = () => {
         <Kenali />
         <WhyUs />
         <PilihanKelas />
-        <Mentor />
+        {/* <Mentor /> */}
+        <ComingSoon />
         <Harga />
         <Comments />
         <FAQ />
