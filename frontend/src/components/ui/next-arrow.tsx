@@ -7,7 +7,7 @@ type NextArrowProps = {
 const NextArrow: React.FC<NextArrowProps> = ({ onClick }) => {
   return (
     <div className="absolute right-0 cursor-pointer" onClick={onClick}>
-      <div className="p-3 bg-[var(--color-primary-800)] rounded-lg flex items-center gap-2 mt-2">
+      <div className="p-3 bg-[var(--color-primary-800)] rounded-lg flex items-center gap-2 mt-2 mx-4">
         <p className="text-[var(--color-neutral-50)] text-sm">Next</p>
         <Image
           src="/icons/backarrow-icon.svg"
