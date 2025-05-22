@@ -24,22 +24,22 @@ const Header = [
 
 const Details = [
     {
-        text1: "Hemat __%",
-        text2: "Hemat __%",
-        text3: "Hemat __%",
-        text4: "Hemat __%",
+        text1: "Cocok untuk pemula",
+        text2: "Fokus pada 1 topik spesifik",
+        text3: "Waktu fleksibel & ringan di jadwal",
+        text4: "Dapat sertifikat & portofolio",
     },
     {
-        text1: "Hemat __%",
-        text2: "Hemat __%",
-        text3: "Hemat __%",
-        text4: "Hemat __%",
+        text1: "Hemat hingga 40%",
+        text2: "Akses dua kelas sekaligus",
+        text3: "Alur belajar yang progresif",
+        text4: "Dapat sertifikat & portofolio",
     },
     {
-        text1: "Hemat __%",
-        text2: "Hemat __%",
-        text3: "Hemat __%",
-        text4: "Hemat __%",
+        text1: "Pendalaman materi yang lebih praktis",
+        text2: "Mentoring dari profesional",
+        text3: "Sesi eksplorasi tools dan teknik industri",
+        text4: "Dapat sertifikat & portofolio",
     }
 ]
 
@@ -108,10 +108,10 @@ const Harga = () => {
 
                             {/* bagian yang persen persenan */}
                             <div className="flex pt-10 md:pt-40 flex-col gap-2 justify-start w-full">
-                                <div className="flex flex-row gap-1 items-center"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text1}</p> </div>
-                                <div className="flex flex-row gap-1 items-center"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text2}</p> </div>
-                                <div className="flex flex-row gap-1 items-center"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text3}</p> </div>
-                                <div className="flex flex-row gap-1 items-center"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text4}</p> </div>
+                                <div className="flex flex-row gap-1 items-center font-bold"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text1}</p> </div>
+                                <div className="flex flex-row gap-1 items-center font-bold"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text2}</p> </div>
+                                <div className="flex flex-row gap-1 items-center font-bold"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text3}</p> </div>
+                                <div className="flex flex-row gap-1 items-center font-bold"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text4}</p> </div>
                             </div>
                             <Link href="/programs" className="w-full">
                                 <Button variant="learn-more-white" className="w-full mt-5 rounded-[8px] items-center">Learn More<ArrowRight className="w-5 ml-2"/></Button>
