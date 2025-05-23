@@ -6,7 +6,7 @@ const Receipt = ({ name, prices, level }: any) => {
   else level = "Bundle";
   return (
     <div className="w-full border-3 border-neutral-500 rounded-xl p-4">
-      <p className="text-lg font-bold pb-9 border-b-3 border-neutral-500">
+      <p className="text-lg font-bold pb-3 border-b-3 border-neutral-500">
         Pembayaran
       </p>
       <div className="flex flex-col gap-2">

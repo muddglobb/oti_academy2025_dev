@@ -1,29 +1,5 @@
 import { getAccessToken } from "../auth/fetch-users";
 
-export async function getAllEnrolledStats() {
-  try {
-    const accessToken = await getAccessToken();
-    const res = await fetch(`${process.env.BASE_URL}/payments/all-stats`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        // "Content-Type": "application/json",
-      },
-    });
-
-    if (!res.ok) {
-      console.error("Gagal mendapatkan data enroll ANJINGG:", res.statusText);
-      throw new Error("Gagal memuat data enroll.");
-    }
-
-    const stats = await res.json();
-    // console.log(stats)
-    return stats;
-  } catch (error) {
-    console.error("Terjadi kesalahan saat mengambil data enroll:", error);
-    throw error;
-  }
-}
 
 export async function enrollNoBundle({
   courseId,
@@ -38,7 +14,7 @@ export async function enrollNoBundle({
 }) {
   try {
     const accessToken = await getAccessToken();
-
+    
     const res = await fetch(`${process.env.BASE_URL}/payments/`, {
       method: "POST",
       headers: {
@@ -53,6 +29,8 @@ export async function enrollNoBundle({
       }),
     });
 
+    // console.log(payload);
+
     if (!res.ok) {
       const err = await res.text();
       console.error("Gagal membuat pembayaran:", err);
@@ -61,6 +39,7 @@ export async function enrollNoBundle({
 
     const result = await res.json();
     return result;
+    console.log("BERHASIL");
   } catch (error) {
     console.error("Terjadi kesalahan saat melakukan pembayaran:", error);
     throw error;
@@ -97,7 +76,7 @@ export async function enrollBundle({
       console.error("Gagal membuat pembayaran:", err);
       throw new Error("Gagal membuat pembayaran.");
     }
-
+    
     const result = await res.json();
     return result;
   } catch (error) {
@@ -106,4 +85,53 @@ export async function enrollBundle({
   }
 }
 
+// ADMIN
+export async function getAllEnrolledStats() {
+  try {
+    const accessToken = await getAccessToken();
+    const res = await fetch(`${process.env.BASE_URL}/payments/all-stats`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        // "Content-Type": "application/json",
+      },
+    });
 
+    if (!res.ok) {
+      console.error("Gagal mendapatkan data enroll ANJINGG:", res.statusText);
+      throw new Error("Gagal memuat data enroll.");
+    }
+
+    const stats = await res.json();
+    // console.log(stats)
+    return stats;
+  } catch (error) {
+    console.error("Terjadi kesalahan saat mengambil data enroll:", error);
+    throw error;
+  }
+}
+
+export async function getAllEnrollment() {
+  try {
+    const accessToken = await getAccessToken();
+    const res = await fetch(`${process.env.BASE_URL}/payments`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        // "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      console.error("Gagal mendapatkan data enroll ANJINGG:", res.statusText);
+      throw new Error("Gagal memuat data enroll.");
+    }
+
+    const stats = await res.json();
+    // console.log(stats)
+    return stats.data.payments;
+  } catch (error) {
+    console.error("Terjadi kesalahan saat mengambil data enroll:", error);
+    throw error;
+  }
+}

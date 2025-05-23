@@ -1,8 +1,46 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { CircleAlert } from "lucide-react";
 import { Link } from "lucide-react";
+// import { enrollBundle, enrollNoBundle } from "@/lib/payment/fetch-payment";
 
-export async function BuktiPembayaran({courseId, packageId}: any) {
+export function BuktiPembayaran({ courseId, packageId }: any) {
+  const [proofLink, setProofLink] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload = {
+      courseId,
+      packageId,
+      type: "UMUM",
+      proofLink,
+    };
+
+    // console.log(payload);
+    try {
+      const res = await fetch("/api/enroll", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      console.log("RES", res);
+      if (!res.ok) {
+        const { error } = await res.json();
+        alert("Gagal anjinggg: " + error);
+        return;
+      }
+
+      alert("Berhasil mendaftar!");
+    } catch (err) {
+      console.error(err);
+      alert("Terjadi kesalahan.");
+    }
+  };
+
   return (
     <div className="rounded-xl border-3 border-neutral-500">
       {/* Welcome Card */}
@@ -34,7 +72,11 @@ export async function BuktiPembayaran({courseId, packageId}: any) {
             </div>
           </div>
 
-          <form action="" className="w-full flex flex-col gap-3">
+          <form
+            onSubmit={handleSubmit}
+            action=""
+            className="w-full flex flex-col gap-3"
+          >
             <div className="bg-neutral-50 flex items-center gap-2 py-2 px-3 rounded-lg text-black">
               <Link className="w-5 h-5 text-neutral-500" />
               <input
@@ -42,6 +84,7 @@ export async function BuktiPembayaran({courseId, packageId}: any) {
                 placeholder="https://drive.google.com/omahtiacademy"
                 name=""
                 id=""
+                onChange={(e) => setProofLink(e.target.value)}
                 className="w-full placeholder-neutral-400"
               />
             </div>
@@ -55,12 +98,10 @@ export async function BuktiPembayaran({courseId, packageId}: any) {
           </form>
 
           {/* {courseId ? `${courseId}` : 'ga ada'} */}
-          
+
           {/* {packageId} */}
         </div>
       </div>
     </div>
   );
 }
-
-// export default WelcomeCard
