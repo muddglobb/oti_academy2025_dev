@@ -5,13 +5,13 @@ import { ArrowUpRight } from "lucide-react";
 const getBundleImage = (name: string): string => {
     switch (name) {
         case "Bundle Python + Data Science & Artificial Intelligence":
-            return "/logo.jpeg";
+            return "/images/class-profile/hako.jpg";
         case "Bundle Graphic Design + UI/UX":
             return "/images/class-profile/hako.jpg";
         case "Bundle Fundamental Cyber Security + Cyber Security":
-            return "/logo.jpeg";
+            return "/images/class-profile/hako.jpg";
         case "Bundle Web Development + Software Engineering":
-            return "/logo.jpeg";
+            return "/images/class-profile/hako.jpg";
         default:
             return "/images/course-placeholder.jpg";
     }

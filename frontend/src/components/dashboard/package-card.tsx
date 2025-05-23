@@ -5,28 +5,28 @@ import { ArrowUpRight } from "lucide-react";
 const getCourseImage = (title: string): string => {
     switch (title) {
         case "Basic Python":
-            return "/logo.jpeg";
+            return "/images/class-profile/hako.jpg";
         case "Graphic Design":
-            return "/logo.jpeg";
+            return "/images/class-profile/hako.jpg";
         case "Competitive Programming":
-            return "/logo.jpeg";
+            return "/images/class-profile/hako.jpg";
         case "Game Development":
-            return "/logo.jpeg";
+            return "/images/class-profile/hako.jpg";
         case "Web Development":
-            return "/logo.jpeg";
+            return "/images/class-profile/hako.jpg";
         case "Fundamental Cyber Security":
-            return "/logo.jpeg";
+            return "/images/class-profile/hako.jpg";
         // intermediate
         case "Software Engineering":
-            return "/logo.jpeg";
+            return "/images/class-profile/hako.jpg";
         case "Data Science & Artificial Intelligence":
-            return "/logo.jpeg";
+            return "/images/class-profile/hako.jpg";
         case "UI/UX":
-            return "/logo.jpeg";
+            return "/images/class-profile/hako.jpg";
         case "Cyber Security":
-            return "/logo.jpeg";
+            return "/images/class-profile/hako.jpg";
         default:
-            return "/logo.jpeg";
+            return "/images/class-profile/hako.jpg";
     }
 };
 
@@ -149,7 +149,7 @@ export default function PackageCard({ pkg , course }: { pkg: PackageType, course
                             <div className="flex flex-row justify-between items-center">
                                 <h2 className="text-xl font-bold text-gray-900">{course.title}</h2>
                                     <div className="bg-[var(--color-primary-500)] rounded-[5px] self-start">
-                                        <Link href={`/dashboard/class-dashboard/${pkg.id}`}>
+                                        <Link href={`/dashboard/class-dashboard/${course.courseId}`}>
                                             <ArrowUpRight className="text-[var(--color-neutral-50)] p-[5px]" size={25} />
                                         </Link>
                                     </div>

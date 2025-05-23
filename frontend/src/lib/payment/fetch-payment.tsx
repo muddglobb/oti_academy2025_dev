@@ -24,3 +24,86 @@ export async function getAllEnrolledStats() {
     throw error;
   }
 }
+
+export async function enrollNoBundle({
+  courseId,
+  packageId,
+  type,
+  proofLink,
+}: {
+  courseId: string;
+  packageId: string;
+  type: string;
+  proofLink: string;
+}) {
+  try {
+    const accessToken = await getAccessToken();
+
+    const res = await fetch(`${process.env.BASE_URL}/payments/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        courseId,
+        packageId,
+        type,
+        proofLink,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("Gagal membuat pembayaran:", err);
+      throw new Error("Gagal membuat pembayaran.");
+    }
+
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.error("Terjadi kesalahan saat melakukan pembayaran:", error);
+    throw error;
+  }
+}
+
+export async function enrollBundle({
+  packageId,
+  type,
+  proofLink,
+}: {
+  packageId: string;
+  type: string;
+  proofLink: string;
+}) {
+  try {
+    const accessToken = await getAccessToken();
+
+    const res = await fetch(`${process.env.BASE_URL}/payments/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        packageId,
+        type,
+        proofLink,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("Gagal membuat pembayaran:", err);
+      throw new Error("Gagal membuat pembayaran.");
+    }
+
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.error("Terjadi kesalahan saat melakukan pembayaran:", error);
+    throw error;
+  }
+}
+
+
