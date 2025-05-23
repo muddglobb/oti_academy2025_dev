@@ -10,36 +10,34 @@ import Image from "next/image";
 
 const CommentContents = [
     {
-        comment: `"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."`,
-        pic: "images/sponsors/sponsor3.JPG",
-        name: "Ayasha Rahmadinni",
-        job: "Full Stack Developer",
+        comment: `"OEM-OEM is a fun way to get into the basics. Karena pengajarnya fleksibel dan bisa ngikutin pace belajar tiap peserta. Selain itu, OEM-OEM terbuka untuk umum dan membuka kesempatan untuk banyak orang. So it was a great experience! OLC is also a good place untuk belajar bareng sama team. Aku suka karena pembelajarannya well delivered dan pengajarnya juga keren-keren."`,
+        pic: "images/testimonial-profile/nazwa.webp",
+        name: "Finanazwa Ayesha",
+        job: "Peserta OEM-OEM & OLC",
     },
     {
-        comment: `Mauris condimentum nibh sit amet diam posuere, quis malesuada leo hendrerit. Pellentesque pellentesque sodales elementum. Sed vel felis eu risus finibus tincidunt nec non mi. Phasellus mollis leo id dolor rutrum, sit amet rhoncus ante pellentesque. Praesent cursus eros purus, volutpat interdum tortor porttitor vel. Sed volutpat nisl odio, non ullamcorper ante sodales eget. Nullam sagittis, metus sit amet congue congue, turpis neque efficitur magna, eget consectetur mi justo ac metus. Vestibulum vel est turpis. Etiam efficitur facilisis venenatis.`,
-        pic: "images/sponsors/sponsor3.JPG",
-        name: "Kevin Antonio Wiyono Lauw",
-        job: "Orang Stress",
+        comment: `"Kalo OEM-OEM sendiri, acaranya gacor, bagus, gratis, tapi saya dapet informasi acaranya telat jadi gak kebagian beberapa kelas yang aku  mau. Tapi tetep keren dan hebat si yang ngajar karena antusias dan competitive sekali (competitive programming). Kalo OLC, eventnya gede, keren, hebat yang garis karena commitment fee aja aku bisa dapet cyber security dapat experience langsung bidang IT yang advanced."`,
+        pic: "images/testimonial-profile/faris.webp",
+        name: "Maulana Faris",
+        job: "Peserta OEM-OEM & OLC",
     },
     {
-        comment: `"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit. sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."`,
-        pic: "images/sponsors/sponsor3.JPG",
-        name: "Regina Joan MJL",
-        job: "Gatau gak kenal",
+        comment: `"Menurutku OEM-OEM menjadi tempat yang bagus untuk mengenalkan konsep yang terdapat dalam lingkup ilmu komputer. Kelas DSAI cukup fundamental dimana konsep dan aplikasinya dalam industri dijelaskan secara general. Sedangkan OLC continued where oem oem left off. OLC tetap menjelaskan kembali konsep yang aku pelajari di OEM-OEM namun melanjutkannya dengan praktik secara langsung.  I'm a firm believer of "practice makes perfect" jadi menurutku sangat-sangat mendorong progressku dalam menelurusi dunia IT."`,
+        pic: "images/testimonial-profile/satya.webp",
+        name: "Satya Wira",
+        job: "Peserta OEM-OEM & OLC",
     },
     {
-        comment: `"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."`,
-        pic: "images/sponsors/sponsor3.JPG",
-        name: "Ayasha Rahmadinni",
-        job: "Full Stack Developer",
+        comment: `"OEM-OEM sangat mudah diakses, sangat mudah untuk daftar, website menarik, saya bisa mendaftar banyak kelas. kelas frontend sangat asik dan mudah dipahami, secara keseluruhan OEM-OEM sangat membantu untuk memulai perjalanan IT. WE MAKE IT FOR ME"`,
+        pic: "images/testimonial-profile/dhimas.webp",
+        name: "Dhimas Putra Sulistio",
+        job: "Peserta OEM-OEM",
     },
     {
-        comment: `"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."`,
-        pic: "images/sponsors/sponsor3.JPG",
-        name: "Ayasha Rahmadinni",
-        job: "Full Stack Developer",
+        comment: `"Menurut aku, OLC adalah wadah yang bagus untuk belajar apalagi dari nol karena pelatihannya yang komprehensif dari pakarnya dengan hands on experience, yaitu praktik dunia nyata. Tidak sampai disitu saja, OLC juga menghandirkan wadah untuk berinovasi dan berkompetisi dengan teman-teman lain jadi pembelajaran yang didapatkan sangat seru dan lengkap"`,
+        pic: "images/testimonial-profile/naya.webp",
+        name: "Indratanaya Budiman",
+        job: "Peserta OLC",
     },
 ];
 
@@ -181,7 +179,7 @@ const Comments = () => {
                 <div className="lg:hidden w-full mt-10 mx-0">
                     <Slider key={isMobile ? "mobile" : "tablet"} {...sliderSettings}>
                         {CommentContents.map((item, index) => (
-                            <div key={index} className="px-2">
+                            <div key={index} className="px-2 h-80">
                                 <CommentCard
                                     nama={item.name}
                                     pic={item.pic}
