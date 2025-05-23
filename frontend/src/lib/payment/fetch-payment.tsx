@@ -85,6 +85,31 @@ export async function enrollBundle({
   }
 }
 
+export async function getMyPayments() {
+  try {
+    const accessToken = await getAccessToken();
+
+    const res = await fetch(`${process.env.BASE_URL}/payments/my-payments`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("Gagal mengambil data pembayaran:", err);
+      throw new Error("Gagal mengambil data pembayaran.");
+    }
+    
+    const result = await res.json();
+    return result.data;
+  } catch (error) {
+    console.error("Terjadi kesalahan saat mengambil data:", error);
+    throw error;
+  }
+}
+
 // ADMIN
 export async function getAllEnrolledStats() {
   try {
