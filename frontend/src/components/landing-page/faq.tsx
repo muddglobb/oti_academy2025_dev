@@ -8,32 +8,27 @@ import {
 import Image from "next/image";
 
 const AnswerQuestion = [
-  {
-    question: "Lorem ipsum Dolor Sit Amet?",
-    answer:
-      "OmahTI Academy adalah program belajar IT yang dirancang untuk membantu peserta dari berbagai latar belakang, baik pemula maupun yang sudah berpengalaman, untuk mengembangkan keterampilan dan pengetahuan di bidang teknologi informasi.",
-  },
-  {
-    question: "Lorem ipsum Dolor Sit Amet?",
-    answer:
-      "OmahTI Academy adalah program belajar IT yang dirancang untuk membantu peserta dari berbagai latar belakang, baik pemula maupun yang sudah berpengalaman, untuk mengembangkan keterampilan dan pengetahuan di bidang teknologi informasi.",
-  },
-  {
-    question: "Lorem ipsum Dolor Sit Amet?",
-    answer:
-      "OmahTI Academy adalah program belajar IT yang dirancang untuk membantu peserta dari berbagai latar belakang, baik pemula maupun yang sudah berpengalaman, untuk mengembangkan keterampilan dan pengetahuan di bidang teknologi informasi.",
-  },
-  {
-    question: "Lorem ipsum Dolor Sit Amet?",
-    answer:
-      "OmahTI Academy adalah program belajar IT yang dirancang untuk membantu peserta dari berbagai latar belakang, baik pemula maupun yang sudah berpengalaman, untuk mengembangkan keterampilan dan pengetahuan di bidang teknologi informasi.",
-  },
-  {
-    question: "Lorem ipsum Dolor Sit Amet?",
-    answer:
-      "OmahTI Academy adalah program belajar IT yang dirancang untuk membantu peserta dari berbagai latar belakang, baik pemula maupun yang sudah berpengalaman, untuk mengembangkan keterampilan dan pengetahuan di bidang teknologi informasi.",
-  },
-];
+    {
+        question: "Saya benar-benar pemula, apakah tetap bisa ikut?",
+        answer: "Tentu saja! Kelas Entry kami sangat cocok untuk pemula. Materinya disusun secara bertahap dan mentor akan membimbingmu dengan pendekatan yang ramah dan mudah dipahami.",
+    },
+    {
+        question: "Boleh ambil lebih dari satu kelas di level yang sama?",
+        answer: "Untuk saat ini, hanya diperbolehkan satu kelas per level. Kami ingin memastikan kamu bisa fokus dan mendapatkan pengalaman belajar yang optimal di setiap tahap.",
+    },
+    {
+        question: "Apakah saya bisa mengikuti lebih dari satu kelas?",
+        answer: "Bisa, namun dengan ketentuan: kamu hanya dapat mengambil maksimal 1 kelas Entry dan 1 kelas Intermediate, atau langsung memilih Bundling Package yang sudah mencakup keduanya.",
+    },
+    {
+        question: "Apakah kelas yang sudah dibayar bisa diganti?",
+        answer: "Sayangnya, kelas yang sudah dibayar tidak dapat diganti. Karena itu, penting untuk memilih kelas yang paling sesuai dengan kebutuhan dan minatmu sejak awal.",
+    },
+    {
+        question: "Apakah pembayaran bisa direfund?",
+        answer: "Mohon maaf, seluruh pembayaran bersifat final dan tidak dapat direfund. Pastikan kamu sudah mempertimbangkan pilihan kelasmu dengan matang sebelum melakukan pembayaran, ya!",
+    },
+]
 
 const FAQ = () => {
   return (
