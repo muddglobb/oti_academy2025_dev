@@ -160,3 +160,28 @@ export async function getAllEnrollment() {
     throw error;
   }
 }
+
+export async function approvePayment({paymentId}: any) {
+  try {
+    const accessToken = await getAccessToken();
+
+    const res = await fetch(`${process.env.BASE_URL}/payments/${paymentId}/approve`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("Gagal aprrove pembayaran:", err);
+      throw new Error("Gagal approve pembayaran.");
+    }
+    
+    const result = await res.json();
+    return result.data;
+  } catch (error) {
+    console.error("Terjadi kesalahan aprrove pembayaran:", error);
+    throw error;
+  }
+}

@@ -27,7 +27,7 @@ export function BuktiPembayaran({ courseId, packageId }: any) {
         body: JSON.stringify(payload),
       });
 
-      console.log("RES", res);
+      // console.log("RES", res);
       if (!res.ok) {
         const { error } = await res.json();
         alert("Gagal anjinggg: " + error);

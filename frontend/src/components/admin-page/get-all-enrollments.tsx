@@ -1,7 +1,8 @@
 import React from "react";
 import { getAllEnrollment } from "@/lib/payment/fetch-payment";
 import { getCoursesById } from "@/lib/courses/fetch-courses";
-import { ListFilter, Search, Check, Pocket } from "lucide-react";
+import { ListFilter, Search, Check } from "lucide-react";
+import ApproveButton from "./approve-button";
 
 const GetAllEnrollments = async () => {
   const data = await getAllEnrollment();
@@ -92,16 +93,13 @@ const GetAllEnrollments = async () => {
                   </td>
                   <td className="py-4 px-4">
                     <div className="flex items-center gap-2">
-                      {item.status === "APPROVED" ? (  
+                      {item.status === "APPROVED" ? (
                         <div className="flex items-center gap-2 px-2 py-1 bg-green-600 rounded-sm">
                           <Check className="text-neutral-50" />
                           <p className="text-neutral-50">Approved</p>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2 px-2 py-1 bg-orange-500 rounded-sm">
-                          <Pocket className="text-neutral-50" />
-                          <p className="text-neutral-50">Paid</p>
-                        </div>
+                        <ApproveButton paymentId={item.id} />
                       )}
                     </div>
                   </td>
