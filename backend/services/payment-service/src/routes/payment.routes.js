@@ -78,7 +78,7 @@ router.post(
 // Create admin rate limiter
 const adminLimiter = createRateLimiter({
   name: 'Admin Operations',
-  windowMs: 60 * 60 * 1000, // 1 hour
+  windowMs: 15 * 60 * 1000, // 1 hour
   max: 2000 // limit admin operations
 });
 
@@ -88,6 +88,14 @@ router.get(
   permit('ADMIN'),
   adminLimiter,
   asyncHandler(controller.getAllPayments)
+);
+
+router.get(
+  '/pending',
+  authenticate,
+  permit('ADMIN'),
+  adminLimiter,
+  asyncHandler(controller.getNeedToApprovePayments)
 );
 
 router.patch(

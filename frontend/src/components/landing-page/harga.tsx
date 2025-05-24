@@ -6,40 +6,38 @@ import Image from "next/image";
 
 const Header = [
     {
-        title: "DIKE UGM",
-        offer: "Exclusive Offer",
-        price: "00.000,-"
+        title: "Level Entry",
+        price: "49.000,-"
     },
     {
         title: "Bundling Package",
         offer: "Most Popular",
-        price: "00.000,-"
+        price: "130.000,-"
     },
     {
-        title: "Single Class",
-        offer: "Standard Offer",
-        price: "00.000,-" 
+        title: "Level Intermediate",
+        price: "90.000,-" 
     }
 ]
 
 const Details = [
     {
-        text1: "Hemat __%",
-        text2: "Hemat __%",
-        text3: "Hemat __%",
-        text4: "Hemat __%",
+        text1: "Cocok untuk pemula",
+        text2: "Fokus pada 1 topik spesifik",
+        text3: "Waktu fleksibel & ringan di jadwal",
+        text4: "Dapat sertifikat & portofolio",
     },
     {
-        text1: "Hemat __%",
-        text2: "Hemat __%",
-        text3: "Hemat __%",
-        text4: "Hemat __%",
+        text1: "Hemat hingga 40%",
+        text2: "Akses dua kelas sekaligus",
+        text3: "Alur belajar yang progresif",
+        text4: "Dapat sertifikat & portofolio",
     },
     {
-        text1: "Hemat __%",
-        text2: "Hemat __%",
-        text3: "Hemat __%",
-        text4: "Hemat __%",
+        text1: "Pendalaman materi yang lebih praktis",
+        text2: "Mentoring dari profesional",
+        text3: "Sesi eksplorasi tools dan teknik industri",
+        text4: "Dapat sertifikat & portofolio",
     }
 ]
 
@@ -71,7 +69,6 @@ const Harga = () => {
                         <div className="flex flex-col gap-5 justify-around w-full">
                             <div className="flex flex-row items-center justify-between w-full">                        
                                 <h2 className="text-[18px] lg:text-[22px] font-bold justify-start">{Header[0].title}</h2>
-                                <p className="text-[12px] lg:text-[14px] px-4 py-1 bg-neutral-200 rounded-[5px]">{Header[0].offer}</p>
                             </div>
                             <div>
                                 <p className="text-[38px] lg:text-[46px] font-bold"><span className="font-normal">Rp</span>{Header[0].price}</p>
@@ -108,10 +105,10 @@ const Harga = () => {
 
                             {/* bagian yang persen persenan */}
                             <div className="flex pt-10 md:pt-40 flex-col gap-2 justify-start w-full">
-                                <div className="flex flex-row gap-1 items-center"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text1}</p> </div>
-                                <div className="flex flex-row gap-1 items-center"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text2}</p> </div>
-                                <div className="flex flex-row gap-1 items-center"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text3}</p> </div>
-                                <div className="flex flex-row gap-1 items-center"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text4}</p> </div>
+                                <div className="flex flex-row gap-1 items-center font-bold"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text1}</p> </div>
+                                <div className="flex flex-row gap-1 items-center font-bold"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text2}</p> </div>
+                                <div className="flex flex-row gap-1 items-center font-bold"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text3}</p> </div>
+                                <div className="flex flex-row gap-1 items-center font-bold"> <CheckCircle/><p className="text-[12px] lg:text-[18px]">{Details[1].text4}</p> </div>
                             </div>
                             <Link href="/programs" className="w-full">
                                 <Button variant="learn-more-white" className="w-full mt-5 rounded-[8px] items-center">Learn More<ArrowRight className="w-5 ml-2"/></Button>
@@ -125,7 +122,6 @@ const Harga = () => {
                         <div className="flex flex-col gap-5 justify-around w-full">
                             <div className="flex flex-row items-center justify-between w-full">                        
                                 <h2 className="text-[18px] lg:text-[22px] font-bold justify-start">{Header[2].title}</h2>
-                                <p className="text-[12px] lg:text-[14px] px-4 py-1 bg-neutral-200 rounded-[5px]">{Header[2].offer}</p>
                             </div>
                             <div>
                                 <p className="text-[38px] lg:text-[46px] font-bold"><span className="font-normal">Rp</span>{Header[2].price}</p>
