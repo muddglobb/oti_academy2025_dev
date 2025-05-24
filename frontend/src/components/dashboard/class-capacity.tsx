@@ -33,14 +33,14 @@ const ClassCapacity = async ({
     capacity > 0 ? Math.round((currentCount / capacity) * 100) : 0;
 
   return (
-    <div className="flex flex-col gap-[5px] ">
+    <div className="w-[96%] flex flex-col gap-[5px] ">
       <p className="self-start mb-0 text-neutral-50 text-sm">
         Class {"> "} {ClassName}
       </p>
       <div
         className="border-sol border-2 border-neutral-500 rounded-[20px] p-5 flex flex-col gap-3"
         style={{
-          backgroundImage: "url('/images/background-class-capacity.png')",
+          backgroundImage: "url('/images/class-capacity-background.png')",
           backgroundSize: "cover",
         }}
       >
