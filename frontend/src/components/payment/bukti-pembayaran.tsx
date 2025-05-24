@@ -17,6 +17,16 @@ export function BuktiPembayaran({ courseId, packageId }: any) {
       proofLink,
     };
 
+    const payloadBundle = {
+      packageId,
+      type: "UMUM",
+      proofLink,
+    };
+
+    if (!courseId) {
+      console.log("Bundle", payloadBundle);
+    }
+
     // console.log(payload);
     try {
       const res = await fetch("/api/enroll", {
@@ -24,7 +34,7 @@ export function BuktiPembayaran({ courseId, packageId }: any) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(courseId? payload : payloadBundle),
       });
 
       // console.log("RES", res);
