@@ -27,20 +27,38 @@ const ClassCapacity = async ({
   });
   const apiData = await res.json();
 
-  const currentCount = apiData.data?.enrollments?.entryIntermediateCount ?? 0;
-  const capacity = apiData.data?.quota?.entryIntermediateQuota ?? 1;
+  console.log("Class Level: ", ClassLevel);
+
+  const currentCount =
+    ClassLevel === "Entry"
+      ? apiData.data?.enrollments?.entryIntermediateCount ?? 0
+      : ClassLevel === "Intermediate"
+      ? apiData.data?.enrollments?.entryIntermediateCount ?? 0
+      : ClassLevel === "Bundle"
+      ? apiData.data?.enrollments?.bundleCount ?? 0
+      : 0;
+  const capacity =
+    ClassLevel === "Entry"
+      ? apiData.data?.quota?.entryIntermediateQuota ?? 1
+      : ClassLevel === "Intermediate"
+      ? apiData.data?.quota?.entryIntermediateQuota ?? 1
+      : ClassLevel === "Bundle"
+      ? apiData.data?.quota?.bundleQuota ?? 1
+      : 0;
   const percentage =
     capacity > 0 ? Math.round((currentCount / capacity) * 100) : 0;
 
+  console.log("Quota ", capacity);
+
   return (
-    <div className="flex flex-col gap-[5px] ">
+    <div className="w-[96%] flex flex-col gap-[5px] ">
       <p className="self-start mb-0 text-neutral-50 text-sm">
         Class {"> "} {ClassName}
       </p>
       <div
         className="border-sol border-2 border-neutral-500 rounded-[20px] p-5 flex flex-col gap-3"
         style={{
-          backgroundImage: "url('/images/background-class-capacity.png')",
+          backgroundImage: "url('/images/class-capacity-background.png')",
           backgroundSize: "cover",
         }}
       >
