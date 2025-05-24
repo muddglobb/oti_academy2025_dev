@@ -98,6 +98,7 @@ const classes = [
   {
     slug: "web-development",
     title: "Web Development",
+    courses: ["Web Development"],
     desc: "Learn HTML, CSS, and JavaScript to build responsive websites from scratch.",
     classInfo: [classInfo[0]],
     teacherCard: [teacherCard[0]],
@@ -106,6 +107,7 @@ const classes = [
   {
     slug: "software-engineering",
     title: "Software Engineering",
+    courses: ["Software Engineering"],
     desc: "Learn professional software development practices including version control, testing, and CI/CD pipelines.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[0], teacherCard[1]],
@@ -114,6 +116,7 @@ const classes = [
   {
     slug: "data-science&artificial-intelligence",
     title: "Data Science & Artificial Intelligence",
+    courses: ["Data Science & Artificial Intelligence"],
     desc: "Explore data analysis, machine learning, and artificial intelligence techniques.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
@@ -122,6 +125,7 @@ const classes = [
   {
     slug: "ui-ux",
     title: "UI/UX",
+    courses: ["UI/UX"],
     desc: "User interface and experience design principles, tools, and methodologies.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[0], teacherCard[1]],
@@ -130,6 +134,7 @@ const classes = [
   {
     slug: "cyber-security",
     title: "Cyber Security",
+    courses: ["Cyber Security"],
     desc: "Advanced security concepts including penetration testing and security architecture.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[0], teacherCard[1]],
@@ -138,6 +143,7 @@ const classes = [
   {
     slug: "basic-python",
     title: "Basic Python",
+    courses: ["Basic Python"],
     desc: "Introduction to Python programming language, syntax, and basic applications.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
@@ -146,6 +152,7 @@ const classes = [
   {
     slug: "competitive-programming",
     title: "Competitive Programming",
+    courses: ["Competitive Programming"],
     desc: "Learn algorithms and data structures for competitive programming contests.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[0], teacherCard[1]],
@@ -155,6 +162,7 @@ const classes = [
   {
     slug: "game-development",
     title: "Game Development",
+    courses: ["Game Development"],
     desc: "Introduction to game development concepts, engines, and basic implementation.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
@@ -163,6 +171,7 @@ const classes = [
   {
     slug: "fundamental-cyber-security",
     title: "Fundamental Cyber Security",
+    courses: ["Fundamental Cyber Security"],
     desc: "Learn the basics of cybersecurity, including threat identification and security principles.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
@@ -171,6 +180,7 @@ const classes = [
   {
     slug: "graphic-design",
     title: "Graphic Design",
+    courses: ["Graphic Design"],
     desc: "Master the basics of Graphic Design including color theory, typography, and composition.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
@@ -179,6 +189,7 @@ const classes = [
   {
     slug: "web-development+software-engineering",
     title: "Web Development + Software Engineering",
+    courses: ["Web Development", "Software Engineering"],
     desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
     classInfo: [classInfo[0], classInfo[2]],
     teacherCard: [teacherCard[0], teacherCard[1]],
@@ -187,6 +198,7 @@ const classes = [
   {
     slug: "python+data-science&artificial-intelligence",
     title: "Bundle Python + Data Science & Artificial Intelligence",
+    courses: ["Basic Python", "Data Science & Artificial Intelligence"],
     desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
     classInfo: [classInfo[0], classInfo[2]],
     teacherCard: [teacherCard[0], teacherCard[1]],
@@ -195,6 +207,7 @@ const classes = [
   {
     slug: "graphic-design+ui-ux",
     title: "Bundle Graphic Design + UI/UX",
+    courses: ["Graphic Design", "UI/UX"],
     desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
     classInfo: [classInfo[0], classInfo[2]],
     teacherCard: [teacherCard[0], teacherCard[1]],
@@ -203,6 +216,7 @@ const classes = [
   {
     slug: "fundamental-cyber-security+cyber-security",
     title: "Bundle Fundamental Cyber Security + Cyber Security",
+    courses: ["Fundamental Cyber Security", "Cyber Security"],
     desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
     classInfo: [classInfo[0], classInfo[2]],
     teacherCard: [teacherCard[0], teacherCard[1]],
@@ -235,9 +249,10 @@ export default async function Page({
 
   const findCourseID = Array.isArray(courseData.data)
     ? (courseData.data as CourseStat[]).find(
-        (course) => course.title === classData.title
+        (course) => course.title === classData.courses[0]
       )
     : undefined;
+
   const courseID = findCourseID ? findCourseID.id : "";
 
   return (
