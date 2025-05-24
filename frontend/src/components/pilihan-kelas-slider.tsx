@@ -149,7 +149,7 @@ const PilihanKelasSlider =() => {
     };
 
     return (
-        <div className="w-full lg:max-w-7xl mx-auto">
+        <div className="w-full lg:max-w-7xl mx-auto ">
             <Slider {...settings}>
                 {Kelas.map((card, index) => (
                     <div key={index} className="px-2">

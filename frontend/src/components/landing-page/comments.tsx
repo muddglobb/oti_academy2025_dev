@@ -89,44 +89,45 @@ const Comments = () => {
     };
 
     return (
-        <Container className="px-0 bg-gradient-to-b from-neutral-900/90 to-neutral-900/70">
-            <Image
-                src="/images/stars-hero-programs.png"
-                alt="stars"
-                layout="fill"
-                className="absolute left-0 max-h-screen object-cover -z-100"
-                style={{ top: "65%" }}
-            />
-            {/* <Image
-                src="/images/stars-hero-programs.png"
-                alt="stars"
-                layout="fill"
-                className="absolute left-0 max-h-screen object-cover -z-100"
-                style={{ top: "80%" }}
-            /> */}
-            {/* <Image
-                src="/images/stars-hero-programs.png"
-                alt="stars"
-                layout="fill"
-                className="absolute left-0 max-h-fit object-cover -z-100"
-                style={{ top: "87%" }}
-            /> */}
-            {/* <Image
-                src="/images/stars-hero-programs.png"
-                alt="stars"
-                layout="fill"
-                className="absolute left-0 max-h-screen object-cover"
-                style={{ top: "56%" }}
-            /> */}
-            {/* <Image
-                src="/images/stars-hero-programs.png"
-                alt="stars"
-                layout="fill"
-                className="absolute left-0 max-h-screen object-cover"
-                style={{ top: "61%" }}
-            /> */}
-            <div className="flex flex-col items-center justify-center w-full h-full py-20">
-                <h1 className="pt-44 px-4 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
+        <div
+              className="
+                bg-[linear-gradient(0deg,rgba(5,12,26,0.6)_0%,rgba(5,12,26,0.8)_100%)]
+                relative
+                py-20
+                lg:py-40
+              "
+            >
+              <div className=" items-center justify-center 
+              ">
+                {/* bintang dan planet */}
+                <>
+                  <Image
+                    src="/images/stars-hero-programs.png"
+                    // src="/images/tes_bg.jpg"
+                    alt="stars"
+                    fill
+                    className="absolute top-0 left-0 w-full object-cover -z-1"
+                  ></Image>
+
+                  <div className="absolute w-full pointer-events-none left-[70%] top-[-115px] -z-1">
+                          {/* saturnus */}
+                          <Image
+                            src="/images/planet/saturnus.png"
+                            alt="mars"
+                            width={1462}
+                            height={1462}
+                            className="object-contain"
+                          />
+                        </div>
+        
+                </>
+        
+                {/* isi */}
+                
+        <Container className="px-0">
+
+            <div className="flex flex-col items-center justify-center w-full ">
+                <h1 className=" px-4 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
                     Kata Mereka Tentang Program Kami
                 </h1>
 
@@ -193,6 +194,8 @@ const Comments = () => {
             </div>
             
         </Container>
+              </div>
+            </div>
     );
 };
 
