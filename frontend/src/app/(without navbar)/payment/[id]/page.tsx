@@ -5,6 +5,7 @@ import Konfirmasi from "@/components/payment/konfirmasi";
 import ChosenClass from "@/components/payment/chosen-class";
 import Receipt from "@/components/payment/receipt";
 import { BuktiPembayaran } from "@/components/payment/bukti-pembayaran";
+import PaymentPopUp from "@/components/payment/payment-popup";
 type CourseStat = {
   id: string;
   title: string;
@@ -237,10 +238,9 @@ export default async function Page({
         <ArrowLeft size={20} color="white" />
         <p className="text-white">Kembali</p>
       </Link>
-      {/* {classData?.title}
-      <p>price : {prices}</p>
-      <p>course id: {matchedCourseId}</p>
-      <p>package id: {matchedPackageId}</p> */}
+      
+      <PaymentPopUp />
+
       <div className="flex gap-6">
         <div className="flex flex-col gap-6">
           <Konfirmasi />
