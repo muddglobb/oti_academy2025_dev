@@ -13,7 +13,7 @@ import ComingSoon from '@/components/landing-page/coming-soon'
 const page = () => {
   return (
     <div className='overflow-x-hidden relative'>
-      <div className='min-h-screen'>
+      <div className=''>
         <Hero />
         <Kenali />
         <WhyUs />
@@ -25,7 +25,7 @@ const page = () => {
         <FAQ />
       </div>
       <div>
-        <LandingPageBackground />
+        {/* <LandingPageBackground /> */}
       </div>
     </div>
   )
