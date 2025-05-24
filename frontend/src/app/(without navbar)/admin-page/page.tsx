@@ -1,6 +1,7 @@
 import ClassTracker from "@/components/admin-page/class-tracker";
 import WelcomeCardz from "@/components/admin-page/welcome-cardz";
 import TotalTracker from "@/components/admin-page/total-tracker";
+import GetAllEnrollments from "@/components/admin-page/get-all-enrollments";
 export default function AdminPage() {
   return (
     <div className="px-14 py-7">
@@ -11,6 +12,7 @@ export default function AdminPage() {
         </div>
         <ClassTracker />
       </div>
+      <GetAllEnrollments />
     </div>
   );
 }
