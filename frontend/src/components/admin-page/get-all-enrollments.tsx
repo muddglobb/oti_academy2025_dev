@@ -10,6 +10,13 @@ const GetAllEnrollments = async () => {
   // Ambil semua detail course berdasarkan courseId dari masing-masing item
   const enrichedData = await Promise.all(
     data.map(async (item: any) => {
+      if (item.packageType === "BUNDLE") {
+        return {
+          ...item,
+          courseTitle: item.packageName || "Tanpa nama paket",
+        };
+      }
+
       const kelas = await getCoursesById(item.courseId);
       return {
         ...item,
