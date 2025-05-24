@@ -1,15 +1,16 @@
 import React from "react";
 import EnrolledClass from "./enrolled-class";
 
-
 const SecondContent = async () => {
   return (
-    <div className="grid grid-cols-3 gap-6">
+    <div className="lg:grid lg:grid-cols-3 gap-6">
       {/* Left Column */}
-      <EnrolledClass />
+      <div className="lg:col-span-2">
+        <EnrolledClass />
+      </div>
 
       {/* Right Column */}
-      <div className="col-span-1">
+      <div className="lg:col-span-1 mt-6 lg:mt-0">
         {/* Calendar */}
         <div className="border-2 border-neutral-500 rounded-[20px] p-5 mb-6">
           <div className="flex justify-between items-center mb-4 pb-3 border-b-2 border-neutral-500">
