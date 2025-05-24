@@ -1,12 +1,13 @@
-'use server';
+"use server";
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getAccessToken } from "../auth/fetch-users";
 
 export async function fetchPackage() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value || "";
-  
+
   if (!accessToken) {
     redirect("/login");
   }
@@ -33,30 +34,56 @@ export async function fetchPackage() {
 }
 
 export async function fetchCourse() {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("access_token")?.value || "";
-    
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value || "";
+
+  if (!accessToken) {
+    redirect("/login");
+  }
+
+  try {
+    const res = await fetch("http://localhost:8000/courses", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch courses");
+    }
+
+    const courseData = await res.json();
+    return courseData.data;
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    throw error;
+  }
+}
+
+export async function getAllPackage() {
+  try {
+    const accessToken = await getAccessToken();
     if (!accessToken) {
-        redirect("/login");
+      redirect("/login"); // ⬅️ langsung redirect jika tidak ada access token
     }
-    
-    try {
-        const res = await fetch("http://localhost:8000/courses", {
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-        },
-        credentials: "include",
-        });
-    
-        if (!res.ok) {
-        throw new Error("Failed to fetch courses");
-        }
-    
-        const courseData = await res.json();
-        return courseData.data;
-    } catch (error) {
-        console.error("Error fetching courses:", error);
-        throw error;
+    const res = await fetch(`${process.env.BASE_URL}/packages`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!res.ok) {
+      console.error("Gagal mendapatkan data package:", res.statusText);
+      throw new Error("Gagal memuat data package.");
     }
+
+    const packages = await res.json();
+    return packages;
+  } catch (error) {
+    console.error("Terjadi kesalahan saat mengambil data package:", error);
+    throw error;
+  }
 }

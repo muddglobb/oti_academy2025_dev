@@ -2,8 +2,8 @@
 import { cookies } from 'next/headers'
 import jwt from 'jsonwebtoken'
 
-export function requireAdmin() {
-  const cookieStore = cookies()
+export async function requireAdmin() {
+  const cookieStore = await cookies()
   const token = cookieStore.get('access_token')?.value
 
   if (!token) throw new Error('NO_TOKEN')
@@ -12,8 +12,8 @@ export function requireAdmin() {
   return payload
 }
 
-export function notAdmin() {
-  const cookieStore = cookies()
+export async function notAdmin() {
+  const cookieStore = await cookies()
   const token = cookieStore.get('access_token')?.value
 
   if (!token) throw new Error('NO_TOKEN')
