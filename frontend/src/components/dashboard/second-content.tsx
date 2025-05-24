@@ -1,54 +1,16 @@
 import React from "react";
-import { Clock } from "lucide-react";
+import EnrolledClass from "./enrolled-class";
 
-type EnrolledClassData = {
-  id: number;
-  name: string;
-  status: string;
-  message: string;
-  description: string;
-};
-type SecondContentProps = {
-  data: EnrolledClassData[];
-};
-const SecondContent = ({ data }: SecondContentProps) => {
+const SecondContent = async () => {
   return (
-    <div className="grid grid-cols-3 gap-6">
+    <div className="lg:grid lg:grid-cols-3 gap-6">
       {/* Left Column */}
-      <div className="col-span-2 border-2 border-neutral-500 rounded-[20px]">
-        <div className="rounded-[20px] p-6 ">
-          <h3 className="text-lg font-medium mb-4">Enrolled Class</h3>
-          <div className="flex items-center mb-2 pb-3 border-b-2 border-neutral-500">
-            <Clock size={16} className="mr-2 text-gray-400" />
-            <p className="text-sm text-gray-300">
-              Kamu bisa daftar 2 kelas: 1 Intermediate dan 1 Entry atau 1 Bundle
-            </p>
-          </div>
-
-          {data.map((enrolledClass) => (
-            <div
-              key={enrolledClass.id}
-              className="mt-4 flex h-auto border-2 border-neutral-500 rounded-[20px]"
-            >
-              <div className="w-35 h-35 bg-gray-700 rounded-[20px]"></div>
-              <div className=" flex flex-col justify-between p-4">
-                <div className="">
-                  <p className="text-3">{enrolledClass.message}</p>
-                  <p className="text-[12px] text-gray-400 mt-1">
-                    {enrolledClass.description}
-                  </p>
-                </div>
-                <button className="bg-primary-500 text-white py-2 px-3 rounded-lg font-bold text-[12px] self-start">
-                  Eksplor Sekarang
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className="lg:col-span-2">
+        <EnrolledClass />
       </div>
 
       {/* Right Column */}
-      <div className="col-span-1">
+      <div className="lg:col-span-1 mt-6 lg:mt-0">
         {/* Calendar */}
         <div className="border-2 border-neutral-500 rounded-[20px] p-5 mb-6">
           <div className="flex justify-between items-center mb-4 pb-3 border-b-2 border-neutral-500">
