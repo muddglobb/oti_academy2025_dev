@@ -21,7 +21,7 @@ const EnrolledClass = async () => {
         </div>
 
         <div className="flex flex-col gap-4">
-          {payments[0].packageType === "BUNDLE" &&
+          {payments[0]?.packageType === "BUNDLE" &&
             payments[0].status === "PAID" &&
             payments[0].bundleCourses.map((paidClass: any) => (
               <div key={paidClass.id}>
@@ -49,7 +49,7 @@ const EnrolledClass = async () => {
               </div>
             ))}
 
-          {payments[0].packageType === "BUNDLE" &&
+          {payments[0]?.packageType === "BUNDLE" &&
             payments[0].status === "APPROVED" &&
             payments[0].bundleCourses.map((paidClass: any) => (
               <div key={paidClass.id}>
@@ -75,7 +75,7 @@ const EnrolledClass = async () => {
               </div>
             ))}
 
-          {payments[0].packageType !== "BUNDLE" && (
+          {payments[0]?.packageType !== "BUNDLE" && (
             <>
               {payments.map((paidClass: any) => (
                 <div key={paidClass.id}>

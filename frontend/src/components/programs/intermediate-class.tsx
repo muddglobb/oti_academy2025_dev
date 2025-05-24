@@ -61,7 +61,7 @@ const IntermediateClass = () => {
   return (
     <div
       className="w-full h-200 bg-cover bg-center flex flex-col items-center justify-center
-        bg-[linear-gradient(0deg,rgba(5,12,26,0.6)_0%,rgba(5,12,26,0.9)_100%)]
+        bg-[linear-gradient(0deg,rgba(5,12,26,0.8)_0%,rgba(5,12,26,0.9)_100%)]
         relative
       "
     >
