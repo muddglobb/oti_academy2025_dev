@@ -101,7 +101,7 @@ const classes = [
     desc: "Learn HTML, CSS, and JavaScript to build responsive websites from scratch.",
     classInfo: [classInfo[0]],
     teacherCard: [teacherCard[0]],
-    ClassLevel: "Beginner",
+    ClassLevel: "Entry",
   },
   {
     slug: "software-engineering",
@@ -124,7 +124,7 @@ const classes = [
     title: "UI/UX",
     desc: "User interface and experience design principles, tools, and methodologies.",
     classInfo: [classInfo[1]],
-    teacherCard: [teacherCard[1]],
+    teacherCard: [teacherCard[0], teacherCard[1]],
     ClassLevel: "Intermediate",
   },
   {
@@ -132,7 +132,7 @@ const classes = [
     title: "Cyber Security",
     desc: "Advanced security concepts including penetration testing and security architecture.",
     classInfo: [classInfo[1]],
-    teacherCard: [teacherCard[1]],
+    teacherCard: [teacherCard[0], teacherCard[1]],
     ClassLevel: "Intermediate",
   },
   {
@@ -148,9 +148,10 @@ const classes = [
     title: "Competitive Programming",
     desc: "Learn algorithms and data structures for competitive programming contests.",
     classInfo: [classInfo[1]],
-    teacherCard: [teacherCard[1]],
-    ClassLevel: "Intermediate",
+    teacherCard: [teacherCard[0], teacherCard[1]],
+    ClassLevel: "Entry",
   },
+
   {
     slug: "game-development",
     title: "Game Development",
@@ -165,7 +166,7 @@ const classes = [
     desc: "Learn the basics of cybersecurity, including threat identification and security principles.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
-    ClassLevel: "Intermediate",
+    ClassLevel: "Entry",
   },
   {
     slug: "graphic-design",

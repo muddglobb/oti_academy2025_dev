@@ -27,10 +27,28 @@ const ClassCapacity = async ({
   });
   const apiData = await res.json();
 
-  const currentCount = apiData.data?.enrollments?.entryIntermediateCount ?? 0;
-  const capacity = apiData.data?.quota?.entryIntermediateQuota ?? 1;
+  console.log("Class Level: ", ClassLevel);
+
+  const currentCount =
+    ClassLevel === "Entry"
+      ? apiData.data?.enrollments?.entryIntermediateCount ?? 0
+      : ClassLevel === "Intermediate"
+      ? apiData.data?.enrollments?.entryIntermediateCount ?? 0
+      : ClassLevel === "Bundle"
+      ? apiData.data?.enrollments?.bundleCount ?? 0
+      : 0;
+  const capacity =
+    ClassLevel === "Entry"
+      ? apiData.data?.quota?.entryIntermediateQuota ?? 1
+      : ClassLevel === "Intermediate"
+      ? apiData.data?.quota?.entryIntermediateQuota ?? 1
+      : ClassLevel === "Bundle"
+      ? apiData.data?.quota?.bundleQuota ?? 1
+      : 0;
   const percentage =
     capacity > 0 ? Math.round((currentCount / capacity) * 100) : 0;
+
+  console.log("Quota ", capacity);
 
   return (
     <div className="w-[96%] flex flex-col gap-[5px] ">
