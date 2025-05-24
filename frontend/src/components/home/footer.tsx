@@ -37,7 +37,7 @@ const Footer = () => {
         flex-col
         justify-between
         
-        bg-[linear-gradient(0deg,rgba(5,12,26,1.0)_0%,rgba(5,12,26,0.6)_100%)]
+        bg-[linear-gradient(0deg,rgba(5,12,26,1.0)_0%,rgba(5,12,26,0.8)_100%)]
         relative
       "
       >

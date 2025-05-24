@@ -9,7 +9,7 @@ type CommentProps = {
 
 const CommentCard = ({ nama, pic, job, comment }: CommentProps) => {
     return (
-        <div className="flex flex-col border rounded-[10px] p-5 justify-between bg-neutral-900/60 max-w-104 h-80 md:h-90">
+        <div className="flex flex-col border rounded-[10px] p-5 justify-between bg-neutral-900/60 max-w-104 h-80 lg:h-90">
             <p className="text-neutral-50 text-[12px] md:text-[14px] leading-relaxed whitespace-pre-line">{comment}</p>
             <div className="flex flex-row gap-4">
                 <Image
