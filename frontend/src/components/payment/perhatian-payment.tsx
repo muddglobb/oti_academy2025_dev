@@ -84,7 +84,7 @@ export default function PerhatianPayment({
 
   return (
     <div className="fixed inset-0 bg-neutral-900/70 z-50 flex items-center justify-center">
-      <div className="bg-neutral-700 rounded-[20px] p-6 max-w-1/2 w-full border-2 border-neutral-500">
+      <div className="bg-neutral-700 rounded-[20px] p-6 w-full border-2 border-neutral-500 mx-3 sm:mx-6 md:mx-10 lg:mx-40 xl:mx-60">
         <div className="flex items-center gap-2 pb-3 border-b-2 border-neutral-500">
           <AlertCircle />
           <h2 className="text-xl font-bold">Pembayaran Berhasil!</h2>
