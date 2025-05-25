@@ -17,14 +17,14 @@ export default function TrollLayout({
   children: React.ReactNode;
 }) {
   //mencegah admin akses dashboard siswa
-  try{
+  try {
     notAdmin();
-    } catch (err) {
-      if ((err as Error).message === "NO_TOKEN") {
-        return redirect("/login");
-      }
-      return redirect("/admin-page");
+  } catch (err) {
+    if ((err as Error).message === "NO_TOKEN") {
+      return redirect("/login");
     }
+    return redirect("/admin-page");
+  }
   return (
     <div className="flex text-white">
       {/* <Sidebar /> */}
@@ -35,6 +35,7 @@ export default function TrollLayout({
         <div className="flex text-white">
           <div className="flex-grow">
             {/* <DashboardHeader data={userData} /> */}
+
             <DashboardHeader />
 
             <div className="block md:hidden">
