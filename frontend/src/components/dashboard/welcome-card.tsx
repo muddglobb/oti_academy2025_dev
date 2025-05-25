@@ -10,7 +10,7 @@ export async function WelcomeCard() {
     <div>
       {/* Breadcrumb */}
       <div className="mb-6">
-        <p className="text-sm text-gray-400">Home</p>
+        <p className="text-sm text-neutral-50">Home</p>
       </div>
 
       {/* Welcome Card */}
