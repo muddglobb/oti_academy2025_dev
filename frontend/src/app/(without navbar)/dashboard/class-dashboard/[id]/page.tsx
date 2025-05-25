@@ -278,6 +278,7 @@ export default async function Page({
           ClassDesc={classData.desc}
           ClassLevel={classData.ClassLevel}
           CourseID={courseID}
+          ClassSlug={classData.slug}
         />
 
         <div className="hidden lg:block">

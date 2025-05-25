@@ -8,6 +8,7 @@ type ClassCapacityProps = {
   ClassDesc: string;
   ClassLevel: string;
   CourseID: string;
+  ClassSlug: string;
 };
 
 const ClassCapacity = async ({
@@ -15,6 +16,7 @@ const ClassCapacity = async ({
   ClassDesc,
   ClassLevel,
   CourseID,
+  ClassSlug,
 }: ClassCapacityProps) => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
@@ -30,19 +32,19 @@ const ClassCapacity = async ({
   console.log("Class Level: ", ClassLevel);
 
   const currentCount =
-    ClassLevel === "Entry"
+    ClassLevel === "ENTRY"
       ? apiData.data?.enrollments?.entryIntermediateCount ?? 0
-      : ClassLevel === "Intermediate"
+      : ClassLevel === "INTERMEDIATE"
       ? apiData.data?.enrollments?.entryIntermediateCount ?? 0
-      : ClassLevel === "Bundle"
+      : ClassLevel === "BUNDLE"
       ? apiData.data?.enrollments?.bundleCount ?? 0
       : 0;
   const capacity =
-    ClassLevel === "Entry"
+    ClassLevel === "ENTRY"
       ? apiData.data?.quota?.entryIntermediateQuota ?? 1
-      : ClassLevel === "Intermediate"
+      : ClassLevel === "INTERMEDIATE"
       ? apiData.data?.quota?.entryIntermediateQuota ?? 1
-      : ClassLevel === "Bundle"
+      : ClassLevel === "BUNDLE"
       ? apiData.data?.quota?.bundleQuota ?? 1
       : 0;
   const percentage =
@@ -76,7 +78,7 @@ const ClassCapacity = async ({
           percentage={percentage}
         />
         <Link
-          href={"/dashboard/class-dashboard"}
+          href={`/payment/${ClassSlug}`}
           className="bg-primary-500 rounded-[8px] text-xs py-2 px-14.5 w-fit"
         >
           <p>Enroll Now</p>
