@@ -33,7 +33,7 @@ const handleLogout = async () => {
 };
 
   return (
-    <div className="w-62 bg-gray-950 flex flex-col border-r border-gray-800 fixed top-0 left-0 h-screen items-center">
+    <div className="w-62 bg-gray-950 flex flex-col border-r-2 border-neutral-500 fixed top-0 left-0 h-screen items-center">
       <Link href={"/"}>
         <div className="pt-6.5">
           {/* <h1 className="text-xl font-bold">OmahTI</h1>

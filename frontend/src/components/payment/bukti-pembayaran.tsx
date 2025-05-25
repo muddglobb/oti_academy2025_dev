@@ -2,10 +2,12 @@
 import React, { useState } from "react";
 import { CircleAlert } from "lucide-react";
 import { Link } from "lucide-react";
+import PerhatianPayment from "@/components/payment/perhatian-payment";
 // import { enrollBundle, enrollNoBundle } from "@/lib/payment/fetch-payment";
 
 export function BuktiPembayaran({ courseId, packageId }: any) {
   const [proofLink, setProofLink] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +46,8 @@ export function BuktiPembayaran({ courseId, packageId }: any) {
         return;
       }
 
-      alert("Berhasil mendaftar!");
+      // alert("Berhasil mendaftar!");
+      setShowPopup(true);
     } catch (err) {
       console.error(err);
       alert("Terjadi kesalahan.");
@@ -52,6 +55,9 @@ export function BuktiPembayaran({ courseId, packageId }: any) {
   };
 
   return (
+    <>
+      {showPopup && <PerhatianPayment show={showPopup} onClose={() => setShowPopup(false)} />}
+
     <div className="rounded-xl border-3 border-neutral-500">
       {/* Welcome Card */}
       <div
@@ -113,5 +119,7 @@ export function BuktiPembayaran({ courseId, packageId }: any) {
         </div>
       </div>
     </div>
+    </>
+
   );
 }

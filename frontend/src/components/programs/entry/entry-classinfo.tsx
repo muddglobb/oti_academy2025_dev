@@ -19,7 +19,7 @@ const EntryClassInfo = ({ classInfo }: ClassInfoProps) => {
           <div className="absolute inset-0 bg-gradient-to-b from-neutral-900 via-neutral-900/10 to-neutral-900/50 -z-20"></div>
         </div>
         <div
-          className="absolute w-3/4 h-3/4 top-2 right-0 bg-right -mr-[40%] -mt-[5%] bg-contain bg-no-repeat -z-10 scale-x-[-1] rotate-[-35deg] brightness-30"
+          className="absolute w-210 h-210 left-2/3 bg-right -mr-[40%] bg-contain bg-no-repeat -z-10 scale-x-[-1] rotate-[-35deg] brightness-19 "
           style={{ backgroundImage: "url(/images/planet/saturnus.png)" }}
         ></div>
         <section className="flex flex-col gap-7.5  justify-center items-center py-10 bg-no-repeat bg-cover w-full">

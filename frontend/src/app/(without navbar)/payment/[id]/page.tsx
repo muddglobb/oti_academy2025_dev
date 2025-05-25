@@ -5,6 +5,7 @@ import Konfirmasi from "@/components/payment/konfirmasi";
 import ChosenClass from "@/components/payment/chosen-class";
 import Receipt from "@/components/payment/receipt";
 import { BuktiPembayaran } from "@/components/payment/bukti-pembayaran";
+import PaymentPopUp from "@/components/payment/payment-popup";
 type CourseStat = {
   id: string;
   title: string;
@@ -96,7 +97,8 @@ const classes = [
   {
     slug: "web-development",
     title: "Web Development",
-    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    courses: ["Web Development"],
+    desc: "Learn HTML, CSS, and JavaScript to build responsive websites from scratch.",
     classInfo: [classInfo[0]],
     teacherCard: [teacherCard[0]],
     ClassLevel: "ENTRY",
@@ -104,15 +106,17 @@ const classes = [
   {
     slug: "software-engineering",
     title: "Software Engineering",
-    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    courses: ["Software Engineering"],
+    desc: "Learn professional software development practices including version control, testing, and CI/CD pipelines.",
     classInfo: [classInfo[1]],
-    teacherCard: [teacherCard[1]],
+    teacherCard: [teacherCard[0], teacherCard[1]],
     ClassLevel: "INTERMEDIATE",
   },
   {
     slug: "data-science&artificial-intelligence",
     title: "Data Science & Artificial Intelligence",
-    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    courses: ["Data Science & Artificial Intelligence"],
+    desc: "Explore data analysis, machine learning, and artificial intelligence techniques.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
     ClassLevel: "INTERMEDIATE",
@@ -120,23 +124,26 @@ const classes = [
   {
     slug: "ui-ux",
     title: "UI/UX",
-    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    courses: ["UI/UX"],
+    desc: "User interface and experience design principles, tools, and methodologies.",
     classInfo: [classInfo[1]],
-    teacherCard: [teacherCard[1]],
+    teacherCard: [teacherCard[0], teacherCard[1]],
     ClassLevel: "INTERMEDIATE",
   },
   {
     slug: "cyber-security",
     title: "Cyber Security",
-    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    courses: ["Cyber Security"],
+    desc: "Advanced security concepts including penetration testing and security architecture.",
     classInfo: [classInfo[1]],
-    teacherCard: [teacherCard[1]],
+    teacherCard: [teacherCard[0], teacherCard[1]],
     ClassLevel: "INTERMEDIATE",
   },
   {
     slug: "basic-python",
     title: "Basic Python",
-    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    courses: ["Basic Python"],
+    desc: "Introduction to Python programming language, syntax, and basic applications.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
     ClassLevel: "ENTRY",
@@ -144,15 +151,18 @@ const classes = [
   {
     slug: "competitive-programming",
     title: "Competitive Programming",
-    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    courses: ["Competitive Programming"],
+    desc: "Learn algorithms and data structures for competitive programming contests.",
     classInfo: [classInfo[1]],
-    teacherCard: [teacherCard[1]],
-    ClassLevel: "INTERMEDIATE",
+    teacherCard: [teacherCard[0], teacherCard[1]],
+    ClassLevel: "ENTRY",
   },
+
   {
     slug: "game-development",
     title: "Game Development",
-    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    courses: ["Game Development"],
+    desc: "Introduction to game development concepts, engines, and basic implementation.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
     ClassLevel: "ENTRY",
@@ -160,22 +170,52 @@ const classes = [
   {
     slug: "fundamental-cyber-security",
     title: "Fundamental Cyber Security",
-    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    courses: ["Fundamental Cyber Security"],
+    desc: "Learn the basics of cybersecurity, including threat identification and security principles.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
-    ClassLevel: "INTERMEDIATE",
+    ClassLevel: "ENTRY",
   },
   {
     slug: "graphic-design",
     title: "Graphic Design",
-    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    courses: ["Graphic Design"],
+    desc: "Master the basics of Graphic Design including color theory, typography, and composition.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
     ClassLevel: "ENTRY",
   },
   {
     slug: "web-development+software-engineering",
-    title: "Bundle Web Development + Software Engineering",
+    title: "Web Development + Software Engineering",
+    courses: ["Web Development", "Software Engineering"],
+    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    classInfo: [classInfo[0], classInfo[2]],
+    teacherCard: [teacherCard[0], teacherCard[1]],
+    ClassLevel: "BUNDLE",
+  },
+  {
+    slug: "python+data-science&artificial-intelligence",
+    title: "Bundle Python + Data Science & Artificial Intelligence",
+    courses: ["Basic Python", "Data Science & Artificial Intelligence"],
+    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    classInfo: [classInfo[0], classInfo[2]],
+    teacherCard: [teacherCard[0], teacherCard[1]],
+    ClassLevel: "BUNDLE",
+  },
+  {
+    slug: "graphic-design+ui-ux",
+    title: "Bundle Graphic Design + UI/UX",
+    courses: ["Graphic Design", "UI/UX"],
+    desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
+    classInfo: [classInfo[0], classInfo[2]],
+    teacherCard: [teacherCard[0], teacherCard[1]],
+    ClassLevel: "BUNDLE",
+  },
+  {
+    slug: "fundamental-cyber-security+cyber-security",
+    title: "Bundle Fundamental Cyber Security + Cyber Security",
+    courses: ["Fundamental Cyber Security", "Cyber Security"],
     desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
     classInfo: [classInfo[0], classInfo[2]],
     teacherCard: [teacherCard[0], teacherCard[1]],
@@ -229,7 +269,7 @@ export default async function Page({
   }
 
   return (
-    <div className="text-white py-10 px-14 flex flex-col gap-4">
+    <div className="text-white py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4">
       <Link
         href="/dashboard/class-dashboard"
         className="flex gap-2 bg-primary-900 text-sm font-bold px-3.5 py-2 rounded-[8px] w-fit self-start"
@@ -237,11 +277,10 @@ export default async function Page({
         <ArrowLeft size={20} color="white" />
         <p className="text-white">Kembali</p>
       </Link>
-      {/* {classData?.title}
-      <p>price : {prices}</p>
-      <p>course id: {matchedCourseId}</p>
-      <p>package id: {matchedPackageId}</p> */}
-      <div className="flex gap-6">
+      
+      <PaymentPopUp />
+
+      <div className="flex flex-col xl:flex-row gap-6">
         <div className="flex flex-col gap-6">
           <Konfirmasi />
           <ChosenClass
@@ -249,7 +288,7 @@ export default async function Page({
             packageId={matchedPackageId}
           />
         </div>
-        <div className="w-2/5 flex flex-col gap-6">
+        <div className="w-full xl:w-2/5 flex flex-col gap-6">
           <Receipt name={classData?.title} prices={prices} level={classData?.ClassLevel}/>
           <BuktiPembayaran courseId={matchedCourseId} packageId={matchedPackageId}/>
         </div>

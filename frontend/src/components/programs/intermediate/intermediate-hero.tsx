@@ -25,8 +25,13 @@ const IntermediateHero = ({ hero }: HeroProps) => {
         <div className="absolute inset-0 bg-linear-to-t from-neutral-900/100 to-neutral-900/10 -z-20"></div>
       </div>
 
+      {/* <div
+        className="absolute w-3/4 h-3/4 -translate-x-1/2 bg-contain bg-no-repeat -z-10 brightness-40 drop-shadow-[0_0_30px_rgba(20,74,200,0.2)]"
+        style={{ backgroundImage: "url(/images/planet/planet-kuning.png)" }}
+      ></div> */}
+
       <div
-        className="absolute w-3/4 h-3/4 top-1/3 left-2 -translate-x-1/2 bg-contain bg-no-repeat -z-10 brightness-40 drop-shadow-[0_0_30px_rgba(20,74,200,0.2)]"
+        className="absolute w-5/6 h-5/6 right-6/8 -top-10 bg-right -mr-[30%] bg-contain bg-no-repeat -z-10 scale-x-[-1] rotate-[-35deg] brightness-40 "
         style={{ backgroundImage: "url(/images/planet/planet-kuning.png)" }}
       ></div>
 

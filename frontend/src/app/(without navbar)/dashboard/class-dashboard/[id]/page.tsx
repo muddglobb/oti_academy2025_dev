@@ -102,7 +102,7 @@ const classes = [
     desc: "Learn HTML, CSS, and JavaScript to build responsive websites from scratch.",
     classInfo: [classInfo[0]],
     teacherCard: [teacherCard[0]],
-    ClassLevel: "Entry",
+    ClassLevel: "ENTRY",
   },
   {
     slug: "software-engineering",
@@ -111,7 +111,7 @@ const classes = [
     desc: "Learn professional software development practices including version control, testing, and CI/CD pipelines.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[0], teacherCard[1]],
-    ClassLevel: "Intermediate",
+    ClassLevel: "INTERMEDIATE",
   },
   {
     slug: "data-science&artificial-intelligence",
@@ -120,7 +120,7 @@ const classes = [
     desc: "Explore data analysis, machine learning, and artificial intelligence techniques.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
-    ClassLevel: "Intermediate",
+    ClassLevel: "INTERMEDIATE",
   },
   {
     slug: "ui-ux",
@@ -129,7 +129,7 @@ const classes = [
     desc: "User interface and experience design principles, tools, and methodologies.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[0], teacherCard[1]],
-    ClassLevel: "Intermediate",
+    ClassLevel: "INTERMEDIATE",
   },
   {
     slug: "cyber-security",
@@ -138,7 +138,7 @@ const classes = [
     desc: "Advanced security concepts including penetration testing and security architecture.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[0], teacherCard[1]],
-    ClassLevel: "Intermediate",
+    ClassLevel: "INTERMEDIATE",
   },
   {
     slug: "basic-python",
@@ -147,7 +147,7 @@ const classes = [
     desc: "Introduction to Python programming language, syntax, and basic applications.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
-    ClassLevel: "Entry",
+    ClassLevel: "ENTRY",
   },
   {
     slug: "competitive-programming",
@@ -156,7 +156,7 @@ const classes = [
     desc: "Learn algorithms and data structures for competitive programming contests.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[0], teacherCard[1]],
-    ClassLevel: "Entry",
+    ClassLevel: "ENTRY",
   },
 
   {
@@ -166,7 +166,7 @@ const classes = [
     desc: "Introduction to game development concepts, engines, and basic implementation.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
-    ClassLevel: "Entry",
+    ClassLevel: "ENTRY",
   },
   {
     slug: "fundamental-cyber-security",
@@ -175,7 +175,7 @@ const classes = [
     desc: "Learn the basics of cybersecurity, including threat identification and security principles.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
-    ClassLevel: "Entry",
+    ClassLevel: "ENTRY",
   },
   {
     slug: "graphic-design",
@@ -184,7 +184,7 @@ const classes = [
     desc: "Master the basics of Graphic Design including color theory, typography, and composition.",
     classInfo: [classInfo[1]],
     teacherCard: [teacherCard[1]],
-    ClassLevel: "Entry",
+    ClassLevel: "ENTRY",
   },
   {
     slug: "web-development+software-engineering",
@@ -193,7 +193,7 @@ const classes = [
     desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
     classInfo: [classInfo[0], classInfo[2]],
     teacherCard: [teacherCard[0], teacherCard[1]],
-    ClassLevel: "Bundle",
+    ClassLevel: "BUNDLE",
   },
   {
     slug: "python+data-science&artificial-intelligence",
@@ -202,7 +202,7 @@ const classes = [
     desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
     classInfo: [classInfo[0], classInfo[2]],
     teacherCard: [teacherCard[0], teacherCard[1]],
-    ClassLevel: "Bundle",
+    ClassLevel: "BUNDLE",
   },
   {
     slug: "graphic-design+ui-ux",
@@ -211,7 +211,7 @@ const classes = [
     desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
     classInfo: [classInfo[0], classInfo[2]],
     teacherCard: [teacherCard[0], teacherCard[1]],
-    ClassLevel: "Bundle",
+    ClassLevel: "BUNDLE",
   },
   {
     slug: "fundamental-cyber-security+cyber-security",
@@ -220,7 +220,7 @@ const classes = [
     desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
     classInfo: [classInfo[0], classInfo[2]],
     teacherCard: [teacherCard[0], teacherCard[1]],
-    ClassLevel: "Bundle",
+    ClassLevel: "BUNDLE",
   },
 ];
 
