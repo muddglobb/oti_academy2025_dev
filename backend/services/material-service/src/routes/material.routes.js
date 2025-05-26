@@ -9,6 +9,7 @@ import {
   getAllMaterials,
   getMaterial,
   getMaterialsByCourse,
+  getMaterialsByCoursePublic,
   updateMaterial,
   deleteMaterial
 } from '../controllers/material.controller.js';
@@ -16,7 +17,8 @@ import { Roles } from '../utils/rbac/roles.js';
 
 const router = express.Router();
 
-// Public routes - none
+// Public routes - tidak perlu authentication
+router.get('/course/:courseId/public', getMaterialsByCoursePublic);
 
 // Protected routes - require authentication
 router.use(authenticate);
