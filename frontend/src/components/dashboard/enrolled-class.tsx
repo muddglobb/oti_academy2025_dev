@@ -7,12 +7,12 @@ import ApprovedClass from "./approved-class";
 
 const EnrolledClass = async () => {
   const payments = await getMyPayments();
-  const now = new Date();
+  // const now = new Date();
   // const targetDate = new Date("2025-05-28T13:52:14.495Z");
   // console.log(targetDate > now); // true jika targetDate sudah lewat
 
   // console.log("Payments", payments.length);
-  console.log("Payments", payments[0]);
+  // console.log("Payments", payments[0]);
   return (
     <div className="border-2 border-neutral-500 rounded-[20px]">
       <div className="rounded-[20px] p-6 ">
@@ -30,7 +30,6 @@ const EnrolledClass = async () => {
             payments[0].bundleCourses.map((paidClass: any) => (
               <div key={paidClass.id}>
                 <MenyiapkanKelas
-                  icon={"/person-placeholder.jpeg"}
                   title={paidClass.title}
                   description={paidClass.description}
                 />
@@ -42,7 +41,6 @@ const EnrolledClass = async () => {
             payments[0].bundleCourses.map((paidClass: any) => (
               <div key={paidClass.id}>
                 <ApprovedClass
-                  icon={"/person-placeholder.jpeg"}
                   title={paidClass.title}
                   description={paidClass.description}
                 />
@@ -55,13 +53,11 @@ const EnrolledClass = async () => {
                 <div key={paidClass.id}>
                   {paidClass.status === "PAID" ? (
                     <MenyiapkanKelas
-                      icon={"/person-placeholder.jpeg"}
                       title={paidClass.course.title}
                       description={paidClass.course.description}
                     />
                   ) : (
                     <ApprovedClass
-                      icon={"/person-placeholder.jpeg"}
                       title={paidClass.course.title}
                       description={paidClass.course.description}
                     />
