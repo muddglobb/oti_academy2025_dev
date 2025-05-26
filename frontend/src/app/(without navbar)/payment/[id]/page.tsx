@@ -187,7 +187,7 @@ const classes = [
   },
   {
     slug: "web-development+software-engineering",
-    title: "Web Development + Software Engineering",
+    title: "Bundle Web Development + Software Engineering",
     courses: ["Web Development", "Software Engineering"],
     desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
     classInfo: [classInfo[0], classInfo[2]],
@@ -232,7 +232,6 @@ export default async function Page({
   const classData = classes.find((classItem) => classItem.slug === id);
 
   const packages = await fetchPackage();
-  // console.log(packages);
 
   let matchingCourse = null;
   let matchedCourseId = null;
@@ -263,7 +262,6 @@ export default async function Page({
       (item: any) => item.name === classData?.title
     );
 
-    // console.log(matchingCourse);
     matchedPackageId = matchingCourse[0]?.id;
     prices = matchingCourse[0]?.price;
   }
