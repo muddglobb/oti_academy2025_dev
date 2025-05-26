@@ -356,6 +356,59 @@ Authorization: Bearer {{accessToken}}
 }
 ```
 
+#### 2.1.6. Get all materials 
+{{baseUrl}}/materials/course/{{courseId}}/public
+
+```
+{
+    "status": "success",
+    "message": "Materials retrieved successfully",
+    "data": [
+        {
+            "id": "3378658d-6542-44a4-a024-cfa468d67d6d",
+            "courseId": "2a7b7de2-d933-4de1-8982-d40a0b159021",
+            "title": "test aja inimah",
+            "description": "Learn the fundamentals of HTML document structure",
+            "unlockDate": {
+                "utc": {
+                    "iso": "2025-05-25T13:00:00.000Z",
+                    "timestamp": 1748178000000
+                },
+                "wib": {
+                    "iso": "2025-05-25T20:00:00.000Z",
+                    "timestamp": 1748203200000
+                }
+            },
+            "createdAt": "2025-05-26T14:55:13.115Z",
+            "updatedAt": "2025-05-26T14:55:13.115Z",
+            "resourceUrl": "https://storage.googleapis.com/learning-materials/html-basics.pdf",
+            "enrollmentStatus": "enrolled"
+        },
+        {
+            "id": "7a899a24-a262-4bdc-b84f-82f6b5a226b7",
+            "courseId": "2a7b7de2-d933-4de1-8982-d40a0b159021",
+            "title": "Intro to DSAI",
+            "description": "Concepts & workflow",
+            "unlockDate": {
+                "utc": {
+                    "iso": "2025-07-14T00:00:00.000Z",
+                    "timestamp": 1752451200000
+                },
+                "wib": {
+                    "iso": "2025-07-14T07:00:00.000Z",
+                    "timestamp": 1752476400000
+                }
+            },
+            "createdAt": "2025-05-26T14:40:18.447Z",
+            "updatedAt": "2025-05-26T14:52:14.613Z",
+            "resourceUrl": null,
+            "message": "This material will be available from 2025-07-14T07:00:00.000Z",
+            "enrollmentStatus": "enrolled"
+        }
+    ]
+}
+```
+
 ## 3. Hak Akses Berdasarkan Role
 
 | Endpoint                   | Admin | DIKE | UMUM | USER |

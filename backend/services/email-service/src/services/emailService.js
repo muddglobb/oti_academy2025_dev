@@ -5,7 +5,6 @@ import { fileURLToPath } from 'url';
 import config from '../config/index.js';
 import logger from '../utils/logger.js';
 import dotenv from 'dotenv';
-import { google } from 'googleapis';
 
 // Load environment variables
 dotenv.config();
@@ -13,54 +12,39 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// OAuth2 configuration
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET ;
-const REDIRECT_URI = process.env.REDIRECT_URI ;
-const REFRESH_TOKEN = process.env.REFRESH_TOKEN ;
-
 /**
  * Email Service for OmahTI Academy
  * Handles sending transactional emails using HTML templates
  */
 class EmailService {
   constructor() {
+    this.transporter = null;
+    this.templatesBasePath = '';
+    this.from = '"OmahTI Academy 2025" <noreply@academy.omahti.web.id>';
+    this.needsReconnect = false;
     this.setupTransporter();
   }
-  // Setup OAuth2 client and create transporter using Gmail API (HTTPS)
+  // Setup simple SMTP transporter (no OAuth2)
   async setupTransporter() {
     try {
-      const oAuth2Client = new google.auth.OAuth2(
-        CLIENT_ID,
-        CLIENT_SECRET,
-        REDIRECT_URI
-      );
-
-      oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
-      
-      // Get access token
-      const accessToken = await oAuth2Client.getAccessToken();
-      
-      // Create nodemailer transporter with OAuth2 using service: 'gmail'
-      // This will use Gmail API via HTTPS (port 443) instead of SMTP
+      // Create simple SMTP transporter
       this.transporter = nodemailer.createTransport({
-        service: 'gmail',  // Uses Gmail API instead of direct SMTP
+        host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+        port: parseInt(process.env.EMAIL_PORT || '587', 10),
+        secure: process.env.EMAIL_SECURE === 'true', // true for 465, false for other ports
         auth: {
-          type: 'OAuth2',
           user: process.env.EMAIL_USER,
-          clientId: CLIENT_ID,
-          clientSecret: CLIENT_SECRET,
-          refreshToken: REFRESH_TOKEN,
-          accessToken: accessToken.token
+          pass: process.env.EMAIL_PASSWORD // App Password
         },
-        // Increase timeout for API connections
+        // Increase timeout for connections
         connectionTimeout: 10000,
-        greetingTimeout: 10000
+        greetingTimeout: 10000,
+        socketTimeout: 10000
       });
       
-      logger.info('Gmail API transporter set up successfully');
+      logger.info('SMTP transporter set up successfully');
     } catch (error) {
-      logger.error(`Error setting up Gmail API transporter: ${error.message}`);
+      logger.error(`Error setting up SMTP transporter: ${error.message}`);
       // Don't throw here, we'll handle it in verification
     }
     
@@ -70,8 +54,8 @@ class EmailService {
       // In development, templates are in src/templates
       this.templatesBasePath = path.join(__dirname, '..', 'templates');
     } else {
-      // In production/Docker, templates should be in dist/templates
-      this.templatesBasePath = path.join(process.cwd(), 'dist', 'templates');
+      // In production/Docker, templates should be in src/templates
+      this.templatesBasePath = path.join(process.cwd(), 'src', 'templates');
     }
     
     logger.info(`Templates path set to: ${this.templatesBasePath}`);
@@ -80,15 +64,17 @@ class EmailService {
     // Verify connection
     this.verifyConnection();
   }
+
   /**
    * Verify connection to email server
    */
   async verifyConnection() {
     try {
       await this.transporter.verify();
-      logger.info('Gmail API connection established successfully');
+      logger.info('SMTP connection established successfully');
+      this.needsReconnect = false;
     } catch (error) {
-      logger.error('Failed to establish connection to Gmail API:', error);
+      logger.error('Failed to establish connection to SMTP server:', error.message);
       // Don't crash the service, we'll retry later
       logger.info('Will retry connection on first email send attempt');
       // If we can't verify, we'll set up a retry mechanism
@@ -97,79 +83,42 @@ class EmailService {
   }
 
   /**
-   * Load a specific template from the templates directory
-   * 
-   * @param {string} templateName The name of the template (without extension)
-   * @returns {Promise<string>} The HTML template as a string
+   * Reconnect to email server if needed
    */
-  async loadTemplate(templateName) {
-    try {
-      // Determine template path from name
-      let templatePath;
-      
-      if (templateName === 'password-reset') {
-        templatePath = path.join(this.templatesBasePath, 'password-reset', 'index.html');
-      } else if (templateName === 'payment-confirmation') {
-        templatePath = path.join(this.templatesBasePath, 'payment-confirmation', 'index.html');
-      } else if (templateName === 'enrollment-confirmation') {
-        templatePath = path.join(this.templatesBasePath, 'enrollment-confirmation', 'index.html');
-      } else {
-        throw new Error(`Template "${templateName}" not found`);
-      }
-      
-      // Log the path we're trying to access
-      logger.info(`Attempting to load template from: ${templatePath}`);
-      
-      try {
-        // First try with fs.readFile
-        const template = await fs.readFile(templatePath, 'utf8');
-        return template;
-      } catch (error) {
-        // If that fails, try with require (for bundled environments)
-        logger.warn(`Failed to read template with fs, trying alternative method: ${error.message}`);
-        
-        // Create a basic fallback template
-        const fallbackTemplate = `
-          <html>
-            <body>
-              <h1>${templateName}</h1>
-              <p>This is a fallback template because the original could not be loaded.</p>
-              ${templateName === 'password-reset' 
-                ? '<p>Click on the link to reset your password: <a href="{{resetLink}}">Reset Password</a></p>' 
-                : ''}
-            </body>
-          </html>
-        `;
-        
-        return fallbackTemplate;
-      }
-    } catch (error) {
-      logger.error(`Failed to load email template "${templateName}":`, error);
-      throw new Error(`Failed to load email template: ${error.message}`);
+  async reconnectIfNeeded() {
+    if (this.needsReconnect) {
+      logger.info('Trying to reconnect to SMTP server before sending email');
+      await this.setupTransporter();
     }
   }
 
   /**
-   * Replace variables in the template with actual values
+   * Load and process HTML template
    * 
-   * @param {string} template The HTML template
-   * @param {Object} variables The variables to replace in the template
-   * @returns {string} The template with replaced variables
+   * @param {string} templateName Template name (folder name)
+   * @param {Object} variables Variables to replace in template
+   * @returns {Promise<string>} Processed HTML content
    */
-  replaceTemplateVariables(template, variables = {}) {
-    let result = template;
-
-    // Replace all variables in the template (format: {{variableName}})
-    Object.entries(variables).forEach(([key, value]) => {
-      const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
-      result = result.replace(regex, String(value));
-    });
-
-    // Remove any unused variables
-    result = result.replace(/{{.*?}}/g, '');
-
-    return result;
+  async loadTemplate(templateName, variables = {}) {
+    try {
+      const templatePath = path.join(this.templatesBasePath, templateName, 'index.html');
+      logger.info(`Attempting to load template from: ${templatePath}`);
+      
+      let htmlContent = await fs.readFile(templatePath, 'utf8');
+      
+      // Replace variables in template
+      Object.keys(variables).forEach(key => {
+        const regex = new RegExp(`{{${key}}}`, 'g');
+        htmlContent = htmlContent.replace(regex, variables[key]);
+      });
+      
+      return htmlContent;
+    } catch (error) {
+      logger.error(`Error loading template ${templateName}:`, error.message);
+      throw new Error(`Template ${templateName} not found or could not be loaded`);
+    }
   }
+
   /**
    * Send an email using a template
    * 
@@ -177,50 +126,31 @@ class EmailService {
    * @returns {Promise<void>} Promise that resolves when the email is sent
    */
   async sendEmail(options) {
-    const { to, subject, templateName, variables } = options;
-
     try {
-      // Check if we need to reconnect
-      if (this.needsReconnect || !this.transporter) {
-        logger.info('Trying to reconnect to Gmail API before sending email');
-        await this.setupTransporter();
-        this.needsReconnect = false;
-      }
+      // Reconnect if needed
+      await this.reconnectIfNeeded();
 
-      // Load template
-      const template = await this.loadTemplate(templateName);
+      const { to, subject, templateName, variables } = options;
       
-      // Replace variables in template
-      const html = this.replaceTemplateVariables(template, variables);
-
-      // Send email
-      const info = await this.transporter.sendMail({
+      // Load and process template
+      const htmlContent = await this.loadTemplate(templateName, variables);
+      
+      // Email options
+      const mailOptions = {
         from: this.from,
-        to: Array.isArray(to) ? to.join(',') : to,
+        to,
         subject,
-        html,
-      });
-
-      logger.info(`Email sent successfully via Gmail API: ${info.messageId}`, { 
-        templateName,
-        subject,
-        recipients: to
-      });
+        html: htmlContent,
+      };
       
-      return info;
+      // Send email
+      const result = await this.transporter.sendMail(mailOptions);
+      logger.info(`Email sent successfully to ${to}. MessageId: ${result.messageId}`);
+      
+      return result;
     } catch (error) {
-      logger.error('Failed to send email:', error);
-      
-      // If authentication error, try to refresh transporter
-      if (error.message.includes('auth') || 
-          error.message.includes('credentials') ||
-          error.message.includes('ETIMEDOUT')) {
-        logger.info('Will try to reconnect on next email attempt');
-        this.needsReconnect = true;
-      }
-      
-      // Don't crash the entire service, but do throw so the message can be retried
-      throw new Error(`Email sending failed: ${error.message}`);
+      logger.error(`Failed to send email: ${error.message}`);
+      throw error;
     }
   }
 
@@ -254,14 +184,7 @@ class EmailService {
    * @param {string} transactionId Transaction ID
    * @param {string} date Payment date
    */
-  async sendPaymentConfirmationEmail(
-    to,
-    username,
-    courseName,
-    amount,
-    transactionId,
-    date
-  ) {
+  async sendPaymentConfirmationEmail(to, username, courseName, amount, transactionId, date) {
     return await this.sendEmail({
       to,
       subject: 'Payment Confirmation - OmahTI Academy',
@@ -283,31 +206,31 @@ class EmailService {
    * @param {string} to Recipient email address
    * @param {string} username User's name
    * @param {string} courseName Name of the course
-   * @param {string} startDate Course start date
-   * @param {string} courseLink Link to access the course
+   * @param {string} packageName Name of the package
+   * @param {number} price Package price
+   * @param {string} paymentId Payment ID
+   * @param {string} date Enrollment date
    */
-  async sendEnrollmentConfirmationEmail(
-    to,
-    username,
-    courseName,
-    startDate,
-    courseLink
-  ) {
+  async sendEnrollmentConfirmationEmail(to, username, courseName, packageName, price, paymentId, date) {
     return await this.sendEmail({
       to,
-      subject: `Welcome to ${courseName} - OmahTI Academy`,
+      subject: 'Enrollment Confirmation - OmahTI Academy',
       templateName: 'enrollment-confirmation',
       variables: {
         username,
         courseName,
-        startDate,
-        courseLink,
+        packageName,
+        price: new Intl.NumberFormat('id-ID', { 
+          style: 'currency', 
+          currency: 'IDR' 
+        }).format(price),
+        paymentId,
+        date,
         currentYear: new Date().getFullYear().toString(),
       },
     });
   }
 }
 
-// Create singleton instance
-const emailService = new EmailService();
-export default emailService;
+// Export singleton instance
+export default new EmailService();

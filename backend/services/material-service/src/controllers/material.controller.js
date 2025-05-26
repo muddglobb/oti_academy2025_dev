@@ -4,6 +4,7 @@ import { ApiResponse } from '../utils/api-response.js';
 import { asyncHandler } from '../middlewares/async.middleware.js';
 import config from '../config/index.js';
 import * as DateHelper from '../utils/date-helper.js';
+import jwt from 'jsonwebtoken';
 
 /**
  * @desc    Create a new material
@@ -290,6 +291,98 @@ export const deleteMaterial = asyncHandler(async (req, res) => {
     console.error('Error deleting material:', error);
     res.status(500).json(
       ApiResponse.error(error.message || 'Error deleting material')
+    );
+  }
+});
+
+/**
+ * @desc    Get all materials for a course (Public access - no enrollment required)
+ * @route   GET /api/materials/course/:courseId/public
+ * @access  Public
+ */
+export const getMaterialsByCoursePublic = asyncHandler(async (req, res) => {
+  const { courseId } = req.params;
+  
+  try {
+    // Get all materials for the course
+    const materials = await MaterialService.getMaterialsByCourse(courseId);
+    
+    if (materials.length === 0) {
+      return res.status(404).json(
+        ApiResponse.error('No materials found for this course')
+      );
+    }    // Check if user is authenticated and enrolled (optional check)
+    let isUserEnrolled = false;
+    let isAdmin = false;
+    let userId = null;
+    
+    // Extract token if provided (optional authentication)
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      try {
+        const token = authHeader.substring(7);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || config.jwtSecret);
+        userId = decoded.id;
+        
+        // Check if user is admin
+        isAdmin = decoded.role === 'ADMIN';
+        
+        // Check enrollment status (only if not admin)
+        if (!isAdmin) {
+          const { EnrollmentIntegrationService } = await import('../services/enrollment-integration.service.js');
+          isUserEnrolled = await EnrollmentIntegrationService.isUserEnrolled(userId, courseId);
+        }
+      } catch (tokenError) {
+        // Token invalid or enrollment check failed, continue as non-enrolled user
+        console.log('Optional authentication failed, continuing as guest:', tokenError.message);
+      }
+    }    // Use MaterialEnhancer to properly handle unlock dates and resource URLs
+    const enhancedMaterials = await MaterialEnhancer.enhanceWithCourseInfo(materials, false, isAdmin);
+    
+    // Transform materials based on enrollment status and unlock dates
+    const transformedMaterials = enhancedMaterials.map(material => {
+      const baseMaterial = {
+        id: material.id,
+        courseId: material.courseId,
+        title: material.title,
+        description: material.description,
+        unlockDate: material.unlockDate,
+        createdAt: material.createdAt,
+        updatedAt: material.updatedAt
+      };
+
+      // Determine if material is unlocked (admin always sees as unlocked)
+      const isUnlocked = isAdmin || material.unlocked;
+      
+      // Include resourceUrl only if user is admin OR (enrolled AND material is unlocked)
+      if (isAdmin) {
+        baseMaterial.resourceUrl = material.resourceUrl || MaterialEnhancer.getHiddenResourceUrl(material);
+        baseMaterial.enrollmentStatus = 'admin_access';
+      } else if (isUserEnrolled) {
+        // For enrolled users, show resourceUrl only if material is unlocked
+        if (isUnlocked) {
+          baseMaterial.resourceUrl = material.resourceUrl || MaterialEnhancer.getHiddenResourceUrl(material);
+        } else {
+          baseMaterial.resourceUrl = null;
+          baseMaterial.message = `This material will be available from ${material.availableFrom || 'soon'}`;
+        }
+        baseMaterial.enrollmentStatus = 'enrolled';
+      } else {
+        baseMaterial.resourceUrl = null;
+        baseMaterial.enrollmentStatus = 'not_enrolled';
+        baseMaterial.message = 'Resource access requires enrollment';
+      }
+
+      return baseMaterial;
+    });
+
+    res.status(200).json(
+      ApiResponse.success(transformedMaterials, 'Materials retrieved successfully')
+    );
+  } catch (error) {
+    console.error('Error getting materials by course (public):', error);
+    res.status(500).json(
+      ApiResponse.error('An error occurred while retrieving materials')
     );
   }
 });
