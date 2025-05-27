@@ -45,7 +45,7 @@ const MenyiapkanKelas = ({ title, description }: any) => {
           <div>
             <div className="w-4 h-4 bg-primary-100 rounded-full"></div>
           </div>
-          <p className="text-primary-100">Menyiapkan kelas untuk kamu!</p>
+          <p className="text-primary-100 text-[12px]">Menyiapkan kelas untuk kamu!</p>
         </div>
         <div>
           <p className="font-bold text-lg sm:text-sm">{title}</p>

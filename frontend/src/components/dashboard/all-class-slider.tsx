@@ -12,31 +12,6 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
-// type SessionTypes = {
-//   id: string;
-//   courseId: string;
-//   startAt: string;
-//   durationHrs: number;
-//   description: string;
-//   createdAt: string;
-//   updatedAt: string;
-// };
-// type CourseTypes = {
-//   id: string;
-//   title: string;
-//   description: string;
-//   quota: number;
-//   entryQuota: number;
-//   bundleQuota: number;
-//   level: string;
-//   createdAt: string;
-//   updatedAt: string;
-//   sessions: SessionTypes;
-// };
-// type AllClassSlider = {
-//   data: CourseTypes[];
-// }
-
 const AllClassSlider = ({ data }: any) => {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
@@ -52,6 +27,41 @@ const AllClassSlider = ({ data }: any) => {
       setCurrent(api.selectedScrollSnap());
     });
   }, [api]);
+
+  function getSlugByTitle(title: string) {
+    switch (title) {
+      case "Web Development":
+        return "web-development";
+      case "Software Engineering":
+        return "software-engineering";
+      case "Data Science & Artificial Intelligence":
+        return "data-science&artificial-intelligence";
+      case "UI/UX":
+        return "ui-ux";
+      case "Cyber Security":
+        return "cyber-security";
+      case "Basic Python":
+        return "basic-python";
+      case "Competitive Programming":
+        return "competitive-programming";
+      case "Game Development":
+        return "game-development";
+      case "Fundamental Cyber Security":
+        return "fundamental-cyber-security";
+      case "Graphic Design":
+        return "graphic-design";
+      case "Bundle Web Development + Software Engineering":
+        return "web-development+software-engineering";
+      case "Bundle Python + Data Science & Artificial Intelligence":
+        return "python+data-science&artificial-intelligence";
+      case "Bundle Graphic Design + UI/UX":
+        return "graphic-design+ui-ux";
+      case "Bundle Fundamental Cyber Security + Cyber Security":
+        return "fundamental-cyber-security+cyber-security";
+      default:
+        return null;
+    }
+  }
 
   return (
     <div>
@@ -77,8 +87,13 @@ const AllClassSlider = ({ data }: any) => {
                       <p className="font-bold text-black w-[70%]">
                         {course.title}
                       </p>
-                      <Link href={`/dashboard/class-dashboard/${course.id}`}>
-                        <button className="bg-primary-500 p-1 rounded self-start">
+                      {/* <Link href={`/dashboard/class-dashboard/${course.id}`}> */}
+                      <Link
+                        href={`/dashboard/class-dashboard/${getSlugByTitle(
+                          course.title
+                        )}`}
+                      >
+                        <button className="bg-primary-500 p-1 rounded self-start cursor-pointer">
                           <ArrowUpRight />
                         </button>
                       </Link>
@@ -123,7 +138,6 @@ const AllClassSlider = ({ data }: any) => {
           </button>
         </div>
       </main>
-
     </div>
   );
 };

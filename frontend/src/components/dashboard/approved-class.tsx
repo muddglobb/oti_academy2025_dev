@@ -66,12 +66,12 @@ const ApprovedClass = async ({ title, description }: any) => {
           {new Date(timez) > new Date() ? (
             <>
               <div className="w-4 h-4 bg-error-800 rounded-full"></div>
-              <p className="text-error-800">Scheduled</p>
+              <p className="text-error-800 text-[12px]">Scheduled</p>
             </>
           ) : (
             <>
               <div className="w-4 h-4 bg-[#095C37] rounded-full"></div>
-              <p className="text-[#095C37]">On going</p>
+              <p className="text-[#095C37] text-[12px]">On going</p>
             </>
           )}
         </div>
