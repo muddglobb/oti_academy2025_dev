@@ -161,6 +161,31 @@ export async function getAllEnrollment() {
   }
 }
 
+export async function getPendingEnrollment() {
+  try {
+    const accessToken = await getAccessToken();
+    const res = await fetch(`${process.env.BASE_URL}/payments/pending`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        // "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      console.error("Gagal mendapatkan data pending enroll:", res.statusText);
+      throw new Error("Gagal memuat data pending enroll.");
+    }
+
+    const stats = await res.json();
+    // console.log(stats)
+    return stats.data;
+  } catch (error) {
+    console.error("Terjadi kesalahan saat mengambil data pending enroll:", error);
+    throw error;
+  }
+}
+
 export async function approvePayment({paymentId}: any) {
   try {
     const accessToken = await getAccessToken();
@@ -185,3 +210,4 @@ export async function approvePayment({paymentId}: any) {
     throw error;
   }
 }
+

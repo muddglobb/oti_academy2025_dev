@@ -6,7 +6,7 @@ import Sidebarz from "@/components/admin-page/sidebarz";
 import { Headerz } from "@/components/admin-page/headerz";
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard OmahTI Academy",
+  title: "Admin Dashboard",
   description: "keren",
 };
 

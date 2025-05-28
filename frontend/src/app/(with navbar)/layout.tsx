@@ -23,6 +23,10 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "OmahTI Academy",
   description: "keren",
+  icons: {
+    icon: "/favicon.svg", // favicon default
+    shortcut: "/favicon.svg", // untuk browser lama
+  },
 };
 
 export default function RootLayout({
