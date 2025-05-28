@@ -87,6 +87,42 @@ type PackageType = {
 
 
 export default function BundleCard({ pkg , course }: { pkg: PackageType, course: CourseType }) {
+function getSlugByTitle(title: string) {
+  switch (title) {
+    case "Web Development":
+      return "web-development";
+    case "Software Engineering":
+      return "software-engineering";
+    case "Data Science & Artificial Intelligence":
+      return "data-science&artificial-intelligence";
+    case "UI/UX":
+      return "ui-ux";
+    case "Cyber Security":
+      return "cyber-security";
+    case "Basic Python":
+      return "basic-python";
+    case "Competitive Programming":
+      return "competitive-programming";
+    case "Game Development":
+      return "game-development";
+    case "Fundamental Cyber Security":
+      return "fundamental-cyber-security";
+    case "Graphic Design":
+      return "graphic-design";
+    case "Bundle Web Development + Software Engineering":
+      return "web-development+software-engineering";
+    case "Bundle Python + Data Science & Artificial Intelligence":
+      return "python+data-science&artificial-intelligence";
+    case "Bundle Graphic Design + UI/UX":
+      return "graphic-design+ui-ux";
+    case "Bundle Fundamental Cyber Security + Cyber Security":
+      return "fundamental-cyber-security+cyber-security";
+    default:
+      return null;
+  }
+}
+
+
   return (    
     <>
       {pkg.type === "BUNDLE" && (
@@ -108,7 +144,9 @@ export default function BundleCard({ pkg , course }: { pkg: PackageType, course:
                     <div className="flex flex-row justify-between items-center">
                         <h2 className="text-[14px] font-bold text-neutral-900">{pkg.name.replace(/^Bundle\s+/i, '')}</h2>
                             <div className="bg-primary-500 rounded-[5px] self-start">
-                                <Link href={`/dashboard/class-dashboard/${pkg.id}`}>
+                                {/* <Link href={`/dashboard/class-dashboard/${pkg.id}`}> */}
+                                <Link href={`/dashboard/class-dashboard/${getSlugByTitle(pkg.name)}`}>
+                                {/* {pkg.name} */}
                                     <ArrowUpRight className="p-[5px]" size={25} />
                                 </Link>
                             </div>
