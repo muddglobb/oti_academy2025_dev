@@ -9,7 +9,6 @@ const PilihanKelas = () => {
       className="
                 bg-[linear-gradient(0deg,rgba(5,12,26,0.6)_0%,rgba(5,12,26,0.8)_100%)]
                 relative
-                lg:h-screen
                 py-10
 pb-20
                 "

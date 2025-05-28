@@ -1,14 +1,18 @@
 import React from "react";
 import { getMyPayments } from "@/lib/payment/fetch-payment";
 import { Clock } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import KelasKosong from "./kelass-kosong";
+import MenyiapkanKelas from "./menyiapkan-kelas";
+import ApprovedClass from "./approved-class";
 
 const EnrolledClass = async () => {
   const payments = await getMyPayments();
+  // const now = new Date();
+  // const targetDate = new Date("2025-05-28T13:52:14.495Z");
+  // console.log(targetDate > now); // true jika targetDate sudah lewat
 
   // console.log("Payments", payments.length);
-  console.log("Payments", payments[0]);
+  // console.log("Payments", payments[0]);
   return (
     <div className="border-2 border-neutral-500 rounded-[20px]">
       <div className="rounded-[20px] p-6 ">
@@ -25,27 +29,10 @@ const EnrolledClass = async () => {
             payments[0].status === "PAID" &&
             payments[0].bundleCourses.map((paidClass: any) => (
               <div key={paidClass.id}>
-                <div className="bg-neutral-500 border-3 border-neutral-500 rounded-[20px] h-35 flex">
-                  <Image
-                    src="/person-placeholder.jpeg"
-                    alt="class-icon"
-                    className="rounded-l-[16px]"
-                    width={140}
-                    height={140}
-                  />
-                  <div className="w-5/6 p-4">
-                    <div className="flex gap-2 items-center mb-2">
-                      <div className="w-4 h-4 bg-primary-100 rounded-full"></div>
-                      <p className="text-primary-100">
-                        Menyiapkan kelas untuk kamu!
-                      </p>
-                    </div>
-                    <div>
-                      <p className="font-bold text-sm">{paidClass.title}</p>
-                      <p className="text-[12px]">{paidClass.description}</p>
-                    </div>
-                  </div>
-                </div>
+                <MenyiapkanKelas
+                  title={paidClass.title}
+                  description={paidClass.description}
+                />
               </div>
             ))}
 
@@ -53,25 +40,10 @@ const EnrolledClass = async () => {
             payments[0].status === "APPROVED" &&
             payments[0].bundleCourses.map((paidClass: any) => (
               <div key={paidClass.id}>
-                <div className="bg-neutral-50 border-3 border-neutral-500 rounded-[20px] h-35 flex">
-                  <Image
-                    src="/person-placeholder.jpeg"
-                    alt="class-icon"
-                    className="rounded-l-[16px]"
-                    width={140}
-                    height={140}
-                  />
-                  <div className="w-5/6 p-4">
-                    <div className="flex gap-2 items-center mb-2">
-                      <div className="w-4 h-4 bg-[#095C37] rounded-full"></div>
-                      <p className="text-[#095C37]">On going</p>
-                    </div>
-                    <div className="text-neutral-900">
-                      <p className="font-bold text-sm">{paidClass.title}</p>
-                      <p className="text-[12px]">{paidClass.description}</p>
-                    </div>
-                  </div>
-                </div>
+                <ApprovedClass
+                  title={paidClass.title}
+                  description={paidClass.description}
+                />
               </div>
             ))}
 
@@ -80,60 +52,16 @@ const EnrolledClass = async () => {
               {payments.map((paidClass: any) => (
                 <div key={paidClass.id}>
                   {paidClass.status === "PAID" ? (
-                    <div className="bg-neutral-500 border-3 border-neutral-500 rounded-[20px] h-35 flex">
-                      <Image
-                        src="/person-placeholder.jpeg"
-                        alt="class-icon"
-                        className="rounded-l-[16px]"
-                        width={140}
-                        height={140}
-                      ></Image>
-                      <div className="w-5/6 p-4">
-                        <div className="flex gap-2 items-center mb-2">
-                          <div className="w-4 h-4 bg-primary-100 rounded-full"></div>
-                          <p className="text-primary-100">
-                            Menyiapkan kelas untuk kamu!
-                          </p>
-                        </div>
-                        <div>
-                          <p className="font-bold text-sm">
-                            {paidClass.course.title}
-                          </p>
-                          <p className="text-[12px]">
-                            {paidClass.course.description}
-                          </p>
-                          {/* <p>{paidClass.status}</p> */}
-                        </div>
-                      </div>
-                    </div>
+                    <MenyiapkanKelas
+                      title={paidClass.course.title}
+                      description={paidClass.course.description}
+                    />
                   ) : (
-                    <div className="bg-neutral-50 border-3 border-neutral-500 rounded-[20px] h-35 text-neutral-900 flex">
-                      <Image
-                        src="/person-placeholder.jpeg"
-                        alt="class-icon"
-                        className="rounded-l-[16px]"
-                        width={140}
-                        height={140}
-                      ></Image>
-                      <div className="w-5/6 p-4">
-                        <div className="flex gap-2 items-center mb-2">
-                          <div className="w-4 h-4 bg-[#095C37] rounded-full"></div>
-                          <p className="text-[#095C37]">On going</p>
-                        </div>
-                        <div>
-                          <p className="font-bold text-sm">
-                            {paidClass.course.title}
-                          </p>
-                          <p className="text-[12px]">
-                            {paidClass.course.description}
-                          </p>
-                          {/* <p>{paidClass.status}</p> */}
-                        </div>
-                      </div>
-                    </div>
+                    <ApprovedClass
+                      title={paidClass.course.title}
+                      description={paidClass.course.description}
+                    />
                   )}
-
-                  {/* PAID atau APPROVED */}
                 </div>
               ))}
             </>
@@ -141,76 +69,13 @@ const EnrolledClass = async () => {
 
           {payments.length === 0 && (
             <>
-              <div className=" border-3 border-neutral-500 rounded-[20px] h-35 flex">
-                <div className="w-5/6 p-4 flex flex-col justify-between">
-                  <div>
-                    <p className="text-sm">
-                      Hmm, daftar kelasmu masih kosong nih!
-                    </p>
-                    <p className="text-[12px]">
-                      Gimana kalau kita isi sekarang? Ada banyak kelas keren
-                      yang bisa kamu pilih!
-                    </p>
-                  </div>
-
-                  <div>
-                    <Link href="/dashboard/class-dashboard">
-                      <button className="px-3 py-2 bg-primary-500 font-bold text-[12px] rounded-sm">
-                        Eksplor Sekarang
-                      </button>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-
-              <div className=" border-3 border-neutral-500 rounded-[20px] h-35 flex">
-                <div className="w-5/6 p-4 flex flex-col justify-between">
-                  <div>
-                    <p className="text-sm">
-                      Hmm, daftar kelasmu masih kosong nih!
-                    </p>
-                    <p className="text-[12px]">
-                      Gimana kalau kita isi sekarang? Ada banyak kelas keren
-                      yang bisa kamu pilih!
-                    </p>
-                  </div>
-
-                  <div>
-                    <Link href="/dashboard/class-dashboard">
-                      <button className="px-3 py-2 bg-primary-500 font-bold text-[12px] rounded-sm">
-                        Eksplor Sekarang
-                      </button>
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <KelasKosong />
+              <KelasKosong />
             </>
           )}
 
-          {payments.length === 1 && (
-            <>
-              <div className=" border-3 border-neutral-500 rounded-[20px] h-35 flex">
-                <div className="w-5/6 p-4 flex flex-col justify-between">
-                  <div>
-                    <p className="text-sm">
-                      Hmm, daftar kelasmu masih kosong nih!
-                    </p>
-                    <p className="text-[12px]">
-                      Gimana kalau kita isi sekarang? Ada banyak kelas keren
-                      yang bisa kamu pilih!
-                    </p>
-                  </div>
-
-                  <div>
-                    <Link href="/dashboard/class-dashboard">
-                      <button className="px-3 py-2 bg-primary-500 font-bold text-[12px] rounded-sm">
-                        Eksplor Sekarang
-                      </button>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </>
+          {payments.length === 1 && payments[0]?.packageType !== "BUNDLE" && (
+            <KelasKosong />
           )}
         </div>
       </div>
