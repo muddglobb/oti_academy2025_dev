@@ -38,7 +38,7 @@ const SessionInfo = async ({ courseID }: SessionProps) => {
   console.log("Course ID ", courseID);
   console.log("Material Data ", MaterialData);
   return (
-    <div className="rounded-[20px] border-solid border-2 border-neutral-500 px-6 py-4 mt-6">
+    <div className="w-full rounded-[20px] border-solid border-2 border-neutral-500 px-6 py-4 mt-6">
       <p className="font-bold text-lg text-neutral-50 pb-2 border-b-2 border-neutral-500 mb-4">
         Complete Session Information
       </p>
@@ -95,14 +95,14 @@ const SessionInfo = async ({ courseID }: SessionProps) => {
                     {status}
                   </p>
                   <h3 className="font-bold">{session.title}</h3>
-                  <div className="flex flex-col items-center lg:flex-row justify-between gap-4 mt-2">
+                  <div className="flex flex-col items-stretch lg:flex-row lg:justify-between gap-4 mt-2">
                     <div className="flex flex-row gap-5 justify-between">
                       <div className="flex flex-row gap-[5px] items-center bg-primary-700 p-1 rounded-sm">
                         <Image
                           src={"/icons/calendar-icon.svg"}
                           alt="calendar-icon"
-                          width={24}
-                          height={24}
+                          width={18}
+                          height={18}
                         />
 
                         <p className="text-xs">{formattedDate}</p>
@@ -111,8 +111,8 @@ const SessionInfo = async ({ courseID }: SessionProps) => {
                         <Image
                           src={"/icons/time-icon.svg"}
                           alt="time-icon"
-                          width={24}
-                          height={24}
+                          width={18}
+                          height={18}
                         />
                         <p className="text-xs">08.00 - 10.00</p>
                       </div>
@@ -120,15 +120,15 @@ const SessionInfo = async ({ courseID }: SessionProps) => {
                         <Image
                           src={"/icons/time-icon.svg"}
                           alt="time-icon"
-                          width={24}
-                          height={24}
+                          width={18}
+                          height={18}
                         />
                         <p className="text-xs">2 Jam</p>
                       </div>
                     </div>
-                    <div className="flex flex-row gap-5 self-end">
+                    <div className="flex flex-row gap-5 self-center">
                       <div
-                        className={`rounded-[8px] py-2 px-13 ${
+                        className={`rounded-[8px] py-2 px-8 lg:px-13 ${
                           status === "Scheduled"
                             ? "text-neutral-400 bg-neutral-800"
                             : status === "On Going"
@@ -145,7 +145,7 @@ const SessionInfo = async ({ courseID }: SessionProps) => {
                         )}
                       </div>
                       <div
-                        className={`rounded-[8px] py-2 px-13 ${
+                        className={`rounded-[8px] py-2 px-8 lg:px-13 ${
                           status === "Scheduled"
                             ? "text-neutral-400 bg-neutral-800"
                             : status === "On Going"
@@ -166,7 +166,7 @@ const SessionInfo = async ({ courseID }: SessionProps) => {
                     </div>
                   </div>
 
-                  <p className="mt-2">{session.description}</p>
+                  <p className="mt-2 text-xs">{`"${session.description}"`}</p>
                 </div>
               </div>
             </div>

@@ -49,7 +49,7 @@ const ClassCapacity = async ({
     capacity > 0 ? Math.round((currentCount / capacity) * 100) : 0;
 
   return (
-    <div className="w-[96%] flex flex-col gap-[5px] ">
+    <div className="w-full flex flex-col gap-[5px] ">
       <p className="self-start mb-0 text-neutral-50 text-sm">
         Class {"> "} {ClassName}
       </p>
@@ -57,7 +57,9 @@ const ClassCapacity = async ({
         className="border-sol border-2 border-neutral-500 rounded-[20px] p-5 flex flex-col gap-3"
         style={{
           backgroundImage: "url('/images/class-capacity-background.png')",
+          backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
         <div className="flex flex-row justify-between items-center">
