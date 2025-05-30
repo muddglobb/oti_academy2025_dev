@@ -14,14 +14,14 @@ type TeacherCardData = [string, string, string, string, string];
 
 const TeacherCard = ({ teacherCard }: { teacherCard: TeacherCardData[] }) => {
   return (
-    <div className="inline-block border-solid border-2 border-neutral-500 rounded-[20px] p-5 justify-self-start">
-      <p className="text-lg text-success-50 border-b-2 border-neutral-500 pb-2">
+    <div className="w-full border-solid border-2 border-neutral-500 rounded-[20px] px-2 py-5 md:px-5 md:py-5">
+      <p className="font-bold text-lg text-neutral-50 border-b-2 border-neutral-500 pb-2 mx-2">
         Teaching Assistant & Mentor
       </p>
-      <div className="flex flex-col lg:flex-row gap-15 mt-2">
+      <div className="flex flex-col items-center lg:flex-row gap-15 mt-2">
         {teacherCard.map(([name, role, imageUrl, linkedin, desc], index) => (
           <div key={index}>
-            <div className="w-122 h-34 flex flex-row gap-4 bg-neutral-50 text-neutral-900 rounded-[10px]">
+            <div className="w-85 sm:w-122 h-34 flex flex-row gap-4 bg-neutral-50 text-neutral-900 rounded-[10px]">
               <div
                 className="w-34 h-34 bg-cover bg-center bg-no-repeat flex rounded-l-[10px]"
                 style={{
@@ -40,7 +40,7 @@ const TeacherCard = ({ teacherCard }: { teacherCard: TeacherCardData[] }) => {
                   </Link>
                 </div>
               </div>
-              <div className="w-94 mt-5">
+              <div className="w-94 mt-2 md:mt-5">
                 <p className="text-sm font-bold">
                   {name} | {role}
                 </p>
