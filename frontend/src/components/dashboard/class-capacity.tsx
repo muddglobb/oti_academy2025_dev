@@ -29,8 +29,6 @@ const ClassCapacity = async ({
   });
   const apiData = await res.json();
 
-  console.log("Class Level: ", ClassLevel);
-
   const currentCount =
     ClassLevel === "ENTRY"
       ? apiData.data?.enrollments?.entryIntermediateCount ?? 0
@@ -49,8 +47,6 @@ const ClassCapacity = async ({
       : 0;
   const percentage =
     capacity > 0 ? Math.round((currentCount / capacity) * 100) : 0;
-
-  console.log("Quota ", capacity);
 
   return (
     <div className="w-[96%] flex flex-col gap-[5px] ">

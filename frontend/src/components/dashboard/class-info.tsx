@@ -17,7 +17,7 @@ type ClassInfoData = [
 const ClassInfo = ({ classInfo }: { classInfo: ClassInfoData[] }) => {
   return (
     <div className="border-sol border-2 border-neutral-500 rounded-[20px] px-5 py-5">
-      <p className="text-lg text-success-50 border-b-2 border-neutral-500 pb-2">
+      <p className="font-bold text-lg text-neutral-50 border-b-2 border-neutral-500 pb-2">
         Detailed Information About Our Class
       </p>
       {classInfo.map(

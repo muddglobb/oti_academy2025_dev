@@ -15,7 +15,7 @@ type TeacherCardData = [string, string, string, string, string];
 const TeacherCard = ({ teacherCard }: { teacherCard: TeacherCardData[] }) => {
   return (
     <div className="inline-block border-solid border-2 border-neutral-500 rounded-[20px] p-5 justify-self-start">
-      <p className="text-lg text-success-50 border-b-2 border-neutral-500 pb-2">
+      <p className="font-bold text-lg text-neutral-50 border-b-2 border-neutral-500 pb-2">
         Teaching Assistant & Mentor
       </p>
       <div className="flex flex-col lg:flex-row gap-15 mt-2">

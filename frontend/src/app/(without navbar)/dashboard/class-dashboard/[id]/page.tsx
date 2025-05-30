@@ -3,6 +3,7 @@ import ClassInfo from "@/components/dashboard/class-info";
 import VideoTeaser from "@/components/dashboard/video-teaser";
 import TeacherCard from "@/components/dashboard/teacher-card";
 import Prerequisites from "@/components/dashboard/prerequisites";
+import SessionInfo from "@/components/dashboard/session-info";
 import Link from "next/link";
 
 import { ArrowLeft } from "lucide-react";
@@ -268,7 +269,7 @@ export default async function Page({
       <div className="relative z-10 w-full flex flex-col items-center justify-center py-4 gap-4 px-4">
         <Link
           href="/dashboard/class-dashboard"
-          className="flex gap-2 bg-primary-900 text-sm font-bold px-3.5 py-2 rounded-[8px] w-fit z-20 self-start ml-10"
+          className="flex gap-2 bg-primary-900 text-sm font-bold px-3.5 py-2 rounded-[8px] w-fit z-20 self-start ml-6"
         >
           <ArrowLeft size={20} color="white" />
           <p className="text-white">Kembali</p>
@@ -282,17 +283,18 @@ export default async function Page({
         />
 
         <div className="hidden lg:block">
-          {classData.classInfo.length > 1 && (
+          {classData.ClassLevel === "BUNDLE" && (
             <div className="flex flex-col gap-6">
               <div className="flex flex-row gap-6">
                 <ClassInfo classInfo={classData.classInfo} />
                 <VideoTeaser />
               </div>
               <TeacherCard teacherCard={classData.teacherCard} />
+              <SessionInfo courseID={courseID} />
             </div>
           )}
-          {classData.classInfo.length === 1 &&
-            classData.ClassLevel !== "Intermediate" && (
+          {classData.ClassLevel === "ENTRY" && (
+            <>
               <div className="flex flex-row gap-6 items-stretch">
                 <div className="flex flex-col gap-3 w-1/2">
                   <ClassInfo classInfo={classData.classInfo} />
@@ -300,8 +302,10 @@ export default async function Page({
                 </div>
                 <VideoTeaser />
               </div>
-            )}
-          {classData.ClassLevel === "Intermediate" && (
+              <SessionInfo courseID={courseID} />
+            </>
+          )}
+          {classData.ClassLevel === "INTERMEDIATE" && (
             <div className="flex flex-col gap-6 mx-4">
               <div className="flex flex-row gap-6 items-stretch">
                 <div className="w-1/2 flex flex-col gap-3">
@@ -311,6 +315,7 @@ export default async function Page({
                 <VideoTeaser />
               </div>
               <TeacherCard teacherCard={classData.teacherCard} />
+              <SessionInfo courseID={courseID} />
             </div>
           )}
         </div>
@@ -320,6 +325,7 @@ export default async function Page({
           <ClassInfo classInfo={classData.classInfo} />
           <Prerequisites />
           <TeacherCard teacherCard={classData.teacherCard} />
+          <SessionInfo courseID={courseID} />
         </div>
       </div>
     </div>
