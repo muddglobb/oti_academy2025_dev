@@ -95,7 +95,7 @@ const Navbar = () => {
                 <Button>Dashboard</Button>
               </Link>
             ) : (
-              <Link href="/login">
+              <Link href="/register">
                 <Button>Get Started</Button>
               </Link>
             )}
