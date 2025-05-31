@@ -238,12 +238,14 @@ services:
     networks:
       - oti-network
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
       interval: 10s
-      timeout: 5s
-      retries: 5
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    restart: unless-stopped
       
-  # EMAIL SERVICE API
+# EMAIL SERVICE API
   email-service-api:
     build: ./services/email-service
     env_file:
@@ -254,8 +256,13 @@ services:
       - ./libs:/app/libs
     environment:
       - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
     networks:
       - oti-network
+    restart: unless-stopped
+    
 
       
   api-gateway:
@@ -272,6 +279,7 @@ services:
           condition: service_healthy
       networks:
         - oti-network
+      
 
 networks:
   oti-network:
