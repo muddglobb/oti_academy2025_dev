@@ -12,7 +12,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
  * @returns {Function} - Express middleware
  */
 export const createRateLimiter = ({ name = 'API', windowMs = 15 * 60 * 1000, max = 100 }) => {
-    if(NODE_ENV !== 'production') { 
+    if(NODE_ENV !== 'development') { 
         // Create a logging middleware that runs before the rate limiter
         const logRateLimitReached = (req, res, next) => {
             // Store the original status function
@@ -50,7 +50,7 @@ export const createRateLimiter = ({ name = 'API', windowMs = 15 * 60 * 1000, max
         ];
     }
     
-    // In production, just return the rate limiter without the logging middleware
+    // In development, just return the rate limiter without the logging middleware
     return rateLimit({
         windowMs,
         max,

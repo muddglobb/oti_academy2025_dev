@@ -12,7 +12,7 @@ RUN chown -R appuser:appgroup /usr/src/app
 COPY package*.json ./
 
 # Install dependensi
-RUN npm ci --only=production
+RUN npm ci --only=development
 
 # Salin kode aplikasi
 COPY --chown=appuser:appgroup . .

@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
 
 // Add explicit initial log
 console.log('🌱🌱🌱 Assignment seed script starting execution...');
@@ -113,8 +114,10 @@ async function fetchUsersFromAuthService(maxRetries = 3, retryDelay = 3000) {
         console.error('❌ Failed to fetch users from auth service after maximum retries');
         // Return fallback test users
         return [
-          { id: 'test-user-1', name: 'Test Student 1', role: 'DIKE' },
-          { id: 'test-user-2', name: 'Test Student 2', role: 'UMUM' }
+          { id: 'test-user-1', name: 'Test Student 1', email: 'test1@example.com', role: 'DIKE' },
+          { id: 'test-user-2', name: 'Test Student 2', email: 'test2@example.com', role: 'UMUM' },
+          { id: 'test-user-3', name: 'Test Student 3', email: 'test3@example.com', role: 'DIKE' },
+          { id: 'test-user-4', name: 'Test Student 4', email: 'test4@example.com', role: 'UMUM' }
         ];
       }
       
@@ -124,13 +127,89 @@ async function fetchUsersFromAuthService(maxRetries = 3, retryDelay = 3000) {
   }
 }
 
-// Single assignment template for each course
-const assignmentTemplate = {
-  title: 'Course Project',
-  description: 'Create a comprehensive project that demonstrates your understanding of the course content. Submit a link to your project repository or documentation.',
-  points: 100,
-  dueDate: new Date('2025-06-30') // Fixed due date instead of dynamic calculation
-};
+/**
+ * Create assignment for a specific course
+ */
+async function createAssignmentForCourse(course, assignmentNumber = 1) {
+  const assignmentTitle = `Final Project - ${course.title}`;
+  const dueDate = futureDate(30); // 30 days from now
+  
+  // Generate unique assignment ID based on course ID to ensure one assignment per course
+  const assignmentId = `assignment-${course.id}`;
+  
+  const assignment = await prisma.assignment.upsert({
+    where: {
+      id: assignmentId
+    },
+    update: {
+      title: assignmentTitle,
+      description: `Complete a comprehensive final project for ${course.title}. This project should demonstrate your mastery of the course concepts and practical application of the skills learned.`,
+      dueDate,
+      points: 100,
+      status: 'ACTIVE',
+      resourceUrl: `https://drive.google.com/drive/folders/course-${course.id}-resources`
+    },
+    create: {
+      id: assignmentId,
+      title: assignmentTitle,
+      description: `Complete a comprehensive final project for ${course.title}. This project should demonstrate your mastery of the course concepts and practical application of the skills learned.`,
+      courseId: course.id,
+      dueDate,
+      points: 100,
+      status: 'ACTIVE',
+      resourceUrl: `https://drive.google.com/drive/folders/course-${course.id}-resources`
+    }
+  });
+  
+  return assignment;
+}
+
+/**
+ * Create submissions for an assignment
+ */
+async function createSubmissionsForAssignment(assignment, students, course) {
+  const submissions = [];
+  
+  for (const student of students) {
+    // 70% chance of a student having submitted the assignment
+    const hasSubmitted = Math.random() < 0.7;
+    
+    if (hasSubmitted) {
+      const submittedAt = pastDate(Math.floor(Math.random() * 10) + 1); // 1-10 days ago
+      const fileUrl = `https://github.com/${student.id}/${course.title.toLowerCase().replace(/[^a-z0-9]/g, '-')}-final-project`;
+      
+      try {
+        const submission = await prisma.submission.upsert({
+          where: {
+            assignmentId_userId: {
+              assignmentId: assignment.id,
+              userId: student.id
+            }
+          },
+          update: {
+            submittedAt: submittedAt,
+            status: 'SUBMITTED',
+            fileUrl: fileUrl
+          },
+          create: {
+            assignmentId: assignment.id,
+            userId: student.id,
+            submittedAt: submittedAt,
+            status: 'SUBMITTED',
+            fileUrl: fileUrl
+          }
+        });
+        
+        submissions.push(submission);
+        console.log(`  📄 Created submission from ${student.name || student.email || student.id}`);
+      } catch (error) {
+        console.warn(`  ⚠️ Failed to create submission for student ${student.id}: ${error.message}`);
+      }
+    }
+  }
+  
+  return submissions;
+}
 
 /**
  * Main seeding function
@@ -146,12 +225,12 @@ export async function seedAssignments(options = { force: false }) {
       console.log(`💡 Found ${existingAssignments} existing assignments`);
       
       if (!options.force) {
-        console.log('ℹ️ Using upsert to add any missing data without duplicates');
-        // We'll continue with upsert to ensure data consistency
+        console.log('ℹ️ Continuing with upsert to ensure data consistency');
       } else {
         console.log('🧹 Force option set, cleaning existing data...');
         await prisma.submission.deleteMany({});
         await prisma.assignment.deleteMany({});
+        console.log('✅ Cleaned existing data');
       }
     } else {
       console.log('📝 No existing assignments found, creating fresh data');
@@ -161,111 +240,72 @@ export async function seedAssignments(options = { force: false }) {
     const courses = await fetchCoursesFromCourseService();
     
     if (!courses.length) {
-      console.warn('⚠️ No courses found, creating sample assignments with placeholder course IDs');
+      console.warn('⚠️ No courses found from course service, using placeholder courses');
+      // Create placeholder courses for testing
+      const placeholderCourses = [
+        { id: 'course-1', title: 'Data Science Fundamentals' },
+        { id: 'course-2', title: 'Web Development Bootcamp' },
+        { id: 'course-3', title: 'Machine Learning Basics' }
+      ];
+      courses.push(...placeholderCourses);
     } else {
       console.log(`✅ Retrieved ${courses.length} courses from course service`);
     }
     
     // Fetch users from auth service for submissions
     const students = await fetchUsersFromAuthService();
-      console.log(`🧑‍🎓 Retrieved ${students.length} students for sample submissions`);
+    console.log(`🧑‍🎓 Retrieved ${students.length} students for sample submissions`);
     
-    // Create assignments for each course - only one assignment per course
+    // Create assignments and submissions
     const createdAssignments = [];
+    let totalSubmissions = 0;
     
-    for (const course of (courses.length ? courses : [{ id: 'placeholder-course-1', title: 'Placeholder Course' }])) {      console.log(`📝 Creating single assignment for course: ${course.title}`);
-      // Use the fixed due date from template
-      const dueDate = assignmentTemplate.dueDate;
+    console.log(`\n📚 Creating assignments for ${courses.length} courses...`);
+    
+    for (const course of courses) {
+      console.log(`\n📝 Processing course: ${course.title} (ID: ${course.id})`);
       
-      // Create one assignment per course
-      const assignmentTitle = `Project - ${course.title}`;
-      
-      // Create the assignment using upsert to prevent duplicates
-      const assignment = await prisma.assignment.upsert({
-        where: {
-          // Use course ID as a unique identifier since there's only one assignment per course
-          id: `${course.id}`
-        },
-        update: {
-          title: assignmentTitle,
-          description: assignmentTemplate.description,
-          dueDate,
-          points: assignmentTemplate.points,
-          status: 'ACTIVE',
-          resourceUrl: `https://drive.google.com/drive/folders/${Buffer.from(course.id).toString('hex').substring(0, 15)}`
-        },
-        create: {
-          id: `${course.id}`,
-          title: assignmentTitle,
-          description: assignmentTemplate.description,
-          courseId: course.id,
-          dueDate,
-          points: assignmentTemplate.points,
-          status: 'ACTIVE',
-          resourceUrl: `https://drive.google.com/drive/folders/${Buffer.from(course.id).toString('hex').substring(0, 15)}`
-        }
-      });      console.log(`✅ Created assignment: ${assignment.title}`);
-      createdAssignments.push(assignment);
-      
-      // Create one submission per student (ensuring each student has only one submission per assignment)
-      if (students.length) {
-        // Create a submission for each student (max one submission per student per assignment)
-        for (const student of students) {
-          // 60% chance of a student having submitted the assignment
-          const isSubmitted = Math.random() < 0.6;
-          
-          if (isSubmitted) {
-            const submissionContent = `This is a project submission from ${student.name} for "${assignment.title}"`;
-            const submissionStatus = 'SUBMITTED'; // Using only SUBMITTED status as per requirements
-            const submittedAt = pastDate(Math.floor(Math.random() * 5) + 1); // 1-5 days ago
-            // Use only GitHub URL format for consistency
-            const fileUrl = `https://github.com/${student.id}/${course.title.toLowerCase().replace(/\s+/g, '-')}-project`;
-            
-            const submission = await prisma.submission.upsert({
-              where: {
-                // Using the unique constraint on assignmentId and userId
-                assignmentId_userId: {
-                  assignmentId: assignment.id,
-                  userId: student.id
-                }
-              },
-              update: {
-                content: submissionContent,
-                submittedAt: submittedAt,
-                status: submissionStatus,
-                fileUrl: fileUrl
-              },
-              create: {
-                assignmentId: assignment.id,
-                userId: student.id,
-                content: submissionContent,
-                submittedAt: submittedAt,
-                status: submissionStatus,
-                fileUrl: fileUrl
-              }
-            });
-            
-            console.log(`📄 Created submission from ${student.name} for "${assignment.title}"`);
-          }
-        }
+      try {
+        // Create one assignment for this course
+        const assignment = await createAssignmentForCourse(course);
+        console.log(`  ✅ Created assignment: ${assignment.title}`);
+        createdAssignments.push(assignment);
+        
+        // Create submissions for this assignment
+        const submissions = await createSubmissionsForAssignment(assignment, students, course);
+        totalSubmissions += submissions.length;
+        console.log(`  📊 Created ${submissions.length} submissions for this assignment`);
+        
+      } catch (error) {
+        console.error(`  ❌ Failed to process course ${course.title}: ${error.message}`);
       }
     }
     
-    // Summary
-    console.log('📊 Seeding summary:');
-    console.log(`  - Created ${createdAssignments.length} assignments`);
+    // Final summary
+    console.log('\n📊 Seeding Summary:');
+    console.log(`  🎯 Courses processed: ${courses.length}`);
+    console.log(`  📝 Assignments created: ${createdAssignments.length}`);
+    console.log(`  📄 Submissions created: ${totalSubmissions}`);
+    console.log(`  🧑‍🎓 Students available: ${students.length}`);
     
-    const submissionCount = await prisma.submission.count();
-    console.log(`  - Created ${submissionCount} submissions`);
+    // Verify final counts
+    const finalAssignmentCount = await prisma.assignment.count();
+    const finalSubmissionCount = await prisma.submission.count();
     
-    console.log('🌱 Assignment service seeding completed successfully!');
+    console.log('\n🔍 Database Verification:');
+    console.log(`  📝 Total assignments in database: ${finalAssignmentCount}`);
+    console.log(`  📄 Total submissions in database: ${finalSubmissionCount}`);
+    
+    console.log('\n🌱 Assignment service seeding completed successfully!');
     
     return {
       success: true,
       message: 'Assignment seeding completed successfully',
       data: {
-        assignments: createdAssignments.length,
-        submissions: submissionCount
+        coursesProcessed: courses.length,
+        assignmentsCreated: createdAssignments.length,
+        submissionsCreated: totalSubmissions,
+        studentsAvailable: students.length
       }
     };
     

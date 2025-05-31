@@ -41,15 +41,17 @@ export class CourseService {
       if (cached) {
         return cached;
       }
-      
-      // Import circuit breaker utilities
+        // Import circuit breaker utilities
       const { executeWithCircuitBreaker, retryWithBackoff } = await import('../utils/circuit-breaker.js');
 
       const courseServiceUrl = process.env.COURSE_SERVICE_URL || 'http://course-service-api:8002';
       const serviceToken = this.generateServiceToken();
       
       const headers = {
-        'Authorization': `Bearer ${serviceToken}`
+        'Authorization': `Bearer ${serviceToken}`,
+        'x-service-token': process.env.INTERNAL_SERVICE_TOKEN,
+        'x-api-key': process.env.INTERNAL_SERVICE_API_KEY,
+        'Content-Type': 'application/json'
       };
       
       // Use circuit breaker pattern for API call
@@ -90,21 +92,22 @@ export class CourseService {
       if (uniqueIds.length === 0) {
         return [];
       }
-      
-      // Check if we can use a batch API first
+        // Check if we can use a batch API first
       const courseServiceUrl = process.env.COURSE_SERVICE_URL || 'http://course-service-api:8002';
       const serviceToken = this.generateServiceToken();
       
       const headers = {
-        'Authorization': `Bearer ${serviceToken}`
+        'Authorization': `Bearer ${serviceToken}`,
+        'x-service-token': process.env.INTERNAL_SERVICE_TOKEN,
+        'x-api-key': process.env.INTERNAL_SERVICE_API_KEY,
+        'Content-Type': 'application/json'
       };
       
       try {
-        // Try to use batch API first
-        const response = await axios.get(`${courseServiceUrl}/courses/batch`, { 
-          headers,
-          params: { ids: uniqueIds.join(',') }
-        });
+        // Try to use batch API first (POST method)
+        const response = await axios.post(`${courseServiceUrl}/courses/batch`, { 
+          courseIds: uniqueIds
+        }, { headers });
         
         if (response.data && response.data.data && Array.isArray(response.data.data)) {
           return response.data.data;

@@ -38,7 +38,7 @@ class AuthService {
    * @returns {Object} Cookie options
    */
 getCookieOptions(tokenType) {
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === 'development';
   
   console.log(`Cookie options requested for ${tokenType} token`);
   

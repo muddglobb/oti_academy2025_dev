@@ -24,7 +24,7 @@ RUN chmod -R 777 node_modules/.prisma node_modules/@prisma
 RUN npx prisma generate
 
 # Railway specific environment variables
-ENV NODE_ENV=production
+ENV NODE_ENV=development
 ENV PORT=8006
 
 # Define health check to ensure the service is ready for traffic
