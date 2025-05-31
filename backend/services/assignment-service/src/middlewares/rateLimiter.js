@@ -55,7 +55,7 @@ export const createRateLimiter = (options = {}) => {
         ];
     }
     
-    // In production, just return the rate limiter without the logging middleware
+    // In development, just return the rate limiter without the logging middleware
     return rateLimit({
         windowMs,
         max,

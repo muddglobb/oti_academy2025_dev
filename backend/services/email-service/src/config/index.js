@@ -17,7 +17,7 @@ const config = {
     port: parseInt(process.env.EMAIL_PORT || '587', 10),
     secure: process.env.EMAIL_SECURE === 'true',
   },
-  apiKey: process.env.API_KEY || 'default-api-key-for-dev-only',  rateLimit: {
+  apiKey: process.env.API_KEY,  rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10), // default 15 minutes (900000 ms)
     max: parseInt(process.env.RATE_LIMIT_MAX || '100', 10), // 100 requests per window
   },

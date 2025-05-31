@@ -10,7 +10,7 @@ RUN mkdir -p /app/logs && chown -R appuser:appuser /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install --production
+RUN npm install --development
 
 # Copy app source
 COPY --chown=appuser:appuser . .

@@ -4,7 +4,6 @@ import multer from 'multer';
 import FormData from 'form-data';
 import path from 'path';
 import fs from 'fs';
-import { standardLimiter } from './ratelimiter.js';
 
 // Simple logger functions
 const logger = {
@@ -109,11 +108,10 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
   
   // Log service URL for debugging
   logger.info(`Creating handler for service: ${baseUrl}, path: ${servicePath}`);
+    const subRouter = express.Router();
   
-  const subRouter = express.Router();
-  
-  // Apply rate limiter middleware
-  subRouter.use(standardLimiter);
+  // Rate limiting is now handled at route level, not here
+  // subRouter.use(standardLimiter); // REMOVED
   
   // Use a simple handler for all methods and paths
   subRouter.use((req, res, next) => {
@@ -169,8 +167,7 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
           if (!safeFilePath.startsWith(allowedDir)) {
             throw new Error('Invalid file path');
           }
-          
-          // Add file
+            // Add file
           formData.append('file', fs.createReadStream(safeFilePath), {
             filename: req.file.originalname,
             contentType: req.file.mimetype
@@ -181,9 +178,11 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
             formData.append(key, req.body[key]);
           });
           
-          // Set headers with form data boundaries
+          // Set headers with form data boundaries and API Gateway identifier
           const headers = {
             ...formData.getHeaders(),
+            'X-API-Gateway': 'true',
+            'X-Service-Key': process.env.SERVICE_API_KEY || 'gateway-internal',
             ...(req.headers.authorization ? { 'Authorization': req.headers.authorization } : {}),
             ...(req.user ? { 'X-User-ID': req.user.id, 'X-User-Role': req.user.role } : {})
           };
@@ -219,9 +218,10 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
           // Regular JSON request
           const sanitizedBody = sanitizeRequestBody(req.body);
           logger.debug(`Request body: ${JSON.stringify(sanitizedBody)}`);
-          
-          const headers = {
+            const headers = {
             'Content-Type': req.headers['content-type'] || 'application/json',
+            'X-API-Gateway': 'true',
+            'X-Service-Key': process.env.SERVICE_API_KEY || 'gateway-internal',
             ...(req.headers.authorization ? { 'Authorization': req.headers.authorization } : {}),
             ...(req.user ? { 'X-User-ID': req.user.id, 'X-User-Role': req.user.role } : {})
           };

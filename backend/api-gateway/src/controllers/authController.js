@@ -92,8 +92,8 @@ export const cacheNewToken = async (req, res, next) => {
           // Set cookie dengan token baru
           res.cookie('accessToken', newToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+            secure: process.env.NODE_ENV === 'development',
+            sameSite: process.env.NODE_ENV === 'development' ? 'strict' : 'lax',
             maxAge: config.REDIS.ttl.token * 1000 // Convert seconds to milliseconds
           });
         }

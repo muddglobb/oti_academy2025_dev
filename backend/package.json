@@ -1,5 +1,8 @@
 {
     "name": "@oti-academy/backend",
     "private": true,
-    "type": "module"
-  }
+    "type": "module",
+    "dependencies": {
+        "multer": "^2.0.0"
+    }
+}

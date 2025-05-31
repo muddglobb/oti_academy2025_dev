@@ -13,7 +13,7 @@ RUN chown -R appuser:appgroup /home/appuser
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci --only=development
 
 # Salin kode aplikasi dan prisma
 COPY --chown=appuser:appgroup . .
