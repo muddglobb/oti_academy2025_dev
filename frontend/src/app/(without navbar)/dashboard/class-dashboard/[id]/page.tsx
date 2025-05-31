@@ -276,7 +276,7 @@ export default async function Page({
           <p className="text-white">Kembali</p>
         </Link>
 
-        <div className="hidden lg:block py-4 px-6">
+        <div className="hidden md:block py-4 px-6 w-full">
           {classData.ClassLevel === "BUNDLE" && (
             <div className="flex flex-col gap-6 w-full">
               <ClassCapacity
