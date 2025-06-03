@@ -1,28 +1,28 @@
 import Redis from 'ioredis';
-import config from '../config/index.js';
+import dotenv from 'dotenv';
 import logger from './logger.js';
 
-if (config.REDIS.url) {
+// Load environment variables
+dotenv.config();
+
+let redisClient;
+
+if (process.env.REDIS_URL) {
   // Jika menggunakan REDIS_URL, tambahkan family=0 untuk Railway
-  const redisUrl = config.REDIS.url.includes('?') 
-    ? `${config.REDIS.url}&family=0`
-    : `${config.REDIS.url}?family=0`;
+  const redisUrl = process.env.REDIS_URL.includes('?') 
+    ? `${process.env.REDIS_URL}&family=0`
+    : `${process.env.REDIS_URL}?family=0`;
     
   redisClient = new Redis(redisUrl);
 } else {
   // Fallback ke konfigurasi manual
-  const redisConfig = {
-    host: config.REDIS.host || 'redis',
-    port: config.REDIS.port || 6379,
-    password: config.REDIS.password || undefined,
+  redisClient = new Redis({
+    host: process.env.REDIS_HOST || 'redis',
+    port: parseInt(process.env.REDIS_PORT) || 6379,
+    password: process.env.REDIS_PASSWORD || undefined,
     family: 0 // Enable dual stack lookup untuk Railway
-  };
-  
-  redisClient = new Redis(redisConfig);
+  });
 }
-
-// Buat Redis client
-const redisClient = new Redis(redisConfig);
 
 // Event handlers
 redisClient.on('connect', () => {
