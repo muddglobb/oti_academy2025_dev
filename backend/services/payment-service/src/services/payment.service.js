@@ -395,8 +395,8 @@ static async validateCourseAvailability(courseId, packageType) {
     }
     
     // Use env variables with fallback to new quota values
-    const entryQuota = parseInt(process.env.ENTRY_QUOTA || '30'); // New entry/intermediate quota
-    const bundleQuota = parseInt(process.env.BUNDLE_QUOTA || '30'); // New bundle quota
+    const entryQuota = course.entryQuota || 0;
+    const bundleQuota = course.bundleQuota || 0;
     
     // If trying to enroll in a bundle but course doesn't support bundles
     if (packageType === 'BUNDLE' && bundleQuota === 0) {
