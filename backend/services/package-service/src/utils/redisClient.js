@@ -7,6 +7,7 @@ const redisOptions = {
   host: process.env.REDIS_HOST || 'redis',
   port: parseInt(process.env.REDIS_PORT) || 6379,
   password: process.env.REDIS_PASSWORD,
+  family: 0,
   retryStrategy: (times) => {
     // Reconnection strategy
     const delay = Math.min(times * 50, 2000);

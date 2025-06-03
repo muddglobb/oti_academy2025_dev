@@ -6,7 +6,8 @@ import logger from './logger.js';
 const redisConfig = {
   host: config.REDIS.host || 'redis',
   port: config.REDIS.port || 6379,
-  password: config.REDIS.password || undefined
+  password: config.REDIS.password || undefined,
+  family: 0
 };
 
 // Buat Redis client
