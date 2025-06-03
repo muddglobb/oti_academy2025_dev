@@ -34,8 +34,11 @@ const createRateLimiter = (options = {}) => {
       const serviceKey = req.headers['x-service-key'] || req.headers['x-api-key'];
       return serviceKey === process.env.SERVICE_API_KEY;
     },
-    onLimitReached: (req, res, options) => {
-      console.log(`Rate limit reached for ${req.ip} on ${req.originalUrl}`);
+    handler: (req, res) => {
+      res.status(429).json({
+        error: 'Too many requests from this IP, please try again later.',
+        retryAfter: Math.round(options.windowMs / 1000) || 900
+      });
     }
   });
 };

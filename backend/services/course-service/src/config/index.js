@@ -24,6 +24,8 @@ export default {
   PACKAGE_SERVICE_IP: process.env.PACKAGE_SERVICE_IP,
   PAYMENT_SERVICE_IP: process.env.PAYMENT_SERVICE_IP,
   API_GATEWAY_IP: process.env.API_GATEWAY_IP,
+
+    REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
   
   // CORS configuration
   CORS_ORIGIN: process.env.CORS_ORIGIN || '*',

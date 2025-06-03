@@ -2,13 +2,24 @@ import Redis from 'ioredis';
 import config from '../config/index.js';
 import logger from './logger.js';
 
-// Konfigurasi Redis client
-const redisConfig = {
-  host: config.REDIS.host || 'redis',
-  port: config.REDIS.port || 6379,
-  password: config.REDIS.password || undefined,
-  family: 0
-};
+if (config.REDIS.url) {
+  // Jika menggunakan REDIS_URL, tambahkan family=0 untuk Railway
+  const redisUrl = config.REDIS.url.includes('?') 
+    ? `${config.REDIS.url}&family=0`
+    : `${config.REDIS.url}?family=0`;
+    
+  redisClient = new Redis(redisUrl);
+} else {
+  // Fallback ke konfigurasi manual
+  const redisConfig = {
+    host: config.REDIS.host || 'redis',
+    port: config.REDIS.port || 6379,
+    password: config.REDIS.password || undefined,
+    family: 0 // Enable dual stack lookup untuk Railway
+  };
+  
+  redisClient = new Redis(redisConfig);
+}
 
 // Buat Redis client
 const redisClient = new Redis(redisConfig);
