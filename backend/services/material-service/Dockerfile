@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:24-alpine3.21
 
 # Install OpenSSL explicitly to fix Prisma OpenSSL detection issue
 RUN apk add --no-cache openssl
