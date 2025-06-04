@@ -2,8 +2,8 @@ FROM node:24-alpine3.21
 
 WORKDIR /app
 
-# Create non-root user for security
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+# Create non-root user for security (Alpine Linux syntax)
+RUN addgroup -S appuser && adduser -S -G appuser appuser
 RUN mkdir -p /app/logs && chown -R appuser:appuser /app
 
 # Copy package files first for better layer caching
