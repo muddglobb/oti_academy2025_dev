@@ -60,7 +60,8 @@ app.use((err, req, res, next) => {
 
 // Wait for course service to be ready
 const waitForCourseService = async (maxRetries = 30, retryDelay = 10000) => {
-  const courseServiceUrl = config.COURSE_SERVICE_URL || 'http://course-service-api:8002';
+  const courseServiceUrl = process.env.COURSE_SERVICE_URL || config.COURSE_SERVICE_URL;
+  console.log(`🔗 Checking course service at ${courseServiceUrl}`);
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
