@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { createDirectHandler, upload } from '../utils/directHandler.js';
 import { jwtValidatorMiddleware } from '../middlewares/jwtValidator.js';
-import { handleLogout, handleTokenRefresh, cacheNewToken } from '../controllers/authController.js';
+import { handleLogout, handleTokenRefresh, cacheNewToken, handleLoginResponse } from '../controllers/authController.js';
 import { passwordResetLimiter, uploadLimiter, adminLimiter } from '../middlewares/rateLimiter.js';
 
 const router = Router();
@@ -64,12 +64,8 @@ router.post('/logout',
 );
 
 router.post('/login',
-  createDirectHandler(
-    AUTH_SERVICE_URL,
-    '/auth',
-    false
-  ),
-  cacheNewToken 
+  handleLoginResponse,
+  createDirectHandler(AUTH_SERVICE_URL, '/auth', false)
 );
 
 // Route khusus untuk refresh token - menambahkan middleware cacheNewToken

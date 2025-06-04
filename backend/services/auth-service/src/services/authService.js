@@ -46,7 +46,7 @@ getCookieOptions(tokenType) {
   const options = {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    sameSite: 'lax',
     path: '/',
   };
   
