@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { CacheService } from './cache.service.js';
 import { CourseService } from './course.service.js';
 import { convertWibToUtc, formatDateObject } from '../utils/date-helper.js';
+import config from '../config/index.js';
 
 const prisma = new PrismaClient();
 
@@ -53,7 +54,6 @@ export class MaterialService {
       unlockDate: formatDateObject(material.unlockDate)
     };
   }
-
   /**
    * Get all materials for a course
    * @param {string} courseId - Course ID
@@ -69,7 +69,7 @@ export class MaterialService {
         });
         
         return materials;
-      });
+      }, config.CACHE.TTL.COURSE_MATERIALS);
       
       // Format dates for response
       return materials.map(material => this.formatMaterialResponse(material));
@@ -77,8 +77,7 @@ export class MaterialService {
       console.error(`Error getting materials for course ${courseId}:`, error);
       throw error;
     }
-  }
-  /**
+  }  /**
    * Get material by ID
    * @param {string} id - Material ID
    * @returns {Promise<Object>} Material
@@ -89,15 +88,14 @@ export class MaterialService {
       return prisma.material.findUnique({
         where: { id }
       });
-    });
+    }, config.CACHE.TTL.MATERIAL);
       
       return this.formatMaterialResponse(material);
     } catch (error) {
       console.error(`Error getting material ${id}:`, error);
       throw error;
     }
-  }
-  /**
+  }  /**
    * Get all materials
    * @returns {Promise<Array>} All materials
    */  static async getAllMaterials() {
@@ -113,7 +111,7 @@ export class MaterialService {
         });
         
         return materials;
-      });
+      }, config.CACHE.TTL.ALL_MATERIALS);
       
       // Format dates for response
       return materials.map(material => this.formatMaterialResponse(material));

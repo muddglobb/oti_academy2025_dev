@@ -43,6 +43,14 @@ const routesPath = path.join(__dirname, 'routes');
 
 // Import routes directly instead of dynamic loading due to ES modules limitations
 import routes from './routes/index.js';
+
+app.get('/', (req, res) => {
+  res.json({
+    status: 'success',
+    message: 'Lagi apa disini bang?',
+  });
+});
+
 app.use(routes);
 
 // 404 handler
