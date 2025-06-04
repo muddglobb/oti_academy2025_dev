@@ -63,6 +63,15 @@ router.post('/logout',
   )
 );
 
+router.post('/login',
+  createDirectHandler(
+    AUTH_SERVICE_URL,
+    '/auth',
+    false
+  ),
+  cacheNewToken 
+);
+
 // Route khusus untuk refresh token - menambahkan middleware cacheNewToken
 router.post('/refresh-token',
   handleTokenRefresh,

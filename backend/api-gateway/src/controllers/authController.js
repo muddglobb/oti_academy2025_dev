@@ -79,6 +79,7 @@ export const cacheNewToken = async (req, res, next) => {
         
         // Ambil token dan data user
         const newToken = parsedBody.data.accessToken;
+        const refreshToken = parsedBody.data.refreshToken;
         const userId = req.user?.id;
         const userRole = req.user?.role;
         
@@ -92,10 +93,22 @@ export const cacheNewToken = async (req, res, next) => {
           // Set cookie dengan token baru
           res.cookie('accessToken', newToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'development',
-            sameSite: process.env.NODE_ENV === 'development' ? 'strict' : 'lax',
-            maxAge: config.REDIS.ttl.token * 1000 // Convert seconds to milliseconds
+            secure: process.env.NODE_ENV === 'production', // Ubah ke production
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // none untuk cross-origin
+            domain: process.env.COOKIE_DOMAIN,
+            maxAge: config.REDIS.ttl.token * 1000
           });
+          
+          // Set refresh token cookie jika ada
+          if (refreshToken) {
+            res.cookie('refreshToken', refreshToken, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+              domain: process.env.COOKIE_DOMAIN,
+              maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+            });
+          }
         }
       }
     } catch (error) {
