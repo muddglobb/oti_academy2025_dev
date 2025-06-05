@@ -71,7 +71,7 @@ async function fetchCoursesFromCourseService() {
         return response.data.data;
       }
       
-      console.warn(`⚠️ Invalid response format from ${baseUrl}`);
+      console.warn(`⚠ Invalid response format from ${baseUrl}`);
     } catch (error) {
       lastError = error;
       console.error(`❌ Failed to fetch courses from ${baseUrl}: ${error.message}`);
@@ -79,9 +79,9 @@ async function fetchCoursesFromCourseService() {
   }
   
   // If we reached here, none of the URLs worked
-  console.log('⚠️ All connection attempts failed, falling back to hardcoded course IDs');
-  console.log('⚠️ WARNING: These IDs may not match your actual course database!');
-  console.log('⚠️ Consider manually updating the IDs in getHardcodedCourses() function');
+  console.log('⚠ All connection attempts failed, falling back to hardcoded course IDs');
+  console.log('⚠ WARNING: These IDs may not match your actual course database!');
+  console.log('⚠ Consider manually updating the IDs in getHardcodedCourses() function');
   return getHardcodedCourses();
 }
 
@@ -265,7 +265,7 @@ async function main() {
   for (const group of materialsData) {
     const course = courseMap[group.courseTitle];
     if (!course) {
-      console.warn(`⚠️ Course not found: ${group.courseTitle}, skipped`);
+      console.warn(`⚠ Course not found: ${group.courseTitle}, skipped`);
       skipCount++;
       continue;
     }
