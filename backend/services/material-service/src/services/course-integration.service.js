@@ -6,8 +6,7 @@ import { CacheService } from './cache.service.js';
 /**
  * Service for integrating with course service
  */
-export class CourseIntegrationService {
-  /**
+export class CourseIntegrationService {  /**
    * Validate that a course exists
    * @param {string} courseId - Course ID to validate
    * @returns {Promise<boolean>} True if course exists
@@ -28,7 +27,7 @@ export class CourseIntegrationService {
         // Check if we got a successful HTTP response (200) - that's enough to know the course exists
         // The course service is returning 200 when the course exists
         return response && response.status === 200;
-      });
+      }, config.CACHE.TTL.COURSE_INFO);
     } catch (error) {
       console.error('Error validating course exists:', error.message);
       return false;
@@ -87,7 +86,6 @@ export class CourseIntegrationService {
       throw error;
     }
   }
-
   /**
    * Get course details by ID
    * @param {string} courseId - Course ID
@@ -98,7 +96,7 @@ export class CourseIntegrationService {
       return await CacheService.getOrSet(cacheKey, async () => {
         const response = await this.callCourseService(`courses/${courseId}`);
         return response.data;
-      });
+      }, config.CACHE.TTL.COURSE_INFO);
     } catch (error) {
       console.error('Error getting course details:', error.message);
       throw new Error(`Could not get details for course ${courseId}: ${error.message}`);

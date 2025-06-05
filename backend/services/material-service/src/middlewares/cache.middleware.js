@@ -1,4 +1,5 @@
 import { CacheService } from '../services/cache.service.js';
+import config from '../config/index.js';
 
 /**
  * Sanitize data to prevent XSS attacks
@@ -49,16 +50,24 @@ const isDataSafe = (data) => {
 };
 
 /**
- * Middleware to cache API responses
+ * Middleware to cache API responses using Redis
  * @param {string} type - Cache type/prefix
  * @param {number} ttl - Time-to-live in seconds
  */
-export const cacheMiddleware = (type = 'general', ttl = 3600) => {
+export const cacheMiddleware = (type = 'general', ttl = null) => {
   return async (req, res, next) => {
-    // Skip cache in development
+    // Skip cache in development if requested
     if (process.env.NODE_ENV === 'development' && req.query.skipCache === 'true') {
       return next();
     }
+
+    // Only cache GET requests
+    if (req.method !== 'GET') {
+      return next();
+    }
+
+    // Use default TTL if not specified
+    const cacheTTL = ttl || config.CACHE.TTL.DEFAULT;
 
     // Create a cache key based on the request path and query (sanitized)
     const sanitizedUrl = (req.originalUrl || req.url).replace(/[<>'"&]/g, '');
@@ -71,12 +80,15 @@ export const cacheMiddleware = (type = 'general', ttl = 3600) => {
         // Validate cached data before sending
         if (isDataSafe(existingCache)) {
           const sanitizedCache = sanitizeData(existingCache);
+          console.log(`🔄 Cache hit for ${cacheKey}`);
           return res.json(sanitizedCache);
         } else {
           // Invalid cached data, remove it
           await CacheService.invalidate(cacheKey);
         }
       }
+      
+      console.log(`🔍 Cache miss for ${cacheKey}`);
       
       // Store original send and json functions
       const originalSend = res.send;
@@ -90,7 +102,9 @@ export const cacheMiddleware = (type = 'general', ttl = 3600) => {
             // Validate and sanitize data before caching
             if (isDataSafe(data)) {
               const sanitizedData = sanitizeData(data);
-              CacheService.set(cacheKey, sanitizedData, ttl);
+              CacheService.set(cacheKey, sanitizedData, cacheTTL).catch(err => {
+                console.error(`Cache set error: ${err.message}`);
+              });
             }
           } catch (error) {
             console.error(`Cache set error: ${error.message}`);
@@ -107,7 +121,9 @@ export const cacheMiddleware = (type = 'general', ttl = 3600) => {
             // Validate and sanitize data before caching
             if (isDataSafe(data)) {
               const sanitizedData = sanitizeData(data);
-              CacheService.set(cacheKey, sanitizedData, ttl);
+              CacheService.set(cacheKey, sanitizedData, cacheTTL).catch(err => {
+                console.error(`Cache set error: ${err.message}`);
+              });
             }
           } catch (error) {
             console.error(`Cache set error: ${error.message}`);
@@ -126,7 +142,7 @@ export const cacheMiddleware = (type = 'general', ttl = 3600) => {
 };
 
 /**
- * Middleware to invalidate cache
+ * Middleware to invalidate cache patterns
  * @param {string} pattern - Cache key pattern to invalidate
  */
 export const invalidateCache = (pattern) => {
@@ -140,7 +156,9 @@ export const invalidateCache = (pattern) => {
       // If successful response, invalidate cache
       if (res.statusCode >= 200 && res.statusCode < 300) {
         try {
-          CacheService.invalidate(pattern, true);
+          CacheService.invalidate(pattern, true).catch(err => {
+            console.error(`Cache invalidation error: ${err.message}`);
+          });
         } catch (error) {
           console.error(`Cache invalidation error: ${error.message}`);
         }
@@ -155,7 +173,9 @@ export const invalidateCache = (pattern) => {
       // If successful response, invalidate cache
       if (res.statusCode >= 200 && res.statusCode < 300) {
         try {
-          CacheService.invalidate(pattern, true);
+          CacheService.invalidate(pattern, true).catch(err => {
+            console.error(`Cache invalidation error: ${err.message}`);
+          });
         } catch (error) {
           console.error(`Cache invalidation error: ${error.message}`);
         }

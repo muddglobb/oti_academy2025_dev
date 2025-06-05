@@ -43,8 +43,10 @@ export const login = asyncHandler(async (req, res) => {
     const result = await authService.login(email, password);
     
     // Add debug logging
+    if(process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'DEVELOPMENT') {
     console.log('Setting access_token cookie with options:', authService.getCookieOptions('access'));
     console.log('Setting refresh_token cookie with options:', authService.getCookieOptions('refresh'));
+    }
     
     // Set cookies in explicit order with explicit options
     const accessOptions = authService.getCookieOptions('access');

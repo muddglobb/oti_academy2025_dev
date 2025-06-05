@@ -58,7 +58,6 @@ export const createRateLimiter = (options = {}) => {
                     );
                 },
                 skip: (req) => false
-                // onLimitReached removed - this was causing the warning
             })
         ];
     } else {

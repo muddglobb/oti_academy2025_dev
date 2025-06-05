@@ -38,7 +38,7 @@ class AuthService {
    * @returns {Object} Cookie options
    */
 getCookieOptions(tokenType) {
-  const isProduction = process.env.NODE_ENV === 'development';
+  const isProduction = process.env.NODE_ENV === 'production';
   
   console.log(`Cookie options requested for ${tokenType} token`);
   
@@ -46,7 +46,7 @@ getCookieOptions(tokenType) {
   const options = {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    sameSite: 'lax',
     path: '/',
   };
   
