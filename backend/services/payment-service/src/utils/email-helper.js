@@ -187,10 +187,15 @@ export const sendEnrollmentConfirmationEmail = async (payment, userInfo, package
     if (isBundle) {
       // For bundles, show each course with its date
       const courseWithDates = courseNames.map(name => {
-        // Look for partial matches in courseScheduleMap keys for flexibility
-        const scheduleKey = Object.keys(courseScheduleMap).find(key => 
-          name.includes(key) || key.includes(name)
-        );
+        // Exact match first, then partial matches sorted by length (longest first)
+        let scheduleKey = Object.keys(courseScheduleMap).find(key => key === name);
+        
+        if (!scheduleKey) {
+          const sortedKeys = Object.keys(courseScheduleMap).sort((a, b) => b.length - a.length);
+          scheduleKey = sortedKeys.find(key => 
+            name.includes(key) || key.includes(name)
+          );
+        }
         
         const scheduleDate = scheduleKey ? courseScheduleMap[scheduleKey] : null;
         console.log(`Bundle course: "${name}", matched with: "${scheduleKey}", date: ${scheduleDate}`);
@@ -204,10 +209,15 @@ export const sendEnrollmentConfirmationEmail = async (payment, userInfo, package
       // For single course, just show the date
       const singleCourseName = Array.isArray(courseNames) ? courseNames[0] : packageInfo?.name;
       
-      // Look for partial matches in courseScheduleMap keys
-      const scheduleKey = Object.keys(courseScheduleMap).find(key => 
-        singleCourseName && (singleCourseName.includes(key) || key.includes(singleCourseName))
-      );
+      // Exact match first, then partial matches sorted by length (longest first)
+      let scheduleKey = Object.keys(courseScheduleMap).find(key => key === singleCourseName);
+      
+      if (!scheduleKey) {
+        const sortedKeys = Object.keys(courseScheduleMap).sort((a, b) => b.length - a.length);
+        scheduleKey = sortedKeys.find(key => 
+          singleCourseName && (singleCourseName.includes(key) || key.includes(singleCourseName))
+        );
+      }
       
       console.log(`Single course: "${singleCourseName}", matched with: "${scheduleKey}"`);
       
