@@ -186,7 +186,7 @@ export async function getPendingEnrollment() {
   }
 }
 
-export async function approvePayment({paymentId}: any) {
+export async function approvePayment({paymentId}: {paymentId : string}) {
   try {
     const accessToken = await getAccessToken();
 

@@ -1,8 +1,8 @@
-import { fetchPackage, fetchCourse } from "@/lib/package/fetch-package";
+import { fetchPackage} from "@/lib/package/fetch-package";
 import React from "react";
 import PackageCard from "@/components/dashboard/package-card";
 import BundleCard from "@/components/dashboard/bundle-card";
-import Container from "@/components/container";
+// import Container from "@/components/container";
 import Pengantar from "@/components/dashboard/pengantar";
 
 // Define the PackageType interface
@@ -22,13 +22,13 @@ type PackageType = {
   }[];
 };
 
-type CourseType = {
-  packageId: string;
-  courseId: string;
-  title: string;
-  description: string;
-  level: "ENTRY" | "INTERMEDIATE";
-};
+// type CourseType = {
+//   packageId: string;
+//   courseId: string;
+//   title: string;
+//   description: string;
+//   level: "ENTRY" | "INTERMEDIATE";
+// };
 
 export default async function ClassDashboard() {
   try {

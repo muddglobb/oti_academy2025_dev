@@ -6,24 +6,42 @@ import ChosenClass from "@/components/payment/chosen-class";
 import Receipt from "@/components/payment/receipt";
 import { BuktiPembayaran } from "@/components/payment/bukti-pembayaran";
 import PaymentPopUp from "@/components/payment/payment-popup";
-type CourseStat = {
-  id: string;
+// type CourseStat = {
+//   id: string;
+//   title: string;
+//   level: string;
+//   quota: {
+//     total: number;
+//     entryQuota: number;
+//     bundleQuota: number;
+//   };
+//   enrollment: {
+//     total: number;
+//     entryIntermediateCount: number;
+//     bundleCount: number;
+//   };
+//   remaining: {
+//     entryIntermediate: number;
+//     bundle: number;
+//   };
+// };
+
+export type Course = {
+  packageId: string;
+  courseId: string;
   title: string;
-  level: string;
-  quota: {
-    total: number;
-    entryQuota: number;
-    bundleQuota: number;
-  };
-  enrollment: {
-    total: number;
-    entryIntermediateCount: number;
-    bundleCount: number;
-  };
-  remaining: {
-    entryIntermediate: number;
-    bundle: number;
-  };
+  description: string;
+  level: "ENTRY" | "INTERMEDIATE" | "BUNDLE" | string; // tambahkan jika ada level lain
+};
+
+export type Package = {
+  id: string;
+  name: string;
+  type: "ENTRY" | "INTERMEDIATE" | "BUNDLE" | string; // tambahkan jika ada type lain
+  price: number;
+  createdAt: string;
+  updatedAt: string;
+  courses: Course[];
 };
 
 const classInfo: [
@@ -231,7 +249,9 @@ export default async function Page({
   const id = decodeURIComponent((await params).id);
   const classData = classes.find((classItem) => classItem.slug === id);
 
-  const packages = await fetchPackage();
+  // const packages = await fetchPackage();
+  const packages: Package[] = await fetchPackage();
+  // console.dir("melinda: ", packages);
 
   let matchingCourse = null;
   let matchedCourseId = null;
@@ -239,9 +259,9 @@ export default async function Page({
   let prices = null;
   if (classData?.ClassLevel !== "BUNDLE") {
     matchingCourse = packages
-      .filter((item: any) => item.type !== "BUNDLE")
-      .flatMap((item: any) =>
-        item.courses.map((course: any) => ({
+      .filter((item: Package) => item.type !== "BUNDLE")
+      .flatMap((item: Package) =>
+        item.courses.map((course: Course) => ({
           courseId: course.courseId,
           packageId: course.packageId,
           title: course.title,
@@ -253,13 +273,13 @@ export default async function Page({
     matchedPackageId = matchingCourse?.packageId;
 
     const matchPrices = packages.filter(
-      (item: any) => item.type === classData?.ClassLevel
+      (item: Package) => item.type === classData?.ClassLevel
     );
 
     prices = matchPrices[0]?.price;
   } else {
     matchingCourse = packages.filter(
-      (item: any) => item.name === classData?.title
+      (item: Package) => item.name === classData?.title
     );
 
     matchedPackageId = matchingCourse[0]?.id;

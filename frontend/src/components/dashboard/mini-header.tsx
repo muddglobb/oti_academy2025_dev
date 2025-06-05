@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Menu, X, User, LogOut } from "lucide-react";
 
-export function MiniHeader({ userName }: any) {
+export function MiniHeader({ userName }: {userName: string}) {
   const [isOpen, setIsOpen] = useState(false);
   const handleToggle = () => setIsOpen(!isOpen);
 

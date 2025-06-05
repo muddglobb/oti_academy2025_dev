@@ -1,11 +1,14 @@
 // app/api/enroll/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 export async function POST(req: NextRequest) {
   // console.log("POST ENROLL");
   const body = await req.json();
-  const accessToken = await cookies().get("access_token")?.value;
+  // const accessToken = await cookies().get("access_token")?.value;
+  const cookieStore = cookies() as unknown as ReadonlyRequestCookies;
+    const accessToken = cookieStore.get("access_token")?.value;
 
   if (!accessToken) {
     return NextResponse.json(
