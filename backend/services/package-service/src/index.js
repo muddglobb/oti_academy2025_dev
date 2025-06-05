@@ -34,6 +34,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser()); // Parse cookies
 app.use(morgan('dev'));
+app.set('trust proxy', 1);
 
 // Apply rate limiter
 const apiLimiter = createRateLimiter({

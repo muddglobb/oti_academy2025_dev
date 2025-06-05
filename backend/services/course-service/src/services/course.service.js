@@ -110,7 +110,7 @@ export const CourseService = {
       
       for (const id of uniqueIds) {
         try {
-          const cached = await CacheService.get(`course:${id}`);
+          const cached = await CacheService.getorSet(`course:${id}`);
           if (cached) {
             cachedCourses.push(cached);
           } else {

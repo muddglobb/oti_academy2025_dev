@@ -1,5 +1,8 @@
 FROM node:24-alpine3.21
 
+# Update npm to latest version
+RUN npm install -g npm@latest
+
 # Buat direktori aplikasi
 WORKDIR /usr/src/app
 
