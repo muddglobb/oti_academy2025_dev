@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { getImageByTitle } from "@/lib/course-props/course-props";
 
 const getBundleImage = (name: string): string => {
     switch (name) {
@@ -132,7 +133,7 @@ function getSlugByTitle(title: string) {
         >
             <div className="flex flex-row">
             <Image
-                src={getBundleImage(pkg.name)}
+                src={getImageByTitle(pkg.name)}
                 alt={pkg.name}
                 width={165}
                 height={165}

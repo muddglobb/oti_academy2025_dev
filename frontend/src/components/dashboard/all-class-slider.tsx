@@ -11,7 +11,7 @@ import Image from "next/image";
 
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { getSlugByTitle, getIcons } from "@/lib/course-props/course-props";
+import { getSlugByTitle, getImageByTitle } from "@/lib/course-props/course-props";
 export type CourseSession = {
   id: string;
   courseId: string;
@@ -79,9 +79,9 @@ const AllClassSlider = ({ data }: { data: DataData[] }) => {
                   <div>
                     {/* <div className="p-5 h-82 bg-black rounded-t-md bg-[url('/images/teacher/faris.jpg')] bg-center bg-contain bg-no-repeat"> */}
                     <div
-                      className="p-5 h-82 bg-black rounded-t-md bg-center bg-contain bg-no-repeat"
+                      className="p-5 h-76 bg-black rounded-t-md bg-center bg-cover bg-no-repeat"
                       style={{
-                        backgroundImage: `url(${getIcons(course.title)})`,
+                        backgroundImage: `url(${getImageByTitle(course.title)})`,
                       }}
                     >
                       <div className="text-white font-bold text-sm bg-primary-500 inline-block px-3 py-1 rounded">

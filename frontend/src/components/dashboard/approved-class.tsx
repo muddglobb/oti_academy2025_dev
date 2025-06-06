@@ -4,7 +4,7 @@ import { getCourses } from "@/lib/courses/fetch-courses";
 import { getMaterials } from "@/lib/material/fetch-material";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { getIcons, getSlugByTitle } from "@/lib/course-props/course-props";
+import { getImageByTitle, getSlugByTitle } from "@/lib/course-props/course-props";
 
 export type CourseSession = {
   id: string;
@@ -36,7 +36,7 @@ const ApprovedClass = async ({
   title: string;
   description: string;
 }) => {
-  const icon = getIcons(title);
+  const image = getImageByTitle(title);
   const classData = await getCourses();
   const course = classData.data.find(
     (course: CourseData) => course.title === title
@@ -50,8 +50,8 @@ const ApprovedClass = async ({
     <Link href={`/dashboard/class-dashboard/${SLUG}`}>
       <div className="bg-neutral-50 border-3 border-neutral-500 rounded-[20px] h-35 flex">
         <Image
-          src={icon || "/person-placeholder.jpeg"}
-          alt="class-icon"
+          src={image || "/person-placeholder.jpeg"}
+          alt="class-image"
           className="rounded-l-[16px]"
           width={140}
           height={140}

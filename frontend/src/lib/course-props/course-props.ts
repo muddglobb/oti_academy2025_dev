@@ -1,50 +1,87 @@
-export const classData: Record<string, { icon: string; slug: string }> = {
+export const classData: Record<
+  string,
+  {
+    slug: string;
+    image: string;
+    teacher1: string;
+    teacher2: string;
+  }
+> = {
   "Web Development": {
-    icon: "/images/class-profile/hako.jpg",
     slug: "web-development",
+    image: "/logo-perkelas/webdev.webp",
+    teacher1: "/images/mentor-coming-soon.webp",
+    teacher2: "/images/mentor-coming-soon.webp",
   },
   "Software Engineering": {
-    icon: "/images/class-profile/hako.jpg",
     slug: "software-engineering",
+    image: "/logo-perkelas/softeng.webp",
+    teacher1: "/images/mentor-coming-soon.webp",
+    teacher2: "/images/mentor-coming-soon.webp",
   },
   "Data Science & Artificial Intelligence": {
-    icon: "/images/class-profile/hako.jpg",
     slug: "data-science&artificial-intelligence",
+    image: "/logo-perkelas/data.webp",
+    teacher1: "/images/mentor-coming-soon.webp",
+    teacher2: "/images/mentor-coming-soon.webp",
   },
   "UI/UX": {
-    icon: "/images/class-profile/hako.jpg",
     slug: "ui-ux",
+    image: "/logo-perkelas/uiux.webp",
+    teacher1: "/images/mentor-coming-soon.webp",
+    teacher2: "/images/mentor-coming-soon.webp",
   },
   "Cyber Security": {
-    icon: "/images/class-profile/hako.jpg",
     slug: "cyber-security",
+    image: "/logo-perkelas/cysec-inter.webp",
+    teacher1: "/images/mentor-coming-soon.webp",
+    teacher2: "/images/mentor-coming-soon.webp",
   },
   "Basic Python": {
-    icon: "/images/class-profile/hako.jpg",
     slug: "basic-python",
+    image: "/logo-perkelas/python.webp",
+    teacher1: "/images/mentor-coming-soon.webp",
+    teacher2: "/",
   },
   "Competitive Programming": {
-    icon: "/images/class-profile/hako.jpg",
     slug: "competitive-programming",
+    image: "/logo-perkelas/cp.webp",
+    teacher1: "/images/mentor-coming-soon.webp",
+    teacher2: "/images/mentor-coming-soon.webp",
   },
   "Game Development": {
-    icon: "/images/class-profile/hako.jpg",
     slug: "game-development",
+    image: "/logo-perkelas/gamedev.webp",
+    teacher1: "/images/mentor-coming-soon.webp",
+    teacher2: "/images/mentor-coming-soon.webp",
   },
   "Fundamental Cyber Security": {
-    icon: "/images/class-profile/hako.jpg",
     slug: "fundamental-cyber-security",
+    image: "/logo-perkelas/cysec-entry.webp",
+    teacher1: "/images/mentor-coming-soon.webp",
+    teacher2: "/images/mentor-coming-soon.webp",
   },
   "Graphic Design": {
-    icon: "/images/class-profile/hako.jpg",
     slug: "graphic-design",
+    image: "/logo-perkelas/graphic.webp",
+    teacher1: "/images/mentor-coming-soon.webp",
+    teacher2: "/images/mentor-coming-soon.webp",
   },
-};
-
-export const getIcons = (title: string): string => {
-  return classData[title]?.icon || "/person-placeholder.jpeg";
 };
 
 export const getSlugByTitle = (title: string): string => {
   return classData[title]?.slug || "";
 };
+
+export const getImageByTitle = (title: string): string => {
+  return classData[title]?.image || "/person-placeholder.jpeg";
+};
+
+export const getFirstTeacher = (title: string): string => {
+  return classData[title]?.teacher1 || "";
+};
+
+export const getSecTeacher = (title: string): string => {
+  return classData[title]?.teacher2 || "";
+};
+

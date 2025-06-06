@@ -1,35 +1,9 @@
 import React from "react";
 import Image from "next/image";
-
-const getIcons = (title: string) => {
-  switch (title) {
-    case "Web Development":
-      return "/images/class-profile/hako.jpg";
-    case "Software Engineering":
-      return "/images/class-profile/hako.jpg";
-    case "Data Science & Artificial Intelligence":
-      return "/images/class-profile/hako.jpg";
-    case "UI/UX":
-      return "/images/class-profile/hako.jpg";
-    case "Cyber Security":
-      return "/images/class-profile/hako.jpg";
-    case "Basic Python":
-      return "/images/class-profile/hako.jpg";
-    case "Competitive Programming":
-      return "/images/class-profile/hako.jpg";
-    case "Game Development":
-      return "/images/class-profile/hako.jpg";
-    case "Fundamental Cyber Security":
-      return "/images/class-profile/hako.jpg";
-    case "Graphic Design":
-      return "/images/class-profile/hako.jpg";
-    default:
-      return "/person-placeholder.jpeg";
-  }
-};
+import { getImageByTitle } from "@/lib/course-props/course-props";
 
 const MenyiapkanKelas = ({ title, description }: {title:string, description: string}) => {
-  const icon = getIcons(title);
+  const icon = getImageByTitle(title);
   // console.log("Icons:", icons);
   return (
     <div className="bg-neutral-500 border-3 border-neutral-500 rounded-[20px] h-35 flex">

@@ -7,11 +7,11 @@ import Slider from "react-slick";
 import Card from "./card";
 import NextArrow from "./ui/next-arrow";
 import PrevArrow from "./ui/prev-arrow";
+import { getFirstTeacher, getImageByTitle, getSecTeacher } from "@/lib/course-props/course-props";
 
 const Kelas = [
     {
         type: "Beginner",
-        image: "/logo-perkelas/webdev.webp",
         teacher1: "/images/mentor-coming-soon.webp",
         title: "Web Development",
         href: "/programs/web-development",
@@ -19,7 +19,6 @@ const Kelas = [
     },
     {
         type: "Beginner",
-        image: "/logo-perkelas/cp.webp",
         teacher1: "/images/mentor-coming-soon.webp",
         title: "Competitive Programming",
         href: "/programs/competitive-programming",
@@ -27,7 +26,6 @@ const Kelas = [
     },
     {
         type: "Beginner",
-        image: "/logo-perkelas/python.webp",
         teacher1: "/images/mentor-coming-soon.webp",
         title: "Basic Python",
         href: "/programs/basic-python",
@@ -35,7 +33,6 @@ const Kelas = [
     },
     {
         type: "Beginner",
-        image: "/logo-perkelas/cysec-entry.webp",
         teacher1: "/images/mentor-coming-soon.webp",
         title: "Fundamental Cyber Security",
         href: "/programs/fundamental-cyber-security",
@@ -43,7 +40,6 @@ const Kelas = [
     },
     {
         type: "Beginner",
-        image: "/logo-perkelas/gamedev.webp",
         teacher1: "/images/mentor-coming-soon.webp",
         title: "Game Development",
         href: "/programs/game-development",
@@ -51,7 +47,6 @@ const Kelas = [
     },
     {
         type: "Beginner",
-        image: "/logo-perkelas/graphic.webp",
         teacher1: "/images/mentor-coming-soon.webp",
         title: "Graphic Design",
         href: "/programs/graphic-design",
@@ -59,7 +54,6 @@ const Kelas = [
     },
     {
         type: "Intermediate",
-        image: "/logo-perkelas/softeng.webp",
         teacher1: "/images/mentor-coming-soon.webp",
         teacher2: "/images/mentor-coming-soon.webp",
         title: "Software Engineering",
@@ -68,16 +62,14 @@ const Kelas = [
     },
     {
         type: "Intermediate",
-        image: "/logo-perkelas/data.webp",
         teacher1: "/images/mentor-coming-soon.webp",
         teacher2: "/images/mentor-coming-soon.webp",
-        title: "Data Science & AI",
+        title: "Data Science & Artificial Intelligence",
         href: "/programs/data-science&artificial-intelligence",
         description: "Belajar Data Science dan AI dari nol hingga siap ikut proyek dan kompetisi. DSAI Bootcamp membimbingmu step-by-step dari dasar hingga membangun model AI siap industri."
     },
     {
         type: "Intermediate",
-        image: "/logo-perkelas/uiux.webp",
         teacher1: "/images/mentor-coming-soon.webp",
         teacher2: "/images/mentor-coming-soon.webp",
         title: "UI/UX",
@@ -86,7 +78,6 @@ const Kelas = [
     },
     {
         type: "Intermediate",
-        image: "/logo-perkelas/cysec-inter.webp",
         teacher1: "/images/mentor-coming-soon.webp",
         teacher2: "/images/mentor-coming-soon.webp",
         title: "Cyber Security",
@@ -141,9 +132,9 @@ const PilihanKelasSlider =() => {
                         <Card
                             key={index}
                             type={card.type}
-                            image={card.image}
-                            teacher1={card.teacher1}
-                            teacher2={card.teacher2}
+                            image={getImageByTitle(card.title)}
+                            teacher1={getFirstTeacher(card.title)}
+                            teacher2={getSecTeacher(card.title)}
                             title={card.title}
                             href={card.href}
                             description={card.description}
