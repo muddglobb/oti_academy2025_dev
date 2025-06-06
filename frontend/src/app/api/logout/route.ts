@@ -23,10 +23,10 @@ export async function POST(_req: NextRequest) {
           //   //   Cookie: `refresh_token=${refreshToken}`,
           //   // }),
           // },
-          headers: {
-            Cookie: `refresh_token=${refreshToken}`, 
-          }
-          // body: JSON.stringify({ refreshToken }),
+          // headers: {
+          //   Cookie: `refresh_token=${refreshToken}`, 
+          // }
+          body: JSON.stringify({ refreshToken }),
         });
       } catch (err) {
         console.error("Gagal logout ke backend:", err);
