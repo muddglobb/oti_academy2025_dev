@@ -125,7 +125,7 @@ const Navbar = () => {
       </Container>
 
       {isMenuOpen && (
-        <div className="fixed top-0 left-0 w-1/4 h-screen z-[1000] bg-[#050c1a] text-white flex flex-col justify-between px-6 py-8">
+        <div className="fixed top-0 left-0 w-50 h-screen z-[1000] bg-[#050c1a] text-white flex flex-col justify-between px-6 py-8">
           <div className="flex justify-end">
             <button onClick={toggleMenu}>
               <svg
