@@ -4,83 +4,7 @@ import { getCourses } from "@/lib/courses/fetch-courses";
 import { getMaterials } from "@/lib/material/fetch-material";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-
-// const getIcons = (title: string) => {
-//   switch (title) {
-//     case "Web Development":
-//       return "/images/class-profile/hako.jpg";
-//     case "Software Engineering":
-//       return "/images/class-profile/hako.jpg";
-//     case "Data Science & Artificial Intelligence":
-//       return "/images/class-profile/hako.jpg";
-//     case "UI/UX":
-//       return "/images/class-profile/hako.jpg";
-//     case "Cyber Security":
-//       return "/images/class-profile/hako.jpg";
-//     case "Basic Python":
-//       return "/images/class-profile/hako.jpg";
-//     case "Competitive Programming":
-//       return "/images/class-profile/hako.jpg";
-//     case "Game Development":
-//       return "/images/class-profile/hako.jpg";
-//     case "Fundamental Cyber Security":
-//       return "/images/class-profile/hako.jpg";
-//     case "Graphic Design":
-//       return "/images/class-profile/hako.jpg";
-//     default:
-//       return "/person-placeholder.jpeg";
-//   }
-// };
-const classData: Record<string, { icon: string; slug: string }> = {
-  "Web Development": {
-    icon: "/images/class-profile/hako.jpg",
-    slug: "web-development",
-  },
-  "Software Engineering": {
-    icon: "/images/class-profile/hako.jpg",
-    slug: "software-engineering",
-  },
-  "Data Science & Artificial Intelligence": {
-    icon: "/images/class-profile/hako.jpg",
-    slug: "data-science&artificial-intelligence",
-  },
-  "UI/UX": {
-    icon: "/images/class-profile/hako.jpg",
-    slug: "ui-ux",
-  },
-  "Cyber Security": {
-    icon: "/images/class-profile/hako.jpg",
-    slug: "cyber-security",
-  },
-  "Basic Python": {
-    icon: "/images/class-profile/hako.jpg",
-    slug: "basic-python",
-  },
-  "Competitive Programming": {
-    icon: "/images/class-profile/hako.jpg",
-    slug: "competitive-programming",
-  },
-  "Game Development": {
-    icon: "/images/class-profile/hako.jpg",
-    slug: "game-development",
-  },
-  "Fundamental Cyber Security": {
-    icon: "/images/class-profile/hako.jpg",
-    slug: "fundamental-cyber-security",
-  },
-  "Graphic Design": {
-    icon: "/images/class-profile/hako.jpg",
-    slug: "graphic-design",
-  },
-};
-
-const getIcons = (title: string) => {
-  return classData[title]?.icon || "/person-placeholder.jpeg";
-};
-
-const getSlug = (title: string) => {
-  return classData[title]?.slug || "";
-};
+import { getIcons, getSlugByTitle } from "@/lib/course-props/course-props";
 
 export type CourseSession = {
   id: string;
@@ -121,7 +45,7 @@ const ApprovedClass = async ({
   const materialData = await getMaterials({ courseId: course.id });
   const timez = materialData.data[0]?.unlockDate.utc.iso;
 
-  const SLUG = getSlug(title);
+  const SLUG = getSlugByTitle(title);
   return (
     <Link href={`/dashboard/class-dashboard/${SLUG}`}>
       <div className="bg-neutral-50 border-3 border-neutral-500 rounded-[20px] h-35 flex">
