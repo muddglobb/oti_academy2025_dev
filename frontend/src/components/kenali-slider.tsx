@@ -8,19 +8,19 @@ import Slider from "react-slick";
 
 const images = [
   { 
-    src: "/images/kenali-omahti/satyeah-wirawr.jpeg", 
+    src: "/images/kenali-omahti/kenali-1.webp", 
     alt: "Kenali 1" 
   },
   { 
-    src: "/images/class-profile/hako.jpg", 
+    src: "/images/kenali-omahti/kenali-2.webp", 
     alt: "Kenali 2" 
   },
   { 
-    src: "/images/teacher/faris.jpg", 
+    src: "/images/kenali-omahti/kenali-3.webp", 
     alt: "Kenali 3" 
   },
   { 
-    src: "/logo.jpeg", 
+    src: "/images/kenali-omahti/kenali-4.webp", 
     alt: "Kenali 4" 
   },
 ];
