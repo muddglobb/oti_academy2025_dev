@@ -34,6 +34,7 @@ export async function POST(_req: NextRequest) {
       }
     }
 
+    // alert("berhasil logout");
     return NextResponse.json({ message: "Logout success" });
   } catch (err) {
     console.error("Logout error:", err);
