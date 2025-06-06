@@ -15,30 +15,43 @@ type Material = {
   };
 };
 
-type SessionProps = { courseID: string };
+type SessionProps = { courseID1: string; courseID2?: string };
 
-const SessionInfo = async ({ courseID }: SessionProps) => {
+const SessionInfo = async ({ courseID1, courseID2 }: SessionProps) => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
 
-  const res = await fetch(
-    `${process.env.BASE_URL}/materials/course/${courseID}/public`,
-    {
-      cache: "no-store",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
+  async function getData(courseID: string) {
+    const res = await fetch(
+      `${process.env.BASE_URL}/materials/course/${courseID}/public`,
+      {
+        cache: "no-store",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return res;
+  }
+
+  const res = await getData(courseID1);
   const MaterialData = await res.json();
-  const sessions: Material[] = Array.isArray(MaterialData.data)
+
+  let sessions: Material[] = Array.isArray(MaterialData.data)
     ? MaterialData.data
     : [];
 
-  console.log("Course ID ", courseID);
-  console.log("Material Data ", MaterialData);
+  if (courseID2 && courseID2 !== courseID1) {
+    const res2 = await getData(courseID2);
+    const MaterialData2 = await res2.json();
+    if (Array.isArray(MaterialData2.data)) {
+      sessions = [...sessions, ...MaterialData2.data];
+    }
+  }
+
   return (
-    <div className="w-full rounded-[20px] border-solid border-2 border-neutral-500 px-6 py-4 mt-6">
+    <div className="rounded-[20px] border-solid border-2 border-neutral-500 px-5 py-4">
       <p className="font-bold text-lg text-neutral-50 pb-2 border-b-2 border-neutral-500 mb-4">
         Complete Session Information
       </p>
@@ -82,48 +95,66 @@ const SessionInfo = async ({ courseID }: SessionProps) => {
 
               {/* Konten session */}
               <div className="relative flex w-full pl-8 text-left text-[12px] md:text-lg ">
-                <div className="w-full ">
-                  <p
-                    className={`${
-                      status === "Scheduled"
-                        ? "text-error-300"
-                        : status === "On Going"
-                        ? "text-success-300"
-                        : "text-primary-300"
-                    }`}
-                  >
-                    {status}
-                  </p>
-                  <h3 className="font-bold">{session.title}</h3>
-                  <div className="flex flex-col items-stretch lg:flex-row lg:justify-between gap-4 mt-2">
-                    <div className="flex flex-row gap-5 justify-between">
-                      <div className="flex flex-row gap-[5px] items-center bg-primary-700 p-1 rounded-sm">
-                        <Image
-                          src={"/icons/calendar-icon.svg"}
-                          alt="calendar-icon"
-                          width={18}
-                          height={18}
-                        />
+                <div className="w-full">
+                  <div className="flex flex-row gap-2 items-center">
+                    <div
+                      className={`rounded-full w-3.5 h-3.5 ${
+                        status === "Scheduled"
+                          ? "bg-error-300"
+                          : status === "On Going"
+                          ? "bg-success-300"
+                          : "bg-primary-300"
+                      }`}
+                    ></div>
+                    <p
+                      className={`${
+                        status === "Scheduled"
+                          ? "text-error-300"
+                          : status === "On Going"
+                          ? "text-success-300"
+                          : "text-primary-300"
+                      }`}
+                    >
+                      {status}
+                    </p>
+                  </div>
 
-                        <p className="text-xs">{formattedDate}</p>
+                  <h3 className="font-bold">{session.title}</h3>
+                  <div className="flex flex-col items-center xl:flex-row lg:justify-between gap-4 mt-2">
+                    <div className="flex flex-row gap-2.5 justify-between">
+                      <div className="w-30 bg-primary-700 rounded-sm">
+                        <div className="flex flex-row gap-2 m-1">
+                          <Image
+                            src={"/icons/calendar-icon.svg"}
+                            alt="calendar-icon"
+                            width={18}
+                            height={18}
+                          />
+
+                          <p className="text-xs ">{formattedDate}</p>
+                        </div>
                       </div>
-                      <div className="flex flex-row gap-[5px] items-center bg-primary-700 px-1 rounded-sm">
-                        <Image
-                          src={"/icons/time-icon.svg"}
-                          alt="time-icon"
-                          width={18}
-                          height={18}
-                        />
-                        <p className="text-xs">08.00 - 10.00</p>
+                      <div className="w-29 bg-primary-700 rounded-sm">
+                        <div className="flex flex-row gap-2 m-1">
+                          <Image
+                            src={"/icons/time-icon.svg"}
+                            alt="time-icon"
+                            width={18}
+                            height={18}
+                          />
+                          <p className="text-xs ">08.00 - 10.00</p>
+                        </div>
                       </div>
-                      <div className="flex flex-row gap-[5px] items-center bg-primary-700 px-1 rounded-sm">
-                        <Image
-                          src={"/icons/time-icon.svg"}
-                          alt="time-icon"
-                          width={18}
-                          height={18}
-                        />
-                        <p className="text-xs">2 Jam</p>
+                      <div className=" bg-primary-700 rounded-sm">
+                        <div className="flex flex-row gap-2 m-1">
+                          <Image
+                            src={"/icons/time-icon.svg"}
+                            alt="time-icon"
+                            width={18}
+                            height={18}
+                          />
+                          <p className="text-xs ">2 Jam</p>
+                        </div>
                       </div>
                     </div>
                     <div className="flex flex-row gap-5 self-center">
@@ -166,7 +197,7 @@ const SessionInfo = async ({ courseID }: SessionProps) => {
                     </div>
                   </div>
 
-                  <p className="mt-2 text-xs">{`"${session.description}"`}</p>
+                  <p className="mt-4 text-xs">{`"${session.description}"`}</p>
                 </div>
               </div>
             </div>

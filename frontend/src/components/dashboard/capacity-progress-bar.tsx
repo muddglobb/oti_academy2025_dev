@@ -17,7 +17,7 @@ const CapacityProgressBar: React.FC<ClassCapacityProps> = ({
   return (
     <div className="flex flex-row justify-between items-center">
       <div className="text-sm sm:text-lg font-medium text-neutral-50">
-        <p>
+        <p className="px-2 inline whitespace-nowrap">
           {currentCount} / {capacity}
         </p>
       </div>

@@ -249,36 +249,41 @@ export default async function Page({
 
   const courseData = await res.json();
 
+  let courseID = "";
+  let courseID2 = "";
+
   const findCourseID = Array.isArray(courseData.data)
     ? (courseData.data as CourseStat[]).find(
         (course) => course.title === classData.courses[0]
       )
     : undefined;
 
-  const courseID = findCourseID ? findCourseID.id : "";
+  courseID = findCourseID ? findCourseID.id : "";
+
+  if (classData.ClassLevel === "BUNDLE") {
+    const findCourseID = Array.isArray(courseData.data)
+      ? (courseData.data as CourseStat[]).find(
+          (course) => course.title === classData.courses[1]
+        )
+      : undefined;
+
+    courseID2 = findCourseID ? findCourseID.id : "";
+  }
 
   return (
-    <div
-      className="relative"
-      style={{
-        backgroundImage: "url('/images/space-background.png')",
-        backgroundRepeat: "repeat",
-      }}
-    >
-      <div className="absolute inset-0 bg-gradient-to-b from-neutral-900/80 via-neutral-900/80 to-black/60 pointer-events-none z-0"></div>
-
-      <div className="relative z-10 w-full flex flex-col items-center justify-center gap-4 pt-4">
+    <>
+      <div className="flex flex-col gap-4 py-10 px-4 lg:px-14 bg-neutral-900">
         <Link
           href="/dashboard/class-dashboard"
-          className="flex gap-2 bg-primary-900 text-sm font-bold px-3.5 py-2 rounded-[8px] w-fit z-20 self-start ml-6"
+          className="flex gap-2 bg-primary-900 text-sm font-bold px-3.5 py-2 rounded-[8px] w-fit self-start"
         >
           <ArrowLeft size={20} color="white" />
           <p className="text-white">Kembali</p>
         </Link>
 
-        <div className="hidden md:block py-4 px-6 w-full">
+        <div className="hidden xl:block">
           {classData.ClassLevel === "BUNDLE" && (
-            <div className="flex flex-col gap-6 w-full">
+            <div className="flex flex-col gap-6">
               <ClassCapacity
                 ClassName={classData.title}
                 ClassDesc={classData.desc}
@@ -287,15 +292,19 @@ export default async function Page({
                 ClassSlug={classData.slug}
               />
               <div className="flex flex-row gap-6 w-full">
-                <ClassInfo classInfo={classData.classInfo} />
-                <VideoTeaser />
+                <div className="w-1/2">
+                  <ClassInfo classInfo={classData.classInfo} />
+                </div>
+                <div className="w-1/2">
+                  <VideoTeaser slug={classData.slug} />
+                </div>
               </div>
               <TeacherCard teacherCard={classData.teacherCard} />
-              <SessionInfo courseID={courseID} />
+              <SessionInfo courseID1={courseID} courseID2={courseID2} />
             </div>
           )}
           {classData.ClassLevel === "ENTRY" && (
-            <div className="flex flex-col gap-6 w-full">
+            <div className="flex flex-col gap-6">
               <ClassCapacity
                 ClassName={classData.title}
                 ClassDesc={classData.desc}
@@ -308,14 +317,16 @@ export default async function Page({
                   <ClassInfo classInfo={classData.classInfo} />
                   <TeacherCard teacherCard={classData.teacherCard} />
                 </div>
-                <VideoTeaser />
+                <div className="w-1/2">
+                  <VideoTeaser slug={classData.slug} />
+                </div>
               </div>
 
-              <SessionInfo courseID={courseID} />
+              <SessionInfo courseID1={courseID} />
             </div>
           )}
           {classData.ClassLevel === "INTERMEDIATE" && (
-            <div className="flex flex-col gap-6 w-full">
+            <div className="flex flex-col gap-6">
               <ClassCapacity
                 ClassName={classData.title}
                 ClassDesc={classData.desc}
@@ -328,15 +339,17 @@ export default async function Page({
                   <ClassInfo classInfo={classData.classInfo} />
                   <Prerequisites />
                 </div>
-                <VideoTeaser />
+                <div className="w-1/2">
+                  <VideoTeaser slug={classData.slug} />
+                </div>
               </div>
               <TeacherCard teacherCard={classData.teacherCard} />
-              <SessionInfo courseID={courseID} />
+              <SessionInfo courseID1={courseID} />
             </div>
           )}
         </div>
 
-        <div className="md:hidden flex flex-col gap-6 px-2">
+        <div className="xl:hidden flex flex-col gap-6">
           <ClassCapacity
             ClassName={classData.title}
             ClassDesc={classData.desc}
@@ -344,20 +357,21 @@ export default async function Page({
             CourseID={courseID}
             ClassSlug={classData.slug}
           />
-          <VideoTeaser />
+          <VideoTeaser slug={classData.slug} />
           <ClassInfo classInfo={classData.classInfo} />
-          <Prerequisites />
+          {classData.ClassLevel === "INTERMEDIATE" && <Prerequisites />}
+
           <TeacherCard teacherCard={classData.teacherCard} />
-          <SessionInfo courseID={courseID} />
-        </div>
-        <div className="md:hidden sticky z-20 w-full bottom-0 ">
-          <MobileBottomBar
-            CourseID={courseID}
-            ClassLevel={classData.ClassLevel}
-            ClassSlug={classData.slug}
-          />
+          <SessionInfo courseID1={courseID} courseID2={courseID2} />
         </div>
       </div>
-    </div>
+      <div className="md:hidden sticky z-10 w-full bottom-0 ">
+        <MobileBottomBar
+          CourseID={courseID}
+          ClassLevel={classData.ClassLevel}
+          ClassSlug={classData.slug}
+        />
+      </div>
+    </>
   );
 }

@@ -21,12 +21,15 @@ const ClassCapacity = async ({
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
 
-  const res = await fetch(`${process.env.BASE_URL}/payments/${CourseID}/stats`, {
-    cache: "no-store",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  const res = await fetch(
+    `${process.env.BASE_URL}/payments/${CourseID}/stats`,
+    {
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
   const apiData = await res.json();
 
   const currentCount =
@@ -49,8 +52,8 @@ const ClassCapacity = async ({
     capacity > 0 ? Math.round((currentCount / capacity) * 100) : 0;
 
   return (
-    <div className="w-full flex flex-col gap-[5px] ">
-      <p className="self-start mb-0 text-neutral-50 text-sm">
+    <div className=" flex flex-col gap-[5px] ">
+      <p className="self-start mb-[5px] text-neutral-50 text-sm">
         Class {"> "} {ClassName}
       </p>
       <div
@@ -63,13 +66,15 @@ const ClassCapacity = async ({
         }}
       >
         <div className="flex flex-row justify-between items-center">
-          <p className="font-display font-bold text-[26px]">{ClassName}</p>
+          <p className="font-display font-bold text-lg sm:text-[26px]">
+            {ClassName}
+          </p>
           <div className="bg-primary-500 py-1 px-2 rounded-[6px] text-neutral-50 text-sm font-display">
             <p>{ClassLevel}</p>
           </div>
         </div>
 
-        <p>{ClassDesc}</p>
+        <p className="sm:text-lg text-xs">{ClassDesc}</p>
         <CapacityProgressBar
           currentCount={currentCount}
           capacity={capacity}
