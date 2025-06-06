@@ -113,7 +113,7 @@ const BundleClassInfo = ({
 
               <div className="md:hidden text-sm text-white flex flex-row justify-center items-center gap-1">
                 <div className="flex flex-col gap-1">
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-48 px-2.5 py-2">
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-60 px-2.5 py-2">
                     <Image
                       src={"/icons/calendar-icon.svg"}
                       alt="calendar-icon"
@@ -122,7 +122,7 @@ const BundleClassInfo = ({
                     ></Image>
                     <p>{date}</p>
                   </div>
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-48 px-2.5 py-2">
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-60 px-2.5 py-2">
                     <Image
                       src={"/icons/target-icon.svg"}
                       alt="calendar-icon"
@@ -133,7 +133,7 @@ const BundleClassInfo = ({
                   </div>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-48 px-2.5 py-2">
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-60 px-2.5 py-2">
                     <Image
                       src={"/icons/time-icon.svg"}
                       alt="calendar-icon"
@@ -142,7 +142,7 @@ const BundleClassInfo = ({
                     ></Image>
                     <p>{jam}</p>
                   </div>
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-48 px-2.5 py-2">
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-60 px-2.5 py-2">
                     <Image
                       src={"/icons/stack-icon.svg"}
                       alt="calendar-icon"

@@ -4,7 +4,7 @@ import Hero from "@/components/programs/intermediate/intermediate-hero";
 import SessionInfo from "@/components/programs/intermediate/intermediate-session-info";
 
 const hero: [string, string, string] = [
-  "Fundamental CyberSecurity + Intermidiate CyberSecurity",
+  "Fundamental Cyber Security + Intermidiate CyberSecurity",
   "Belajar cybersecurity dan ethical hacking dari basic hingga intermediate, mulai dari OSINT, forensik, web exploit, hingga penetration testing dan pembuatan laporan profesional.",
   "Bundle",
 ];
@@ -108,7 +108,7 @@ const bundle = () => {
           mentorImage="/person-placeholder.jpeg"
           mentorDesc="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?"
           mentorLink="https://www.linkedin.com"
-          TA="Muhammad Ahsan Zaki Wiryawan"
+          TA="Muhammad Ahsan"
           TAImage="/person-placeholder.jpeg"
           TADesc="Mahasiswa Ilmu Komputer UGM yang antusias di bidang cybersecurity. Telah menyelesaikan Google Cybersecurity Certificate dan terus belajar hal baru di dunia teknologi. Di kelas ini, dia siap jadi teaching assistant yang bisa diandalkan."
           TALink="https://www.linkedin.com"
