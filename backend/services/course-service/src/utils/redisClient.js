@@ -3,20 +3,24 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const redisOptions = {
-  host: process.env.REDIS_HOST || 'redis',
-  port: parseInt(process.env.REDIS_PORT) || 6379,
-  password: process.env.REDIS_PASSWORD,
-  retryStrategy: (times) => {
-    // Reconnection strategy
-    const delay = Math.min(times * 50, 2000);
-    return delay;
-  }
-};
+let redisClient;
 
-// Create Redis client
-const redisClient = new Redis(redisOptions);
-
+if (process.env.REDIS_URL) {
+  // Menggunakan REDIS_URL dengan family=0 untuk Railway
+  const redisUrl = process.env.REDIS_URL.includes('?') 
+    ? `${process.env.REDIS_URL}&family=0`
+    : `${process.env.REDIS_URL}?family=0`;
+    
+  redisClient = new Redis(redisUrl);
+} else {
+  // Fallback ke konfigurasi individual
+  redisClient = new Redis({
+    host: process.env.REDIS_HOST || 'redis',
+    port: parseInt(process.env.REDIS_PORT) || 6379,
+    password: process.env.REDIS_PASSWORD,
+    family: 0 // Dual stack lookup untuk Railway
+  });
+}
 // Handle connection events
 redisClient.on('connect', () => {
   console.log('✅ Redis client connected');

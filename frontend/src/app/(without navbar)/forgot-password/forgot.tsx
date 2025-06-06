@@ -25,7 +25,7 @@ export default function Forgot() {
     setSuccessMessage(null);
 
     try {
-      const res = await axios.post(`http://localhost:8000/auth/forgot-password`, {
+      const res = await axios.post(`${process.env.BASE_URL}/auth/forgot-password`, {
         email: formData.email
       });
 

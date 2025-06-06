@@ -3,18 +3,34 @@ import { CircleAlert } from "lucide-react";
 import { getAllPackage } from "@/lib/package/fetch-package";
 import { getCoursesById } from "@/lib/courses/fetch-courses";
 
+export type CourseData = {
+  packageId: string;
+  courseId: string;
+  title: string;
+  description: string;
+  level: "BEGINNER" | "INTERMEDIATE" | "BUNDLE"; // asumsi enum level
+};
+export type PackageData = {
+  id: string;
+  name: string;
+  type: "BEGINNER" | "INTERMEDIATE" | "BUNDLE"; // asumsi enum level
+  price: number;
+  createdAt: string;
+  updatedAt: string;
+  courses: CourseData[];
+}
 const ChosenClass = async ({
   courseId,
   packageId,
 }: {
-  courseId: any;
-  packageId: any;
+  courseId: string | null | undefined;
+  packageId: string | null | undefined;
 }) => {
   const packageData = await getAllPackage();
   console.log(packageData);
   let name = null;
   if (courseId === null || courseId === undefined) {
-    name = packageData.data.find((item: any) => item.id === packageId)?.name;
+    name = packageData.data.find((item: PackageData) => item.id === packageId)?.name;
   }
   else{
     const courseData = await getCoursesById(courseId);

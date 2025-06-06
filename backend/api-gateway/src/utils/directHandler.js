@@ -4,7 +4,6 @@ import multer from 'multer';
 import FormData from 'form-data';
 import path from 'path';
 import fs from 'fs';
-import { standardLimiter } from './ratelimiter.js';
 
 // Simple logger functions
 const logger = {
@@ -13,50 +12,7 @@ const logger = {
   debug: (message) => console.log(`[DEBUG] ${message}`)
 };
 
-// Simple circuit breaker implementation
-const circuitBreakers = {};
-
-class CircuitBreaker {
-  constructor(serviceName) {
-    this.serviceName = serviceName;
-    this.state = 'CLOSED';
-    this.failureCount = 0;
-    this.lastFailureTime = null;
-    this.failureThreshold = 5;
-    this.resetTimeout = 30000; // 30 seconds
-  }
-
-  recordSuccess() {
-    this.failureCount = 0;
-    this.state = 'CLOSED';
-  }
-
-  recordFailure() {
-    this.failureCount++;
-    this.lastFailureTime = Date.now();
-    
-    if (this.failureCount >= this.failureThreshold) {
-      this.state = 'OPEN';
-      logger.error(`Circuit breaker for ${this.serviceName} is now OPEN`);
-    }
-  }
-
-  canRequest() {
-    if (this.state === 'CLOSED') {
-      return true;
-    }
-    
-    // Check if it's time to try again
-    if (this.state === 'OPEN' && 
-        Date.now() - this.lastFailureTime > this.resetTimeout) {
-      this.state = 'HALF-OPEN';
-      logger.info(`Circuit breaker for ${this.serviceName} is now HALF-OPEN`);
-      return true;
-    }
-    
-    return this.state === 'HALF-OPEN';
-  }
-}
+// Circuit breaker implementation removed for simplicity
 
 // Configure upload storage
 const storage = multer.diskStorage({
@@ -109,11 +65,10 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
   
   // Log service URL for debugging
   logger.info(`Creating handler for service: ${baseUrl}, path: ${servicePath}`);
+    const subRouter = express.Router();
   
-  const subRouter = express.Router();
-  
-  // Apply rate limiter middleware
-  subRouter.use(standardLimiter);
+  // Rate limiting is now handled at route level, not here
+  // subRouter.use(standardLimiter); // REMOVED
   
   // Use a simple handler for all methods and paths
   subRouter.use((req, res, next) => {
@@ -137,23 +92,7 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
         
         // Build target URL
         const targetUrl = `${baseUrl}${servicePath}${relativePath}`;
-        
-        logger.info(`Direct request: ${req.method} ${req.originalUrl} -> ${targetUrl}`);
-        
-        // Circuit breaker logic
-        if (!circuitBreakers[baseUrl]) {
-          circuitBreakers[baseUrl] = new CircuitBreaker(baseUrl);
-        }
-        
-        const circuitBreaker = circuitBreakers[baseUrl];
-        
-        if (!circuitBreaker.canRequest()) {
-          logger.error(`Circuit breaker for ${baseUrl} is OPEN. Request blocked.`);
-          return res.status(503).json({
-            status: 'error',
-            message: 'Service temporarily unavailable due to repeated failures'
-          });
-        }
+          logger.info(`Direct request: ${req.method} ${req.originalUrl} -> ${targetUrl}`);
         
         // Check if this is a multipart request with file
         const isMultipart = req.headers['content-type'] && 
@@ -169,8 +108,7 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
           if (!safeFilePath.startsWith(allowedDir)) {
             throw new Error('Invalid file path');
           }
-          
-          // Add file
+            // Add file
           formData.append('file', fs.createReadStream(safeFilePath), {
             filename: req.file.originalname,
             contentType: req.file.mimetype
@@ -181,9 +119,11 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
             formData.append(key, req.body[key]);
           });
           
-          // Set headers with form data boundaries
+          // Set headers with form data boundaries and API Gateway identifier
           const headers = {
             ...formData.getHeaders(),
+            'X-API-Gateway': 'true',
+            'X-Service-Key': process.env.SERVICE_API_KEY || 'gateway-internal',
             ...(req.headers.authorization ? { 'Authorization': req.headers.authorization } : {}),
             ...(req.user ? { 'X-User-ID': req.user.id, 'X-User-Role': req.user.role } : {})
           };
@@ -202,10 +142,8 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
               if (err) logger.error(`Error deleting temp file: ${err.message}`);
             });
           } else {
-            logger.error('Attempted to delete file outside of allowed directory');
-          }
+            logger.error('Attempted to delete file outside of allowed directory');          }
           
-          circuitBreaker.recordSuccess();
           logger.info(`Response from ${baseUrl}: ${response.status}`);
 
           // Handle cookies properly - Forward any Set-Cookie headers
@@ -219,14 +157,14 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
           // Regular JSON request
           const sanitizedBody = sanitizeRequestBody(req.body);
           logger.debug(`Request body: ${JSON.stringify(sanitizedBody)}`);
-          
-          const headers = {
+            const headers = {
             'Content-Type': req.headers['content-type'] || 'application/json',
+            'X-API-Gateway': 'true',
+            'X-Service-Key': process.env.SERVICE_API_KEY || 'gateway-internal',
             ...(req.headers.authorization ? { 'Authorization': req.headers.authorization } : {}),
             ...(req.user ? { 'X-User-ID': req.user.id, 'X-User-Role': req.user.role } : {})
           };
-          
-          const response = await axios({
+            const response = await axios({
             method: req.method,
             url: targetUrl,
             data: req.method !== 'GET' ? req.body : undefined,
@@ -235,7 +173,6 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
             timeout: 10000 // 10 seconds timeout
           });
           
-          circuitBreaker.recordSuccess();
           logger.info(`Response from ${baseUrl}: ${response.status}`);
           
           // FIXED: Properly handle and forward Set-Cookie headers
@@ -245,18 +182,15 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
           }
           
           return res.status(response.status).json(response.data);
-        }
-      } catch (error) {
+        }      } catch (error) {
         logger.error(`Request error: ${error.message}`);
         
         if (error.response) {
-          circuitBreakers[baseUrl].recordFailure();
           return res.status(error.response.status).json(error.response.data);
         }
         
         if (error.code === 'ECONNABORTED') {
           logger.error(`Request to ${baseUrl} timed out`);
-          circuitBreakers[baseUrl].recordFailure();
           return res.status(504).json({
             status: 'error',
             message: 'Service request timed out',
@@ -264,7 +198,6 @@ export const createDirectHandler = (serviceUrl, servicePath, requiresAuth = true
           });
         }
         
-        circuitBreakers[baseUrl].recordFailure();
         return res.status(503).json({
           status: 'error',
           message: 'Service temporarily unavailable',

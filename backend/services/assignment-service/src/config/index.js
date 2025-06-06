@@ -21,6 +21,8 @@ export default {
   // CORS configuration
   CORS_ORIGIN: process.env.CORS_ORIGIN || '*',
   
+  REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
+  
   // Rate limiting
   RATE_LIMIT: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes

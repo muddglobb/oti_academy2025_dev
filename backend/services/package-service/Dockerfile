@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:24-alpine3.21
 
 # Install OpenSSL explicitly to fix Prisma OpenSSL detection issue
 RUN apk add --no-cache openssl
@@ -40,4 +40,4 @@ RUN npx prisma generate
 EXPOSE 8005
 
 # Start command with schema push for development (similar to auth-service)
-CMD sh -c "npx prisma db push && node prisma/seed.js && node src/index.js"
+CMD sh -c "npx prisma db push && node src/index.js"

@@ -4,7 +4,7 @@ dotenv.config();
 
 const config = {
   // Server configuration
-  PORT: process.env.PORT || 4000,
+  PORT: process.env.PORT || 8000,
   NODE_ENV: process.env.NODE_ENV || 'development',
   // Service URLs
   AUTH_SERVICE_URL: process.env.AUTH_SERVICE_URL || 'http://auth-service-api:8001',
@@ -25,6 +25,7 @@ const config = {
 
   // Redis configuration
   REDIS: {
+    url: process.env.REDIS_URL,
     host: process.env.REDIS_HOST || 'redis',
     port: parseInt(process.env.REDIS_PORT) || 6379,
     password: process.env.REDIS_PASSWORD,

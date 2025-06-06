@@ -5,6 +5,48 @@ import KelasKosong from "./kelass-kosong";
 import MenyiapkanKelas from "./menyiapkan-kelas";
 import ApprovedClass from "./approved-class";
 
+export type PaidBundle = {
+  id: string;
+  title: string;
+  description: string;
+  level: "BEGINNER" | "INTERMEDIATE" | "BUNDLE"; // asumsi enum level
+};
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  type: string; // Bisa dijadikan union type kalau nilainya terbatas, misal: 'UMUM' | 'DIKE'
+}
+
+export type Course = {
+  id: string;
+  title: string;
+  description: string;
+  level: string; // Bisa jadi: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
+}
+
+export type EnrollmentDetail = {
+  id: string;
+  userId: string;
+  packageId: string;
+  courseId: string;
+  type: string; // 'UMUM' | 'DIKE'
+  proofLink: string;
+  status: string; // 'PAID' | 'PENDING' | dll
+  createdAt: string;
+  updatedAt: string;
+  packageName: string;
+  packageType: string; // 'INTERMEDIATE' | 'BUNDLE' | 'BEGINNER'
+  price: number;
+  courseName: string;
+  user: User;
+  course: Course;
+  bundleCourses: null | Course[];
+  enrollmentStatus: boolean;
+  paymentDate: string;
+}
+
 const EnrolledClass = async () => {
   const payments = await getMyPayments();
   // const now = new Date();
@@ -27,7 +69,7 @@ const EnrolledClass = async () => {
         <div className="flex flex-col gap-4">
           {payments[0]?.packageType === "BUNDLE" &&
             payments[0].status === "PAID" &&
-            payments[0].bundleCourses.map((paidClass: any) => (
+            payments[0].bundleCourses.map((paidClass: PaidBundle) => (
               <div key={paidClass.id}>
                 <MenyiapkanKelas
                   title={paidClass.title}
@@ -38,7 +80,7 @@ const EnrolledClass = async () => {
 
           {payments[0]?.packageType === "BUNDLE" &&
             payments[0].status === "APPROVED" &&
-            payments[0].bundleCourses.map((paidClass: any) => (
+            payments[0].bundleCourses.map((paidClass: PaidBundle) => (
               <div key={paidClass.id}>
                 <ApprovedClass
                   title={paidClass.title}
@@ -49,7 +91,7 @@ const EnrolledClass = async () => {
 
           {payments[0]?.packageType !== "BUNDLE" && (
             <>
-              {payments.map((paidClass: any) => (
+              {payments.map((paidClass: EnrollmentDetail) => (
                 <div key={paidClass.id}>
                   {paidClass.status === "PAID" ? (
                     <MenyiapkanKelas

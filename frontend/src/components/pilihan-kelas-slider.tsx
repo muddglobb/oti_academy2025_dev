@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+// import React, { useEffect, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
@@ -99,18 +100,18 @@ const Kelas = [
 ]
 
 const PilihanKelasSlider =() => {
-    const [isMobile, setIsMobile] = useState(false);
+    // const [isMobile, setIsMobile] = useState(false);
     
-    useEffect(() => {
-        const checkMobile = () => {
-          setIsMobile(window.innerWidth <= 769);
-        };
+    // useEffect(() => {
+    //     const checkMobile = () => {
+    //       setIsMobile(window.innerWidth <= 769);
+    //     };
     
-        checkMobile();
-        window.addEventListener("resize", checkMobile);
+    //     checkMobile();
+    //     window.addEventListener("resize", checkMobile);
     
-        return () => window.removeEventListener("resize", checkMobile);
-    }, []);
+    //     return () => window.removeEventListener("resize", checkMobile);
+    // }, []);
 
     const settings = {
         arrows: true,

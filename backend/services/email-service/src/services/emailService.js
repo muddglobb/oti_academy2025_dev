@@ -49,12 +49,12 @@ class EmailService {
     }
     
     // Use more flexible path resolution for templates
-    // Check if we're in development or production mode
+    // Check if we're in development or development mode
     if (process.env.NODE_ENV === 'development') {
       // In development, templates are in src/templates
       this.templatesBasePath = path.join(__dirname, '..', 'templates');
     } else {
-      // In production/Docker, templates should be in src/templates
+      // In development/Docker, templates should be in src/templates
       this.templatesBasePath = path.join(process.cwd(), 'src', 'templates');
     }
     
@@ -199,19 +199,16 @@ class EmailService {
       },
     });
   }
-
   /**
    * Send an enrollment confirmation email
    * 
    * @param {string} to Recipient email address
    * @param {string} username User's name
    * @param {string} courseName Name of the course
-   * @param {string} packageName Name of the package
-   * @param {number} price Package price
-   * @param {string} paymentId Payment ID
-   * @param {string} date Enrollment date
+   * @param {string} startDate Course start date
+   * @param {string} courseLink Link to course
    */
-  async sendEnrollmentConfirmationEmail(to, username, courseName, packageName, price, paymentId, date) {
+  async sendEnrollmentConfirmationEmail(to, username, courseName, startDate, courseLink) {
     return await this.sendEmail({
       to,
       subject: 'Enrollment Confirmation - OmahTI Academy',
@@ -219,13 +216,8 @@ class EmailService {
       variables: {
         username,
         courseName,
-        packageName,
-        price: new Intl.NumberFormat('id-ID', { 
-          style: 'currency', 
-          currency: 'IDR' 
-        }).format(price),
-        paymentId,
-        date,
+        startDate,
+        courseLink,
         currentYear: new Date().getFullYear().toString(),
       },
     });

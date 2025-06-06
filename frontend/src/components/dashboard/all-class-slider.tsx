@@ -12,7 +12,42 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
-const AllClassSlider = ({ data }: any) => {
+export type CourseSession = {
+  id: string;
+  courseId: string;
+  startAt: string; // ISO timestamp
+  durationHrs: number;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CourseData = {
+  id: string;
+  title: string;
+  description: string;
+  quota: number;
+  entryQuota: number;
+  bundleQuota: number;
+  level: "BEGINNER" | "INTERMEDIATE" | "BUNDLE"; // asumsi enum level
+  createdAt: string;
+  updatedAt: string;
+  sessions: CourseSession[];
+};
+export type DataData = {
+  bundleQuota: number;
+  createdAt: string;
+  description: string;
+  entryQuota: number;
+  id: string;
+  level: "BEGINNER" | "INTERMEDIATE" | "BUNDLE"; // asumsi enum level
+  quota: number;
+  sessions: CourseSession[];
+  title: string;
+  updatedAt: string;
+};
+
+const AllClassSlider = ({ data }: { data: DataData[] }) => {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
 
@@ -68,7 +103,7 @@ const AllClassSlider = ({ data }: any) => {
       <main className="w-full overflow-hidden">
         <Carousel setApi={setApi}>
           <CarouselContent>
-            {data.map((course: any) => (
+            {data.map((course: CourseData) => (
               <CarouselItem
                 key={course.id}
                 className="w-8 md:basis-1/2 lg:basis-1/3"

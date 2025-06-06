@@ -1,6 +1,6 @@
 import React from "react";
 
-const Receipt = ({ name, prices, level }: any) => {
+const Receipt = ({ name, prices, level }: {name: string | undefined, prices: number, level: string | undefined}) => {
   if (level === "ENTRY") level = "Entry";
   else if (level === "INTERMEDIATE") level = "Intermediate";
   else level = "Bundle";

@@ -23,9 +23,40 @@ export const createRateLimiter = (options = {}) => {
         name = 'default'
     } = options;
 
+    // Create middleware that checks for API Gateway headers first
+    const gatewayAwareMiddleware = (req, res, next) => {
+        // Skip rate limiting if request comes from API Gateway
+        const isFromGateway = req.headers['x-api-gateway'] === 'true' || 
+                             req.headers['x-service-key'] === process.env.SERVICE_API_KEY ||
+                             req.headers['x-service-key'] === 'gateway-internal';
+        
+        if (isFromGateway) {
+            console.log(`[GATEWAY MODE] Rate limiting bypassed for '${name}' - request from API Gateway`);
+            return next();
+        }
+
+        // If not from gateway and in development, still skip
+        if (NODE_ENV === 'DEVELOPMENT') {
+            console.log(`[DEV MODE] Rate limiting disabled for '${name}'`);
+            return next();
+        }
+
+        // Otherwise apply rate limiting
+        next();
+    };
+
     if(NODE_ENV !== 'DEVELOPMENT') { 
         // Create a logging middleware that runs before the rate limiter
         const logRateLimitReached = (req, res, next) => {
+            // Skip if from gateway
+            const isFromGateway = req.headers['x-api-gateway'] === 'true' || 
+                                 req.headers['x-service-key'] === process.env.SERVICE_API_KEY ||
+                                 req.headers['x-service-key'] === 'gateway-internal';
+            
+            if (isFromGateway) {
+                return next();
+            }
+
             // Store the original status function
             const originalStatus = res.status;
             
@@ -43,6 +74,7 @@ export const createRateLimiter = (options = {}) => {
         
         // Return an array of middleware functions
         return [
+            gatewayAwareMiddleware,
             logRateLimitReached,
             rateLimit({
                 windowMs,
@@ -57,16 +89,18 @@ export const createRateLimiter = (options = {}) => {
                         ApiResponse.error(message)
                     );
                 },
-                skip: (req) => false
+                skip: (req) => {
+                    // Skip if from gateway
+                    return req.headers['x-api-gateway'] === 'true' || 
+                           req.headers['x-service-key'] === process.env.SERVICE_API_KEY ||
+                           req.headers['x-service-key'] === 'gateway-internal';
+                }
                 // onLimitReached removed - this was causing the warning
             })
         ];
     } else {
         // Return dummy middleware for development
-        return (req, res, next) => {
-            console.log(`[DEV MODE] Rate limiting disabled for '${name}'`);
-            next();
-        };
+        return gatewayAwareMiddleware;
     }
 };
 

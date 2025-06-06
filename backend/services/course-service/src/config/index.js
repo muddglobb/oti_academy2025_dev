@@ -16,6 +16,17 @@ export default {
   // Service URLs for inter-service communication
   AUTH_SERVICE_URL: process.env.AUTH_SERVICE_URL || 'http://auth-service:8001',
   
+  // Service-to-service authentication
+  INTERNAL_SERVICE_TOKEN: process.env.INTERNAL_SERVICE_TOKEN,
+  INTERNAL_SERVICE_API_KEY: process.env.INTERNAL_SERVICE_API_KEY,
+  
+  // Whitelisted service IPs for rate limiting exemption
+  PACKAGE_SERVICE_IP: process.env.PACKAGE_SERVICE_IP,
+  PAYMENT_SERVICE_IP: process.env.PAYMENT_SERVICE_IP,
+  API_GATEWAY_IP: process.env.API_GATEWAY_IP,
+
+    REDIS_URL: process.env.REDIS_URL || 'redis://localhost:6379',
+  
   // CORS configuration
   CORS_ORIGIN: process.env.CORS_ORIGIN || '*',
   

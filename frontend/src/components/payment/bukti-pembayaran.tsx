@@ -5,7 +5,7 @@ import { Link } from "lucide-react";
 import PerhatianPayment from "@/components/payment/perhatian-payment";
 // import { enrollBundle, enrollNoBundle } from "@/lib/payment/fetch-payment";
 
-export function BuktiPembayaran({ courseId, packageId }: any) {
+export function BuktiPembayaran({ courseId, packageId }: {courseId: string | null | undefined, packageId: string | null | undefined}) {
   const [proofLink, setProofLink] = useState("");
   const [showPopup, setShowPopup] = useState(false);
 

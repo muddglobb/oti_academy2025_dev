@@ -93,7 +93,7 @@ type PackageType = {
 };
 
 
-export default function PackageCard({ pkg , course }: { pkg: PackageType, course: CourseType }) {
+export default function PackageCard({ pkg }: { pkg: PackageType, course: CourseType }) {
     if (pkg.type === "BUNDLE") return;
 
 function getSlugByTitle(title: string) {

@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:24-alpine3.21
 
 # Install OpenSSL explicitly to fix Prisma OpenSSL detection issue
 RUN apk add --no-cache openssl
@@ -24,7 +24,7 @@ RUN chmod -R 777 node_modules/.prisma node_modules/@prisma
 RUN npx prisma generate
 
 # Railway specific environment variables
-ENV NODE_ENV=production
+ENV NODE_ENV=development
 ENV PORT=8006
 
 # Define health check to ensure the service is ready for traffic

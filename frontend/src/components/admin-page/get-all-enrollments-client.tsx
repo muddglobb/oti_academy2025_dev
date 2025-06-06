@@ -1,10 +1,31 @@
 "use client";
 
 import React, { useState } from "react";
-import { ListFilter, Search, Check, Trash2 } from "lucide-react";
+import { Search, Check, Trash2 } from "lucide-react";
 import ApproveButton from "./approve-button";
 
-const GetAllEnrollmentsClient = ({ data }: { data: any[] }) => {
+export type EnrichedEnrollmentPayment = {
+  id: string;
+  userId: string;
+  packageId: string;
+  courseId: string;
+  type: string;
+  proofLink: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  packageName: string;
+  packageType: string;
+  price: number;
+  courseName: string;
+  userName: string;
+  userEmail: string;
+  userType: string;
+  courseTitle: string; // properti tambahan yang tidak ada di response awal
+};
+
+
+const GetAllEnrollmentsClient = ({ data }: { data: EnrichedEnrollmentPayment[] }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredData = data.filter((item) =>
@@ -54,7 +75,7 @@ const GetAllEnrollmentsClient = ({ data }: { data: any[] }) => {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((item: any, index: number) => (
+              {filteredData.map((item: EnrichedEnrollmentPayment, index: number) => (
                 <tr
                   key={item.id}
                   className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${

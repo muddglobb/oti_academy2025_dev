@@ -9,6 +9,7 @@ import { ArrowUpRight } from "lucide-react";
 const SelectClass = async () => {
   const courses = await getCourses();
   // console.log("Data kelas:", courses);
+  
   return (
     <div className="mt-9">
       <div className="flex justify-between">

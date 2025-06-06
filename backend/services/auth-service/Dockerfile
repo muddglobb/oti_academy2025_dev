@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:24-alpine3.21
 
 # Update npm sebelum langkah lainnya
 RUN npm install -g npm@latest
@@ -13,7 +13,7 @@ RUN chown -R appuser:appgroup /home/appuser
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci --only=development
 
 # Salin kode aplikasi dan prisma
 COPY --chown=appuser:appgroup . .

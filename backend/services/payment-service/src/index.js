@@ -28,6 +28,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true // Enable credentials (cookies, auth headers)
 }));
+app.set('trust proxy', 1);
 app.use(express.json());
 app.use(cookieParser()); // Parse cookies
 app.use(morgan('dev'));

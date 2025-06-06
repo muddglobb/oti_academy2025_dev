@@ -16,7 +16,7 @@ const MobileBottomBar = async ({
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
 
-  const res = await fetch(`http://localhost:8000/payments/${CourseID}/stats`, {
+  const res = await fetch(`${process.env.BASE_URL}/payments/${CourseID}/stats`, {
     cache: "no-store",
     headers: {
       Authorization: `Bearer ${accessToken}`,

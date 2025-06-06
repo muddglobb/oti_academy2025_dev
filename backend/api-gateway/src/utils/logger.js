@@ -1,7 +1,7 @@
 import winston from 'winston';
 
 const logger = winston.createLogger({
-  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  level: process.env.NODE_ENV === 'development' ? 'info' : 'debug',
   format: winston.format.combine(
     winston.format.timestamp({
       format: 'YYYY-MM-DD HH:mm:ss'
@@ -23,8 +23,8 @@ const logger = winston.createLogger({
   ]
 });
 
-// If we're not in production, also log to the console with pretty format
-if (process.env.NODE_ENV !== 'production') {
+// If we're not in development, also log to the console with pretty format
+if (process.env.NODE_ENV !== 'development') {
   logger.add(new winston.transports.Console({
     format: winston.format.combine(
       winston.format.colorize(),

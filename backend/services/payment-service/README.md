@@ -63,7 +63,7 @@ Penggabungan kedua layanan ini dilakukan untuk:
 # Memulai service dalam mode development
 npm run dev
 
-# Memulai service dalam mode production
+# Memulai service dalam mode development
 npm start
 
 # Menjalankan dengan Docker

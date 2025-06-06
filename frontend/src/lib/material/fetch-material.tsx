@@ -2,7 +2,7 @@ import { getAccessToken } from "../auth/fetch-users";
 
 
 
-export async function getMaterials({courseId}: any) {
+export async function getMaterials({courseId}: {courseId: string}) {
   try {
     const accessToken = await getAccessToken();
     const res = await fetch(`${process.env.BASE_URL}/materials/course/${courseId}/public`, {

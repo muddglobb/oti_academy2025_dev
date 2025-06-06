@@ -30,17 +30,40 @@ const getIcons = (title: string) => {
   }
 };
 
-const ApprovedClass = async ({ title, description }: any) => {
+export type CourseSession = {
+  id: string;
+  courseId: string;
+  startAt: string; // ISO timestamp
+  durationHrs: number;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type CourseData = {
+  id: string;
+  title: string;
+  description: string;
+  quota: number;
+  entryQuota: number;
+  bundleQuota: number;
+  level: "BEGINNER" | "INTERMEDIATE" | "BUNDLE"; // asumsi enum level
+  createdAt: string;
+  updatedAt: string;
+  sessions: CourseSession[];
+};
+
+const ApprovedClass = async ({ title, description }: {title: string, description: string}) => {
   const icon = getIcons(title);
-  const now = new Date();
+  // const now = new Date();
   // const targetDate = new Date("2025-05-28T13:52:14.495Z");
   // console.log(targetDate > now); // true jika targetDate sudah lewat
 
   const classData = await getCourses();
-  const course = classData.data.find((course) => course.title === title);
+  const course = classData.data.find((course: CourseData) => course.title === title);
 
   const materialData = await getMaterials({ courseId: course.id });
-  console.log("Material Data " + course.title, materialData);
+  // console.log("Material Data " + course.title, materialData);
 
   const timez = materialData.data[0]?.unlockDate.utc.iso;
   // console.log("Now", now);

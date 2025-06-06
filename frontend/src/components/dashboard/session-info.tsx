@@ -22,7 +22,7 @@ const SessionInfo = async ({ courseID }: SessionProps) => {
   const accessToken = cookieStore.get("access_token")?.value;
 
   const res = await fetch(
-    `http://localhost:8000/materials/course/${courseID}/public`,
+    `${process.env.BASE_URL}/materials/course/${courseID}/public`,
     {
       cache: "no-store",
       headers: {

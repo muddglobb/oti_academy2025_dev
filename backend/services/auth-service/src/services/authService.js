@@ -46,7 +46,7 @@ getCookieOptions(tokenType) {
   const options = {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    sameSite: 'lax',
     path: '/',
   };
   
@@ -140,7 +140,6 @@ getCookieOptions(tokenType) {
       refreshToken,
     };
   }
-
   /**
    * Authenticate a user by email and password
    * @param {string} email - User email
@@ -159,6 +158,11 @@ getCookieOptions(tokenType) {
     if (!isPasswordValid) {
       throw new Error('Invalid credentials');
     }
+
+    // **PERBAIKAN: Hapus semua refresh token lama untuk user ini sebelum membuat yang baru**
+    await prisma.refreshToken.deleteMany({
+      where: { userId: user.id }
+    });
 
     // Generate tokens with role included
     const { accessToken, refreshToken } = this.generateTokens(user);
@@ -184,11 +188,10 @@ getCookieOptions(tokenType) {
       refreshToken,
     };
   }
-
   /**
    * Refresh access token using a valid refresh token
    * @param {string} refreshToken - Refresh token
-   * @returns {Object} New access token
+   * @returns {Object} New access token and refresh token
    */
   async refreshAccessToken(refreshToken) {
     // Find valid refresh token
@@ -206,30 +209,60 @@ getCookieOptions(tokenType) {
       throw new Error('Invalid or expired refresh token');
     }
 
-    // Generate new access token with role
-    const accessToken = jwt.sign(
-      { 
-        id: storedRefreshToken.user.id,
-        role: storedRefreshToken.user.role 
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
-    );
+    // **PERBAIKAN: Implementasi refresh token rotation - hapus token lama**
+    await prisma.refreshToken.delete({
+      where: { id: storedRefreshToken.id }
+    });
 
-    return { accessToken };
+    // Generate new tokens (both access and refresh for rotation)
+    const { accessToken, refreshToken: newRefreshToken } = this.generateTokens(storedRefreshToken.user);
+
+    // Store new refresh token
+    await prisma.refreshToken.create({
+      data: {
+        token: newRefreshToken,
+        userId: storedRefreshToken.user.id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      },
+    });
+
+    return { 
+      accessToken,
+      refreshToken: newRefreshToken 
+    };
   }
-  
-  /**
+    /**
    * Logout a user by invalidating their refresh token
    * @param {string} refreshToken - Refresh token to invalidate
    * @param {string} accessToken - Optional access token to blacklist
    * @returns {boolean} Success status
    */
   async logout(refreshToken, accessToken = null) {
-    // Remove refresh token from database
-    await prisma.refreshToken.deleteMany({
-      where: { token: refreshToken }
-    });
+    let userId = null;
+
+    // **PERBAIKAN: Dapatkan userId dari refresh token untuk menghapus semua token user**
+    if (refreshToken) {
+      const storedRefreshToken = await prisma.refreshToken.findFirst({
+        where: { token: refreshToken },
+        select: { userId: true }
+      });
+      
+      if (storedRefreshToken) {
+        userId = storedRefreshToken.userId;
+      }
+    }
+
+    // **PERBAIKAN: Hapus SEMUA refresh token untuk user ini, bukan hanya satu**
+    if (userId) {
+      await prisma.refreshToken.deleteMany({
+        where: { userId }
+      });
+    } else if (refreshToken) {
+      // Fallback: hapus hanya token yang diberikan jika userId tidak ditemukan
+      await prisma.refreshToken.deleteMany({
+        where: { token: refreshToken }
+      });
+    }
     
     // Optionally blacklist the access token
     if (accessToken) {
@@ -250,7 +283,6 @@ getCookieOptions(tokenType) {
     
     return true;
   }
-
   /**
    * Update user role
    * @param {number} userId - User ID to update
@@ -280,6 +312,46 @@ getCookieOptions(tokenType) {
     });
     
     return updatedUser;
+  }
+
+  /**
+   * Clean up expired refresh tokens
+   * @returns {number} Number of tokens cleaned up
+   */
+  async cleanupExpiredTokens() {
+    try {
+      const result = await prisma.refreshToken.deleteMany({
+        where: {
+          expiresAt: { lt: new Date() }
+        }
+      });
+      
+      console.log(`🧹 Cleaned up ${result.count} expired refresh tokens`);
+      return result.count;
+    } catch (error) {
+      console.error('Error cleaning up expired tokens:', error);
+      return 0;
+    }
+  }
+
+  /**
+   * Clean up expired blacklisted tokens
+   * @returns {number} Number of tokens cleaned up
+   */
+  async cleanupExpiredBlacklistedTokens() {
+    try {
+      const result = await prisma.tokenBlacklist.deleteMany({
+        where: {
+          expiresAt: { lt: new Date() }
+        }
+      });
+      
+      console.log(`🧹 Cleaned up ${result.count} expired blacklisted tokens`);
+      return result.count;
+    } catch (error) {
+      console.error('Error cleaning up expired blacklisted tokens:', error);
+      return 0;
+    }
   }
 }
 
