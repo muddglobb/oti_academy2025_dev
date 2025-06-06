@@ -11,24 +11,27 @@ export async function POST(_req: NextRequest) {
     cookieStore.delete("access_token");
     cookieStore.delete("refresh_token");
 
-    // if (refreshToken || accessToken) {
-    try {
-      await fetch(`${process.env.AUTH_URL}/auth/logout`, {
-        method: "POST",
-        credentials: "include",
-        // headers: {
-        //   // "Content-Type": "application/json",
-        //   Authorization: `Bearer ${accessToken}`,
-        //   // ...(refreshToken && {
-        //   //   Cookie: `refresh_token=${refreshToken}`,
-        //   // }),
-        // },
-        body: JSON.stringify({ refreshToken }),
-      });
-    } catch (err) {
-      console.error("Gagal logout ke backend:", err);
+    if (refreshToken) {
+      try {
+        await fetch(`${process.env.AUTH_URL}/auth/logout`, {
+          method: "POST",
+          credentials: "include",
+          // headers: {
+          //   // "Content-Type": "application/json",
+          //   Authorization: `Bearer ${accessToken}`,
+          //   // ...(refreshToken && {
+          //   //   Cookie: `refresh_token=${refreshToken}`,
+          //   // }),
+          // },
+          headers: {
+            Cookie: `refresh_token=${refreshToken}`, 
+          }
+          // body: JSON.stringify({ refreshToken }),
+        });
+      } catch (err) {
+        console.error("Gagal logout ke backend:", err);
+      }
     }
-    // }
     // alert("berhasil logout");
     return NextResponse.json({ message: "Logout success" });
   } catch (err) {
