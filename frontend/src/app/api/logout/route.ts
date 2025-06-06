@@ -13,7 +13,7 @@ export async function POST(_req: NextRequest) {
 
     if (refreshToken) {
       try {
-        await fetch(`${process.env.AUTH_URL}/auth/logout`, {
+        await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/logout`, {
           method: "POST",
           credentials: "include",
           // headers: {
