@@ -20,6 +20,7 @@ export async function POST(_req: NextRequest) {
             ...(accessToken && {
               Authorization: `Bearer ${accessToken}`,
             }),
+            'Set-Cookie': `access-token=${accessToken}; Path=/; Max-Age=0`,
             // ...(refreshToken && {
             //   Cookie: `refresh_token=${refreshToken}`,
             // }),
