@@ -16,13 +16,13 @@ export async function POST(_req: NextRequest) {
       await fetch(`${process.env.AUTH_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
-        headers: {
-          // "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-          // ...(refreshToken && {
-          //   Cookie: `refresh_token=${refreshToken}`,
-          // }),
-        },
+        // headers: {
+        //   // "Content-Type": "application/json",
+        //   Authorization: `Bearer ${accessToken}`,
+        //   // ...(refreshToken && {
+        //   //   Cookie: `refresh_token=${refreshToken}`,
+        //   // }),
+        // },
         body: JSON.stringify({ refreshToken }),
       });
     } catch (err) {
