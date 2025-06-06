@@ -43,7 +43,8 @@ export default function Register() {
       setLoading(true);
       setErrorMessage(null);
 
-      const response = await fetch("http://localhost:8000/auth/register", {
+      // const response = await fetch(`${process.env.BASE_URL}/auth/register`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -113,7 +114,21 @@ export default function Register() {
             type="text"
             id="email"
             placeholder="omahtiacademy@gmail.com"
-            {...register("email", { required: "Email wajib diisi", pattern: { value: /^\S+@\S+$/i, message: "Format email tidak valid" } })}
+            {...register("email", {
+              required: "Email wajib diisi",
+              validate: (value) => {
+                const domain = value.split("@")[1];
+                const allowedDomains = [
+                  "gmail.com",
+                  "mail.ugm.ac.id"
+                ];
+                if (!allowedDomains.includes(domain)) {
+                  return "Gunakan domain gmail.com atau mail.ugm.ac.id";
+                }
+                return true;
+              }
+            })}
+
             className="w-full bg-white text-black border-3 rounded-md px-10 py-2"
           />
           <Mail

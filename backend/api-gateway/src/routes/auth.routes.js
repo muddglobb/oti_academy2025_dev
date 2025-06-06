@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { createDirectHandler, upload } from '../utils/directHandler.js';
 import { jwtValidatorMiddleware } from '../middlewares/jwtValidator.js';
-import { handleLogout, handleTokenRefresh, cacheNewToken } from '../controllers/authController.js';
+import { handleLogout, handleTokenRefresh, cacheNewToken, handleLoginResponse } from '../controllers/authController.js';
+import { passwordResetLimiter, uploadLimiter, adminLimiter } from '../middlewares/rateLimiter.js';
 
 const router = Router();
 
@@ -9,8 +10,28 @@ const router = Router();
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || 'http://auth-service-api:8001';
 console.log('Using AUTH_SERVICE_URL:', AUTH_SERVICE_URL);
 
-// Special route for file upload - corrected to handle multipart form data properly
+// Password reset endpoints with stricter rate limiting
+router.post('/forgot-password', 
+  passwordResetLimiter,
+  createDirectHandler(
+    AUTH_SERVICE_URL,
+    '/auth',
+    false
+  )
+);
+
+router.post('/reset-password', 
+  passwordResetLimiter,
+  createDirectHandler(
+    AUTH_SERVICE_URL,
+    '/auth',
+    false
+  )
+);
+
+// Admin file upload with upload limiter and admin access
 router.post('/admin/import-dike-students', 
+  adminLimiter,
   jwtValidatorMiddleware, 
   upload.single('file'),
   async (req, res, next) => {
@@ -40,6 +61,11 @@ router.post('/logout',
     '/auth',
     true
   )
+);
+
+router.post('/login',
+  handleLoginResponse,
+  createDirectHandler(AUTH_SERVICE_URL, '/auth', false)
 );
 
 // Route khusus untuk refresh token - menambahkan middleware cacheNewToken

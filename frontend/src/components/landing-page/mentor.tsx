@@ -34,13 +34,13 @@ const MentorContent = [
     }
 ]
 
-type MentorCardProps = {
-    name: string;
-    role: string;
-    linkedin: string;
-    imageUrl: string;
-    description: string;
-  };
+// type MentorCardProps = {
+//     name: string;
+//     role: string;
+//     linkedin: string;
+//     imageUrl: string;
+//     description: string;
+//   };
 
 const Mentor = () => {
     return (

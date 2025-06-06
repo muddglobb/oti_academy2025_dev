@@ -60,14 +60,26 @@ app.use((err, req, res, next) => {
 
 // Wait for course service to be ready
 const waitForCourseService = async (maxRetries = 30, retryDelay = 10000) => {
-  const courseServiceUrl = config.COURSE_SERVICE_URL || 'http://course-service-api:8002';
+  // Perbaiki cara mendapatkan URL
+  const courseServiceUrl = process.env.COURSE_SERVICE_URL || config.COURSE_SERVICE_URL;
+  
+  // Validasi URL sebelum digunakan
+  if (!courseServiceUrl) {
+    console.error('❌ COURSE_SERVICE_URL not configured');
+    throw new Error('Course service URL not configured');
+  }
+  
+  console.log(`🔗 Checking course service at ${courseServiceUrl}`);
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       console.log(`🔍 Checking course service readiness (attempt ${attempt}/${maxRetries})...`);
       
-      const response = await axios.get(`${courseServiceUrl}/health`, {
-        timeout: 5000,
+      // Tambahkan validasi URL
+      const url = new URL(`${courseServiceUrl}/health`);
+      
+      const response = await axios.get(url.toString(), {
+        timeout: 8000, // Tingkatkan timeout
         headers: {
           'User-Agent': 'material-service-startup-check'
         }
@@ -86,11 +98,12 @@ const waitForCourseService = async (maxRetries = 30, retryDelay = 10000) => {
             { expiresIn: '1h' }
           );
           
-          const coursesResponse = await axios.get(`${courseServiceUrl}/courses`, {
+          const coursesUrl = new URL(`${courseServiceUrl}/courses`);
+          const coursesResponse = await axios.get(coursesUrl.toString(), {
             headers: {
               'Authorization': `Bearer ${serviceToken}`
             },
-            timeout: 5000
+            timeout: 8000
           });
           
           if (coursesResponse.data && coursesResponse.data.data && coursesResponse.data.data.length > 0) {

@@ -16,8 +16,8 @@ type ClassInfoData = [
 
 const ClassInfo = ({ classInfo }: { classInfo: ClassInfoData[] }) => {
   return (
-    <div className="border-sol border-2 border-neutral-500 rounded-[20px] px-5 py-5">
-      <p className="text-lg text-success-50 border-b-2 border-neutral-500 pb-2">
+    <div className="w-full border-solid border-2 border-neutral-500 rounded-[20px] px-5 py-5">
+      <p className="font-bold text-lg text-neutral-50 border-b-2 border-neutral-500 pb-2">
         Detailed Information About Our Class
       </p>
       {classInfo.map(
@@ -40,7 +40,7 @@ const ClassInfo = ({ classInfo }: { classInfo: ClassInfoData[] }) => {
             <p className="text-xs text-neutral-50 mt-3 mb-2">{ClassName}</p>
             <div className="flex flex-row gap-2">
               <div className="flex flex-col gap-2">
-                <div className="w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
+                <div className="w-40 sm:w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
                   <Image
                     src={"/icons/ellipse-icon.svg"}
                     alt="ellipse"
@@ -49,7 +49,7 @@ const ClassInfo = ({ classInfo }: { classInfo: ClassInfoData[] }) => {
                   ></Image>
                   <p>{Mentor}</p>
                 </div>
-                <div className="w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
+                <div className="w-40 sm:w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
                   <Image
                     src={"/icons/black-target-icon.svg"}
                     alt="target-icon"
@@ -60,7 +60,7 @@ const ClassInfo = ({ classInfo }: { classInfo: ClassInfoData[] }) => {
                   <p>{Session}</p>
                 </div>
                 {Prerequisites !== "" && (
-                  <div className="w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
+                  <div className="w-40 sm:w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
                     <Image
                       src={"/icons/alert-icon.svg"}
                       alt="alert-icon"
@@ -71,7 +71,7 @@ const ClassInfo = ({ classInfo }: { classInfo: ClassInfoData[] }) => {
                   </div>
                 )}
                 {Date1 !== "" && (
-                  <div className="w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
+                  <div className="w-40 sm:w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
                     <Image
                       src={"/icons/black-calendar-icon.svg"}
                       alt="calendar-icon"
@@ -82,7 +82,7 @@ const ClassInfo = ({ classInfo }: { classInfo: ClassInfoData[] }) => {
                   </div>
                 )}
                 {ClassLevel !== "" && (
-                  <div className="w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
+                  <div className="w-40 sm:w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
                     <Image
                       src={"/icons/chart-icon.svg"}
                       alt="chart-icon"
@@ -95,7 +95,7 @@ const ClassInfo = ({ classInfo }: { classInfo: ClassInfoData[] }) => {
               </div>
               <div className="flex flex-col gap-2">
                 {TA !== "" && (
-                  <div className="w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
+                  <div className="w-40 sm:w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
                     <Image
                       src={"/icons/ellipse-icon.svg"}
                       alt="ellipse"
@@ -106,7 +106,7 @@ const ClassInfo = ({ classInfo }: { classInfo: ClassInfoData[] }) => {
                     <p>{TA}</p>
                   </div>
                 )}
-                <div className="w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
+                <div className="w-40 sm:w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
                   <Image
                     src={"/icons/black-time-icon.svg"}
                     alt="time-icon"
@@ -116,7 +116,7 @@ const ClassInfo = ({ classInfo }: { classInfo: ClassInfoData[] }) => {
                   <p>{Duration}</p>
                 </div>
                 {Date2 !== "" && (
-                  <div className="w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
+                  <div className="w-40 sm:w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
                     <Image
                       src={"/icons/black-calendar-icon.svg"}
                       alt="calendar-icon"
@@ -127,7 +127,7 @@ const ClassInfo = ({ classInfo }: { classInfo: ClassInfoData[] }) => {
                   </div>
                 )}
 
-                <div className="w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
+                <div className="w-40 sm:w-59 h-6.5 bg-neutral-50 text-neutral-900 text-xs font-display py-1 rounded-[4px] border-solid border-2 border-neutral-500 flex flex-row gap-2">
                   <Image
                     src={"/icons/black-stack-icon.svg"}
                     alt="stack-icon"

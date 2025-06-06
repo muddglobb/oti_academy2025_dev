@@ -1,5 +1,4 @@
-# filepath: e:\PROJECT\OTI Academy\oti_academy2025_dev\backend\api-gateway\Dockerfile
-FROM node:20-alpine
+FROM node:24-alpine3.21
 
 # Buat direktori aplikasi
 WORKDIR /usr/src/app
@@ -12,7 +11,7 @@ RUN chown -R appuser:appgroup /usr/src/app
 COPY package*.json ./
 
 # Install dependensi
-RUN npm ci --only=production
+RUN npm ci --only=development
 
 # Salin kode aplikasi
 COPY --chown=appuser:appgroup . .

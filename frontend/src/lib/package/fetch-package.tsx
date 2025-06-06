@@ -13,7 +13,7 @@ export async function fetchPackage() {
   }
 
   try {
-    const res = await fetch("http://localhost:8000/packages", {
+    const res = await fetch(`${process.env.BASE_URL}/packages`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
@@ -42,7 +42,7 @@ export async function fetchCourse() {
   }
 
   try {
-    const res = await fetch("http://localhost:8000/courses", {
+    const res = await fetch(`${process.env.BASE_URL}/courses`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",

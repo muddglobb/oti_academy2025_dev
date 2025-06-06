@@ -3,6 +3,8 @@ import ClassInfo from "@/components/dashboard/class-info";
 import VideoTeaser from "@/components/dashboard/video-teaser";
 import TeacherCard from "@/components/dashboard/teacher-card";
 import Prerequisites from "@/components/dashboard/prerequisites";
+import SessionInfo from "@/components/dashboard/session-info";
+import MobileBottomBar from "@/components/dashboard/mobile-bottombar";
 import Link from "next/link";
 
 import { ArrowLeft } from "lucide-react";
@@ -155,7 +157,7 @@ const classes = [
     courses: ["Competitive Programming"],
     desc: "Learn algorithms and data structures for competitive programming contests.",
     classInfo: [classInfo[1]],
-    teacherCard: [teacherCard[0], teacherCard[1]],
+    teacherCard: [teacherCard[1]],
     ClassLevel: "ENTRY",
   },
 
@@ -241,7 +243,7 @@ export default async function Page({
     );
   }
 
-  const res = await fetch("http://localhost:8000/courses", {
+  const res = await fetch(`${process.env.BASE_URL}/courses`, {
     cache: "no-store",
   });
 
@@ -265,43 +267,62 @@ export default async function Page({
     >
       <div className="absolute inset-0 bg-gradient-to-b from-neutral-900/80 via-neutral-900/80 to-black/60 pointer-events-none z-0"></div>
 
-      <div className="relative z-10 w-full flex flex-col items-center justify-center py-4 gap-4 px-4">
+      <div className="relative z-10 w-full flex flex-col items-center justify-center gap-4 pt-4">
         <Link
           href="/dashboard/class-dashboard"
-          className="flex gap-2 bg-primary-900 text-sm font-bold px-3.5 py-2 rounded-[8px] w-fit z-20 self-start ml-10"
+          className="flex gap-2 bg-primary-900 text-sm font-bold px-3.5 py-2 rounded-[8px] w-fit z-20 self-start ml-6"
         >
           <ArrowLeft size={20} color="white" />
           <p className="text-white">Kembali</p>
         </Link>
-        <ClassCapacity
-          ClassName={classData.title}
-          ClassDesc={classData.desc}
-          ClassLevel={classData.ClassLevel}
-          CourseID={courseID}
-        />
 
-        <div className="hidden lg:block">
-          {classData.classInfo.length > 1 && (
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-row gap-6">
+        <div className="hidden md:block py-4 px-6 w-full">
+          {classData.ClassLevel === "BUNDLE" && (
+            <div className="flex flex-col gap-6 w-full">
+              <ClassCapacity
+                ClassName={classData.title}
+                ClassDesc={classData.desc}
+                ClassLevel={classData.ClassLevel}
+                CourseID={courseID}
+                ClassSlug={classData.slug}
+              />
+              <div className="flex flex-row gap-6 w-full">
                 <ClassInfo classInfo={classData.classInfo} />
                 <VideoTeaser />
               </div>
               <TeacherCard teacherCard={classData.teacherCard} />
+              <SessionInfo courseID={courseID} />
             </div>
           )}
-          {classData.classInfo.length === 1 &&
-            classData.ClassLevel !== "Intermediate" && (
+          {classData.ClassLevel === "ENTRY" && (
+            <div className="flex flex-col gap-6 w-full">
+              <ClassCapacity
+                ClassName={classData.title}
+                ClassDesc={classData.desc}
+                ClassLevel={classData.ClassLevel}
+                CourseID={courseID}
+                ClassSlug={classData.slug}
+              />
               <div className="flex flex-row gap-6 items-stretch">
-                <div className="flex flex-col gap-3 w-1/2">
+                <div className="w-1/2 flex flex-col gap-3">
                   <ClassInfo classInfo={classData.classInfo} />
                   <TeacherCard teacherCard={classData.teacherCard} />
                 </div>
                 <VideoTeaser />
               </div>
-            )}
-          {classData.ClassLevel === "Intermediate" && (
-            <div className="flex flex-col gap-6 mx-4">
+
+              <SessionInfo courseID={courseID} />
+            </div>
+          )}
+          {classData.ClassLevel === "INTERMEDIATE" && (
+            <div className="flex flex-col gap-6 w-full">
+              <ClassCapacity
+                ClassName={classData.title}
+                ClassDesc={classData.desc}
+                ClassLevel={classData.ClassLevel}
+                CourseID={courseID}
+                ClassSlug={classData.slug}
+              />
               <div className="flex flex-row gap-6 items-stretch">
                 <div className="w-1/2 flex flex-col gap-3">
                   <ClassInfo classInfo={classData.classInfo} />
@@ -310,15 +331,31 @@ export default async function Page({
                 <VideoTeaser />
               </div>
               <TeacherCard teacherCard={classData.teacherCard} />
+              <SessionInfo courseID={courseID} />
             </div>
           )}
         </div>
 
-        <div className="lg:hidden flex flex-col gap-6">
+        <div className="md:hidden flex flex-col gap-6 px-2">
+          <ClassCapacity
+            ClassName={classData.title}
+            ClassDesc={classData.desc}
+            ClassLevel={classData.ClassLevel}
+            CourseID={courseID}
+            ClassSlug={classData.slug}
+          />
           <VideoTeaser />
           <ClassInfo classInfo={classData.classInfo} />
           <Prerequisites />
           <TeacherCard teacherCard={classData.teacherCard} />
+          <SessionInfo courseID={courseID} />
+        </div>
+        <div className="md:hidden sticky z-20 w-full bottom-0 ">
+          <MobileBottomBar
+            CourseID={courseID}
+            ClassLevel={classData.ClassLevel}
+            ClassSlug={classData.slug}
+          />
         </div>
       </div>
     </div>

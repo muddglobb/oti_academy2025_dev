@@ -28,7 +28,7 @@ const getIcons = (title: string) => {
   }
 };
 
-const MenyiapkanKelas = ({ title, description }: any) => {
+const MenyiapkanKelas = ({ title, description }: {title:string, description: string}) => {
   const icon = getIcons(title);
   // console.log("Icons:", icons);
   return (

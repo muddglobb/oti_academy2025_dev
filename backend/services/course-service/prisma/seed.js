@@ -11,9 +11,9 @@ dotenv.config();
 // Total quota is 140 per course
 // Game Dev and Competitive Programming have 140 entry quota and 0 bundle quota
 // Other courses have 110 entry quota and 30 bundle quota
-const DEFAULT_TOTAL_QUOTA = 60;
-const DEFAULT_ENTRY_QUOTA = 30;
-const DEFAULT_BUNDLE_QUOTA = 30;
+const DEFAULT_TOTAL_QUOTA = 30;
+const DEFAULT_ENTRY_QUOTA = 15;
+const DEFAULT_BUNDLE_QUOTA = 15;
 const NO_BUNDLE_COURSES = ['Competitive Programming', 'Game Development'];
 
 const prisma = new PrismaClient({
@@ -62,7 +62,7 @@ export async function seedCourses(options = { force: false }) {
         const entryCourses = [
             {
                 title: 'Competitive Programming',
-                description: 'Learn algorithms and data structures for competitive programming contests.',
+                description: 'Mengenali dasar-dasar Competitive Programming secara bertahap mulai dari algoritma, struktur data, hingga graf. Dirancang ringkas dan menantang, cocok untuk pemula dan ditutup dengan konteks sebagai tugas akhir.',
                 level: 'ENTRY',
                 quota: DEFAULT_TOTAL_QUOTA,
                 entryQuota: DEFAULT_TOTAL_QUOTA, // Full quota for entry level
@@ -84,7 +84,7 @@ export async function seedCourses(options = { force: false }) {
             },
             {
                 title: 'Graphic Design',
-                description: 'Master the basics of Graphic Design including color theory, typography, and composition.',
+                description: 'Belajar dasar desain grafis mulai dari elemen visual, warna, hingga layout. Lewat studi kasus dan praktik di Figma, kamu akan buat berbagai konten secara terarah dan bermakna.',
                 level: 'ENTRY',
                 quota: DEFAULT_TOTAL_QUOTA,
                 entryQuota: DEFAULT_ENTRY_QUOTA,
@@ -106,7 +106,7 @@ export async function seedCourses(options = { force: false }) {
             },
             {
                 title: 'Fundamental Cyber Security',
-                description: 'Learn the basics of cybersecurity, including threat identification and security principles.',
+                description: 'Masuki dunia cybersecurity dengan materi praktis dan menyenangkan, mulai dari Linux, forensik, web exploitation, kriptografi, hingga OSINT. Ditutup dengan praktik langsung lewat picoCTF. Materi ringkas dan mudah dipahami, cocok untuk pemula. ',
                 level: 'ENTRY',
                 quota: DEFAULT_TOTAL_QUOTA,
                 entryQuota: DEFAULT_ENTRY_QUOTA,
@@ -128,7 +128,7 @@ export async function seedCourses(options = { force: false }) {
             },
             {
                 title: 'Game Development',
-                description: 'Introduction to game development concepts, engines, and basic implementation.',
+                description: 'Menjelajahi dunia game development dari merancang ide, Game Design Document (GDD), hingga membangun prototype game dengan GDevelop. Materi lengkap dan mudah diikuti, cocok untuk pemula.',
                 level: 'ENTRY',
                 quota: DEFAULT_TOTAL_QUOTA,
                 entryQuota: DEFAULT_TOTAL_QUOTA, // Full quota for entry level
@@ -150,7 +150,7 @@ export async function seedCourses(options = { force: false }) {
             },
             {
                 title: 'Web Development',
-                description: 'Learn HTML, CSS, and JavaScript to build responsive websites from scratch.',
+                description: 'Belajar membuat UI dari nol, mulai dari HTML, CSS, React, hingga Tailwind & MUI. Cocok untuk pemula yang ingin membangun halaman web responsif, memahami dasar komponen React, dan eksplorasi styling modern.',
                 level: 'ENTRY',
                 quota: DEFAULT_TOTAL_QUOTA,
                 entryQuota: DEFAULT_ENTRY_QUOTA,
@@ -172,7 +172,7 @@ export async function seedCourses(options = { force: false }) {
             },
             {
                 title: 'Basic Python',
-                description: 'Introduction to Python programming language, syntax, and basic applications.',
+                description: 'Pelajari dasar-dasar pemrograman Python, mulai dari sintaks dasar hingga OOP dan struktur data. Materi disusun secara bertahap dan mudah diikuti cocok untuk pemula dengan studi kasus menarik.',
                 level: 'ENTRY',
                 quota: DEFAULT_TOTAL_QUOTA,
                 entryQuota: DEFAULT_ENTRY_QUOTA,
@@ -199,7 +199,7 @@ export async function seedCourses(options = { force: false }) {
         const intermediateCourses = [
             {
                 title: 'Software Engineering',
-                description: 'Learn professional software development practices including version control, testing, and CI/CD pipelines.',
+                description: 'Kuasai pembuatan aplikasi web modern lengkap dari autentikasi hingga fitur CRUD lewat praktik langsung dan studi kasus nyata. Jadi developer full-stack handal dengan pengalaman yang keren',
                 level: 'INTERMEDIATE',
                 quota: DEFAULT_TOTAL_QUOTA,
                 entryQuota: DEFAULT_ENTRY_QUOTA,
@@ -221,7 +221,7 @@ export async function seedCourses(options = { force: false }) {
             },
             {
                 title: 'Data Science & Artificial Intelligence',
-                description: 'Explore data analysis, machine learning, and artificial intelligence techniques.',
+                description: 'Belajar Data Science dan AI dari nol hingga siap ikut proyek dan kompetisi. DSAI Bootcamp membimbingmu step-by-step dari dasar hingga membangun model AI siap industri.',
                 level: 'INTERMEDIATE',
                 quota: DEFAULT_TOTAL_QUOTA,
                 entryQuota: DEFAULT_ENTRY_QUOTA,
@@ -243,7 +243,7 @@ export async function seedCourses(options = { force: false }) {
             },
             {
                 title: 'Cyber Security',
-                description: 'Advanced security concepts including penetration testing and security architecture.',
+                description: 'Masuki dunia ethical hacking dan praktik langsung tahapan penetration testing, dari reconnaissance hingga post-exploitation, lengkap dengan penyusunan laporan uji keamanan secara profesional.',
                 level: 'INTERMEDIATE',
                 quota: DEFAULT_TOTAL_QUOTA,
                 entryQuota: DEFAULT_ENTRY_QUOTA,
@@ -265,7 +265,7 @@ export async function seedCourses(options = { force: false }) {
             },
             {
                 title: 'UI/UX',
-                description: 'User interface and experience design principles, tools, and methodologies.',
+                description: 'Mulai dari mengubah PRD jadi desain, membuat mock-up, wireframe, hingga memahami UX laws dan desain yang aksesibel. Belajar secara fleksibel lewat modul online, tugas, konsultasi, dan proyek akhir yang bisa jadi portofolio.',
                 level: 'INTERMEDIATE',
                 quota: DEFAULT_TOTAL_QUOTA,
                 entryQuota: DEFAULT_ENTRY_QUOTA,

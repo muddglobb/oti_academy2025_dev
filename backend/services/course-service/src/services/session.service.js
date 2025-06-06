@@ -1,9 +1,9 @@
 import { CourseModel } from '../models/course.model.js';
 import { SessionModel } from '../models/session.model.js';
 import { CacheService } from './cache.service.js';
+import { SessionNotFoundError, CourseNotFoundError } from '../utils/errors.js';
 
-export const SessionService = {
-  /**
+export const SessionService = {  /**
    * Create a new session
    * @param {Object} sessionData - Session data
    * @returns {Promise<Object>} Created session
@@ -12,7 +12,7 @@ export const SessionService = {
     // Check if course exists
     const courseExists = await CourseModel.exists(sessionData.courseId);
     if (!courseExists) {
-      throw new Error('Course not found');
+      throw new CourseNotFoundError();
     }
     
     const session = await SessionModel.create(sessionData);
@@ -25,8 +25,7 @@ export const SessionService = {
     
     return session;
   },
-  
-  /**
+    /**
    * Get session by ID
    * @param {string} id - Session ID
    * @returns {Promise<Object>} Session
@@ -35,7 +34,7 @@ export const SessionService = {
     return await CacheService.getOrSet(`session:${id}`, async () => {
       const session = await SessionModel.findById(id);
       if (!session) {
-        throw new Error('Session not found');
+        throw new SessionNotFoundError();
       }
       return session;
     }, 30 * 60); // Cache for 30 minutes
@@ -50,7 +49,7 @@ export const SessionService = {
     // Check if course exists
     const courseExists = await CourseModel.exists(courseId);
     if (!courseExists) {
-      throw new Error('Course not found');
+      throw new CourseNotFoundError();
     }
     
     return await CacheService.getOrSet(`course-sessions:${courseId}`, async () => {
@@ -67,7 +66,7 @@ export const SessionService = {
   async updateSession(id, data) {
     const session = await SessionModel.findById(id);
     if (!session) {
-      throw new Error('Session not found');
+      throw new SessionNotFoundError();
     }
     
     const updatedSession = await SessionModel.update(id, data);
@@ -81,8 +80,7 @@ export const SessionService = {
     
     return updatedSession;
   },
-  
-  /**
+    /**
    * Delete session
    * @param {string} id - Session ID
    * @returns {Promise<void>}
@@ -90,7 +88,7 @@ export const SessionService = {
   async deleteSession(id) {
     const session = await SessionModel.findById(id);
     if (!session) {
-      throw new Error('Session not found');
+      throw new SessionNotFoundError();
     }
     
     await SessionModel.delete(id);

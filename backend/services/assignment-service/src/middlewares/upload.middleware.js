@@ -62,7 +62,7 @@ export const handleUpload = (req, res, next) => {
     
     // If file was uploaded successfully, add file URL to request
     if (req.file) {
-      // In production, this would likely be a cloud storage URL
+      // In development, this would likely be a cloud storage URL
       req.fileUrl = `/uploads/${req.file.filename}`;
     }
     

@@ -51,6 +51,25 @@ export const CourseModel = {
     });
   },
 
+  async findByIds(ids) {
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return [];
+    }
+    
+    return await prisma.course.findMany({
+      where: {
+        id: {
+          in: ids
+        }
+      },
+      include: {
+        sessions: {
+          orderBy: { startAt: 'asc' }
+        }
+      }
+    });
+  },
+
   async delete(id) {
     return await prisma.course.delete({
       where: { id }

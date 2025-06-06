@@ -9,7 +9,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   embedUrl,
   className = "",
 }) => (
-  <div className={`relative w-120 overflow-hidden ${className}`}>
+  <div className={`relative w-89 md:w-120 overflow-hidden ${className}`}>
     <div className="pb-[56.25%]">
       <iframe
         src={embedUrl}

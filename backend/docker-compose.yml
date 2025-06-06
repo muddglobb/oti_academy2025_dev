@@ -52,7 +52,8 @@ services:
       test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d course_service_db"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 5  # material SERVICE API  
+
   # COURSE SERVICE API
   course-service-api:
     build: ./services/course-service
@@ -67,12 +68,6 @@ services:
         condition: service_healthy
     networks:
       - oti-network
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8002/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
 
         # material SERVICE DATABASE
   material-service-db:
@@ -92,6 +87,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5  # material SERVICE API
+
   material-service-api:
     build: ./services/material-service
     env_file:
@@ -103,16 +99,10 @@ services:
     depends_on:
       material-service-db:
         condition: service_healthy
-      course-service-api:
+      course-service-db:
         condition: service_healthy
     networks:
       - oti-network
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8003/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
 
         # ASSIGNMENT SERVICE DATABASE
   assignment-service-db:
@@ -146,12 +136,6 @@ services:
         condition: service_healthy
     networks:
       - oti-network
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8004/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
 
 
   # PACKAGE SERVICE DATABASE
@@ -184,16 +168,10 @@ services:
     depends_on:
       package-service-db:
         condition: service_healthy
-      course-service-api:
+      course-service-db:
         condition: service_healthy
     networks:
       - oti-network
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8005/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
       
   # PAYMENT SERVICE DATABASE
   payment-service-db:
@@ -228,12 +206,6 @@ services:
         condition: service_healthy
     networks:
       - oti-network
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8006/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
 
   redis:
     container_name: redis
@@ -266,12 +238,14 @@ services:
     networks:
       - oti-network
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
       interval: 10s
-      timeout: 5s
-      retries: 5
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+    restart: unless-stopped
       
-  # EMAIL SERVICE API
+# EMAIL SERVICE API
   email-service-api:
     build: ./services/email-service
     env_file:
@@ -283,18 +257,12 @@ services:
     environment:
       - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672
     depends_on:
-      api-gateway:
-        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
       - oti-network
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8008/health || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
+    restart: unless-stopped
+    
 
       
   api-gateway:
@@ -311,12 +279,7 @@ services:
           condition: service_healthy
       networks:
         - oti-network
-      restart: unless-stopped
-      healthcheck:
-        test: ["CMD", "wget", "-qO-", "http://localhost:${API_GATEWAY_PORT}/health"]
-        interval: 30s
-        timeout: 10s
-        retries: 3
+      
 
 networks:
   oti-network:

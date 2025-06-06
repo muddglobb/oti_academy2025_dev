@@ -26,7 +26,7 @@ export async function getCourses() {
   }
 }
 
-export async function getCoursesById(courseId: any) {
+export async function getCoursesById(courseId: string) {
   try {
     const accessToken = await getAccessToken();
     const res = await fetch(`${process.env.BASE_URL}/courses/${courseId}`, {

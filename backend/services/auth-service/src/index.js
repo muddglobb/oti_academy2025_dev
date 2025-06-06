@@ -9,6 +9,7 @@ import bcrypt from 'bcryptjs';
 import authRoutes from './routes/auth.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import usersRoutes from './routes/user.routes.js';
+import authService from './services/authService.js';
 import { ApiResponse } from './utils/api-response.js';
 
 // Load environment variables
@@ -65,6 +66,20 @@ async function initializeAdminAccount() {
   }
 }
 
+// **PERBAIKAN: Tambah fungsi pembersihan token expired**
+async function cleanupExpiredTokens() {
+  try {
+    const refreshTokensCleanup = await authService.cleanupExpiredTokens();
+    const blacklistedTokensCleanup = await authService.cleanupExpiredBlacklistedTokens();
+    
+    if (refreshTokensCleanup > 0 || blacklistedTokensCleanup > 0) {
+      console.log(`🧹 Token cleanup completed: ${refreshTokensCleanup} refresh tokens, ${blacklistedTokensCleanup} blacklisted tokens`);
+    }
+  } catch (error) {
+    console.error('❌ Error during token cleanup:', error);
+  }
+}
+
 // Middleware
 app.use(helmet());
 app.use(cors({
@@ -118,6 +133,13 @@ const startServer = async () => {
     
     // Initialize admin account
     await initializeAdminAccount();
+    
+    // **PERBAIKAN: Initial cleanup dan scheduled cleanup**
+    await cleanupExpiredTokens();
+    
+    // Schedule cleanup every hour (3600000 ms = 1 hour)
+    setInterval(cleanupExpiredTokens, 3600000);
+    console.log('🕐 Scheduled token cleanup every hour');
     
     app.listen(PORT, () => {
       console.log(`🚀 Auth service running on port ${PORT}`);
