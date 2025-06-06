@@ -56,7 +56,7 @@ const Card = ({
               </div>
             </div>
 
-            <p className="text-[14px]">4 Jam/Sessions</p>
+            <p className="text-[14px] text-neutral-50">2 Jam/Sesi</p>
           </div>
         </div>
       </div>
@@ -72,7 +72,7 @@ const Card = ({
           </div>
         </div>
 
-        <p className="text-[12px]">{description}</p>
+        <p className="text-[12px] line-clamp-3 mt-1">{description}</p>
       </div>
     </div>
   );
