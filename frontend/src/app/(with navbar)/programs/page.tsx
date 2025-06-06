@@ -1,66 +1,50 @@
-import React from "react";
-import EntryClassInfo from "@/components/programs/entry/entry-classinfo";
-import Hero from "@/components/programs/intermediate/intermediate-hero";
-import SessionInfo from "@/components/programs/intermediate/intermediate-session-info";
+"use client"
 
-const hero: [string, string, string] = [
-  "Web Development",
-  "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis? fjieofjiojwjefoiejwoi",
-  "Beginner Level",
-];
-const classInfo: [
-  string,
-  string,
-  string,
-  string,
-  string,
-  string,
-  string,
-  string
-] = [
-  "1 - 15 June 2025",
-  "6 Sesi",
-  "2 Jam/Sesi",
-  "10 Modul",
-  "Dhimas Putra",
-  "/person-placeholder.jpeg",
-  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?",
-  "https://www.linkedin.com",
-];
-const sessions: [string, string, string, string][] = [
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-  [
-    "Session 1",
-    "1 June 2025",
-    "2 - 4 Jam/Sessions",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
-  ],
-];
-const webDevelopment = () => {
+import React, { useEffect } from "react";
+import ProgramsPage from "@/components/programs/programs-page";
+
+const Page = () => {
+  useEffect(() => {
+    // Handle hash navigation after page load
+    const handleHashScroll = () => {
+      const hash = window.location.hash;
+      if (hash) {
+        // Remove the '#' from hash
+        const elementId = hash.substring(1);
+        const element = document.getElementById(elementId);
+        
+        if (element) {
+          // Add a small delay to ensure the page is fully rendered
+          setTimeout(() => {
+            element.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }, 100);
+        }
+      }
+    };
+
+    // Run on mount
+    handleHashScroll();
+
+    // Also listen for hash changes (if user manually changes the hash)
+    window.addEventListener('hashchange', handleHashScroll);
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashScroll);
+    };
+  }, []);
+
   return (
-    <div className="flex flex-col items-center">
-      <Hero hero={hero} />
-      <EntryClassInfo classInfo={classInfo} />
-      <SessionInfo sessions={sessions} />
+    <div
+      className="     
+      relative 
+      "
+    >
+      <ProgramsPage></ProgramsPage>
     </div>
   );
 };
 
-export default webDevelopment;
+export default Page;

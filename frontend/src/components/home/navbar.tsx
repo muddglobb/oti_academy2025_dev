@@ -8,7 +8,7 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
 const navbarItems = [
-  { name: "About Us", href: "/about" },
+  { name: "About Us", href: "/#about" },
   { name: "Programs", href: "/programs" },
 ];
 
@@ -29,7 +29,7 @@ const Navbar = () => {
   };
 
   return (
-    <main className="w-full fixed z-10 backdrop-blur-md">
+    <main className="w-full fixed z-10 backdrop-blur-md ">
       <div className="bg-[#06163c] text-white text-center text-[12px] px-5 py-4">
         <div className="flex justify-center items-center gap-2">
           <span>
