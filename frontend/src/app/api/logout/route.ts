@@ -26,7 +26,7 @@ export async function POST(_req: NextRequest) {
           // headers: {
           //   Cookie: `refresh_token=${refreshToken}`, 
           // }
-          body: JSON.stringify({ refreshToken }),
+          body: `refresh_token=${refreshToken}`,
         });
       } catch (err) {
         console.error("Gagal logout ke backend:", err);
