@@ -75,18 +75,48 @@ export const logout = asyncHandler(async (req, res) => {
   const accessToken = req.cookies?.access_token || req.headers.authorization?.split(' ')[1];
   
   try {
-    await authService.logout(refreshToken, accessToken);
+    // **PERBAIKAN: Logout bahkan jika tidak ada refresh token**
+    if (refreshToken || accessToken) {
+      await authService.logout(refreshToken, accessToken);
+    }
     
-    // Clear cookies with the same options used when setting them
-  res.clearCookie('access_token', authService.getCookieOptions('access'));
-  res.clearCookie('refresh_token', authService.getCookieOptions('refresh'));
+    // **PERBAIKAN: Clear cookies dengan opsi yang lebih eksplisit**
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    };
+    
+    // Add domain if configured
+    if (process.env.COOKIE_DOMAIN) {
+      cookieOptions.domain = process.env.COOKIE_DOMAIN;
+    }
+    
+    res.clearCookie('access_token', cookieOptions);
+    res.clearCookie('refresh_token', cookieOptions);
     
     res.status(200).json(
       ApiResponse.success(null, 'Logged out successfully')
     );
   } catch (error) {
-    res.status(400).json(
-      ApiResponse.error(error.message)
+    // **PERBAIKAN: Clear cookies even if logout fails**
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    };
+    
+    if (process.env.COOKIE_DOMAIN) {
+      cookieOptions.domain = process.env.COOKIE_DOMAIN;
+    }
+    
+    res.clearCookie('access_token', cookieOptions);    res.clearCookie('refresh_token', cookieOptions);
+    
+    // Still return success even if logout fails (user experience)
+    res.status(200).json(
+      ApiResponse.success(null, 'Logged out successfully')
     );
   }
 });
@@ -107,12 +137,14 @@ export const refreshToken = asyncHandler(async (req, res) => {
   try {
     const result = await authService.refreshAccessToken(refreshToken);
     
-    // Set HTTP-only cookie for the new access token
+    // **PERBAIKAN: Set kedua token karena menggunakan refresh token rotation**
     res.cookie('access_token', result.accessToken, authService.getCookieOptions('access'));
+    res.cookie('refresh_token', result.refreshToken, authService.getCookieOptions('refresh'));
     
     res.status(200).json(
       ApiResponse.success({
-        accessToken: result.accessToken // Include for backwards compatibility
+        accessToken: result.accessToken, // Include for backwards compatibility
+        refreshToken: result.refreshToken // Include new refresh token
       }, 'Token refreshed successfully')
     );
   } catch (error) {
