@@ -9,7 +9,7 @@ export async function POST(_req: NextRequest) {
     const refreshToken = cookieStore.get("refresh_token")?.value;
 
     
-    if (refreshToken || accessToken) {
+    // if (refreshToken || accessToken) {
       try {
         await fetch(`${process.env.AUTH_URL}/auth/logout`, {
           method: "POST",
@@ -30,7 +30,7 @@ export async function POST(_req: NextRequest) {
       } catch (err) {
         console.error("Gagal logout ke backend:", err);
       }
-    }
+    // }
     
     cookieStore.delete("access_token");
     cookieStore.delete("refresh_token");
