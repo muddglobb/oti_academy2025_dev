@@ -1,30 +1,33 @@
-import { cookies } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(_req: NextRequest) {
-    void _req;
+  void _req;
   try {
     const cookieStore = await cookies();
-    const accessToken = cookieStore.get('access_token')?.value;
-    const refreshToken = cookieStore.get('refresh_token')?.value;
+    const accessToken = cookieStore.get("access_token")?.value;
+    const refreshToken = cookieStore.get("refresh_token")?.value;
 
-    cookieStore.delete('access_token');
-    cookieStore.delete('refresh_token');
+    cookieStore.delete("access_token");
+    cookieStore.delete("refresh_token");
 
     if (refreshToken || accessToken) {
       try {
         await fetch(`${process.env.AUTH_URL}/auth/logout`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             ...(accessToken && {
               Authorization: `Bearer ${accessToken}`,
             }),
-            ...(refreshToken && {
-              Cookie: `refresh_token=${refreshToken}`,
-            }),
+            // ...(refreshToken && {
+            //   Cookie: `refresh_token=${refreshToken}`,
+            // }),
           },
-          credentials: 'include',
+          body: JSON.stringify({
+            ...(refreshToken && { refreshToken }),
+          }),
+          credentials: "include",
         });
       } catch (err) {
         console.error("Gagal logout ke backend:", err);
