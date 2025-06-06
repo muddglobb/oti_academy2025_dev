@@ -29,7 +29,7 @@ export const classData: Record<
     slug: "ui-ux",
     image: "/logo-perkelas/uiux.webp",
     teacher1: "/images/mentor-coming-soon.webp",
-    teacher2: "/images/mentor-coming-soon.webp",
+    teacher2: "",
   },
   "Cyber Security": {
     slug: "cyber-security",
@@ -41,7 +41,7 @@ export const classData: Record<
     slug: "basic-python",
     image: "/logo-perkelas/python.webp",
     teacher1: "/images/mentor-coming-soon.webp",
-    teacher2: "/",
+    teacher2: "",
   },
   "Competitive Programming": {
     slug: "competitive-programming",
@@ -67,6 +67,30 @@ export const classData: Record<
     teacher1: "/images/mentor-coming-soon.webp",
     teacher2: "/images/mentor-coming-soon.webp",
   },
+  "Bundle Web Development + Software Engineering": {
+    slug: "web-development+software-engineering",
+    image: "/logo-perkelas/graphic.webp",
+    teacher1: "/images/mentor-coming-soon.webp",
+    teacher2: "/images/mentor-coming-soon.webp",
+  },
+  "Bundle Python + Data Science & Artificial Intelligence": {
+    slug: "python+data-science&artificial-intelligence",
+    image: "/logo-perkelas/graphic.webp",
+    teacher1: "/images/mentor-coming-soon.webp",
+    teacher2: "/images/mentor-coming-soon.webp",
+  },
+  "Bundle Graphic Design + UI/UX": {
+    slug: "graphic-design+ui-ux",
+    image: "/logo-perkelas/graphic.webp",
+    teacher1: "/images/mentor-coming-soon.webp",
+    teacher2: "/images/mentor-coming-soon.webp",
+  },
+  "Bundle Fundamental Cyber Security + Cyber Security": {
+    slug: "fundamental-cyber-security+cyber-security",
+    image: "/logo-perkelas/graphic.webp",
+    teacher1: "/images/mentor-coming-soon.webp",
+    teacher2: "/images/mentor-coming-soon.webp",
+  }
 };
 
 export const getSlugByTitle = (title: string): string => {
