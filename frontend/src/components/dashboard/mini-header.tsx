@@ -11,13 +11,18 @@ export function MiniHeader({ userName }: {userName: string}) {
   const router = useRouter();
   const handleLogout = async () => {
   try {
-    const res = await fetch("/api/logout", {
-      method: "POST",
-      credentials: "include", 
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
+    // const res = await fetch("/api/logout", {
+    //   method: "POST",
+    //   credentials: "include", 
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   }
+    // });
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include', // Ensure cookies are sent
+      })
     
     if (res.ok) {
       console.log("Logout sukses");

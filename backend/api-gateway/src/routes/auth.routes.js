@@ -54,12 +54,11 @@ router.post('/admin/import-dike-students',
 
 // Route khusus untuk logout - menggunakan middleware handleLogout untuk invalidasi token
 router.post('/logout', 
-  jwtValidatorMiddleware, 
   handleLogout, 
   createDirectHandler(
     AUTH_SERVICE_URL,
     '/auth',
-    true
+    false
   )
 );
 
