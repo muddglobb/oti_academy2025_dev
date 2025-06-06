@@ -8,19 +8,17 @@ export async function POST(_req: NextRequest) {
     const accessToken = cookieStore.get("access_token")?.value;
     const refreshToken = cookieStore.get("refresh_token")?.value;
 
-    cookieStore.delete("access_token");
-    cookieStore.delete("refresh_token");
-
+    
     if (refreshToken || accessToken) {
       try {
         await fetch(`${process.env.AUTH_URL}/auth/logout`, {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
             ...(accessToken && {
               Authorization: `Bearer ${accessToken}`,
             }),
-            'Set-Cookie': `access-token=${accessToken}; Path=/; Max-Age=0`,
             // ...(refreshToken && {
             //   Cookie: `refresh_token=${refreshToken}`,
             // }),
@@ -28,13 +26,14 @@ export async function POST(_req: NextRequest) {
           body: JSON.stringify({
             ...(refreshToken && { refreshToken }),
           }),
-          credentials: "include",
         });
       } catch (err) {
         console.error("Gagal logout ke backend:", err);
       }
     }
-
+    
+    cookieStore.delete("access_token");
+    cookieStore.delete("refresh_token");
     // alert("berhasil logout");
     return NextResponse.json({ message: "Logout success" });
   } catch (err) {
