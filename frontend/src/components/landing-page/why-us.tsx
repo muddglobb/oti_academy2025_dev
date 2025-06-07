@@ -64,7 +64,7 @@ const WhyUs = () => {
       <div
         className="flex-col items-center justify-center 
               px-10
-              lg:px-60"
+              lg:px-"
       >
         {/* bintang dan planet */}
         <>

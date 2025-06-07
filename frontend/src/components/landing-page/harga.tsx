@@ -45,7 +45,7 @@ const Harga = () => {
   return (
     <div
       className="w-full bg-cover bg-center flex flex-col items-center justify-center
-                bg-[linear-gradient(0deg,rgba(5,12,26,0.6)_0%,rgba(5,12,26,0.8)_100%)]
+                bg-neutral-900/80
                 relative
                 lg:h-screen
               "
@@ -86,7 +86,7 @@ const Harga = () => {
             <h1 className="pt-10 w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold pb-10">
               Harga Program Kami
             </h1>
-            <div className="flex flex-col md:flex-row justify-center items-end gap-4 md:gap-5 ">
+            <div className="flex flex-col lg:flex-row justify-center items-center lg:items-end gap-4 md:gap-5 ">
               {/* putih kiri */}
               <div className="relative border bg-neutral-50 rounded-[10px] max-w-105 p-5 flex flex-col items-center justify-between w-full">
                 {/* header atasnya */}

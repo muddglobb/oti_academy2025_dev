@@ -7,7 +7,7 @@ const SecondContent = async () => {
     <div className="lg:grid lg:grid-cols-3 gap-6">
       {/* Left Column */}
       <div className="lg:col-span-2">
-        <EnrolledClass />
+        <EnrolledClass check="NO" />
       </div>
 
       {/* Right Column */}
