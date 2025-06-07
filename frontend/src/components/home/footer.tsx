@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { Instagram, Mail } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -89,18 +90,20 @@ const Footer = () => {
           </div>
 
           <div className="flex gap-[20px] items-end">
-            <Image
-              src="/mail-icon.png"
-              alt="Mail Icon"
-              width={28}
-              height={28}
-            ></Image>
-            <Image
-              src="/instagram-icon.png"
-              alt="Mail Icon"
-              width={28}
-              height={28}
-            ></Image>
+            <Link href="https://omahti.web.id/">
+              <Mail
+                width={28}
+                height={28}
+                color="#f8f9ff"
+              />
+            </Link>
+            <Link href="https://www.instagram.com/omahti_ugm/">
+              <Instagram
+                width={28}
+                height={28}
+                color="#f8f9ff"
+              />
+            </Link>
           </div>
         </div>
       </div>

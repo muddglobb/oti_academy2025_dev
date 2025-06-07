@@ -31,28 +31,18 @@ const WhyUsContent = [
 
 const Sponsors = [
   {
-    src: "/images/sponsors/sponsor1.jpeg",
+    src: "/images/sponsors/s-mvr.webp",
     alt: "sponsor 1",
+    width: 103,
+    height: 103,
+    displaySize: "h-[103px]"
   },
   {
-    src: "/images/sponsors/sponsor2.jpg",
+    src: "/images/sponsors/l-asn.webp",
     alt: "sponsor 2",
-  },
-  {
-    src: "/images/sponsors/sponsor3.JPG",
-    alt: "sponsor 3",
-  },
-  {
-    src: "/images/sponsors/sponsor1.jpeg",
-    alt: "sponsor 4",
-  },
-  {
-    src: "/images/sponsors/sponsor2.jpg",
-    alt: "sponsor 5",
-  },
-  {
-    src: "/images/sponsors/sponsor3.JPG",
-    alt: "sponsor 6",
+    width: 180,
+    height: 180,
+    displaySize: "h-[180px]"
   },
 ];
 
@@ -147,15 +137,15 @@ const WhyUs = () => {
             viewport={{
               once: true,
             }}
-            className="flex flex-wrap justify-center gap-4 md:gap-9 max-w-screen w-auto">
+            className="flex flex-wrap items-center gap-4 md:gap-9 max-w-screen w-auto">
             {Sponsors.map((img) => (
-              <div key={img.alt} className="w-auto">
+              <div key={img.alt} className={`w-auto ${img.displaySize} flex items-center`}>
                 <Image
                   src={img.src}
                   alt={img.alt}
-                  width={103}
-                  height={1000}
-                  className="rounded-1 object-cover w-auto h-[103px]"
+                  width={img.width}
+                  height={img.height}
+                  className={`rounded-1 object-contain ${img.displaySize} w-auto`}
                 />
               </div>
             ))}
