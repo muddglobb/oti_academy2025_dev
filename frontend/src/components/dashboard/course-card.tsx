@@ -10,12 +10,17 @@ type CourseCardProps = {
   description: string;
   firstTeacher: string;
   secTeacher: string | null;
-}
-const CourseCard = ({slug, image, title, description, firstTeacher, secTeacher}: CourseCardProps) => {
+};
+const CourseCard = ({
+  slug,
+  image,
+  title,
+  description,
+  firstTeacher,
+  secTeacher,
+}: CourseCardProps) => {
   return (
-    <div
-      className="flex flex-col border-2 rounded-[12px] border-neutral-500 bg-white w-full"
-    >
+    <div className="flex flex-col border-2 rounded-[12px] border-neutral-500 bg-white w-full">
       <Link href={`/dashboard/class-dashboard/${slug}`}>
         <div>
           <div className="flex flex-row">
@@ -40,7 +45,13 @@ const CourseCard = ({slug, image, title, description, firstTeacher, secTeacher}:
                     {/* </Link> */}
                   </div>
                 </div>
-                <p className="text-neutral-900 my-3 text-[12px]">
+                <p
+                  className={`text-neutral-900 my-3 text-[12px] ${
+                    title.startsWith("Bundle ")
+                      ? "line-clamp-2"
+                      : "line-clamp-3"
+                  }`}
+                >
                   {description}
                 </p>
               </div>
@@ -55,7 +66,7 @@ const CourseCard = ({slug, image, title, description, firstTeacher, secTeacher}:
                   />
                   {secTeacher !== "" && (
                     <Image
-                      src={secTeacher|| "/images/class-profile/hako.jpg"}
+                      src={secTeacher || "/images/class-profile/hako.jpg"}
                       alt="Mentor"
                       width={30}
                       height={30}

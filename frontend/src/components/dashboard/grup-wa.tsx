@@ -6,7 +6,6 @@ const GrupWa = async () => {
   const myEnroll = await getMyEnrollment();
   const totalEnrollments = myEnroll.length;
 
-  console.log("MELL", myEnroll);
   if (totalEnrollments === 0) {
     return (
       <div className="border-2 border-neutral-500 rounded-[20px] p-5">
