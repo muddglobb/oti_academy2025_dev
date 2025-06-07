@@ -1,8 +1,7 @@
 import { getCache, setCache, deleteCache, deletePattern } from '../utils/redisClient.js';
-import config from '../config/index.js';
 
 /**
- * Service untuk menangani caching data material menggunakan Redis
+ * Service untuk menangani caching data course
  */
 export class CacheService {
   /**
@@ -12,7 +11,7 @@ export class CacheService {
    * @param {number} ttl - Time-to-live dalam detik
    * @returns {Promise<any>} Data dari cache atau hasil callback
    */
-  static async getOrSet(key, callback, ttl = 3600) {
+  static async getOrSet(key, callback, ttl = 7200) {
     try {
       // Try to get data from cache first
       const cachedData = await getCache(key);
@@ -32,31 +31,30 @@ export class CacheService {
       
       return freshData;
     } catch (error) {
-      console.error(`Cache getOrSet error for key ${key}:`, error.message);
-      // If cache fails, still return fresh data
-      return await callback();
+      console.error(`Cache service error for key ${key}: ${error.message}`);
+      // If anything goes wrong with cache, just return the callback result
+      return callback();
     }
   }
-  
+
   /**
-   * Menyimpan data ke cache
+   * **TAMBAHAN: Method set untuk menyimpan data ke cache**
    * @param {string} key - Cache key
    * @param {any} data - Data yang akan disimpan
    * @param {number} ttl - Time-to-live dalam detik
-   * @returns {Promise<boolean>} Status berhasil
+   * @returns {Promise<boolean>} Status keberhasilan operasi
    */
-  static async set(key, data, ttl = 3600) {
+  static async set(key, data, ttl = 7200) {
     try {
-      console.log(`💾 Setting cache for key: ${key}`);
       return await setCache(key, data, ttl);
     } catch (error) {
-      console.error(`Cache set error for key ${key}:`, error.message);
+      console.error(`Cache set error for key ${key}: ${error.message}`);
       return false;
     }
   }
-  
+
   /**
-   * Mendapatkan data dari cache
+   * **TAMBAHAN: Method get untuk mengambil data dari cache**
    * @param {string} key - Cache key
    * @returns {Promise<any>} Data dari cache atau null
    */
@@ -64,7 +62,7 @@ export class CacheService {
     try {
       return await getCache(key);
     } catch (error) {
-      console.error(`Cache get error for key ${key}:`, error.message);
+      console.error(`Cache get error for key ${key}: ${error.message}`);
       return null;
     }
   }
@@ -73,7 +71,7 @@ export class CacheService {
    * Menghapus cache untuk sebuah key atau pattern
    * @param {string} keyOrPattern - Cache key atau pattern (dengan *)
    * @param {boolean} isPattern - Apakah key adalah pattern
-   * @returns {Promise<number>} Jumlah key yang dihapus
+   * @returns {Promise<boolean>} Success status
    */
   static async invalidate(keyOrPattern, isPattern = false) {
     try {
@@ -82,39 +80,10 @@ export class CacheService {
         return await deletePattern(keyOrPattern);
       } else {
         console.log(`🗑️ Invalidating cache key: ${keyOrPattern}`);
-        const success = await deleteCache(keyOrPattern);
-        return success ? 1 : 0;
+        return await deleteCache(keyOrPattern);
       }
     } catch (error) {
-      console.error(`Cache invalidate error for ${keyOrPattern}:`, error.message);
-      return 0;
-    }
-  }
-  
-  /**
-   * Flush semua cache (gunakan dengan hati-hati)
-   * @returns {Promise<boolean>} Status berhasil
-   */
-  static async flushAll() {
-    try {
-      console.log('🧹 Flushing all material cache');
-      // Redis flushall bisa berbahaya, jadi kita hapus pattern tertentu saja
-      const patterns = [
-        'material:*',
-        'course:*:materials',
-        'all:materials'
-      ];
-      
-      let totalDeleted = 0;
-      for (const pattern of patterns) {
-        const deleted = await deletePattern(pattern);
-        totalDeleted += deleted;
-      }
-      
-      console.log(`🧹 Flushed ${totalDeleted} cache keys`);
-      return totalDeleted > 0;
-    } catch (error) {
-      console.error('Cache flush error:', error.message);
+      console.error(`Cache invalidation error: ${error.message}`);
       return false;
     }
   }

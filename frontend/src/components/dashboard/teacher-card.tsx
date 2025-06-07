@@ -16,7 +16,7 @@ const teacherCardData: Record<
       "Teaching Assistant",
       "/person-placeholder.jpeg",
       "https://www.linkedin.com/",
-      "Mahasiswa Ilmu Komputer UGM tahun kedua yang fokus di web development. Siap membimbing dengan cara yang santai dan mudah dipahami, khususnya untuk pemula di dunia web.",
+      "Mahasiswa Ilmu Komputer UGM tahun kedua, berpengalaman di web development dan aktif mengerjakan proyek-proyek aplikasi web modern.",
     ],
   ],
   "Basic Python": [
@@ -25,7 +25,7 @@ const teacherCardData: Record<
       "Teaching Assistant",
       "/person-placeholder.jpeg",
       "https://www.linkedin.com/",
-      "Mahasiswa tahun pertama Ilmu Komputer UGM yang antusias di dunia coding, khususnya Python, C++, dan JavaScript. Finalis Data Royale Competition 2024 ini siap membimbing kamu dengan cara yang santai dan mudah dipahami.",
+      "Mahasiswa Ilkom UGM tahun pertama, antusias coding Python, C++, JavaScript. Finalis Data Royale 2024, siap membimbing dengan cara santai dan mudah.",
     ],
   ],
   "Fundamental Cyber Security": [
@@ -34,7 +34,7 @@ const teacherCardData: Record<
       "Teaching Assistant",
       "/person-placeholder.jpeg",
       "https://www.linkedin.com/",
-      "Mahasiswa Ilmu Komputer UGM yang antusias di bidang cybersecurity. Telah menyelesaikan Google Cybersecurity Certificate dan terus belajar hal baru di dunia teknologi. Di kelas ini, dia siap jadi teaching assistant yang bisa diandalkan.",
+      "Mahasiswa Ilmu Komputer UGM yang antusias di bidang cybersecurity. Telah menyelesaikan Google Cybersecurity Certificate dan siap jadi teaching assistant andal di kelas ini.",
     ],
   ],
   "Game Development": [
@@ -43,7 +43,7 @@ const teacherCardData: Record<
       "Teaching Assistant",
       "/person-placeholder.jpeg",
       "https://www.linkedin.com/",
-      "Mahasiswa tahun pertama Ilmu Komputer UGM dengan minat besar dalam game development. Peraih Best Innovation di Yogyakarta Global Game Jam 2025, siap menjadi teaching assistant yang bisa diandalkan di kelas ini.",
+      "Mahasiswa tahun pertama Ilmu Komputer UGM dengan minat besar dalam game development. Peraih Best Innovation di Yogyakarta Global Game Jam 2025, siap menjadi teaching assistant andal.",
     ],
   ],
   "Graphic Design": [
@@ -52,7 +52,7 @@ const teacherCardData: Record<
       "Teaching Assistant",
       "/person-placeholder.jpeg",
       "https://www.linkedin.com/",
-      "Seorang mahasiswa Ilmu Komputer UGM yang dikenal dengan karya-karya desain grafisnya yang kreatif dan standout. Aktif di berbagai proyek, ia siap berbagi wawasan visual sebagai teaching assistant di kelas ini.",
+      "Mahasiswa Ilmu Komputer UGM yang dikenal dengan karya-karya desain grafisnya yang kreatif dan standout. Aktif di berbagai proyek dan siap berbagi sebagai teaching assistant.",
     ],
   ],
   "Competitive Programming": [
@@ -77,7 +77,7 @@ const teacherCardData: Record<
       "Teaching Assistant",
       "/person-placeholder.jpeg",
       "https://www.linkedin.com/",
-      "Mahasiswa tahun pertama Ilmu Komputer UGM yang antusias di dunia coding, khususnya Python, C++, dan JavaScript. Finalis Data Royale Competition 2024 ini siap membimbing kamu dengan cara yang santai dan mudah dipahami.",
+      "Mahasiswa Ilkom UGM tahun pertama, antusias coding Python, C++, JavaScript. Finalis Data Royale 2024, siap membimbing dengan cara santai dan mudah.",
     ],
   ],
   "UI/UX": [
@@ -109,7 +109,7 @@ const teacherCardData: Record<
       "Teaching Assistant",
       "/person-placeholder.jpeg",
       "https://www.linkedin.com/",
-      "Mahasiswa Ilmu Komputer UGM tahun kedua yang fokus di web development. Siap membimbing dengan cara yang santai dan mudah dipahami, khususnya untuk pemula di dunia web.",
+      "Mahasiswa Ilmu Komputer UGM tahun kedua, berpengalaman di web development dan aktif mengerjakan proyek-proyek aplikasi web modern.",
     ],
   ],
   "Cyber Security": [
@@ -125,12 +125,12 @@ const teacherCardData: Record<
       "Teaching Assistant",
       "/person-placeholder.jpeg",
       "https://www.linkedin.com/",
-      "Mahasiswa Ilmu Komputer UGM yang antusias di bidang cybersecurity. Telah menyelesaikan Google Cybersecurity Certificate dan terus belajar hal baru di dunia teknologi. Di kelas ini, dia siap jadi teaching assistant yang bisa diandalkan.",
+      "Mahasiswa Ilmu Komputer UGM yang antusias di bidang cybersecurity. Telah menyelesaikan Google Cybersecurity Certificate dan siap jadi teaching assistant andal di kelas ini.",
     ],
   ],
-  Mentor: [
+  "Mentor Card": [
     [
-      "XX",
+      "Mentor ",
       "Mentor",
       "/person-placeholder.jpeg",
       "https://www.linkedin.com/",
@@ -149,10 +149,10 @@ const TeacherCard = ({ courseTitle }: TeacherCardProps) => {
       <div className="flex flex-col xl:flex-row gap-15 mt-2 items-stretch">
         {teachers.map(([name, role, imageUrl, linkedin, desc], index) => (
           <div
-            className={`${teachers.length === 2 ? "w-1/2" : ""}`}
+            className={`${teachers.length === 2 ? "lg:w-1/2" : "w-full"}`}
             key={index}
           >
-            <div className="w-full min-w-89 flex flex-row gap-4 bg-neutral-50 text-neutral-900 rounded-[10px] min-h-34 h-full">
+            <div className="w-full max-sm:min-w-68 flex flex-row gap-4 bg-neutral-50 text-neutral-900 rounded-[10px] min-h-34 h-full">
               <div
                 className="w-34 bg-cover bg-center bg-no-repeat flex rounded-l-[10px]"
                 style={{

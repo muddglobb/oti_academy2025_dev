@@ -13,7 +13,7 @@ import { rateLimit } from 'express-rate-limit';
 const router = Router();
 
 // Caching time to live (30 minutes)
-const packageCacheTTL = 30 * 60;
+const packageCacheTTL = 2 * 60 * 60;
 
 const serviceToServiceLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
