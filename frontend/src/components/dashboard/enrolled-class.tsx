@@ -17,14 +17,14 @@ export type User = {
   name: string;
   email: string;
   type: string; // Bisa dijadikan union type kalau nilainya terbatas, misal: 'UMUM' | 'DIKE'
-}
+};
 
 export type Course = {
   id: string;
   title: string;
   description: string;
   level: string; // Bisa jadi: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
-}
+};
 
 export type EnrollmentDetail = {
   id: string;
@@ -45,9 +45,12 @@ export type EnrollmentDetail = {
   bundleCourses: null | Course[];
   enrollmentStatus: boolean;
   paymentDate: string;
-}
+};
 
-const EnrolledClass = async () => {
+type PropsType = {
+  check: string;
+};
+const EnrolledClass = async ({ check }: PropsType) => {
   const payments = await getMyPayments();
 
   return (
@@ -106,13 +109,25 @@ const EnrolledClass = async () => {
 
           {payments.length === 0 && (
             <>
-              <KelasKosong />
-              <KelasKosong />
+              <KelasKosong
+                title="Hmm, daftar kelasmu masih kosong nih!"
+                desc="Gimana kalau kita isi sekarang? Ada banyak kelas keren yang bisa kamu pilih!"
+                check={check}
+              />
+              <KelasKosong
+                title="Satu lagi biar komplit!"
+                desc="Masih ada slot kosong nih, isi sekarang biar makin mantap!"
+                check={check}
+              />
             </>
           )}
 
           {payments.length === 1 && payments[0]?.packageType !== "BUNDLE" && (
-            <KelasKosong />
+            <KelasKosong
+              title="Hmm, daftar kelasmu masih kosong nih!"
+              desc="Gimana kalau kita isi sekarang? Ada banyak kelas keren yang bisa kamu pilih!"
+              check={check}
+            />
           )}
         </div>
       </div>

@@ -21,7 +21,6 @@ if (process.env.REDIS_URL) {
     family: 0 // Dual stack lookup untuk Railway
   });
 }
-
 // Handle connection events
 redisClient.on('connect', () => {
   console.log('✅ Redis client connected');
@@ -67,12 +66,11 @@ export const deletePattern = async (pattern) => {
     const keys = await redisClient.keys(pattern);
     if (keys.length > 0) {
       await redisClient.del(keys);
-      return keys.length;
     }
-    return 0;
+    return true;
   } catch (error) {
     console.error(`Redis deletePattern error: ${error.message}`);
-    return 0;
+    return false;
   }
 };
 
