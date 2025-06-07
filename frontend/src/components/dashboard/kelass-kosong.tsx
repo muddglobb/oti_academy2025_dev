@@ -9,7 +9,7 @@ type PropsType = {
 const KelasKosong = ({ title, desc, check }: PropsType) => {
   return (
     <div className=" border-3 border-neutral-500 rounded-[20px] flex">
-      <div className="sm:w-30 aspect-square bg-neutral-500 text-wrap rounded-l-[17px]"></div>
+      {/* <div className="sm:w-30 aspect-square bg-neutral-500 text-wrap rounded-l-[17px]"></div> */}
       <div className="w-full p-4 flex flex-col justify-between">
         <div>
           <p className="text-sm">{title}</p>
