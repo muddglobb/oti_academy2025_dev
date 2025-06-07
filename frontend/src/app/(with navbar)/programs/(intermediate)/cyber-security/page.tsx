@@ -24,12 +24,12 @@ const classInfo: [
   string
 ] = [
   "TBA",
-  "/images/teacher/faris.jpg",
+  "/person-placeholder.jpeg",
   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?",
   "https://www.linkedin.com/in/dhimas-sulistio/",
 
   "Ahsan Zaki",
-  "/images/class-profile/hako.jpg",
+  "/images/foto-orang/ahsan.webp",
   "Mahasiswa Ilmu Komputer UGM yang antusias di bidang cybersecurity. Telah menyelesaikan Google Cybersecurity Certificate dan terus belajar hal baru di dunia teknologi. Di kelas ini, dia siap jadi teaching assistant yang bisa diandalkan.",
   "https://www.linkedin.com/in/dhimas-sulistio/",
 

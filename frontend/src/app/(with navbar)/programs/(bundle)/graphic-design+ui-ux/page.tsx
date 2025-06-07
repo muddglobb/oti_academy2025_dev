@@ -126,10 +126,11 @@ const bundle = () => {
           mentorImage="/person-placeholder.jpeg"
           mentorDesc="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?"
           mentorLink="https://www.linkedin.com"
-          TA="Geraldine Hutagalung, Ken Bima Satria Gandasasmita"
-          TAImage="/person-placeholder.jpeg"
+          TA="Geraldine Hutagalung"
+          TAImage="/images/foto-orang/geradline.webp"
           TADesc="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?"
           TALink="https://www.linkedin.com"
+          title= {hero[0]}
         ></BundleClassInfo>
 
         <SessionInfo sessions={sessions} />

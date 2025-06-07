@@ -115,9 +115,10 @@ const bundle = () => {
           mentorDesc="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?"
           mentorLink="https://www.linkedin.com"
           TA="Rayhan Firdaus Ardian"
-          TAImage="/person-placeholder.jpeg"
+          TAImage="/images/foto-orang/rehund.webp"
           TADesc="Mahasiswa Ilmu Komputer UGM tahun kedua yang fokus di web development. Siap membimbing dengan cara yang santai dan mudah dipahami, khususnya untuk pemula di dunia web."
           TALink="https://www.linkedin.com"
+          title= ""
         ></BundleClassInfo>
 
         <SessionInfo sessions={sessions} />

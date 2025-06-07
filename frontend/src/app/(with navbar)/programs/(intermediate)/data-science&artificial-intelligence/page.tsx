@@ -24,12 +24,12 @@ const classInfo: [
   string
 ] = [
   "TBA",
-  "/images/teacher/faris.jpg",
+  "/person-placeholder.jpeg",
   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?",
   "https://www.linkedin.com/in/dhimas-sulistio/",
 
-  "Daffa Aryza Pasya",
-  "/images/class-profile/hako.jpg",
+  "Daffa Aryza",
+  "/images/foto-orang/daffa.webp",
   "Mahasiswa tahun pertama Ilmu Komputer UGM yang antusias di dunia coding, khususnya Python, C++, dan JavaScript. Finalis Data Royale Competition 2024 ini siap membimbing kamu dengan cara yang santai dan mudah dipahami.",
   "https://www.linkedin.com/in/dhimas-sulistio/",
 

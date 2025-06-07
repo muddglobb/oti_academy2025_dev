@@ -15,6 +15,7 @@ type BundleClassInfoProps = {
   TAImage: string;
   TALink: string;
   TADesc: string;
+  title: string;
 };
 
 const BundleClassInfo = ({
@@ -30,6 +31,7 @@ const BundleClassInfo = ({
   TAImage,
   TALink,
   TADesc,
+  title,
 }: BundleClassInfoProps) => {
   return (
     <>
@@ -45,11 +47,13 @@ const BundleClassInfo = ({
           style={{ backgroundImage: "url(/images/planet/saturnus.png)" }}
         ></div>
         <section className="flex flex-col gap-7.5  justify-center items-center py-10 bg-no-repeat bg-cover w-full">
-          <p className="text-center font-bold bg-gradient-to-b from-gray-300 to-gray-400 bg-clip-text text-transparent
+          <p
+            className="text-center font-bold bg-gradient-to-b from-gray-300 to-gray-400 bg-clip-text text-transparent
           text-[22px]
           sm:text-[26px]
           md:text-[30px]
-          lg:text-[32px]">
+          lg:text-[32px]"
+          >
             Detailed Information About Our Class
           </p>
           <div className="md:w-4xl w-sm">
@@ -70,6 +74,16 @@ const BundleClassInfo = ({
                   description={TADesc}
                   linkedin={TALink}
                 />
+                {/* Ken Bima Satria Gandasasmita */}
+                {title == "Graphic Design + UI/UX" && (
+                  <MentorCard
+                    name="Ken Bima Satria Gandasasmita"
+                    imageUrl="/images/foto-orang/ken-bima.webp"
+                    role="Teaching Assistant"
+                    description={TADesc}
+                    linkedin={TALink}
+                  />
+                )}
               </div>
 
               <div className="hidden text-sm text-white md:flex flex-col gap-2 justify-center items-center">
@@ -113,7 +127,7 @@ const BundleClassInfo = ({
 
               <div className="md:hidden text-sm text-white flex flex-row justify-center items-center gap-1">
                 <div className="flex flex-col gap-1">
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-60 px-2.5 py-2">
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-53 sm:w-60 px-2.5 py-2">
                     <Image
                       src={"/icons/calendar-icon.svg"}
                       alt="calendar-icon"
@@ -122,7 +136,7 @@ const BundleClassInfo = ({
                     ></Image>
                     <p>{date}</p>
                   </div>
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-60 px-2.5 py-2">
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-53 sm:w-60 px-2.5 py-2">
                     <Image
                       src={"/icons/target-icon.svg"}
                       alt="calendar-icon"
@@ -133,7 +147,7 @@ const BundleClassInfo = ({
                   </div>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-60 px-2.5 py-2">
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-53 sm:w-60 px-2.5 py-2">
                     <Image
                       src={"/icons/time-icon.svg"}
                       alt="calendar-icon"
@@ -142,7 +156,7 @@ const BundleClassInfo = ({
                     ></Image>
                     <p>{jam}</p>
                   </div>
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-60 px-2.5 py-2">
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-53 sm:w-60 px-2.5 py-2">
                     <Image
                       src={"/icons/stack-icon.svg"}
                       alt="calendar-icon"
