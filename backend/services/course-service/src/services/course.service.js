@@ -110,7 +110,7 @@ export const CourseService = {
       
       for (const id of uniqueIds) {
         try {
-          const cached = await CacheService.getorSet(`course:${id}`);
+          const cached = await CacheService.getOrSet(`course:${id}`);
           if (cached) {
             cachedCourses.push(cached);
           } else {
@@ -131,7 +131,7 @@ export const CourseService = {
         // Cache the newly fetched courses with error handling
         for (const course of dbCourses) {
           try {
-            await CacheService.set(`course:${course.id}`, course, 30 * 60);
+            await CacheService.getOrSet(`course:${course.id}`, course, 30 * 60);
           } catch (cacheError) {
             console.warn(`Failed to cache course ${course.id}:`, cacheError.message);
           }
