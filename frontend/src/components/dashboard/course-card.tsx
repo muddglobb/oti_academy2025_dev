@@ -24,19 +24,20 @@ const CourseCard = ({
       <Link href={`/dashboard/class-dashboard/${slug}`}>
         <div>
           <div className="flex flex-row">
-            <Image
-              src={image}
-              alt={title}
-              width={165}
-              height={165}
-              className="rounded-l-[10px]"
-            />
+            <div className="relative w-35 md:w-45 h-auto">
+              <Image
+                src={image}
+                alt={title}
+                fill
+                className="rounded-l-[10px] object-cover"
+              />
+            </div>
 
-            <div className="flex flex-col mx-5 my-4 w-full justify-between">
+            <div className="flex flex-col mx-1 sm:mx-5 my-1 sm:my-4 w-full justify-between">
               <div>
                 <div className="flex flex-row justify-between items-center">
                   <h2 className="text-[14px] font-bold text-neutral-900">
-                    {title}
+                    {title.replace(/^Bundle\s*/, "")}
                   </h2>
                   <div className="bg-primary-500 rounded-[5px] self-start">
                     {/* <Link href={`/dashboard/class-dashboard/${pkg.id}`}> */}
@@ -56,7 +57,7 @@ const CourseCard = ({
                 </p>
               </div>
               <div className="flex flex-row justify-between items-center">
-                <div className="flex flex-row gap-2">
+                <div className="hidden sm:flex flex-row gap-2">
                   <Image
                     src={firstTeacher}
                     alt="Teacher"
