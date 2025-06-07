@@ -487,9 +487,9 @@ const SessionInfo = async ({
 
                     <h3 className="font-bold">{session.title}</h3>
                     <div className="flex flex-col items-center xl:flex-row lg:justify-between gap-4 mt-2">
-                      <div className="flex flex-row gap-2.5 justify-between">
-                        <div className="w-30 bg-primary-700 rounded-sm">
-                          <div className="flex flex-row gap-2 m-1">
+                      <div className="flex flex-row gap-1.5 sm:gap-2.5 justify-between">
+                        <div className=" bg-primary-700 rounded-sm">
+                          <div className="flex flex-row gap-1 sm:gap-2 m-1">
                             <Image
                               src={"/icons/calendar-icon.svg"}
                               alt="calendar-icon"
@@ -500,19 +500,19 @@ const SessionInfo = async ({
                             <p className="text-xs ">{formattedDate}</p>
                           </div>
                         </div>
-                        <div className="w-29 bg-primary-700 rounded-sm">
-                          <div className="flex flex-row gap-2 m-1">
+                        <div className=" bg-primary-700 rounded-sm">
+                          <div className="flex flex-row gap-1 sm:gap-2 m-1">
                             <Image
                               src={"/icons/time-icon.svg"}
                               alt="time-icon"
                               width={18}
                               height={18}
                             />
-                            <p className="text-xs ">{extra.courseTime}</p>
+                            <p className="text-xs">{extra.courseTime}</p>
                           </div>
                         </div>
                         <div className=" bg-primary-700 rounded-sm">
-                          <div className="flex flex-row gap-2 m-1">
+                          <div className="flex flex-row gap-1 sm:gap-2 m-1">
                             <Image
                               src={"/icons/time-icon.svg"}
                               alt="time-icon"
