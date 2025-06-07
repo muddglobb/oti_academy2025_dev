@@ -40,8 +40,9 @@ const KenaliSlider = () => {
   }, []);
 
   const settings = {
+    onClick: false,
     arrows: false,
-    infinite: isMobile,
+    infinite: true,
     autoplay: isMobile,
     autoplaySpeed: 2000,
     slidesToShow: 4,
@@ -49,13 +50,14 @@ const KenaliSlider = () => {
       {
         breakpoint: 1024,
         settings: { 
-          slidesToShow: 2,
+          slidesToShow: 3,
+          centerPadding: "10px"
          },
       },
       {
-        breakpoint: 769, 
+        breakpoint: 768, 
         settings: { 
-          slidesToShow: 1.5,
+          slidesToShow: 2,
           centerMode: true,
           centerPadding: "20px",
         },
