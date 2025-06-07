@@ -11,7 +11,10 @@ import Image from "next/image";
 
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import { getSlugByTitle, getImageByTitle } from "@/lib/course-props/course-props";
+import {
+  getSlugByTitle,
+  getImageByTitle,
+} from "@/lib/course-props/course-props";
 export type CourseSession = {
   id: string;
   courseId: string;
@@ -75,26 +78,28 @@ const AllClassSlider = ({ data }: { data: DataData[] }) => {
                 // className="w-8 md:basis-1/2 lg:basis-1/3"
                 // className="w-[20px]"
               >
-                <div className="bg-white rounded-md h-full">
-                  <div>
-                    {/* <div className="p-5 h-82 bg-black rounded-t-md bg-[url('/images/teacher/faris.jpg')] bg-center bg-contain bg-no-repeat"> */}
-                    <div
-                      className="p-5 h-76 bg-black rounded-t-md bg-center bg-cover bg-no-repeat"
-                      style={{
-                        backgroundImage: `url(${getImageByTitle(course.title)})`,
-                      }}
-                    >
-                      <div className="text-white font-bold text-sm bg-primary-500 inline-block px-3 py-1 rounded">
-                        {course.level}
+                <Link
+                  href={`/dashboard/class-dashboard/${getSlugByTitle(
+                    course.title
+                  )}`}
+                >
+                  <div className="bg-white rounded-md h-full">
+                    <div>
+                      {/* <div className="p-5 h-82 bg-black rounded-t-md bg-[url('/images/teacher/faris.jpg')] bg-center bg-contain bg-no-repeat"> */}
+                      <div
+                        className="p-5 h-76 bg-black rounded-t-md bg-center bg-cover bg-no-repeat"
+                        style={{
+                          backgroundImage: `url(${getImageByTitle(
+                            course.title
+                          )})`,
+                        }}
+                      >
+                        <div className="text-white font-bold text-sm bg-primary-500 inline-block px-3 py-1 rounded">
+                          {course.level}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <Link
-                    href={`/dashboard/class-dashboard/${getSlugByTitle(
-                      course.title
-                    )}`}
-                  >
                     <div className="p-5">
                       <div className="flex justify-between">
                         <p className="font-bold text-black w-[70%]">
@@ -111,8 +116,9 @@ const AllClassSlider = ({ data }: { data: DataData[] }) => {
                       </div>
                       <div />
                     </div>
-                  </Link>
-                </div>
+                    {/* </Link> */}
+                  </div>
+                </Link>
               </CarouselItem>
             ))}
           </CarouselContent>
