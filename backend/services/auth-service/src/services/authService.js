@@ -334,25 +334,23 @@ getCookieOptions(tokenType) {
     }
   }
 
-  /**
-   * Clean up expired blacklisted tokens
-   * @returns {number} Number of tokens cleaned up
-   */
-  async cleanupExpiredBlacklistedTokens() {
-    try {
-      const result = await prisma.tokenBlacklist.deleteMany({
-        where: {
-          expiresAt: { lt: new Date() }
-        }
-      });
-      
-      console.log(`🧹 Cleaned up ${result.count} expired blacklisted tokens`);
-      return result.count;
-    } catch (error) {
-      console.error('Error cleaning up expired blacklisted tokens:', error);
-      return 0;
-    }
+  async cleanupExpiredTokens() {
+  try {
+    const result = await prisma.refreshToken.deleteMany({
+      where: {
+        expiresAt: { lt: new Date() }
+      }
+    });
+    
+    console.log(`🧹 Cleaned up ${result.count} expired refresh tokens`);
+    return result.count;
+  } catch (error) {
+    console.error('Error cleaning up expired tokens:', error);
+    return 0;
   }
+}
+
+
 }
 
 export default new AuthService();
