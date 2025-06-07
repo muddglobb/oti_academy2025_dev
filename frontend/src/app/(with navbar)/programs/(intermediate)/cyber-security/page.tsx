@@ -4,7 +4,7 @@ import IntermediateClassInfo from "@/components/programs/intermediate/intermedia
 import IntermediateSessionInfo from "@/components/programs/intermediate/intermediate-session-info";
 
 const hero: [string, string, string] = [
-  "CyberSecurity",
+  "Cyber Security",
   "Masuki dunia ethical hacking dan praktik langsung tahapan penetration testing, dari reconnaissance hingga post-exploitation, lengkap dengan penyusunan laporan uji keamanan secara profesional.",
   "Intermediate Level",
 ];
@@ -28,7 +28,7 @@ const classInfo: [
   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?",
   "https://www.linkedin.com/in/dhimas-sulistio/",
 
-  "Muhammad Ahsan Zaki Wiryawan",
+  "Ahsan Zaki",
   "/images/class-profile/hako.jpg",
   "Mahasiswa Ilmu Komputer UGM yang antusias di bidang cybersecurity. Telah menyelesaikan Google Cybersecurity Certificate dan terus belajar hal baru di dunia teknologi. Di kelas ini, dia siap jadi teaching assistant yang bisa diandalkan.",
   "https://www.linkedin.com/in/dhimas-sulistio/",
