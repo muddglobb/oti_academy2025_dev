@@ -289,18 +289,18 @@ export default async function Page({
   }
 
   const payments = await getMyPayments();
-  console.log("meli", payments);
-  console.log("fefsd", payments[0].packageType);
+  // console.log("meli", payments);
+  // console.log("fefsd", payments[0].packageType);
 
   let checkBundle = "NO";
   let checkEntry = "NO";
   let checkIntermediate = "NO";
 
-  if (payments[0].packageType == "BUNDLE") checkBundle = "YES";
+  if (payments[0]?.packageType == "BUNDLE") checkBundle = "YES";
   else {
     for (let i = 0; i < 2; i++) {
-      if (payments[i].packageType == "ENTRY") checkEntry = "YES";
-      else if (payments[i].packageType == "INTERMEDIATE")
+      if (payments[i]?.packageType == "ENTRY") checkEntry = "YES";
+      else if (payments[i]?.packageType == "INTERMEDIATE")
         checkIntermediate = "YES";
     }
   }
