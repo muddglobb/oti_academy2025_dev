@@ -20,8 +20,7 @@ const Kenali = () => {
       >
         <div
           className="flex-col items-center justify-center 
-                px-20
-                lg:px-60"
+                px-20"
         >
           {/* bintang dan planet */}
           <>

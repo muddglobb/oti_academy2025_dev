@@ -27,23 +27,26 @@ const images = [
 
 const KenaliSlider = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 769);
+    const checkScreenSize = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsTablet(width > 768 && width <= 1024);
     };
 
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
 
-    return () => window.removeEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   const settings = {
     onClick: false,
     arrows: false,
     infinite: true,
-    autoplay: isMobile,
+    autoplay: isMobile || isTablet,
     autoplaySpeed: 2000,
     slidesToShow: 4,
     responsive: [
@@ -51,7 +54,7 @@ const KenaliSlider = () => {
         breakpoint: 1024,
         settings: { 
           slidesToShow: 3,
-          centerPadding: "10px"
+          centerPadding: "10px",
          },
       },
       {
@@ -65,6 +68,28 @@ const KenaliSlider = () => {
     ],
   };
 
+  // For screens larger than 1024px, render as a simple grid
+  if (!isMobile && !isTablet) {
+    return (
+      <div className="w-full max-w-7xl mx-auto">
+        <div className="flex justify-center items-center gap-4 px-2">
+          {images.map((img) => (
+            <div key={img.alt} className="flex-1 max-w-[312px]">
+              <Image
+                src={img.src}
+                alt={img.alt}
+                width={312}
+                height={224}
+                className="rounded-lg object-cover aspect-[312/224] w-full h-auto"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // For mobile and tablet, use the slider
   return (
     <div className="max-w-screen mx-auto">
       <Slider key={isMobile ? "mobile" : "desktop"} {...settings}>
