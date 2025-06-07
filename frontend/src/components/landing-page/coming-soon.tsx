@@ -13,7 +13,7 @@ const ComingSoon = () => {
       <div
         className="flex-col items-center justify-center 
               px-10
-              lg:px-60"
+              "
       >
         {/* bintang dan planet */}
         <>
@@ -45,7 +45,7 @@ const ComingSoon = () => {
               </span>
               !
             </p>
-            <div className="flex lg:flex-row flex-col justify-center gap-5 pb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 justify-center gap-5 pb-4">
               <ComingSoonCard />
               <ComingSoonCard />
               <ComingSoonCard />
