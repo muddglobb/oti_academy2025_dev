@@ -112,7 +112,7 @@ const classes = [
   },
   {
     slug: "web-development+software-engineering",
-    title: "Bundle Web Development + Software Engineering",
+    title: "Web Development + Software Engineering",
     courses: ["Web Development", "Software Engineering"],
     desc: "Kuasai pembuatan UI dan aplikasi web modern dari basic hingga intermediate dengan React, Tailwind, dan MUI. Praktik langsung buat halaman responsif, autentikasi, dan fitur CRUD.",
     ClassLevel: "BUNDLE",
@@ -258,7 +258,7 @@ export default async function Page({
               <div className="flex flex-row gap-6 w-full">
                 <div className="flex flex-col w-1/2 gap-3">
                   <ClassInfo courseTitle={classData.title} />
-                  <TeacherCard courseTitle="Mentor" />
+                  <TeacherCard courseTitle="Mentor Card" />
                 </div>
                 <div className="w-1/2">
                   <VideoTeaser slug={classData.slug} />

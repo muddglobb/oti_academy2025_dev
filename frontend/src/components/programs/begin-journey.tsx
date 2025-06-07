@@ -10,11 +10,11 @@ const BeginJourney = async () => {
   const buttonText = access_token ? "Dashboard" : "Begin Your Journey Here!";
 
   return (
-    <div>
-      <Link href={linkHref}>
-        <Button>{buttonText}</Button>
-      </Link>
-    </div>
+    <Link href={linkHref}>
+      <div className="bg-primary-500 text-neutral-50 py-3 px-4 rounded-md font-bold cursor-pointer">
+        <button className="cursor-pointer">{buttonText}</button>
+      </div>
+    </Link>
   );
 };
 

@@ -4,6 +4,7 @@ import { Clock } from "lucide-react";
 import KelasKosong from "./kelass-kosong";
 import MenyiapkanKelas from "./menyiapkan-kelas";
 import ApprovedClass from "./approved-class";
+import { getShortDescByTitle } from "@/lib/course-props/course-props";
 
 export type PaidBundle = {
   id: string;
@@ -71,7 +72,8 @@ const EnrolledClass = async ({ check }: PropsType) => {
               <div key={paidClass.id}>
                 <MenyiapkanKelas
                   title={paidClass.title}
-                  description={paidClass.description}
+                  // description={paidClass.description}
+                  description={getShortDescByTitle(paidClass.title)}
                 />
               </div>
             ))}
@@ -82,7 +84,8 @@ const EnrolledClass = async ({ check }: PropsType) => {
               <div key={paidClass.id}>
                 <ApprovedClass
                   title={paidClass.title}
-                  description={paidClass.description}
+                  // description={paidClass.description}
+                  description={getShortDescByTitle(paidClass.title)}
                 />
               </div>
             ))}
@@ -94,12 +97,14 @@ const EnrolledClass = async ({ check }: PropsType) => {
                   {paidClass.status === "PAID" ? (
                     <MenyiapkanKelas
                       title={paidClass.course.title}
-                      description={paidClass.course.description}
+                      // description={paidClass.course.description}
+                      description={getShortDescByTitle(paidClass.course.title)}
                     />
                   ) : (
                     <ApprovedClass
                       title={paidClass.course.title}
-                      description={paidClass.course.description}
+                      // description={paidClass.course.description}
+                      description={getShortDescByTitle(paidClass.course.title)}
                     />
                   )}
                 </div>

@@ -14,6 +14,7 @@ import Link from "next/link";
 import {
   getSlugByTitle,
   getImageByTitle,
+  getShortDescByTitle,
 } from "@/lib/course-props/course-props";
 export type CourseSession = {
   id: string;
@@ -101,9 +102,10 @@ const AllClassSlider = ({ data }: { data: DataData[] }) => {
                     </div>
 
                     <div className="p-5">
-                      <div className="flex justify-between">
-                        <p className="font-bold text-black w-[70%]">
+                      <div className="flex justify-between gap-4">
+                        <p className="font-bold text-black w-full">
                           {course.title}
+                          {/* Fundamental Cyber Security + Cyber Security */}
                         </p>
                         {/* <Link href={`/dashboard/class-dashboard/${course.id}`}> */}
 
@@ -111,8 +113,9 @@ const AllClassSlider = ({ data }: { data: DataData[] }) => {
                           <ArrowUpRight />
                         </button>
                       </div>
-                      <div className="text-sm text-gray-600 mt-2">
-                        {course.description}
+                      <div className="text-sm text-gray-600 mt-2 text-justify">
+                        {/* {course.description} */}
+                        {getShortDescByTitle(course.title)}
                       </div>
                       <div />
                     </div>

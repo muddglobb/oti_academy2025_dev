@@ -5,6 +5,7 @@ import {
   getFirstTeacher,
   getImageByTitle,
   getSecTeacher,
+  getShortDescByTitle,
   getSlugByTitle,
 } from "@/lib/course-props/course-props";
 import CourseCard from "./course-card";
@@ -29,50 +30,6 @@ type getBundleMentorPicType = {
   mentor: string;
 };
 
-const getBundleMentorPic = (name: string): getBundleMentorPicType => {
-  switch (name) {
-    case "Bundle Python + Data Science & Artificial Intelligence":
-      return {
-        TA: "/images/teacher/faris.jpg",
-        mentor: "/images/class-profile/hako.jpg",
-      };
-    case "Bundle Graphic Design + UI/UX":
-      return {
-        TA: "/images/teacher/faris.jpg",
-        mentor: "/images/class-profile/hako.jpg",
-      };
-    case "Bundle Fundamental Cyber Security + Cyber Security":
-      return {
-        TA: "/images/teacher/faris.jpg",
-        mentor: "/images/class-profile/hako.jpg",
-      };
-    case "Bundle Web Development + Software Engineering":
-      return {
-        TA: "/images/teacher/faris.jpg",
-        mentor: "/images/class-profile/hako.jpg",
-      };
-    default:
-      return {
-        TA: "/images/teacher/faris.jpg",
-        mentor: "/images/class-profile/hako.jpg",
-      };
-  }
-};
-
-const getBundleDesc = (name: string): string => {
-  switch (name) {
-    case "Bundle Python + Data Science & Artificial Intelligence":
-      return "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti";
-    case "Bundle Graphic Design + UI/UX":
-      return "Lorem Ipsum is simply dummy text of the printing and typesetting industry.";
-    case "Bundle Fundamental Cyber Security + Cyber Security":
-      return "Contrary to popular belief, Lorem Ipsum is not simply random text.";
-    case "Bundle Web Development + Software Engineering":
-      return "There are many variations of passages of Lorem Ipsum available.";
-    default:
-      return "/images/course-placeholder.jpg";
-  }
-};
 
 type CourseType = {
   packageId: string;
@@ -108,7 +65,7 @@ export default function BundleCard({
             image={getImageByTitle(pkg.name)}
             // title={pkg.name.replace(/^Bundle\s+/i, "")}
             title={pkg.name}
-            description={getBundleDesc(pkg.name)}
+            description={getShortDescByTitle(pkg.name)}
             firstTeacher={getFirstTeacher(pkg.name)}
             secTeacher={getSecTeacher(pkg.name)}
           />

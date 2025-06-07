@@ -37,7 +37,7 @@ const BeginnerClass = () => {
             <div className="mb-11">
               <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center 
               text-[22px]
-              lg:text-[32px] font-bold">
+              lg:text-[32px] font-bold mt-15">
                 Kelas Pemula untuk Memulai Perjalanan Belajarmu
               </p>
               <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center 

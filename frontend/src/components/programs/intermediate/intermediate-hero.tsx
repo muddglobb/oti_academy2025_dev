@@ -31,7 +31,7 @@ const IntermediateHero = ({ hero }: HeroProps) => {
       <div className="mt-2 ml-6 md:ml-15">
         <Link
           href="/programs"
-          className="flex gap-2 bg-[var(--color-primary-800)] text-[14px] font-bold px-4.5 py-3 rounded-[5px] w-fit"
+          className="flex gap-2 bg-[var(--color-primary-800)] text-[14px] font-bold px-4.5 py-3 rounded-[8px] w-fit"
         >
           <ArrowLeft size={20} color="white" />
           <p className="text-white ">Kembali</p>
