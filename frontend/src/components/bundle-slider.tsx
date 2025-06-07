@@ -50,7 +50,7 @@ const BundleSlider = () => {
               teacher1={getFirstTeacher(card.title)}
               teacher2={getSecTeacher(card.title)}
               title={card.title}
-              bundleTitle={card.title.replace(/^Bundle\s*/, "")}
+              // bundleTitle={card.title.replace(/^Bundle\s*/, "")}
               href={`programs/${getSlugByTitle(card.title)}`}
               description={getDescByTitle(card.title)}
             />
