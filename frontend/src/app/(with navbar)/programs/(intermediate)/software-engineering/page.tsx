@@ -24,12 +24,12 @@ const classInfo: [
   string
 ] = [
   "TBA",
-  "/images/teacher/faris.jpg",
+  "/person-placeholder.jpeg",
   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?",
   "https://www.linkedin.com/in/dhimas-sulistio/",
 
   "Rayhan Firdaus Ardian",
-  "/images/class-profile/hako.jpg",
+  "/images/foto-orang/rehund.webp",
   "Mahasiswa Ilmu Komputer UGM tahun kedua yang fokus di web development. Siap membimbing dengan cara yang santai dan mudah dipahami, khususnya untuk pemula di dunia web.",
   "https://www.linkedin.com/in/dhimas-sulistio/",
 

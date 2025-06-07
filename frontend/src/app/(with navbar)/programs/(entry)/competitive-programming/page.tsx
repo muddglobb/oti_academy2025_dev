@@ -23,7 +23,7 @@ const classInfo: [
   "2 Jam/Sesi",
   "X Modul",
   "Revy Satya Gunawan",
-  "/person-placeholder.jpeg",
+  "/images/foto-orang/revy.webp",
   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?",
   "https://www.linkedin.com",
 ];

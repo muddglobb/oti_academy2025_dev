@@ -24,12 +24,12 @@ const classInfo: [
   string
 ] = [
   "TBA",
-  "/images/teacher/faris.jpg",
+  "/person-placeholder.jpeg",
   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?",
   "https://www.linkedin.com/in/dhimas-sulistio/",
 
   "Ken Bima Satria Gandasasmita",
-  "/images/class-profile/hako.jpg",
+  "/images/foto-orang/ken-bima.webp",
   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?",
   "https://www.linkedin.com/in/dhimas-sulistio/",
 

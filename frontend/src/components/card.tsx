@@ -15,7 +15,7 @@ type CardProps = {
   teacher1: string;
   teacher2?: string;
   title: string;
-  bundleTitle: string;
+  // bundleTitle: string;
   href: string;
   description: string;
 };
@@ -26,7 +26,7 @@ const Card = ({
   teacher1,
   teacher2,
   title,
-  bundleTitle,
+  // bundleTitle,
   href,
   description,
 }: CardProps) => {
@@ -108,7 +108,7 @@ const Card = ({
           <div className="p-5 h-50">
             <div className="flex justify-between gap-4">
               {type == "Bundle" && (
-                <p className="font-bold text-black w-full">{bundleTitle}</p>
+                <p className="font-bold text-black w-full">{title.replace(/^Bundle\s*/, "")}</p>
               )}
               {type != "Bundle" && (
                 <p className="font-bold text-black w-full">{title}</p>

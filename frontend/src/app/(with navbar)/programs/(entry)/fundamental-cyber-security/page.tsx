@@ -22,8 +22,8 @@ const classInfo: [
   "8 Sesi",
   "2 Jam/Sesi",
   "6 Modul",
-  "Muhammad Ahsan Zaki Wiryawan",
-  "/person-placeholder.jpeg",
+  "Ahsan Zaki",
+  "/images/foto-orang/ahsan.webp",
   "Mahasiswa Ilmu Komputer UGM yang antusias di bidang cybersecurity. Telah menyelesaikan Google Cybersecurity Certificate dan terus belajar hal baru di dunia teknologi. Di kelas ini, dia siap jadi teaching assistant yang bisa diandalkan.",
   "https://www.linkedin.com",
 ];

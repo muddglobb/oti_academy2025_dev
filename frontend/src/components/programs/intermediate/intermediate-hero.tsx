@@ -53,14 +53,13 @@ const IntermediateHero = ({ hero }: HeroProps) => {
 
         <div
           className="flex-col items-center justify-center 
-        px-4
         md:px-10
         lg:px-15
 
         mt-11
         "
         >
-          <div className="flex flex-col items-center gap-3 lg:gap-10 mx-20 xl:mx-45">
+          <div className="flex flex-col items-center gap-3 lg:gap-10 mx-9 xl:mx-45">
             <div className="flex flex-col gap-2.5">
               <div className="flex gap-5 items-center justify-center">
                 <div className="text-white border-solid border-1 rounded-[5px] px-4.5 py-1.5 border-white">

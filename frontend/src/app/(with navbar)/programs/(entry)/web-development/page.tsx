@@ -23,7 +23,7 @@ const classInfo: [
   "2 Jam/Sesi",
   "5 Modul",
   "Rayhan Firdaus Ardian",
-  "/person-placeholder.jpeg",
+  "/images/foto-orang/rehund.webp",
   "Mahasiswa Ilmu Komputer UGM tahun kedua yang fokus di web development. Siap membimbing dengan cara yang santai dan mudah dipahami, khususnya untuk pemula di dunia web.",
   "https://www.linkedin.com",
 ];

@@ -22,8 +22,8 @@ const classInfo: [
   "6 Sesi",
   "2 Jam/Sesi",
   "5 Modul",
-  "Thomas Nadandra Aryawida",
-  "/person-placeholder.jpeg",
+  "Thomas Nadandra",
+  "/images/foto-orang/thomas.webp",
   "Mahasiswa tahun pertama Ilmu Komputer UGM dengan minat besar dalam game development. Peraih Best Innovation di Yogyakarta Global Game Jam 2025, siap menjadi teaching assistant yang bisa diandalkan di kelas ini.",
   "https://www.linkedin.com",
 ];
