@@ -44,7 +44,6 @@ const GetAllEnrollments = async () => {
     })
   );
 
-  // console.log("MELINDA ", enrichedData);
 
   return <GetAllEnrollmentsClient data={enrichedData} />;
 };

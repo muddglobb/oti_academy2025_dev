@@ -49,12 +49,7 @@ export type EnrollmentDetail = {
 
 const EnrolledClass = async () => {
   const payments = await getMyPayments();
-  // const now = new Date();
-  // const targetDate = new Date("2025-05-28T13:52:14.495Z");
-  // console.log(targetDate > now); // true jika targetDate sudah lewat
 
-  // console.log("Payments", payments.length);
-  // console.log("Payments", payments[0]);
   return (
     <div className="border-2 border-neutral-500 rounded-[20px]">
       <div className="rounded-[20px] p-6 ">

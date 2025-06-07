@@ -11,6 +11,14 @@ type ClassCapacityProps = {
   ClassSlug: string;
 };
 
+type Enroll = {
+  status: string;
+  message: string;
+  data: {
+    isEnrolled: boolean;
+  };
+};
+
 const ClassCapacity = async ({
   ClassName,
   ClassDesc,
@@ -31,6 +39,27 @@ const ClassCapacity = async ({
     }
   );
   const apiData = await res.json();
+
+  async function getEnroll(courseID: string) {
+    const enrollRes = await fetch(
+      `${process.env.BASE_URL}/enrollments/${courseID}/status`,
+      {
+        cache: "no-store",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return enrollRes;
+  }
+
+  const enrollRes = await getEnroll(CourseID);
+  const enrollData = await enrollRes.json();
+
+  let enroll: Enroll[] = Array.isArray(enrollData.data) ? enrollData.data : [];
+
+  const isEnrolled = enrollData.data?.isEnrolled;
 
   const currentCount =
     ClassLevel === "ENTRY"
@@ -80,12 +109,14 @@ const ClassCapacity = async ({
           capacity={capacity}
           percentage={percentage}
         />
-        <Link
-          href={`/payment/${ClassSlug}`}
-          className="bg-primary-500 rounded-[8px] text-xs py-2 px-14.5 w-fit"
-        >
-          <p>Enroll Now</p>
-        </Link>
+        {isEnrolled === false && (
+          <Link
+            href={`/payment/${ClassSlug}`}
+            className="bg-primary-500 rounded-[8px] text-xs py-2 px-14.5 w-fit"
+          >
+            <p>Enroll Now</p>
+          </Link>
+        )}
       </div>
     </div>
   );

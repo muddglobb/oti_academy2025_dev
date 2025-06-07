@@ -25,7 +25,6 @@ export function MiniHeader({ userName }: {userName: string}) {
       })
     
     if (res.ok) {
-      console.log("Logout sukses");
       router.push("/");
     } else {
       const errorData = await res.json();

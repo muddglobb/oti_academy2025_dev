@@ -299,7 +299,7 @@ export default async function Page({
       <PaymentPopUp />
 
       <div className="flex flex-col xl:flex-row gap-6">
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 xl:w-240">
           <Konfirmasi />
           <ChosenClass
             courseId={matchedCourseId}

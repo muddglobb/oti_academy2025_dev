@@ -84,14 +84,14 @@ export default function PerhatianPayment({
 
   return (
     <div className="fixed inset-0 bg-neutral-900/70 z-50 flex items-center justify-center">
-      <div className="bg-neutral-700 rounded-[20px] p-6 w-full border-2 border-neutral-500 mx-3 sm:mx-6 md:mx-10 lg:mx-40 xl:mx-60">
+      <div className="bg-neutral-700 rounded-[20px] p-6 w-140 sm:w-160 border-2 border-neutral-500 mx-3 sm:mx-6 md:mx-10 lg:mx-40 xl:mx-60">
         <div className="flex items-center gap-2 pb-3 border-b-2 border-neutral-500">
           <AlertCircle />
           <h2 className="text-xl font-bold">Pembayaran Berhasil!</h2>
         </div>
         <div className="text-[12px] pt-3">
-          <div className="flex gap-2 items-start">
-            <div className="w-4 h-4 bg-primary-500 rounded-[4px] text-center text-white text-[10px]">
+          <div className="flex gap-2 items-start text-[12px]">
+            <div className="w-4 h-4 bg-primary-500 rounded-[4px] text-center text-white">
               1
             </div>
             <p>
@@ -101,7 +101,7 @@ export default function PerhatianPayment({
           </div>
 
           <div className="flex gap-2 items-start mt-2">
-            <div className="w-4 h-4 bg-primary-500 rounded-[4px] text-center text-white text-[10px]">
+            <div className="w-4 h-4 bg-primary-500 rounded-[4px] text-center text-white">
               2
             </div>
             <p>
@@ -111,7 +111,7 @@ export default function PerhatianPayment({
           </div>
 
           <div className="flex gap-2 items-start mt-2">
-            <div className="w-4 h-4 bg-primary-500 rounded-[4px] text-center text-white text-[10px]">
+            <div className="w-4 h-4 bg-primary-500 rounded-[4px] text-center text-white">
               3
             </div>
             <p>
@@ -120,13 +120,21 @@ export default function PerhatianPayment({
             </p>
           </div>
         </div>
-        <div className="flex gap-2 pt-3 justify-end">
+        <div className="flex gap-2 pt-8 justify-end">
           <Link
             href="/dashboard"
-            className="px-4 py-2 bg-primary-500 text-white rounded-sm cursor-pointer text-center"
+            className="px-4 py-2 w-36 sm:w-44 bg-primary-700 text-white rounded-sm cursor-pointer text-center"
             onClick={onClose}
           >
             Mengerti
+          </Link>
+
+          <Link
+            href="https://api.whatsapp.com/send?phone=6285797472200&text=halo%20kak%2C%20saya%20[nama]%20baru%20saja%20melakukan%20pembayaran%20OmahTI%20Academy%20untuk%20kelas%20[kelas%20kamu]"
+            className="px-4 py-2 w-36 sm:w-44 bg-primary-500 text-white rounded-sm cursor-pointer text-center"
+            onClick={onClose}
+          >
+            Konfirmasi
           </Link>
         </div>
       </div>

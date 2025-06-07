@@ -10,7 +10,7 @@ const Receipt = ({ name, prices, level }: {name: string | undefined, prices: num
         Pembayaran
       </p>
       <div className="flex flex-col gap-2">
-        <p className="text-2xl pt-3">BCA 6969696969</p>
+        <p className="text-2xl pt-3">BNI 1878490384</p>
         <p className="text-lg">a/n Gracella Wiendy Koesnadi</p>
       </div>
       <p className="text-lg font-bold pb-3 pt-10 border-b-3 border-neutral-500">

@@ -135,7 +135,7 @@ const Harga = () => {
                     </p>{" "}
                   </div>
                 </div>
-                <Link href="/programs" className="w-full">
+                <Link href="/programs#entry-class" className="w-full">
                   <Button
                     variant="learn-more-blue"
                     className="w-full mt-5 rounded-[8px] items-center"
@@ -157,7 +157,7 @@ const Harga = () => {
                       <h2 className="text-[18px] lg:text-[22px] font-bold justify-start">
                         {Header[1].title}
                       </h2>
-                      <p className="text-[12px] lg:text-[14px] px-4 py-1 bg-neutral-200 rounded-[5px] text-neutral-900">
+                      <p className="text-[12px] lg:text-[14px] px-4 py-1 bg-neutral-200 rounded-[5px] whitespace-nowrap text-neutral-900">
                         {Header[1].offer}
                       </p>
                     </div>
@@ -200,7 +200,7 @@ const Harga = () => {
                       </p>{" "}
                     </div>
                   </div>
-                  <Link href="/programs" className="w-full">
+                  <Link href="/programs#bundle-class" className="w-full">
                     <Button
                       variant="learn-more-white"
                       className="w-full mt-5 rounded-[8px] items-center"
@@ -260,7 +260,7 @@ const Harga = () => {
                     </p>{" "}
                   </div>
                 </div>
-                <Link href="/programs" className="w-full">
+                <Link href="/programs#intermediate-class" className="w-full">
                   <Button
                     variant="learn-more-blue"
                     className="w-full mt-5 rounded-[8px] items-center"
@@ -273,10 +273,10 @@ const Harga = () => {
             </div>
 
             {/* text bawah */}
-            <div className="h-10 md:h-12 md:left-[calc(50%-320px)] md:px-32">
+            <div className="h-10 md:h-12">
               <div className="w-full pt-2">
                 <p className="text-neutral-50 text-[12px] md:text-[14px]">
-                  *Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                  *Pembayaran tidak bisa diganti atau direfund, pastikan pilihanmu tepat!
                 </p>
               </div>
             </div>

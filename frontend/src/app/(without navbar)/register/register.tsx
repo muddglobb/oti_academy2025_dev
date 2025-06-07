@@ -67,7 +67,6 @@ export default function Register() {
       }
 
       localStorage.setItem("token", responseData.token);
-      alert("Registrasi berhasil!");
       router.push("/login");
     } catch (error: unknown) {
       if (error instanceof Error) {
