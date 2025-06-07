@@ -49,7 +49,8 @@ const BundleSlider = () => {
               image={getImageByTitle(card.title)}
               teacher1={getFirstTeacher(card.title)}
               teacher2={getSecTeacher(card.title)}
-              title={card.title.replace(/^Bundle\s*/, "")}
+              title={card.title}
+              bundleTitle={card.title.replace(/^Bundle\s*/, "")}
               href={`programs/${getSlugByTitle(card.title)}`}
               description={getDescByTitle(card.title)}
             />

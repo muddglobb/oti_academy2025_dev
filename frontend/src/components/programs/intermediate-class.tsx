@@ -68,7 +68,6 @@ const IntermediateClass = () => {
       <div
         className="w-full pb-25 bg-cover bg-center flex flex-col items-center justify-center
           bg-[linear-gradient(0deg,rgba(5,12,26,0.4)_0%,rgba(5,12,26,0.9)_100%)]
-
           relative
         "
       >
@@ -91,7 +90,7 @@ const IntermediateClass = () => {
             <div className="mb-11">
               <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center 
               text-[22px]
-              lg:text-[32px] font-bold">
+              lg:text-[32px] font-bold mt-15">
                 Kelas Intermediate untuk Naik Level Skill-mu
               </p>
               <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center 

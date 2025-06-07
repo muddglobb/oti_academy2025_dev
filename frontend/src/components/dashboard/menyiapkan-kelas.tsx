@@ -22,8 +22,8 @@ const MenyiapkanKelas = ({ title, description }: {title:string, description: str
           <p className="text-primary-100 text-[12px]">Menyiapkan kelas untuk kamu!</p>
         </div>
         <div>
-          <p className="font-bold text-lg sm:text-sm">{title}</p>
-          <p className="text-[12px] line-clamp-2 hidden sm:block">{description}</p>
+          <p className="font-bold text-sm">{title}</p>
+          <p className="text-[12px] line-clamp-2">{description}</p>
         </div>
       </div>
     </div>

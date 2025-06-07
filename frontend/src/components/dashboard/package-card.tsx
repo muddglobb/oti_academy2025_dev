@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { getFirstTeacher, getImageByTitle, getSecTeacher } from "@/lib/course-props/course-props";
+import { getFirstTeacher, getImageByTitle, getSecTeacher, getShortDescByTitle } from "@/lib/course-props/course-props";
 import CourseCard from "./course-card";
 
 const getTeacherPic = (title: string): string => {
@@ -171,7 +171,7 @@ function getSlugByTitle(title: string) {
                         slug={getSlugByTitle(course.title)} 
                         image={getImageByTitle(course.title)} 
                         title={course.title} 
-                        description={course.description} 
+                        description={getShortDescByTitle(course.title)} 
                         firstTeacher={getFirstTeacher(course.title)} 
                         secTeacher={getSecTeacher(course.title)}/>
                     </div>
