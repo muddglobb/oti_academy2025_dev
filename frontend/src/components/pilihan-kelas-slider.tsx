@@ -102,7 +102,7 @@ const PilihanKelasSlider =() => {
                 settings: {
                     slidesToShow: 3,
                     centerMode: true,
-                    centerPadding: "50px",
+                    centerPadding: "30px",
                 }
             },
             {
@@ -118,7 +118,7 @@ const PilihanKelasSlider =() => {
                 settings: {
                     slidesToShow: 1,
                     centerMode: true,
-                    centerPadding: "50px",
+                    centerPadding: "30px",
                 }
             }
         ]

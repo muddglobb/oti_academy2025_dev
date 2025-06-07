@@ -66,7 +66,7 @@ const Comments = () => {
         speed: 500,
         slidesToShow: isMobile ? 1 : isTablet ? 2 : 3,
         slidesToScroll: 1,
-        centerMode: isMobile,
+        centerMode: true,
         centerPadding: isMobile ? "20px" : "0",
         responsive: [
             {
@@ -74,15 +74,25 @@ const Comments = () => {
                 settings: {
                     slidesToShow: 2,
                     slidesToScroll: 1,
+                    centerMode: true,
+                    centerPadding: "20px"
                 }
             },
             {
                 breakpoint: 768,
                 settings: {
-                    slidesToShow: 1,
+                    slidesToShow: 1.5,
                     slidesToScroll: 1,
                     centerMode: true,
-                    centerPadding: "20px",
+                    centerPadding: "10px",
+                }
+            },
+            {
+                breakpoint: 640,
+                settings: {
+                    slidesToShow: 1,
+                    SlidesToScroll: 1,
+                    centerMode: true,
                 }
             }
         ]
@@ -180,7 +190,7 @@ const Comments = () => {
                 <div className="lg:hidden w-full mt-10 mx-0">
                     <Slider key={isMobile ? "mobile" : "tablet"} {...sliderSettings}>
                         {CommentContents.map((item, index) => (
-                            <div key={index} className="px-2 h-80">
+                            <div key={index} className="px-2 h-90">
                                 <CommentCard
                                     nama={item.name}
                                     pic={item.pic}

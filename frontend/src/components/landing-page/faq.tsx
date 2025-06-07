@@ -59,7 +59,7 @@ const FAQ = () => {
             <h1 className="pt-44 px-4 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
               Frequently Asked Questions
             </h1>
-            <div className="pt-5 flex flex-col">
+            <div className="pt-5 lg:px-20 flex flex-col">
               <Accordion
                 type="single"
                 collapsible
