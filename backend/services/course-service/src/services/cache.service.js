@@ -11,7 +11,7 @@ export class CacheService {
    * @param {number} ttl - Time-to-live dalam detik
    * @returns {Promise<any>} Data dari cache atau hasil callback
    */
-  static async getOrSet(key, callback, ttl = 3600) {
+  static async getOrSet(key, callback, ttl = 7200) {
     try {
       // Try to get data from cache first
       const cachedData = await getCache(key);
@@ -44,7 +44,7 @@ export class CacheService {
    * @param {number} ttl - Time-to-live dalam detik
    * @returns {Promise<boolean>} Status keberhasilan operasi
    */
-  static async set(key, data, ttl = 3600) {
+  static async set(key, data, ttl = 7200) {
     try {
       return await setCache(key, data, ttl);
     } catch (error) {
