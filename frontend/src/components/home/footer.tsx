@@ -37,7 +37,7 @@ const Footer = () => {
         flex-col
         justify-between
         
-        bg-[linear-gradient(0deg,rgba(5,12,26,1.0)_0%,rgba(5,12,26,0.8)_100%)]
+        bg-[linear-gradient(0deg,rgba(5,12,26,1.0)_0%,rgba(5,12,26,0.4)_100%)]
         relative
       "
       >
@@ -54,7 +54,7 @@ const Footer = () => {
 
         <div className="flex flex-col items-center justify-center h-full
         px-[30px]
-        md:px-[100px]">
+        md:px-[260px]">
           <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center font-bold
           text-[22px]
           lg:text-[46px]">
