@@ -8,47 +8,24 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import NextArrow from "./ui/next-arrow";
 import PrevArrow from "./ui/prev-arrow";
+import { getDescByTitle, getFirstTeacher, getImageByTitle, getSecTeacher, getSlugByTitle } from "@/lib/course-props/course-props";
 
 const bundleData = [
   {
     type: "Bundle",
-    image: "/images/class-profile/hako.jpg",
-    teacher1: "/images/teacher/faris.jpg",
-    teacher2: "/images/teacher/faris.jpg",
-    title: "Graphic Design + Dipukul Melinda",
-    href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
+    title: "Bundle Web Development + Software Engineering",
   },
   {
     type: "Bundle",
-    image: "/images/class-profile/hako.jpg",
-    teacher1: "/images/teacher/faris.jpg",
-    teacher2: "/images/teacher/faris.jpg",
-    title: "Graphic Design + Dipukul Melinda",
-    href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
+    title: "Bundle Python + Data Science & Artificial Intelligence",
   },
   {
     type: "Bundle",
-    image: "/images/class-profile/hako.jpg",
-    teacher1: "/images/teacher/faris.jpg",
-    teacher2: "/images/teacher/faris.jpg",
-    title: "Graphic Design + Dipukul Melinda",
-    href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
+    title: "Bundle Graphic Design + UI/UX",
   },
   {
     type: "Bundle",
-    image: "/images/class-profile/hako.jpg",
-    teacher1: "/images/teacher/faris.jpg",
-    teacher2: "/images/teacher/faris.jpg",
-    title: "Graphic Design + Dipukul Melinda",
-    href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
+    title: "Bundle Fundamental Cyber Security + Cyber Security",
   },
 ];
 const BundleSlider = () => {
@@ -69,12 +46,12 @@ const BundleSlider = () => {
             <Card
               key={index}
               type={card.type}
-              image={card.image}
-              teacher1={card.teacher1}
-              teacher2={card.teacher2}
-              title={card.title}
-              href={card.href}
-              description={card.description}
+              image={getImageByTitle(card.title)}
+              teacher1={getFirstTeacher(card.title)}
+              teacher2={getSecTeacher(card.title)}
+              title={card.title.replace(/^Bundle\s*/, "")}
+              href={`programs/${getSlugByTitle(card.title)}`}
+              description={getDescByTitle(card.title)}
             />
           </div>
         ))}

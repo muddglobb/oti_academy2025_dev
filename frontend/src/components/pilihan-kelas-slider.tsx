@@ -1,118 +1,93 @@
 "use client";
 
 import React from "react";
-// import React, { useEffect, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Card from "./card";
 import NextArrow from "./ui/next-arrow";
 import PrevArrow from "./ui/prev-arrow";
+import { getFirstTeacher, getImageByTitle, getSecTeacher } from "@/lib/course-props/course-props";
 
 const Kelas = [
     {
         type: "Beginner",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
+        teacher1: "/images/mentor-coming-soon.webp",
         title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        href: "/programs/web-development",
+        description: "Belajar membuat UI dari nol, mulai dari HTML, CSS, React, hingga Tailwind & MUI. Cocok untuk pemula yang ingin membangun halaman web responsif, memahami dasar komponen React, dan eksplorasi styling modern."
     },
     {
         type: "Beginner",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        teacher1: "/images/mentor-coming-soon.webp",
+        title: "Competitive Programming",
+        href: "/programs/competitive-programming",
+        description: "Mengenali dasar-dasar Competitive Programming secara bertahap mulai dari algoritma, struktur data, hingga graf. Dirancang ringkas dan menantang, cocok untuk pemula dan ditutup dengan konteks sebagai tugas akhir."
     },
     {
         type: "Beginner",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        teacher1: "/images/mentor-coming-soon.webp",
+        title: "Basic Python",
+        href: "/programs/basic-python",
+        description: "Pelajari dasar-dasar pemrograman Python, mulai dari sintaks dasar hingga OOP dan struktur data. Materi disusun secara bertahap dan mudah diikuti cocok untuk pemula dengan studi kasus menarik."
     },
     {
         type: "Beginner",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        teacher1: "/images/mentor-coming-soon.webp",
+        title: "Fundamental Cyber Security",
+        href: "/programs/fundamental-cyber-security",
+        description: "Masuki dunia cybersecurity dengan materi praktis dan menyenangkan, mulai dari Linux, forensik, web exploitation, kriptografi, hingga OSINT. Ditutup dengan praktik langsung lewat picoCTF. Materi ringkas dan mudah dipahami, cocok untuk pemula. "
+    },
+    {
+        type: "Beginner",
+        teacher1: "/images/mentor-coming-soon.webp",
+        title: "Game Development",
+        href: "/programs/game-development",
+        description: "Menjelajahi dunia game development dari merancang ide, Game Design Document (GDD), hingga membangun prototype game dengan GDevelop. Materi lengkap dan mudah diikuti, cocok untuk pemula."
+    },
+    {
+        type: "Beginner",
+        teacher1: "/images/mentor-coming-soon.webp",
+        title: "Graphic Design",
+        href: "/programs/graphic-design",
+        description: "Belajar dasar desain grafis mulai dari elemen visual, warna, hingga layout. Lewat studi kasus dan praktik di Figma, kamu akan buat berbagai konten secara terarah dan bermakna."
     },
     {
         type: "Intermediate",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        teacher2: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        teacher1: "/images/mentor-coming-soon.webp",
+        teacher2: "/images/mentor-coming-soon.webp",
+        title: "Software Engineering",
+        href: "/programs/software-engineering",
+        description: "Kuasai pembuatan aplikasi web modern lengkap dari autentikasi hingga fitur CRUD lewat praktik langsung dan studi kasus nyata. Jadi developer full-stack handal dengan pengalaman yang keren."
     },
     {
         type: "Intermediate",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        teacher2: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        teacher1: "/images/mentor-coming-soon.webp",
+        teacher2: "/images/mentor-coming-soon.webp",
+        title: "Data Science & Artificial Intelligence",
+        href: "/programs/data-science&artificial-intelligence",
+        description: "Belajar Data Science dan AI dari nol hingga siap ikut proyek dan kompetisi. DSAI Bootcamp membimbingmu step-by-step dari dasar hingga membangun model AI siap industri."
     },
     {
         type: "Intermediate",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        teacher2: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        teacher1: "/images/mentor-coming-soon.webp",
+        teacher2: "/images/mentor-coming-soon.webp",
+        title: "UI/UX",
+        href: "/programs/ui-ux",
+        description: "Mulai dari mengubah PRD jadi desain, membuat mock-up, wireframe, hingga memahami UX laws dan desain yang aksesibel. Belajar secara fleksibel lewat modul online, tugas, konsultasi, dan proyek akhir yang bisa jadi portofolio."
     },
     {
         type: "Intermediate",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        teacher2: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
-    },
-    {
-        type: "Intermediate",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        teacher2: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
-    },
-    {
-        type: "Intermediate",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        teacher2: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        teacher1: "/images/mentor-coming-soon.webp",
+        teacher2: "/images/mentor-coming-soon.webp",
+        title: "Cyber Security",
+        href: "/programs/cyber-security",
+        description: "Masuki dunia ethical hacking dan praktik langsung tahapan penetration testing, dari reconnaissance hingga post-exploitation, lengkap dengan penyusunan laporan uji keamanan secara profesional."
     },
 
 ]
 
 const PilihanKelasSlider =() => {
-    // const [isMobile, setIsMobile] = useState(false);
-    
-    // useEffect(() => {
-    //     const checkMobile = () => {
-    //       setIsMobile(window.innerWidth <= 769);
-    //     };
-    
-    //     checkMobile();
-    //     window.addEventListener("resize", checkMobile);
-    
-    //     return () => window.removeEventListener("resize", checkMobile);
-    // }, []);
-
     const settings = {
         arrows: true,
         infinite: true,
@@ -157,9 +132,9 @@ const PilihanKelasSlider =() => {
                         <Card
                             key={index}
                             type={card.type}
-                            image={card.image}
-                            teacher1={card.teacher1}
-                            teacher2={card.teacher2}
+                            image={getImageByTitle(card.title)}
+                            teacher1={getFirstTeacher(card.title)}
+                            teacher2={getSecTeacher(card.title)}
                             title={card.title}
                             href={card.href}
                             description={card.description}

@@ -8,69 +8,35 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import NextArrow from "@/components/ui/next-arrow";
 import PrevArrow from "@/components/ui/prev-arrow";
+import { getDescByTitle, getFirstTeacher, getImageByTitle, getSecTeacher, getSlugByTitle } from "@/lib/course-props/course-props";
 
 const beginnerData = [
   {
-    type: "Beginner",
-    image: "/images/class-profile/hako.jpg",
-    teacher1: "/images/teacher/faris.jpg",
-    teacher2: "/images/teacher/faris.jpg",
-    title: "Dasar Pemrograman",
-    href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
+    type: "Entry",
+    title: "Web Development",
   },
   {
-    type: "Beginner",
-    image: "/images/class-profile/hako.jpg",
-    teacher1: "/images/teacher/faris.jpg",
-    teacher2: "/images/teacher/faris.jpg",
-    title: "Dasar Pemrograman",
-    href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
+    type: "Entry",
+    title: "Basic Python",
   },
   {
-    type: "Beginner",
-    image: "/images/class-profile/hako.jpg",
-    teacher1: "/images/teacher/faris.jpg",
-    teacher2: "/images/teacher/faris.jpg",
-    title: "Dasar Pemrograman",
-    href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
+    type: "Entry",
+    title: "Fundamental Cyber Security",
   },
   {
-    type: "Beginner",
-    image: "/images/class-profile/hako.jpg",
-    teacher1: "/images/teacher/faris.jpg",
-    teacher2: "/images/teacher/faris.jpg",
-    title: "Dasar Pemrograman",
-    href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
+    type: "Entry",
+    title: "Game Development",
   },
   {
-    type: "Beginner",
-    image: "/images/class-profile/hako.jpg",
-    teacher1: "/images/teacher/faris.jpg",
-    teacher2: "/images/teacher/faris.jpg",
-    title: "Dasar Pemrograman",
-    href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
+    type: "Entry",
+    title: "Graphic Design",
   },
   {
-    type: "Beginner",
-    image: "/images/class-profile/hako.jpg",
-    teacher1: "/images/teacher/faris.jpg",
-    teacher2: "/images/teacher/faris.jpg",
-    title: "Dasar Pemrograman",
-    href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi ad cupiditate perferendis corrupti",
+    type: "Entry",
+    title: "Competitive Programming",
   },
 ];
+
 const BeginnerSlider = () => {
   const settings = {
     // dots: true,
@@ -87,7 +53,7 @@ const BeginnerSlider = () => {
   return (
     // <div className="flex items-center flex-wrap gap-10 justify-center">
     // <div className="relative w-full px-5">
-      <div className="relative max-w-90 sm:max-w-140 md:max-w-180 lg:max-w-245 xl:max-w-300 2xl:max-w-330">
+    <div className="relative max-w-90 sm:max-w-140 md:max-w-180 lg:max-w-245 xl:max-w-300 2xl:max-w-330">
       <Slider {...settings}>
         {beginnerData.map((card, index) => (
           <div
@@ -98,12 +64,12 @@ const BeginnerSlider = () => {
             <Card
               key={index}
               type={card.type}
-              image={card.image}
-              teacher1={card.teacher1}
-              teacher2={card.teacher2}
+              image={getImageByTitle(card.title)}
+              teacher1={getFirstTeacher(card.title)}
+              teacher2={getSecTeacher(card.title)}
               title={card.title}
-              href={card.href}
-              description={card.description}
+              href={`/programs/${getSlugByTitle(card.title)}`}
+              description={getDescByTitle(card.title)}
             />
           </div>
         ))}

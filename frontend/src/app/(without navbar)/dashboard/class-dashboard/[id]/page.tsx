@@ -190,7 +190,7 @@ const classes = [
   },
   {
     slug: "web-development+software-engineering",
-    title: "Web Development + Software Engineering",
+    title: "Bundle Web Development + Software Engineering",
     courses: ["Web Development", "Software Engineering"],
     desc: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eius, obcaecati? Facere quidem tempora sit debitis modi dolore natus, aut non labore voluptatum reprehenderit, consectetur repellendus earum incidunt numquam ipsam quia.",
     classInfo: [classInfo[0], classInfo[2]],
