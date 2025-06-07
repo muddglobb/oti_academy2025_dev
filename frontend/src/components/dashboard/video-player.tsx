@@ -12,7 +12,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   <div
     className={`relative w-full h-full overflow-hidden flex items-center justify-center  ${className}`}
   >
-    <div className="lg:w-122 lg:h-84.5 w-89.5 h-62 relative">
+    <div className="lg:w-122 lg:h-84.5 sm:w-89.5 sm:h-62 w-65 h-45 relative">
       <iframe
         src={embedUrl}
         allowFullScreen
