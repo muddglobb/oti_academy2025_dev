@@ -28,7 +28,7 @@ const ChosenClass = async ({
   packageId: string | null | undefined;
 }) => {
   const packageData = await getAllPackage();
-  console.log(packageData);
+  // console.log(packageData);
   let name = null;
   if (courseId === null || courseId === undefined) {
     name = packageData.data.find((item: PackageData) => item.id === packageId)?.name;
