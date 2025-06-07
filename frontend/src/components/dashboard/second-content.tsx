@@ -1,5 +1,6 @@
 import React from "react";
 import EnrolledClass from "./enrolled-class";
+import GrupWa from "./grup-wa";
 
 const SecondContent = async () => {
   return (
@@ -71,16 +72,7 @@ const SecondContent = async () => {
           </div>
         </div>
 
-        {/* WhatsApp Group */}
-        <div className="border-2 border-neutral-500 rounded-[20px] p-5">
-          <h3 className="font-medium mb-3 pb-3 border-b-2 border-neutral-500">
-            WhatsApp Group
-          </h3>
-          <p className="text-sm text-gray-300">
-            Grup WA ini khusus untuk yang sudah terdaftar, jadi jangan lupa
-            daftar!
-          </p>
-        </div>
+        <GrupWa />
       </div>
     </div>
   );
