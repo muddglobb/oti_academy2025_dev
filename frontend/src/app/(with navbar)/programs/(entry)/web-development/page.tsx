@@ -4,7 +4,7 @@ import Hero from "@/components/programs/intermediate/intermediate-hero";
 import SessionInfo from "@/components/programs/intermediate/intermediate-session-info";
 
 const hero: [string, string, string] = [
-  "CyberSecurity",
+  "Web Development",
   "Masuki dunia ethical hacking dan praktik langsung tahapan penetration testing, dari reconnaissance hingga post-exploitation, lengkap dengan penyusunan laporan uji keamanan secara profesional.",
   "Beginner Level",
 ];
