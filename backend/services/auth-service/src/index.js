@@ -70,13 +70,14 @@ async function initializeAdminAccount() {
 async function cleanupExpiredTokens() {
   try {
     const refreshTokensCleanup = await authService.cleanupExpiredTokens();
-    const blacklistedTokensCleanup = await authService.cleanupExpiredBlacklistedTokens();
     
-    if (refreshTokensCleanup > 0 || blacklistedTokensCleanup > 0) {
-      console.log(`🧹 Token cleanup completed: ${refreshTokensCleanup} refresh tokens, ${blacklistedTokensCleanup} blacklisted tokens`);
+    if (refreshTokensCleanup > 0) {
+      console.log(`🧹 Token cleanup completed: ${refreshTokensCleanup} expired refresh tokens removed`);
+    } else {
+      console.log('🧹 Token cleanup completed: no expired refresh tokens found');
     }
   } catch (error) {
-    console.error('❌ Error during token cleanup:', error);
+    console.error('❌ Error during token cleanup:', error.message);
   }
 }
 
