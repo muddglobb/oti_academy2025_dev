@@ -1,6 +1,10 @@
+"use client";
+
 import Container from "@/components/container";
 import { SquarePen, Database, Clipboard, UserPlus } from "lucide-react";
 import Image from "next/image";
+import * as motion from "motion/react-client"
+import { fadeIn, fadeInComp } from "@/lib/animation";
 
 const WhyUsContent = [
   {
@@ -90,14 +94,37 @@ const WhyUs = () => {
 
         {/* isi */}
         <Container className="items-center gap-4 lg:gap-10 ">
-          <h1 className="pt-10 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
-            Mengapa Kami Pilihan Tepat untuk Kamu
-          </h1>
-          <div className="z-0 flex flex-col justify-center gap-2 lg:gap-6 pb-6 lg:pb-15">
+          <motion.h1 
+            variants={fadeIn}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{
+              once: true,
+            }}
+            className="pt-10 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold"
+          >
+              Mengapa Kami Pilihan Tepat untuk Kamu
+          </motion.h1>
+          <motion.div 
+            variants={fadeIn}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{
+              once: true,
+            }}
+            className="z-0 flex flex-col justify-center gap-2 lg:gap-6 pb-6 lg:pb-15"
+          >
             {WhyUsContent.map((item, index) => {
               const Icon = item.icon;
               return (
-                <div
+                <motion.div
+                  variants={fadeInComp}
+                  initial="hidden"
+                  whileInView="visible"
+                  custom={index}
+                  viewport={{
+                    once: true,
+                  }}
                   key={index}
                   className="z-100 flex items-center flex-row gap-3 p-6 max-w-screen xl:w-260 border border-white rounded-xl text-neutral-50"
                 >
@@ -108,12 +135,19 @@ const WhyUs = () => {
                     </h2>
                     <p className="text-[12px] lg:text-[18px]">{item.content}</p>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
 
-          <div className="flex flex-wrap justify-center gap-4 md:gap-9 max-w-screen w-auto">
+          <motion.div 
+            variants={fadeIn}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{
+              once: true,
+            }}
+            className="flex flex-wrap justify-center gap-4 md:gap-9 max-w-screen w-auto">
             {Sponsors.map((img) => (
               <div key={img.alt} className="w-auto">
                 <Image
@@ -125,7 +159,7 @@ const WhyUs = () => {
                 />
               </div>
             ))}
-          </div>
+          </motion.div>
         </Container>
       </div>
     </div>

@@ -8,6 +8,8 @@ import Card from "./card";
 import NextArrow from "./ui/next-arrow";
 import PrevArrow from "./ui/prev-arrow";
 import { getDescByTitle, getFirstTeacher, getImageByTitle, getSecTeacher, getSlugByTitle } from "@/lib/course-props/course-props";
+import * as motion from "motion/react-client"
+import { slideInComp } from "@/lib/animation";
 
 const Kelas = [
     {
@@ -94,7 +96,17 @@ const PilihanKelasSlider =() => {
         <div className="w-full lg:max-w-7xl mx-auto ">
             <Slider {...settings}>
                 {Kelas.map((card, index) => (
-                    <div key={index} className="px-2">
+                    <motion.div 
+                        variants={slideInComp}
+                        initial="hidden"
+                        whileInView="visible"
+                        custom={index}
+                        viewport={{
+                        once: true,
+                        }}
+                        key={index} 
+                        className="px-2"
+                    >
                         <Card
                             key={index}
                             type={card.type}
@@ -105,7 +117,7 @@ const PilihanKelasSlider =() => {
                             href={`programs/${getSlugByTitle(card.title)}`}
                             description={getDescByTitle(card.title)}
                         />
-                    </div>
+                    </motion.div>
                 ))}
             </Slider>
         </div>

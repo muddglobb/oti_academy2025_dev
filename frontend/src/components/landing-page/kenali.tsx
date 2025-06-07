@@ -2,6 +2,8 @@ import React from "react";
 import Container from "@/components/container";
 import KenaliSlider from "@/components/kenali-slider";
 import Image from "next/image";
+import * as motion from "motion/react-client"
+import { fadeIn } from "@/lib/animation";
 
 const Kenali = () => {
   return (
@@ -35,7 +37,14 @@ const Kenali = () => {
 
           {/* isi */}
 
-          <div className="">
+          <motion.div
+            variants={fadeIn}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{
+                once: true,
+              }}
+            >
             <Container className="flex flex-col items-center justify-center pb-20 md:pb-41">
               <h1 className="pt-10 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold z-0">
                 Kenali Lebih Dekat OmahTI Academy
@@ -43,7 +52,7 @@ const Kenali = () => {
                   <div className="pt-0 md:pt-10 flex flex-col xl:flex-row justify-center items-center">
                       <KenaliSlider/>
                   </div>
-              <p className="pt-0 md:pt-10 lg:px-24 px-9 text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[12px] sm:text-[18px]">
+              <p className="pt-0 md:pt-10 lg:px-24 px-9 text-neutral-50 text-center text-[12px] sm:text-[18px]">
                 Dulu dikenal sebagai OEM-OEM dan OLC, sekarang OmahTI Academy
                 hadir sebagai{" "}
                 <span className="font-bold">
@@ -58,7 +67,7 @@ const Kenali = () => {
                 <span className="font-bold">profesional di industri</span>.
               </p>
             </Container>
-          </div>
+          </motion.div>
         </div>
       </div>
     </>
