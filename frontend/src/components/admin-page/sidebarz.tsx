@@ -26,7 +26,6 @@ const Sidebarz = () => {
       })
       
       if (res.ok) {
-        console.log("Logout sukses");
         router.push("/");
       } else {
         const errorData = await res.json();

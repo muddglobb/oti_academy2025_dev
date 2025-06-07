@@ -28,7 +28,6 @@ const handleLogout = async () => {
     
     if (res.ok) {
       // alert("berhasil logout");
-      console.log("Logout sukses");
       router.push("/");
     } else {
       const errorData = await res.json();

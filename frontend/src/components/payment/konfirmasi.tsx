@@ -8,7 +8,7 @@ const Konfirmasi = () => {
         <CircleAlert className="w-6 h-6 shrink-0" />
         <p className="text-wraper">
           Perubahan kelas tidak dapat dilakukan setelah pembayaran dilakukan!
-          Sudah isi formulir? Langsung konfirmasi ke WA (Nazwa) ini ya!
+          Sudah isi formulir? Langsung konfirmasi ke WA (Deira) ini ya!
         </p>
       </div>
       <div className="flex justify-end">

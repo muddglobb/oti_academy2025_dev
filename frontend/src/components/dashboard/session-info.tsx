@@ -35,8 +35,6 @@ const SessionInfo = async ({ courseID }: SessionProps) => {
     ? MaterialData.data
     : [];
 
-  console.log("Course ID ", courseID);
-  console.log("Material Data ", MaterialData);
   return (
     <div className="w-full rounded-[20px] border-solid border-2 border-neutral-500 px-6 py-4 mt-6">
       <p className="font-bold text-lg text-neutral-50 pb-2 border-b-2 border-neutral-500 mb-4">
