@@ -8,6 +8,9 @@ import Container from "@/components/container";
 import CommentCard from "@/components/comment-card";
 import Image from "next/image";
 
+import * as motion from "motion/react-client"
+import { fadeIn, slideInComp } from "@/lib/animation";
+
 const CommentContents = [
     {
         comment: `"OEM-OEM is a fun way to get into the basics. Karena pengajarnya fleksibel dan bisa ngikutin pace belajar tiap peserta. Selain itu, OEM-OEM terbuka untuk umum dan membuka kesempatan untuk banyak orang. So it was a great experience! OLC is also a good place untuk belajar bareng sama team. Aku suka karena pembelajarannya well delivered dan pengajarnya juga keren-keren."`,
@@ -137,14 +140,27 @@ const Comments = () => {
         <Container className="px-0">
 
             <div className="flex flex-col items-center justify-center w-full ">
-                <h1 className=" px-4 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
+                <motion.h1 
+                    variants={fadeIn}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{
+                        once: true,
+                    }}
+                    className=" px-4 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold"
+                >
                     Kata Mereka Tentang Program Kami
-                </h1>
+                </motion.h1>
 
                 {/* desktop */}
                 <div className="hidden lg:flex 2xl:gap-8 gap-5 mt-10 h-full">
                     {/* kiri dua */}
-                    <div className="flex flex-col 2xl:gap-10 gap-5 max-w-104">
+                    <motion.div 
+                        initial={{ opacity: 0, y: 60 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 3, delay: 0.7, type: "spring" }}
+                        className="flex flex-col 2xl:gap-10 gap-5 max-w-104"
+                    >
                         <CommentCard
                             nama={CommentContents[0].name}
                             pic={CommentContents[0].pic}
@@ -157,20 +173,28 @@ const Comments = () => {
                             job={CommentContents[1].job}
                             comment={CommentContents[1].comment}
                         />
-                    </div>
+                    </motion.div>
 
                     {/* tengah gede sendiri */}
-                    <div className="flex flex-col 2xl:gap-10 gap-5 max-w-104 justify-center">
+                    <motion.div 
+                        initial={{ opacity: 0, y: 60 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 3, delay: 1, type: "spring" }}
+                        className="flex flex-col 2xl:gap-10 gap-5 max-w-104 justify-center">
                         <CommentCard
                             nama={CommentContents[2].name}
                             pic={CommentContents[2].pic}
                             job={CommentContents[2].job}
                             comment={CommentContents[2].comment}
                         />
-                    </div>
+                    </motion.div>
 
                     {/* kanan dua */}
-                    <div className="flex flex-col 2xl:gap-10 gap-5 max-w-104">
+                    <motion.div 
+                        initial={{ opacity: 0, y: 60 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 3, delay: 1.3, type: "spring" }}
+                        className="flex flex-col 2xl:gap-10 gap-5 max-w-104">
                         <CommentCard
                             nama={CommentContents[3].name}
                             pic={CommentContents[3].pic}
@@ -183,24 +207,34 @@ const Comments = () => {
                             job={CommentContents[4].job}
                             comment={CommentContents[4].comment}
                         />
-                    </div>
+                    </motion.div>
                 </div>
 
                 {/* mobile */}
-                <div className="lg:hidden w-full mt-10 mx-0">
+                <motion.div 
+                
+                    className="lg:hidden w-full mt-10 mx-0">
                     <Slider key={isMobile ? "mobile" : "tablet"} {...sliderSettings}>
                         {CommentContents.map((item, index) => (
-                            <div key={index} className="px-2 h-90">
+                            <motion.div 
+                                variants={slideInComp}
+                                initial="hidden"
+                                whileInView="visible"
+                                custom={index}
+                                viewport={{
+                                once: true,
+                                }} key={index} className="px-2 h-90"
+                            >
                                 <CommentCard
                                     nama={item.name}
                                     pic={item.pic}
                                     job={item.job}
                                     comment={item.comment}
                                 />
-                            </div>
+                            </motion.div>
                         ))}
                     </Slider>
-                </div>
+                </motion.div>
             </div>
             
         </Container>

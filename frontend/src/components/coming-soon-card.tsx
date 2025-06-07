@@ -9,7 +9,7 @@ const ComingSoonCard = () => {
       sm:w-123
 
       md:flex-col
-      md:w-75
+      md:w-65
       md:h-100
     bg-neutral-900 rounded-lg"
     >
@@ -22,7 +22,7 @@ const ComingSoonCard = () => {
         sm:h-auto
         sm:min-h-85
 
-        md:w-75 
+        md:w-65 
         md:h-100
         md:mask-b-from-90%
         md:mask-r-from-100%
@@ -35,8 +35,8 @@ const ComingSoonCard = () => {
                 <Image
                   src={"/images/mentor-coming-soon.webp"}
                   alt="mentor"
-                  width={300}
-                  height={300}
+                  width={260}
+                  height={260}
                 />
                 <div className="absolute inset-0 bg-gradient-to-r md:bg-gradient-to-b from-transparent to-neutral-900" /> {/* Corrected gradient class */}
               </div>

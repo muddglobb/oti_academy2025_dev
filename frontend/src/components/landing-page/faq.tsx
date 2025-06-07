@@ -1,3 +1,5 @@
+"use client";
+
 import Container from "@/components/container";
 import {
   Accordion,
@@ -6,6 +8,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/faq-button";
 import Image from "next/image";
+import * as motion from "motion/react-client"
+import { fadeIn, fadeInComp } from "@/lib/animation";
 
 const AnswerQuestion = [
     {
@@ -56,9 +60,17 @@ const FAQ = () => {
 
         <Container className="">
           <div className="pb-44 z-0">
-            <h1 className="pt-44 px-4 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
+            <motion.h1 
+              variants={fadeIn}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{
+                once: true,
+              }} 
+              className="pt-44 px-4 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold"
+            >
               Frequently Asked Questions
-            </h1>
+            </motion.h1>
             <div className="pt-5 lg:px-20 flex flex-col">
               <Accordion
                 type="single"
@@ -66,20 +78,30 @@ const FAQ = () => {
                 className="flex flex-col gap-5"
               >
                 {AnswerQuestion.map((item, index) => (
-                  <AccordionItem
+                  <motion.div
                     key={index}
-                    value={`item-${index + 1}`}
-                    className="flex flex-col"
+                    variants={fadeInComp}
+                    initial="hidden"
+                    whileInView="visible"
+                    custom={index}
+                    viewport={{
+                      once: true,
+                    }}
                   >
-                    <AccordionTrigger>{item.question}</AccordionTrigger>
-                    <AccordionContent>
-                      <div>
-                        <p className="text-[12px] lg:text-[14px] px-2 py-1 rounded-[5px]">
-                          {item.answer}
-                        </p>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
+                    <AccordionItem
+                      value={`item-${index + 1}`}
+                      className="flex flex-col"
+                    >
+                      <AccordionTrigger>{item.question}</AccordionTrigger>
+                      <AccordionContent>
+                        <div>
+                          <p className="text-[12px] lg:text-[14px] px-2 py-1 rounded-[5px]">
+                            {item.answer}
+                          </p>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  </motion.div>
                 ))}
               </Accordion>
             </div>
