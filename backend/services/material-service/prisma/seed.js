@@ -24,19 +24,16 @@ function parseWIBDate(dateStr) {
       parsed = new Date(parseInt(year), monthMap[month], parseInt(day));
     }
     
-    // Set time to 00:00:00.000 in WIB (UTC+7)
-    // Since we want 00:00 WIB to be stored as UTC, we need to subtract 7 hours
+    // Set time to 00:00:00.000 WIB and store as-is (no UTC conversion)
     const wibDate = new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate(), 0, 0, 0, 0);
     
-    // Convert WIB to UTC by subtracting 7 hours (7 * 60 * 60 * 1000 = 25200000 ms)
-    const utcDate = new Date(wibDate.getTime() - (7 * 60 * 60 * 1000));
-    
-    return utcDate;
+    // Return date as-is without UTC conversion
+    // This will store 2025-06-30 00:00:00 in database (treated as local time)
+    return wibDate;
   } catch (error) {
     console.error(`Failed to parse date: ${dateStr}`, error);
-    // Return a default date if parsing fails (June 30, 2025 00:00 WIB converted to UTC)
-    const defaultWibDate = new Date(2025, 5, 30, 0, 0, 0, 0);
-    return new Date(defaultWibDate.getTime() - (7 * 60 * 60 * 1000));
+    // Return a default date (June 30, 2025 00:00 local time)
+    return new Date(2025, 5, 30, 0, 0, 0, 0);
   }
 }
 
