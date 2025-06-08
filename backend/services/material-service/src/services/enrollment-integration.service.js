@@ -32,7 +32,8 @@ export class EnrollmentIntegrationService {
    * @param {string} userId - User ID
    * @param {string} courseId - Course ID
    * @returns {Promise<boolean>} True if user is enrolled
-   */  static async isUserEnrolled(userId, courseId) {
+   */
+  static async isUserEnrolled(userId, courseId) {
     try {
       // Check if user has admin role, admins should always have access
       if (userId && userId.includes('admin')) {
@@ -40,15 +41,6 @@ export class EnrollmentIntegrationService {
         return true;
       }
       
-      // TEMPORARY: Development/Testing Mode - Force allow access for specific courses
-      // When enrollment service issues are fixed, remove this or toggle via env var
-      const ENABLE_EMERGENCY_ACCESS = false; // Now using circuit breaker instead of emergency mode
-      if (ENABLE_EMERGENCY_ACCESS) {
-        console.log(`⚠️ EMERGENCY ACCESS MODE - Bypassing enrollment check for user ${userId} in course ${courseId}`);
-        return true;
-      }
-      
-      // Normal flow - only executes if emergency access is disabled
       // Cache key for enrollment status
       const cacheKey = `enrollment:${userId}:${courseId}`;
       
@@ -117,6 +109,7 @@ export class EnrollmentIntegrationService {
       CacheService.invalidate(`enrollment:${userId}:`, true);
     }
   }
+
   /**
    * Call enrollment service API (which is part of payment service)
    * @param {string} endpoint - API endpoint to call (e.g. /enrollments/{courseId}/status)
@@ -124,10 +117,19 @@ export class EnrollmentIntegrationService {
    * @param {Object} data - Request data
    * @param {string} userId - User ID for X-User-ID header
    * @returns {Promise<Object>} Response data
-   */  static async callEnrollmentService(endpoint, method = 'GET', data = null, userId = null) {
+   */
+  static async callEnrollmentService(endpoint, method = 'GET', data = null, userId = null) {
     try {
       const token = this.generateServiceToken();
-      const url = `${config.PAYMENT_SERVICE_URL}${endpoint}`;
+      
+      // Ensure PAYMENT_SERVICE_URL is properly configured
+      if (!config.PAYMENT_SERVICE_URL) {
+        throw new Error('PAYMENT_SERVICE_URL is not configured');
+      }
+      
+      // Construct full URL - no need to add /api prefix for enrollment endpoints
+      const baseUrl = config.PAYMENT_SERVICE_URL.replace(/\/$/, ''); // Remove trailing slash
+      const url = `${baseUrl}${endpoint}`;
       
       const headers = {
         'Authorization': `Bearer ${token}`,
@@ -149,11 +151,10 @@ export class EnrollmentIntegrationService {
       
       // Only add data property if there's actual data to send
       if (data !== null && data !== undefined) {
-        // Ensure data is properly stringified when sent
-        requestConfig.data = typeof data === 'string' ? data : JSON.stringify(data);
+        requestConfig.data = data;
       }
       
-      console.log(`Calling enrollment service at ${endpoint} with method ${method}`);
+      console.log(`Calling enrollment service at ${url} with method ${method}`);
       const response = await axios(requestConfig);
       
       return response.data;
@@ -163,6 +164,10 @@ export class EnrollmentIntegrationService {
       if (error.response) {
         console.error('Error response:', error.response.data);
         console.error('Error status:', error.response.status);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+      } else {
+        console.error('Request setup error:', error.message);
       }
       
       throw error;
@@ -174,10 +179,80 @@ export class EnrollmentIntegrationService {
    * @returns {string} JWT token
    */
   static generateServiceToken() {
+    if (!config.JWT_SECRET) {
+      throw new Error('JWT_SECRET is not configured');
+    }
+    
     return jwt.sign(
-      { service: 'material-service', role: 'SERVICE' },
+      { 
+        service: 'material-service', 
+        role: 'SERVICE',
+        iat: Math.floor(Date.now() / 1000)
+      },
       config.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '5m' } // Shorter expiry for service tokens
     );
+  }
+
+  /**
+   * Health check for enrollment service
+   * @returns {Promise<boolean>} Service health status
+   */
+  static async checkEnrollmentServiceHealth() {
+    try {
+      if (!config.PAYMENT_SERVICE_URL) {
+        console.error('PAYMENT_SERVICE_URL is not configured');
+        return false;
+      }
+
+      const url = `${config.PAYMENT_SERVICE_URL}/health`;
+      console.log(`Checking enrollment service health at: ${url}`);
+      
+      const response = await axios.get(url, { timeout: 3000 });
+      
+      if (response.status === 200) {
+        console.log('✅ Enrollment service is healthy');
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error(`❌ Enrollment service health check failed: ${error.message}`);
+      return false;
+    }
+  }
+
+  /**
+   * Test enrollment service connection with basic auth
+   * @param {string} userId - Test user ID
+   * @returns {Promise<boolean>} Connection test result
+   */
+  static async testEnrollmentServiceConnection(userId = 'test-user') {
+    try {
+      console.log('🧪 Testing enrollment service connection...');
+      
+      // First check health
+      const isHealthy = await this.checkEnrollmentServiceHealth();
+      if (!isHealthy) {
+        return false;
+      }
+
+      // Test actual API call
+      try {
+        await this.callEnrollmentService('/enrollments', 'GET', null, userId);
+        console.log('✅ Enrollment service connection test successful');
+        return true;
+      } catch (apiError) {
+        // 401/403 is actually expected for service-to-service calls without proper auth
+        if (apiError.response && [401, 403].includes(apiError.response.status)) {
+          console.log('✅ Enrollment service is responding (auth required as expected)');
+          return true;
+        }
+        throw apiError;
+      }
+    } catch (error) {
+      console.error(`❌ Enrollment service connection test failed: ${error.message}`);
+      return false;
+    }
   }
 }

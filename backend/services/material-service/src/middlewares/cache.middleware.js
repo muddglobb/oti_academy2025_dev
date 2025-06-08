@@ -73,22 +73,18 @@ export const cacheMiddleware = (type = 'general', ttl = null) => {
     const sanitizedUrl = (req.originalUrl || req.url).replace(/[<>'"&]/g, '');
     const cacheKey = `${type}:${sanitizedUrl}`;
     
-    try {
-      // Check if cached data exists first
+    try {      // Check if cached data exists first
       const existingCache = await CacheService.get(cacheKey);
       if (existingCache && !res.headersSent) {
         // Validate cached data before sending
         if (isDataSafe(existingCache)) {
           const sanitizedCache = sanitizeData(existingCache);
-          console.log(`🔄 Cache hit for ${cacheKey}`);
           return res.json(sanitizedCache);
         } else {
           // Invalid cached data, remove it
           await CacheService.invalidate(cacheKey);
         }
       }
-      
-      console.log(`🔍 Cache miss for ${cacheKey}`);
       
       // Store original send and json functions
       const originalSend = res.send;
