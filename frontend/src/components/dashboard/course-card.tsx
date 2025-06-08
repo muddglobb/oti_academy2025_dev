@@ -10,6 +10,7 @@ type CourseCardProps = {
   description: string;
   firstTeacher: string;
   secTeacher: string | null;
+  thirdTeacher: string | null;
 };
 const CourseCard = ({
   slug,
@@ -18,13 +19,14 @@ const CourseCard = ({
   description,
   firstTeacher,
   secTeacher,
+  thirdTeacher,
 }: CourseCardProps) => {
   return (
     <div className="flex flex-col border-2 rounded-[12px] border-neutral-500 bg-white w-full">
       <Link href={`/dashboard/class-dashboard/${slug}`}>
         <div>
           <div className="flex flex-row">
-            <div className="relative w-35 md:w-45 h-auto">
+            <div className="relative w-35 md:w-50 h-auto">
               <Image
                 src={image}
                 alt={title}
@@ -33,7 +35,7 @@ const CourseCard = ({
               />
             </div>
 
-            <div className="flex flex-col mx-1 sm:mx-5 my-1 sm:my-4 w-full justify-between">
+            <div className="flex flex-col mx-1 sm:mx-5 my-1 sm:my-4 w-full justify-between sm:h-32 md:h-35">
               <div>
                 <div className="flex flex-row justify-between items-center">
                   <h2 className="text-[14px] font-bold text-neutral-900">
@@ -68,6 +70,15 @@ const CourseCard = ({
                   {secTeacher !== "" && (
                     <Image
                       src={secTeacher || "/images/class-profile/hako.jpg"}
+                      alt="Mentor"
+                      width={30}
+                      height={30}
+                      className="rounded-full"
+                    />
+                  )}
+                  {thirdTeacher !== "" && (
+                    <Image
+                      src={thirdTeacher || "/images/class-profile/hako.jpg"}
                       alt="Mentor"
                       width={30}
                       height={30}
