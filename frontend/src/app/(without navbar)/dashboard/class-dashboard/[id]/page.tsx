@@ -234,7 +234,7 @@ export default async function Page({
                     <ClassInfo courseTitle={classData.title} />
                   </div>
                   <div className="w-1/2">
-                    <VideoTeaser slug={classData.slug} />
+                    <VideoTeaser slug={classData.slug} title={classData.title}/>
                   </div>
                 </div>
                 <TeacherCard courseTitle={classData.courses[1]} />
@@ -261,7 +261,7 @@ export default async function Page({
                   <TeacherCard courseTitle="Mentor Card" />
                 </div>
                 <div className="w-1/2">
-                  <VideoTeaser slug={classData.slug} />
+                  <VideoTeaser slug={classData.slug} title={classData.title}/>
                 </div>
               </div>
               <TeacherCard courseTitle={classData.courses[1]} />
@@ -288,7 +288,7 @@ export default async function Page({
                   <TeacherCard courseTitle={classData.courses[0]} />
                 </div>
                 <div className="w-1/2">
-                  <VideoTeaser slug={classData.slug} />
+                  <VideoTeaser slug={classData.slug} title={classData.title}/>
                 </div>
               </div>
 
@@ -314,7 +314,7 @@ export default async function Page({
                   <Prerequisites courseTitle={classData.title} />
                 </div>
                 <div className="w-1/2">
-                  <VideoTeaser slug={classData.slug} />
+                  <VideoTeaser slug={classData.slug} title={classData.title}/>
                 </div>
               </div>
               <TeacherCard courseTitle={classData.courses[0]} />
@@ -335,7 +335,7 @@ export default async function Page({
             CourseID={courseID}
             ClassSlug={classData.slug}
           />
-          <VideoTeaser slug={classData.slug} />
+          <VideoTeaser slug={classData.slug} title={classData.title} />
           <ClassInfo courseTitle={classData.title} />
           {classData.ClassLevel === "INTERMEDIATE" && (
             <Prerequisites courseTitle={classData.title} />
