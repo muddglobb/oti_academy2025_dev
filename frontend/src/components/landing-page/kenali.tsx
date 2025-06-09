@@ -17,7 +17,6 @@ const Kenali = () => {
         className="scroll-smooth w-full bg-cover bg-center flex flex-col items-center justify-center
                   bg-[linear-gradient(0deg,rgba(5,12,26,0.6)_0%,rgba(5,12,26,0.8)_100%)]
                   relative
-                  lg:h-screen
                 "
       >
         <div

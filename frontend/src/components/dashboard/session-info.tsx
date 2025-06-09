@@ -554,7 +554,7 @@ const SessionInfo = async ({
                             }`}
                           >
                             {status === "On Going" && (
-                              <Link href={``}>
+                              <Link href={session.resourceUrl}>
                                 <p>See Material</p>
                               </Link>
                             )}

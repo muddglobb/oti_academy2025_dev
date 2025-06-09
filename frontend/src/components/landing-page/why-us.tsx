@@ -115,7 +115,7 @@ const WhyUs = () => {
                     once: true,
                   }}
                   key={index}
-                  className="z-100 flex flex-row gap-3 p-6 max-w-screen xl:w-260 border border-white rounded-xl text-neutral-50"
+                  className="z-100 flex flex-row gap-3 p-6 max-w-screen w-full xl:w-260 border border-white rounded-xl text-neutral-50"
                 >
                   <Icon size={48} />
                   <div className="z-100 flex flex-col">

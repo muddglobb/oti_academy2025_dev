@@ -117,30 +117,38 @@ const Harga = () => {
 
                   {/* bagian yang persen persenan */}
                   <div className="flex pt-10 md:pt-25 flex-col gap-2 pt-5 justify-start w-full">
-                    <div className="flex flex-row gap-1 items-center">
+                    <div className="flex flex-row gap-1 items-start justify-start">
                       {" "}
-                      <CheckCircle />
+                      <div className="w-6 h-6">
+                        <CheckCircle />
+                      </div>
                       <p className="text-[12px] lg:text-[18px]">
                         {Details[0].text1}
                       </p>{" "}
                     </div>
-                    <div className="flex flex-row gap-1 items-center">
+                    <div className="flex flex-row gap-1 items-start">
                       {" "}
-                      <CheckCircle />
+                      <div className="w-6 h-6">
+                        <CheckCircle />
+                      </div>
                       <p className="text-[12px] lg:text-[18px]">
                         {Details[0].text2}
                       </p>{" "}
                     </div>
-                    <div className="flex flex-row gap-1 items-center">
+                    <div className="flex flex-row gap-1 items-start">
                       {" "}
-                      <CheckCircle />
+                      <div className="w-6 h-6">
+                        <CheckCircle />
+                      </div>
                       <p className="text-[12px] lg:text-[18px]">
                         {Details[0].text3}
                       </p>{" "}
                     </div>
-                    <div className="flex flex-row gap-1 items-center">
+                    <div className="flex flex-row gap-1 items-start">
                       {" "}
-                      <CheckCircle />
+                      <div className="w-6 h-6">
+                        <CheckCircle />
+                      </div>
                       <p className="text-[12px] lg:text-[18px]">
                         {Details[0].text4}
                       </p>{" "}
@@ -182,30 +190,38 @@ const Harga = () => {
 
                     {/* bagian yang persen persenan */}
                     <div className="flex pt-10 md:pt-40 flex-col gap-2 justify-start w-full">
-                      <div className="flex flex-row gap-1 items-center">
+                      <div className="flex flex-row gap-1 items-start">
                         {" "}
-                        <CheckCircle />
+                        <div className="w-6 h-6">
+                          <CheckCircle />
+                        </div>
                         <p className="text-[12px] lg:text-[18px]">
                           {Details[1].text1}
                         </p>{" "}
                       </div>
-                      <div className="flex flex-row gap-1 items-center">
+                      <div className="flex flex-row gap-1 items-start">
                         {" "}
-                        <CheckCircle />
+                        <div className="w-6 h-6">
+                          <CheckCircle />
+                        </div>
                         <p className="text-[12px] lg:text-[18px]">
                           {Details[1].text2}
                         </p>{" "}
                       </div>
-                      <div className="flex flex-row gap-1 items-center">
+                      <div className="flex flex-row gap-1 items-start">
                         {" "}
-                        <CheckCircle />
+                        <div className="w-6 h-6">
+                          <CheckCircle />
+                        </div>
                         <p className="text-[12px] lg:text-[18px]">
                           {Details[1].text3}
                         </p>{" "}
                       </div>
-                      <div className="flex flex-row gap-1 items-center">
+                      <div className="flex flex-row gap-1 items-start">
                         {" "}
-                        <CheckCircle />
+                        <div className="w-6 h-6">
+                          <CheckCircle />
+                        </div>
                         <p className="text-[12px] lg:text-[18px]">
                           {Details[1].text4}
                         </p>{" "}
@@ -242,30 +258,38 @@ const Harga = () => {
 
                   {/* bagian yang persen persenan */}
                   <div className="flex pt-10 md:pt-25 flex-col gap-2 pt-5 justify-start w-full">
-                    <div className="flex flex-row gap-1 items-center">
+                    <div className="flex flex-row gap-1 items-start">
                       {" "}
-                      <CheckCircle />
+                      <div className="w-6 h-6">
+                        <CheckCircle />
+                      </div>
                       <p className="text-[12px] lg:text-[18px]">
                         {Details[2].text1}
                       </p>{" "}
                     </div>
-                    <div className="flex flex-row gap-1 items-center">
+                    <div className="flex flex-row gap-1 items-start">
                       {" "}
-                      <CheckCircle />
+                      <div className="w-6 h-6">
+                        <CheckCircle />
+                      </div>
                       <p className="text-[12px] lg:text-[18px]">
                         {Details[2].text2}
                       </p>{" "}
                     </div>
-                    <div className="flex flex-row gap-1 items-center">
+                    <div className="flex flex-row gap-1 items-start justify-start">
                       {" "}
-                      <CheckCircle />
+                      <div className="w-6 h-6">
+                        <CheckCircle />
+                      </div>
                       <p className="text-[12px] lg:text-[18px]">
                         {Details[2].text3}
                       </p>{" "}
                     </div>
-                    <div className="flex flex-row gap-1 items-center">
+                    <div className="flex flex-row gap-1 items-start">
                       {" "}
-                      <CheckCircle />
+                      <div className="w-6 h-6">
+                        <CheckCircle />
+                      </div>
                       <p className="text-[12px] lg:text-[18px]">
                         {Details[2].text4}
                       </p>{" "}
