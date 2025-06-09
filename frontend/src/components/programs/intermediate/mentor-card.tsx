@@ -143,7 +143,7 @@ const MentorCard = ({
           height={200}
           className="rounded-l-md"
         />
-        <div className="bg-neutral-50 w-55 rounded-r-md h-50">
+        <div className="bg-neutral-50 w-42 rounded-r-md h-50">
           <div className="m-2">
             <div className="flex justify-between">
               <div className="mr-2">
@@ -174,8 +174,6 @@ const MentorCard = ({
             <div>
               {/* <p>{description}</p> */}
               <p className="text-sm line-clamp-5">{description}</p>
-
-
             </div>
           </div>
         </div>
