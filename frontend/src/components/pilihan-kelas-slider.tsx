@@ -86,7 +86,7 @@ const PilihanKelasSlider =() => {
                 settings: {
                     slidesToShow: 1,
                     centerMode: true,
-                    centerPadding: "30px",
+                    centerPadding: "20px",
                 }
             }
         ]
@@ -105,7 +105,7 @@ const PilihanKelasSlider =() => {
                         once: true,
                         }}
                         key={index} 
-                        className="px-2"
+                        className="px-2 gap-5"
                     >
                         <Card
                             key={index}

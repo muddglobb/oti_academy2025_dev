@@ -471,7 +471,7 @@ static async getCoursePendingEnrollmentCount(courseId) {
     const uniquePackageIds = [...new Set(directPayments.map(p => p.packageId))];
     let entryIntermediateCount = 0;
     
-    // Get package types
+    // Get package types for direct payments
     await Promise.all(uniquePackageIds.map(async (packageId) => {
       if (!packageTypeCache.has(packageId)) {
         const packageInfo = await this.getPackageInfo(packageId);
@@ -506,11 +506,26 @@ static async getCoursePendingEnrollmentCount(courseId) {
     let bundleCount = 0;
     
     for (const payment of bundlePayments) {
-      const packageType = packageTypeCache.get(payment.packageId) || await this.getPackageType(payment.packageId);
-      
+      // Get package type if not already cached
+      if (!packageTypeCache.has(payment.packageId)) {
+        const packageInfo = await this.getPackageInfo(payment.packageId);
+        if (packageInfo) {
+          packageTypeCache.set(payment.packageId, packageInfo.type);
+        }
+      }
+    
+      const packageType = packageTypeCache.get(payment.packageId);
+    
       if (packageType === 'BUNDLE') {
-        const coursesInBundle = await this.getCoursesInPackage(payment.packageId);
+        // Get courses in bundle if not already cached
+         if (!bundleCourseCache.has(payment.packageId)) {
+          const coursesInBundle = await this.getCoursesInPackage(payment.packageId);
+          bundleCourseCache.set(payment.packageId, coursesInBundle || []);
+        }
+      
+        const coursesInBundle = bundleCourseCache.get(payment.packageId);
         const isCourseInBundle = coursesInBundle.some(c => String(c.id) === String(courseId));
+        
         if (isCourseInBundle) {
           bundleCount++;
         }

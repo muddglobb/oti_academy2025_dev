@@ -7,6 +7,7 @@ import {
   getSecTeacher,
   getShortDescByTitle,
   getSlugByTitle,
+  getThirdTeacher,
 } from "@/lib/course-props/course-props";
 import CourseCard from "./course-card";
 
@@ -68,6 +69,7 @@ export default function BundleCard({
             description={getShortDescByTitle(pkg.name)}
             firstTeacher={getFirstTeacher(pkg.name)}
             secTeacher={getSecTeacher(pkg.name)}
+            thirdTeacher={getThirdTeacher(pkg.name)}
           />
         </div>
       )}

@@ -56,12 +56,12 @@ const Hero = () => {
 
         {/* isi */}
         <div>
-          <div className=" flex flex-col items-center justify-center z-0">
+          <div className=" flex flex-col items-center justify-center z-10">
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 2 }}
-              className="flex flex-row gap-5 md:flex-col lg:pt-0 pb-7">
+              className="flex flex-row gap-5 md:flex-col lg:pt-0 pb-10 z-10">
               <div className="justify-center items-center flex lg:pt-3">
                 <Link
                   href="https://omahti.web.id/"
@@ -143,7 +143,7 @@ const Hero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 5, delay: 0.5, type: "spring" }}
                 className="flex justify-center items-center">
-                <div className="flex flex-col w-35 sm:w-55 justify-center items-center">
+                <div className="flex flex-col w-35 sm:w-55 justify-center items-center z-10">
                   <p className="flex-inline text-neutral-50 font-bold text-center text-[14px] sm:text-[2em]">
                     20+
                   </p>

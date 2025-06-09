@@ -67,7 +67,7 @@ const IntermediateClass = () => {
       />
       <div
         className="w-full pb-25 bg-cover bg-center flex flex-col items-center justify-center
-          bg-[linear-gradient(0deg,rgba(5,12,26,0.4)_0%,rgba(5,12,26,0.9)_100%)]
+          bg-[linear-gradient(0deg,rgba(5,12,26,0.7)_0%,rgba(5,12,26,0.9)_100%)]
           relative
         "
       >

@@ -14,7 +14,7 @@ const teacherCardData: Record<
     [
       "Rayhan Firdaus Ardian",
       "Teaching Assistant",
-      "/person-placeholder.jpeg",
+      "/images/foto-orang/rehund.webp",
       "https://www.linkedin.com/",
       "Mahasiswa Ilmu Komputer UGM tahun kedua, berpengalaman di web development dan aktif mengerjakan proyek-proyek aplikasi web modern.",
     ],
@@ -23,7 +23,7 @@ const teacherCardData: Record<
     [
       "Daffa Aryza Pasya",
       "Teaching Assistant",
-      "/person-placeholder.jpeg",
+      "/images/foto-orang/daffa.webp",
       "https://www.linkedin.com/",
       "Mahasiswa Ilkom UGM tahun pertama, antusias coding Python, C++, JavaScript. Finalis Data Royale 2024, siap membimbing dengan cara santai dan mudah.",
     ],
@@ -32,7 +32,7 @@ const teacherCardData: Record<
     [
       "Muhammad Ahsan Zaki Wiryawan",
       "Teaching Assistant",
-      "/person-placeholder.jpeg",
+      "/images/foto-orang/ahsan.webp",
       "https://www.linkedin.com/",
       "Mahasiswa Ilmu Komputer UGM yang antusias di bidang cybersecurity. Telah menyelesaikan Google Cybersecurity Certificate dan siap jadi teaching assistant andal di kelas ini.",
     ],
@@ -41,7 +41,7 @@ const teacherCardData: Record<
     [
       "Thomas Nadandra Aryawida",
       "Teaching Assistant",
-      "/person-placeholder.jpeg",
+      "/images/foto-orang/thomas.webp",
       "https://www.linkedin.com/",
       "Mahasiswa tahun pertama Ilmu Komputer UGM dengan minat besar dalam game development. Peraih Best Innovation di Yogyakarta Global Game Jam 2025, siap menjadi teaching assistant andal.",
     ],
@@ -50,7 +50,7 @@ const teacherCardData: Record<
     [
       "Geraldine Hutagalung",
       "Teaching Assistant",
-      "/person-placeholder.jpeg",
+      "/images/foto-orang/geradline.webp",
       "https://www.linkedin.com/",
       "Mahasiswa Ilmu Komputer UGM yang dikenal dengan karya-karya desain grafisnya yang kreatif dan standout. Aktif di berbagai proyek dan siap berbagi sebagai teaching assistant.",
     ],
@@ -59,14 +59,14 @@ const teacherCardData: Record<
     [
       "Revy Satya Gunawan",
       "Teaching Assistant",
-      "/person-placeholder.jpeg",
+      "/images/foto-orang/revy.webp",
       "https://www.linkedin.com/",
       "-",
     ],
   ],
   "Data Science & Artificial Intelligence": [
     [
-      "XX",
+      "TBA",
       "Mentor",
       "/person-placeholder.jpeg",
       "https://www.linkedin.com/",
@@ -75,14 +75,14 @@ const teacherCardData: Record<
     [
       "Daffa Aryza Pasya",
       "Teaching Assistant",
-      "/person-placeholder.jpeg",
+      "/images/foto-orang/daffa.webp",
       "https://www.linkedin.com/",
       "Mahasiswa Ilkom UGM tahun pertama, antusias coding Python, C++, JavaScript. Finalis Data Royale 2024, siap membimbing dengan cara santai dan mudah.",
     ],
   ],
   "UI/UX": [
     [
-      "XX",
+      "TBA",
       "Mentor",
       "/person-placeholder.jpeg",
       "https://www.linkedin.com/",
@@ -91,14 +91,14 @@ const teacherCardData: Record<
     [
       "Ken Bima Satria Gandasasmita",
       "Teaching Assistant",
-      "/person-placeholder.jpeg",
+      "/images/foto-orang/ken-bima.webp",
       "https://www.linkedin.com/",
       "-",
     ],
   ],
   "Software Engineering": [
     [
-      "XX",
+      "TBA",
       "Mentor",
       "/person-placeholder.jpeg",
       "https://www.linkedin.com/",
@@ -107,7 +107,7 @@ const teacherCardData: Record<
     [
       "Rayhan Firdaus Ardian",
       "Teaching Assistant",
-      "/person-placeholder.jpeg",
+      "/images/foto-orang/rehund.webp",
       "https://www.linkedin.com/",
       "Mahasiswa Ilmu Komputer UGM tahun kedua, berpengalaman di web development dan aktif mengerjakan proyek-proyek aplikasi web modern.",
     ],
@@ -123,7 +123,7 @@ const teacherCardData: Record<
     [
       "Muhammad Ahsan Zaki Wiryawan",
       "Teaching Assistant",
-      "/person-placeholder.jpeg",
+      "/images/foto-orang/ahsan.webp",
       "https://www.linkedin.com/",
       "Mahasiswa Ilmu Komputer UGM yang antusias di bidang cybersecurity. Telah menyelesaikan Google Cybersecurity Certificate dan siap jadi teaching assistant andal di kelas ini.",
     ],

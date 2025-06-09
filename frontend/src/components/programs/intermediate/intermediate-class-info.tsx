@@ -94,7 +94,7 @@ const IntermediateClassInfo = ({ classInfo }: ClassInfoProps) => {
 
           <div
             className="text-white flex flex-col gap-2.5 w-auto
-            px-37
+            px-0
             md:px-15
             lg:px-46
             xl:px-108

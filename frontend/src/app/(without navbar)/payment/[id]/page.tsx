@@ -289,18 +289,18 @@ export default async function Page({
   }
 
   const payments = await getMyPayments();
-  console.log("meli", payments);
-  console.log("fefsd", payments[0].packageType);
+  // console.log("meli", payments);
+  // console.log("fefsd", payments[0].packageType);
 
   let checkBundle = "NO";
   let checkEntry = "NO";
   let checkIntermediate = "NO";
 
-  if (payments[0].packageType == "BUNDLE") checkBundle = "YES";
+  if (payments[0]?.packageType == "BUNDLE") checkBundle = "YES";
   else {
     for (let i = 0; i < 2; i++) {
-      if (payments[i].packageType == "ENTRY") checkEntry = "YES";
-      else if (payments[i].packageType == "INTERMEDIATE")
+      if (payments[i]?.packageType == "ENTRY") checkEntry = "YES";
+      else if (payments[i]?.packageType == "INTERMEDIATE")
         checkIntermediate = "YES";
     }
   }
@@ -317,12 +317,13 @@ export default async function Page({
 
       {/* <PaymentPopUp /> */}
       {checkBundle == "YES" && <TolakPopUp type="Bundle"/>}
-      {classData?.ClassLevel == "ENTRY" && checkEntry == "YES" && <TolakPopUp type="Entry"/>}
-      {classData?.ClassLevel == "INTERMEDIATE" && checkIntermediate == "YES" && <TolakPopUp type="Intermediate"/>}
-      {classData?.ClassLevel == "ENTRY" && checkEntry == "NO" && <PaymentPopUp/>}
-      {classData?.ClassLevel == "INTERMEDIATE" && checkEntry == "NO" && <PaymentPopUp/>}
-      {classData?.ClassLevel == "BUNDLE" && checkEntry == "NO" && <PaymentPopUp/>}
-      
+      {checkBundle == "NO" && classData?.ClassLevel == "BUNDLE" && checkIntermediate == "YES" && <TolakPopUp type="Intermediate"/>}
+      {checkBundle == "NO" && classData?.ClassLevel == "BUNDLE" && checkEntry == "YES" && <TolakPopUp type="Entry"/>}
+      {checkBundle == "NO" && classData?.ClassLevel == "BUNDLE" && checkEntry == "NO" && checkIntermediate == "NO" && <PaymentPopUp/>}
+      {checkBundle == "NO" && classData?.ClassLevel == "INTERMEDIATE" && checkIntermediate == "YES" && <TolakPopUp type="Intermediate"/>}
+      {checkBundle == "NO" && classData?.ClassLevel == "INTERMEDIATE" && checkIntermediate == "NO" && <PaymentPopUp/>}
+      {checkBundle == "NO" && classData?.ClassLevel == "ENTRY" && checkEntry == "YES" && <TolakPopUp type="Entry"/>}
+      {checkBundle == "NO" && classData?.ClassLevel == "ENTRY" && checkEntry == "NO" && <PaymentPopUp/>}
 
       <div className="flex flex-col xl:flex-row gap-6">
         <div className="flex flex-col gap-6 xl:w-240">

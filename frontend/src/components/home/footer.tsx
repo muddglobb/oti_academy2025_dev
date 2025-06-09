@@ -38,7 +38,7 @@ const Footer = () => {
         flex-col
         justify-between
         
-        bg-[linear-gradient(0deg,rgba(5,12,26,1.0)_0%,rgba(5,12,26,0.4)_100%)]
+        bg-[linear-gradient(0deg,rgba(5,12,26,1.0)_0%,rgba(5,12,26,0.7)_100%)]
         relative
       "
       >
@@ -63,7 +63,7 @@ const Footer = () => {
           </p>
           <div className="flex justify-center mt-4">
             <Link href="/register">
-              <Button>Get Started</Button>
+              <Button className="px-5 py-4 text-[16px] font-white">Get Started</Button>
             </Link>
           </div>
         </div>
@@ -90,7 +90,7 @@ const Footer = () => {
           </div>
 
           <div className="flex gap-[20px] items-end">
-            <Link href="https://omahti.web.id/">
+            <Link href="mailto:omahti.mipa@ugm.ac.id">
               <Mail
                 width={28}
                 height={28}

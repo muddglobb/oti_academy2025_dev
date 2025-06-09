@@ -23,13 +23,13 @@ const EntryClassInfo = ({ classInfo }: ClassInfoProps) => {
           style={{ backgroundImage: "url(/images/planet/saturnus.png)" }}
         ></div>
         <section className="flex flex-col gap-7.5  justify-center items-center py-10 bg-no-repeat bg-cover w-full">
-          <p className="text-center font-bold bg-gradient-to-b from-gray-300 to-gray-400 bg-clip-text text-transparent w-md md:w-full
+          <p className="text-center font-bold bg-gradient-to-b from-gray-300 to-gray-400 bg-clip-text text-transparent md:w-full
           text-[22px]
           md:text-[32px]">
             Detailed Information About Our Class
           </p>
-          <div className="md:w-4xl w-sm">
-            <div className="flex md:flex-row flex-col justify-center md:gap-x-8 gap-y-8">
+          <div className="w-full">
+            <div className="flex md:flex-row flex-col justify-center md:gap-x-8 gap-y-8 items-center">
               <MentorCard
                 name={mentor}
                 imageUrl={mentorImage}
@@ -77,43 +77,44 @@ const EntryClassInfo = ({ classInfo }: ClassInfoProps) => {
                 </div>
               </div>
 
-              <div className="md:hidden text-sm text-white flex flex-row justify-center items-center gap-1">
-                <div className="flex flex-col gap-1">
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-48 px-2.5 py-2">
+              <div className="md:hidden text-sm text-white flex flex-col justify-center items-center gap-1">
+                <div className="flex gap-1">
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-40 sm:w-52 px-2.5 py-2 items-center">
                     <Image
                       src={"/icons/calendar-icon.svg"}
                       alt="calendar-icon"
-                      width={21}
-                      height={21}
+                      width={19}
+                      height={19}
                     ></Image>
                     <p>{date}</p>
                   </div>
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-48 px-2.5 py-2">
-                    <Image
-                      src={"/icons/target-icon.svg"}
-                      alt="calendar-icon"
-                      width={21}
-                      height={21}
-                    ></Image>
-                    <p>{sesi}</p>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-48 px-2.5 py-2">
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-40 sm:w-52 px-2.5 py-2 items-center">
                     <Image
                       src={"/icons/time-icon.svg"}
                       alt="calendar-icon"
-                      width={21}
-                      height={21}
+                      width={19}
+                      height={19}
                     ></Image>
                     <p>{jam}</p>
                   </div>
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-48 px-2.5 py-2">
+                </div>
+                <div className="flex gap-1">
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-40 sm:w-52 px-2.5 py-2 items-center">
+                    <Image
+                      src={"/icons/target-icon.svg"}
+                      alt="calendar-icon"
+                      width={19}
+                      height={19}
+                    ></Image>
+                    <p>{sesi}</p>
+                  </div>
+                  
+                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-40 sm:w-52 px-2.5 py-2 items-center">
                     <Image
                       src={"/icons/stack-icon.svg"}
                       alt="calendar-icon"
-                      width={21}
-                      height={21}
+                      width={19}
+                      height={19}
                     ></Image>
                     <p>{modul}</p>
                   </div>
