@@ -109,7 +109,7 @@ const ClassCapacity = async ({
           capacity={capacity}
           percentage={percentage}
         />
-        {isEnrolled === false && (
+        {isEnrolled === false && currentCount !== capacity && (
           <Link
             href={`/payment/${ClassSlug}`}
             className="bg-primary-500 rounded-[8px] text-xs py-2 px-14.5 w-fit"
