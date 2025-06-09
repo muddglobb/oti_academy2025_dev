@@ -80,7 +80,7 @@ const BundleClassInfo = ({
                     name="Ken Bima Satria Gandasasmita"
                     imageUrl="/images/foto-orang/ken-bima.webp"
                     role="Teaching Assistant"
-                    description={TADesc}
+                    description="Mahasiswa Ilmu Komputer UGM dengan spesialisasi dan berpengalaman dalam berbagai kompetisi  UI/UX termasuk menjadi finalis GEMASTIK 2024. Ia siap berbagi ilmu dan jadi teaching assistant."
                     linkedin={TALink}
                   />
                 )}

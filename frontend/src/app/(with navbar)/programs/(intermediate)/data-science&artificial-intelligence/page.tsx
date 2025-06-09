@@ -25,7 +25,7 @@ const classInfo: [
 ] = [
   "TBA",
   "/person-placeholder.jpeg",
-  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?",
+  "",
   "https://www.linkedin.com/in/dhimas-sulistio/",
 
   "Daffa Aryza",
@@ -43,12 +43,12 @@ const sessions: [string, string, string, string][] = [
   [
     "Grand Launching",
     "30 Juni 2025",
-    "XX.00 – XX.00 WIB",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+    "TBA",
+    "",
   ],
   [
     "DSAI Workspace Setup (Video)",
-    "XX June 2025",
+    "",
     "Asinkronus",
     "Sesi ini merupakan pembelajaran mandiri yang dirancang untuk membantu peserta menyiapkan lingkungan kerja menggunakan Kaggle. Materi mencakup cara membuat akun, mengenal antarmuka Kaggle, serta mengatur file dan notebook yang akan digunakan selama program. Dengan menyelesaikan sesi ini, peserta diharapkan siap untuk mengikuti sesi pembelajaran DSAI secara optimal tanpa kendala teknis.",
   ],
@@ -98,13 +98,13 @@ const sessions: [string, string, string, string][] = [
     "Rapat Teknis untuk Presentasi Final Round",
     "26 Juli 2025",
     "14.00 –15.00 WIB | 1 Jam",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis? fjieofjiojwjefoiejwoi",
+    "",
   ],
   [
     "Presentasi Final Round",
     "28 Juli 2025",
     "14.00 –16.00 WIB | 2 Jam",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis? fjieofjiojwjefoiejwoi",
+    "",
   ],
 ];
 

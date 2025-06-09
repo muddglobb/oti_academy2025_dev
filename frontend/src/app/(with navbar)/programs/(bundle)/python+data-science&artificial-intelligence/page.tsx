@@ -12,118 +12,119 @@ const sessions: [string, string, string, string][] = [
   [
     "Grand Launching",
     "30 Juni 2025",
-    "XX.00 – XX.00 WIB",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+    "TBA",
+    ""
   ],
   [
     "Basic Python Workspace Setup",
     "30 Juni 2025",
     "Asinkronus",
-    "Dalam sesi ini, kamu akan mendapatkan video panduan lengkap tentang cara menyiapkan workspace Python-mu sendiri. Mulai dari instalasi tools yang dibutuhkan hingga menjalankan kode pertamamu, semua dijelaskan langkah demi langkah!",
+    "Dalam sesi ini, kamu akan dapat video panduan lengkap menyiapkan workspace Python. Mulai instalasi tools yang dibutuhkan hingga menjalankan kode pertama, semua dijelaskan langkah demi langkah dengan jelas dan mudah diikuti, supaya kamu siap mulai belajar coding Python tanpa kendala."
   ],
   [
     "Mempelajari Dasar-Dasar Python",
     "1 Juli 2025",
     "09.00 – 11.00 WIB | 2 Jam",
-    "Masuk ke inti dunia pemrograman bareng Python! Dalam sesi ini, kamu akan belajar menulis kode pertamamu, memahami sintaks dasar, mencetak output, menulis komentar, serta mengenal variabel, tipe data, input pengguna, dan operasi matematika sederhana. Langsung praktik lewat mini assignment seru yang merangkum semua konsep dasar yang kamu pelajari.",
+    "Masuk ke dunia pemrograman dengan Python. Pelajari sintaks dasar, output, komentar, variabel, tipe data, input pengguna, dan operasi matematika sederhana. Langsung praktik lewat mini assignment seru yang merangkum semua konsep dasar yang kamu pelajari."
   ],
   [
     "Logika dan Kontrol Alur Program Python",
     "2 Juli 2025",
     "09.00 – 11.00 WIB | 2 Jam",
-    "Sesi ini mengenalkan cara mengontrol alur program menggunakan operator logika, ekspresi kondisional (if, nested if), serta perulangan (for & while). Selain itu, kamu juga akan mengeksplorasi cara manipulasi string dan indexing. Untuk memperdalam pemahaman, kamu akan membangun Password Validator dan berlatih pattern printing.",
+    "Sesi ini mengenalkan cara mengontrol alur program menggunakan operator logika, ekspresi kondisional serta perulangan. Selain itu, kamu juga akan mengeksplorasi cara manipulasi string dan indexing. Untuk memperdalam pemahaman, kamu akan membangun Password Validator dan berlatih pattern printing."
   ],
   [
     "Struktur Data dan Fungsi Python",
     "3 Juli 2025",
     "09.00 – 11.00 WIB | 2 Jam",
-    "Kenali berbagai struktur data seperti Array, List, Tuple, Set, dan Dictionary yang sangat penting dalam Python. Dalam sesi ini, kamu juga akan mengenal fungsi dan scope dalam Python. Selain itu, kamu akan belajar cara mengimpor library dan menggunakan NumPy untuk perhitungan lebih kompleks. Semua konsep ini akan langsung kamu terapkan dalam studi kasus nyata.",
+    "Kenali berbagai struktur data seperti Array, List, Tuple, Set, dan Dictionary yang sangat penting dalam Python. Kamu juga akan mengenal fungsi dan scope dalam Python. Selain itu, cara mengimpor library dan menggunakan NumPy untuk perhitungan lebih kompleks."
   ],
   [
     "Pengenalan OOP dan Pemrograman Berbasis Objek",
     "7 Juli 2025",
     "09.00 – 11.00 WIB | 2 Jam",
-    "Masuki dunia Object-Oriented Programming (OOP) dan mulai menulis kode Python yang lebih rapi, terstruktur, dan mudah dikembangkan. Dalam sesi ini, kamu akan belajar konsep dasar seperti class, object, method, attribute, hingga method overloading & overriding. OOP adalah fondasi penting untuk membangun program berskala besar dan profesional dan sesi ini akan jadi langkah awalmu ke arah sana.",
+    "Masuki dunia Object-Oriented Programming (OOP) dan mulai menulis kode Python yang lebih rapi, terstruktur, dan mudah dikembangkan. Dalam sesi ini, kamu akan belajar konsep dasar seperti class, object, method, attribute, hingga method overloading & overriding."
   ],
   [
     "Data Structures 101 Dari Linked List ke Tree",
     "8 Juli 2025",
     "09.00 – 11.00 WIB | 2 Jam",
-    "Sesi ini akan memperkenalkan konsep dasar struktur data dan algoritma, kamu akan mempelajari cara kerja Linked List dan Tree, serta bagaimana mengimplementasikannya menggunakan Python. Untuk memperdalam pemahaman, kamu akan membangun Organization Tree sebagai studi kasus nyata. Di akhir sesi, akan diumumkan detail Final Project yang akan menjadi tantangan utama dan penutup dari perjalanan belajar kamu.",
+    "Sesi ini akan memperkenalkan konsep dasar struktur data dan algoritma, seperti cara kerja Linked List dan Tree, serta bagaimana mengimplementasikannya menggunakan Python. Di akhir sesi, akan diumumkan detail Final Project yang akan menjadi tantangan utama dan penutup dari perjalanan belajar kamu."
   ],
   [
     "Sesi Konsultasi",
     "8 – 13 Juli 2025",
     "TBA",
-    "Selama sesi ini, kamu juga bisa konsultasi langsung lewat Zoom. Kalau ada pertanyaan atau butuh arahan, silahkan masuk ke ruang Zoom dan bertanya langsung dengan Teaching Assistant kami. Ruang konsultasi ini akan dibuka dari pagi hingga sore, jadi kamu bisa tanya kapan pun selama jam tersebut.",
+    "Selama sesi, kamu bisa konsultasi langsung lewat Zoom dengan Teaching Assistant. Ruang konsultasi buka dari pagi sampai sore, jadi bisa tanya kapan saja dalam jam tersebut."
   ],
   [
     "Pengumuman Top 3 Proyek",
     "21 Juli 2025",
     "Asinkronus",
-    "Di sesi ini, kita akan mengumumkan Top 3 proyek terbaik dari final project yang telah dikumpulkan. Penilaian dilakukan berdasarkan tiga aspek utama: kualitas teknis, fitur yang berjalan baik, serta dokumentasi yang jelas.",
+    "Di sesi ini, kita akan mengumumkan Top 3 proyek terbaik dari final project yang telah dikumpulkan. Penilaian dilakukan berdasarkan tiga aspek utama: kualitas teknis, fitur yang berjalan baik, serta dokumentasi yang jelas."
   ],
   [
     "DSAI Workspace Setup (Video)",
-    "XX June 2025",
     "Asinkronus",
-    "Sesi ini merupakan pembelajaran mandiri yang dirancang untuk membantu peserta menyiapkan lingkungan kerja menggunakan Kaggle. Materi mencakup cara membuat akun, mengenal antarmuka Kaggle, serta mengatur file dan notebook yang akan digunakan selama program. Dengan menyelesaikan sesi ini, peserta diharapkan siap untuk mengikuti sesi pembelajaran DSAI secara optimal tanpa kendala teknis.",
+    "Asinkronus",
+    "Sesi ini merupakan pembelajaran mandiri yang dirancang untuk membantu peserta menyiapkan lingkungan kerja menggunakan Kaggle. Materi mencakup cara membuat akun, mengenal antarmuka Kaggle, serta mengatur file dan notebook yang akan digunakan selama program."
   ],
   [
     "Langkah Awal di Dunia Data Science & AI",
     "14 Juli 2025",
     "14.00 –16.00 WIB | 2 Jam",
-    "Mulai perjalananmu di dunia Data Science & AI dengan sesi pembuka yang seru dan penuh wawasan! Di sini kamu akan mengenal konsep dasar DSAI, memahami alur kerjanya, dan belajar menggunakan library penting seperti Pandas dan Matplotlib. Tak hanya teori, kamu juga akan langsung praktik mengolah data mentah lewat sesi hands-on yang aplikatif.",
+    "Mulai perjalananmu di dunia Data Science & AI dengan sesi pembuka yang seru dan penuh wawasan. Di sini kamu akan mengenal konsep dasar DSAI, memahami alur kerjanya, dan belajar menggunakan library penting seperti Pandas dan Matplotlib."
   ],
   [
     "Pengenalan Machine Learning",
     "15 Juli 2025",
     "14.00 – 16.00 WIB | 2 Jam",
-    "Pada sesi ini, kamu akan membahas konsep dasar Machine Learning, termasuk supervised dan unsupervised learning. Peserta akan mempelajari regresi, klasifikasi, regresi linear, serta klasterisasi menggunakan K-means. Terdapat juga studi kasus praktik langsung dengan data mentah untuk kedua jenis pembelajaran tersebut.",
+    "Pada sesi ini, kamu akan membahas konsep dasar Machine Learning, termasuk supervised dan unsupervised learning. Peserta akan mempelajari regresi, klasifikasi, regresi linear, serta klasterisasi menggunakan K-means."
   ],
   [
     "Membongkar Algoritma & Teknik Canggih Machine Learning",
     "16 Juli 2025",
     "14.00 –16.00 WIB | 2 Jam",
-    "Tingkatkan skill Machine Learning dengan teknik canggih seperti stacking dan algoritma populer K-Nearest Neighbour, Decision Tree, serta Random Forest. Di sesi ini, kamu juga akan langsung memulai kompetisi Kaggle dan praktik dengan data mentah untuk memperkuat kemampuan nyata.",
+    "Tingkatkan skill Machine Learning dengan teknik canggih seperti stacking dan algoritma populer K-Nearest Neighbour, Decision Tree, serta Random Forest. Di sesi ini, kamu juga akan langsung memulai kompetisi Kaggle dan praktik dengan data mentah untuk memperkuat kemampuan nyata."
   ],
   [
     "Selami Dunia Deep Learning dari Fondasi sampai Aplikasinya",
     "22 Juli 2025",
     "14.00 –16.00 WIB | 2 Jam",
-    "Sesi ini memberikan pemahaman dasar tentang Deep Learning, mencakup definisi, perbedaan dengan Machine Learning tradisional, serta konsep dasar seperti neuron, lapisan (layers), bobot (weights), dan fungsi aktivasi. Termasuk juga demo singkat membangun jaringan saraf sederhana menggunakan Keras Dengan pendekatan Sequential.",
+    "Sesi ini memberikan pemahaman dasar tentang Deep Learning, mencakup definisi, perbedaan dengan Machine Learning tradisional, serta konsep dasar seperti neuron, layers, weights, dan fungsi aktivasi. Termasuk juga demo singkat membangun jaringan saraf sederhana menggunakan Keras Dengan pendekatan Sequential."
   ],
   [
     "Dari Kata ke Kode, Petualangan di Dunia Natural Language Processing (NLP)",
     "23 Juli 2025",
     "14.00 –16.00 WIB | 2 Jam",
-    "Mulai petualanganmu di dunia Natural Language Processing (NLP) dengan mengenal teknik-teknik dasar yang membuat komputer bisa “mengerti” bahasa manusia. Dalam sesi ini, kamu akan belajar cara membersihkan teks, seperti mengubah huruf besar ke kecil, menghapus kata-kata umum yang tidak penting (stopwords), dan memecah kalimat menjadi potongan-potongan kecil (tokenisasi).",
+    "Mulai petualanganmu di dunia Natural Language Processing (NLP) dengan mengenal teknik dasar yang membuat komputer bisa “mengerti” bahasa manusia. Kamu akan mempelajari cara membersihkan teks, seperti mengubah huruf besar ke kecil, menghapus stopwords, dan tokenisasi."
   ],
   [
     "Representasi Teks dan Klasifikasi dalam NLB",
     "24 Juli 2025",
     "14.00 –16.00 WIB | 2 Jam",
-    "Sesi ini membahas cara mempresentasikan teks dalam bentuk nemurik menggunakan metode Bag of Words dan TF-IDF. Peserta akan belajar melatih model klasifikasi teks sederhana untuk deteksi spam, dengan studi kasus menggunakan algoritma Naive Bayes.",
+    "Sesi ini membahas cara mempresentasikan teks dalam bentuk numerik menggunakan metode Bag of Words dan TF-IDF. Peserta akan belajar melatih model klasifikasi teks sederhana untuk deteksi spam, dengan studi kasus menggunakan algoritma Naive Bayes."
   ],
   [
     "Computer Vision 101 dengan Convolutional Neural Networks (CNN)",
     "25 Juli 2025",
     "14.00 –16.00 WIB | 2 Jam",
-    "Jelajahi dunia di mana komputer bisa ‘melihat’ dan mengenali gambar seperti manusia. Di sesi ini, kamu akan memahami rahasia di balik penglihatan mesin lewat konsep Computer Vision dan kekuatan Convolutional Neural Networks (CNN). Mulai dari piksel hingga model canggih, kamu juga akan langsung praktik klasifikasi gambar. Selain itu, di sesi ini akan diumumkan pemenang kompetisi Kaggle untuk melakukan presentasi hasil terbaik mereka.",
+    "Jelajahi dunia di mana komputer bisa ‘melihat’ dan mengenali gambar seperti manusia. Di sesi ini, kamu akan memahami rahasia di balik penglihatan mesin lewat konsep Computer Vision dan kekuatan Convolutional Neural Networks (CNN). Selain itu, di sesi ini akan diumumkan pemenang kompetisi Kaggle."
   ],
   [
     "Rapat Teknis untuk Presentasi Final Round",
     "26 Juli 2025",
     "14.00 –15.00 WIB | 1 Jam",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis? fjieofjiojwjefoiejwoi",
+    "Sesi briefing terakhir untuk menyambut babak presentasi akhir. Kamu akan mendapatkan arahan teknis serta panduan presentasi agar dapat menampilkan hasil proyekmu dengan maksimal di hadapan juri."
   ],
   [
     "Presentasi Final Round",
     "28 Juli 2025",
     "14.00 –16.00 WIB | 2 Jam",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis? fjieofjiojwjefoiejwoi",
-  ],
+    "Sesi puncak untuk mempresentasikan final project kamu di hadapan juri dan peserta lainnya. Tunjukkan hasil kerja kerasmu dan raih apresiasi tertinggi!"
+  ]
 ];
+
 const bundle = () => {
   return (
     <>
@@ -136,7 +137,7 @@ const bundle = () => {
           modul="6 Modul"
           mentor="TBA"
           mentorImage="/person-placeholder.jpeg"
-          mentorDesc="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?"
+          mentorDesc="To be announced"
           mentorLink="https://www.linkedin.com"
           TA="Daffa Aryza Pasya"
           TAImage="/images/foto-orang/daffa.webp"

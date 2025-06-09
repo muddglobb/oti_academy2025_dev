@@ -31,8 +31,8 @@ const sessions: [string, string, string, string][] = [
   [
     "Grand Launching",
     "30 Juni 2025",
-    "XX.00 – XX.00 WIB",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+    "To be announced",
+    "",
   ],
   [
     "Mengenal Dasar Linux dan Terminal",

@@ -25,12 +25,12 @@ const classInfo: [
 ] = [
   "TBA",
   "/person-placeholder.jpeg",
-  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?",
+  "To be announced",
   "https://www.linkedin.com/in/dhimas-sulistio/",
 
   "Ken Bima Satria Gandasasmita",
   "/images/foto-orang/ken-bima.webp",
-  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?",
+  "-",
   "https://www.linkedin.com/in/dhimas-sulistio/",
 
   "30 Juni & 17 Juli – 28 Juli 2025",
@@ -43,8 +43,8 @@ const sessions: [string, string, string, string][] = [
   [
     "Grand Launching",
     "30 Juni 2025",
-    "XX.00 – XX.00 WIB",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+    "To be announced",
+    "",
   ],
   [
     "Dari Ide ke Rencana, Kenali Design Brief dan Dokumen Proyek",

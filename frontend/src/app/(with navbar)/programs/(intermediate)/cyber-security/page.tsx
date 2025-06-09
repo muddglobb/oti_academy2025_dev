@@ -25,7 +25,7 @@ const classInfo: [
 ] = [
   "TBA",
   "/person-placeholder.jpeg",
-  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?",
+  "To be announced",
   "https://www.linkedin.com/in/dhimas-sulistio/",
 
   "Ahsan Zaki",
@@ -43,8 +43,8 @@ const sessions: [string, string, string, string][] = [
   [
     "Grand Launching",
     "30 Juni 2025",
-    "XX.00 – XX.00 WIB",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+    "To be announced",
+    "",
   ],
   [
     "Pengenalan Penetration Testing dan Pre-Engagement",

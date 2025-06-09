@@ -5,7 +5,7 @@ import SessionInfo from "@/components/programs/intermediate/intermediate-session
 
 const hero: [string, string, string] = [
   "Web Development + Software Engineering",
-  "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis? fjieofjiojwjefoiejwoi",
+  "Kuasai UI & web app modern dari basic hingga intermediate dengan React, Tailwind, dan MUI. Praktik bikin halaman responsif, autentikasi, dan fitur CRUD.",
   "Bundle",
 ];
 const sessions: [string, string, string, string][] = [
@@ -13,7 +13,7 @@ const sessions: [string, string, string, string][] = [
     "Grand Launching",
     "30 Juni 2025",
     "XX.00 – XX.00 WIB",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+    "",
   ],
   [
     "Web Dasar tentang Struktur & Styling",
@@ -112,7 +112,7 @@ const bundle = () => {
           modul="6 Modul"
           mentor="TBA"
           mentorImage="/person-placeholder.jpeg"
-          mentorDesc="Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?"
+          mentorDesc="To be announced"
           mentorLink="https://www.linkedin.com"
           TA="Rayhan Firdaus Ardian"
           TAImage="/images/foto-orang/rehund.webp"

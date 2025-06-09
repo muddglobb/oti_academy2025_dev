@@ -24,21 +24,21 @@ const classInfo: [
   "X Modul",
   "Revy Satya Gunawan",
   "/images/foto-orang/revy.webp",
-  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi suscipit ipsam tenetur temporibus atque velit laudantium animi unde eum cum?",
+  "",
   "https://www.linkedin.com",
 ];
 const sessions: [string, string, string, string][] = [
   [
     "Pengenalan Basic C++",
-    "XX June 2025",
+    "",
     "Asinkronus",
     "Sesi ini merupakan pembelajaran mandiri untuk memahami dasar-dasar C++ yang menjadi prasyarat sebelum memasuki materi utama Competitive Programming. Materi dirancang untuk membantu peserta memahami sintaks dan konsep dasar C++ sehingga sesi tatap muka dapat langsung difokuskan pada strategi dan penyelesaian soal-soal kompetitif.",
   ],
   [
     "Grand Launching",
     "30 Juni 2025",
-    "XX.00 – XX.00 WIB",
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Veritatis rem dolore officia suscipit non consequatur odit id a repudiandae nobis?",
+    "To be announced",
+    "",
   ],
   [
     "Pengenalan Pencarian & Pengurutan",
