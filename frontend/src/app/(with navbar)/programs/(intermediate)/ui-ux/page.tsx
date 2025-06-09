@@ -30,7 +30,7 @@ const classInfo: [
 
   "Ken Bima Satria Gandasasmita",
   "/images/foto-orang/ken-bima.webp",
-  "-",
+  "Mahasiswa Ilmu Komputer UGM dengan spesialisasi dan berpengalaman dalam berbagai kompetisi  UI/UX termasuk menjadi finalis GEMASTIK 2024. Ia siap berbagi ilmu dan jadi teaching assistant.",
   "https://www.linkedin.com/in/dhimas-sulistio/",
 
   "30 Juni & 17 Juli – 28 Juli 2025",
