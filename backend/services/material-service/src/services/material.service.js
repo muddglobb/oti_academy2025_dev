@@ -53,15 +53,15 @@ export class MaterialService {
       ...material,
       unlockDate: formatDateObject(material.unlockDate)
     };
-  }
-  /**
+  }  /**
    * Get all materials for a course
    * @param {string} courseId - Course ID
    * @returns {Promise<Array>} Materials for the course
-   */  static async getMaterialsByCourse(courseId) {
+   */    static async getMaterialsByCourse(courseId) {
     try {
-      // Try to get from cache first
+      const ttl = config.CACHE?.TTL?.COURSE_MATERIALS || 900;
       const cacheKey = `course:${courseId}:materials`;
+      
       const materials = await CacheService.getOrSet(cacheKey, async () => {
         const materials = await prisma.material.findMany({
           where: { courseId },
@@ -69,15 +69,17 @@ export class MaterialService {
         });
         
         return materials;
-      }, config.CACHE.TTL.COURSE_MATERIALS);
+      }, ttl);
       
       // Format dates for response
-      return materials.map(material => this.formatMaterialResponse(material));
+      const formattedMaterials = materials.map(material => this.formatMaterialResponse(material));
+      
+      return formattedMaterials;
     } catch (error) {
       console.error(`Error getting materials for course ${courseId}:`, error);
       throw error;
     }
-  }  /**
+  }/**
    * Get material by ID
    * @param {string} id - Material ID
    * @returns {Promise<Object>} Material

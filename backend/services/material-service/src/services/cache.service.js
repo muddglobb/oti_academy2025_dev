@@ -10,20 +10,16 @@ export class CacheService {
    * @param {Function} callback - Async function yang akan dipanggil jika cache tidak ada
    * @param {number} ttl - Time-to-live dalam detik
    * @returns {Promise<any>} Data dari cache atau hasil callback
-   */
-  static async getOrSet(key, callback, ttl = 7200) {
+   */  static async getOrSet(key, callback, ttl = 7200) {
     try {
       // Try to get data from cache first
       const cachedData = await getCache(key);
       
       if (cachedData) {
-        console.log(`🔄 Cache hit for ${key}`);
         return cachedData;
       }
       
-      console.log(`🔍 Cache miss for ${key}, fetching fresh data`);
-      
-      // If cache miss, execute callback to get fresh data
+      // Execute callback to get fresh data
       const freshData = await callback();
       
       // Store result in cache with TTL
@@ -31,8 +27,9 @@ export class CacheService {
       
       return freshData;
     } catch (error) {
-      console.error(`Cache service error for key ${key}: ${error.message}`);
-      // If anything goes wrong with cache, just return the callback result
+      console.error(`Cache error for key ${key}: ${error.message}`);
+      
+      // Fallback to callback without cache
       return callback();
     }
   }
@@ -72,14 +69,11 @@ export class CacheService {
    * @param {string} keyOrPattern - Cache key atau pattern (dengan *)
    * @param {boolean} isPattern - Apakah key adalah pattern
    * @returns {Promise<boolean>} Success status
-   */
-  static async invalidate(keyOrPattern, isPattern = false) {
+   */  static async invalidate(keyOrPattern, isPattern = false) {
     try {
       if (isPattern) {
-        console.log(`🗑️ Invalidating cache pattern: ${keyOrPattern}`);
         return await deletePattern(keyOrPattern);
       } else {
-        console.log(`🗑️ Invalidating cache key: ${keyOrPattern}`);
         return await deleteCache(keyOrPattern);
       }
     } catch (error) {

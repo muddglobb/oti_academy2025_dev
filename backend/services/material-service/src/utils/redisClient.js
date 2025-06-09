@@ -34,19 +34,24 @@ redisClient.on('error', (err) => {
 export const getCache = async (key) => {
   try {
     const cachedData = await redisClient.get(key);
-    return cachedData ? JSON.parse(cachedData) : null;
+    
+    if (cachedData) {
+      return JSON.parse(cachedData);
+    } else {
+      return null;
+    }
   } catch (error) {
-    console.error(`Redis getCache error: ${error.message}`);
+    console.error(`Redis getCache error for key ${key}: ${error.message}`);
     return null;
   }
 };
 
 export const setCache = async (key, data, ttl = 3600) => {
   try {
-    await redisClient.set(key, JSON.stringify(data), 'EX', ttl);
-    return true;
+    const result = await redisClient.set(key, JSON.stringify(data), 'EX', ttl);
+    return result === 'OK';
   } catch (error) {
-    console.error(`Redis setCache error: ${error.message}`);
+    console.error(`Redis setCache error for key ${key}: ${error.message}`);
     return false;
   }
 };
@@ -64,12 +69,14 @@ export const deleteCache = async (key) => {
 export const deletePattern = async (pattern) => {
   try {
     const keys = await redisClient.keys(pattern);
+    
     if (keys.length > 0) {
-      await redisClient.del(keys);
+      const result = await redisClient.del(...keys); // <- Fix: spread keys
+      return result > 0;
     }
     return true;
   } catch (error) {
-    console.error(`Redis deletePattern error: ${error.message}`);
+    console.error(`Redis deletePattern error for pattern ${pattern}: ${error.message}`);
     return false;
   }
 };

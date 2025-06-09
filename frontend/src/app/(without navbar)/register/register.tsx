@@ -1,9 +1,9 @@
 "use client";
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { User, Mail, Lock, ArrowLeft, Eye, EyeOff } from 'react-feather';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, useWatch } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 
 interface FormData {
@@ -21,17 +21,27 @@ export default function Register() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isRefillVisible, setIsRefillVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hasSubmittedWithError, setHasSubmittedWithError] = useState(false);
 
   const router = useRouter();
-
   const {
       register,
       handleSubmit,
+      control,
       watch,
       formState: { errors },
     } = useForm<FormData>();
 
   const password = watch('password');
+  const formValues = useWatch({ control });
+
+  useEffect(() => {
+    if (hasSubmittedWithError) {
+      setErrorMessage(null);      
+      setHasSubmittedWithError(false);  
+      setLoading(false);             
+    }
+  }, [formValues]);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     if (data.password !== data.confirmPassword) {
@@ -56,7 +66,6 @@ export default function Register() {
           password: data.password,
           type: "UMUM",
           //nim: isDike ? data.nim : undefined,
-
         }),
       });
 
@@ -74,7 +83,10 @@ export default function Register() {
       } else {
         setErrorMessage("Terjadi kesalahan saat registrasi.");
       }
-}
+      setHasSubmittedWithError(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
