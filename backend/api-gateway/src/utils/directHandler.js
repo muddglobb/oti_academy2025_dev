@@ -5,7 +5,6 @@ import FormData from 'form-data';
 import path from 'path';
 import fs from 'fs';
 
-// Simple logger functions
 const logger = {
   info: (message) => console.log(`[INFO] ${message}`),
   error: (message) => console.error(`[ERROR] ${message}`),

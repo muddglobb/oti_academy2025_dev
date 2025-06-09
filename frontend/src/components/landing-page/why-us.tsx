@@ -4,7 +4,7 @@ import Container from "@/components/container";
 import { SquarePen, Database, Clipboard, UserPlus } from "lucide-react";
 import Image from "next/image";
 import * as motion from "motion/react-client"
-import { fadeIn, fadeInComp } from "@/lib/animation";
+import { fadeIn, fadeInComp, slideInComp } from "@/lib/animation";
 
 const WhyUsContent = [
   {
@@ -49,16 +49,15 @@ const Sponsors = [
 const WhyUs = () => {
   return (
     <div
-      className="w-full bg-cover bg-center flex flex-col items-center justify-center
+      className="w-full bg-cover bg-center flex flex-col  justify-center
                 bg-[linear-gradient(0deg,rgba(5,12,26,0.6)_0%,rgba(5,12,26,0.8)_100%)]
                 relative
                 md:pb-20
               "
     >
       <div
-        className="flex-col items-center justify-center 
-              px-10
-              lg:px-"
+        className="flex-col w-full justify-center 
+              px-10"
       >
         {/* bintang dan planet */}
         <>
@@ -83,7 +82,7 @@ const WhyUs = () => {
         </>
 
         {/* isi */}
-        <Container className="items-center gap-4 lg:gap-10 ">
+        <Container className="gap-4 lg:gap-10 ">
           <motion.h1 
             variants={fadeIn}
             initial="hidden"
@@ -102,7 +101,7 @@ const WhyUs = () => {
             viewport={{
               once: true,
             }}
-            className="z-0 flex flex-col justify-center gap-2 lg:gap-6 pb-6 lg:pb-15"
+            className="z-0 flex flex-col justify-center gap-2 lg:gap-6 pb-6 lg:pb-15 items-center"
           >
             {WhyUsContent.map((item, index) => {
               const Icon = item.icon;
@@ -116,7 +115,7 @@ const WhyUs = () => {
                     once: true,
                   }}
                   key={index}
-                  className="z-100 flex items-center flex-row gap-3 p-6 max-w-screen xl:w-260 border border-white rounded-xl text-neutral-50"
+                  className="z-100 flex flex-row gap-3 p-6 max-w-screen xl:w-260 border border-white rounded-xl text-neutral-50"
                 >
                   <Icon size={48} />
                   <div className="z-100 flex flex-col">
@@ -137,9 +136,19 @@ const WhyUs = () => {
             viewport={{
               once: true,
             }}
-            className="flex flex-wrap items-center gap-4 md:gap-9 max-w-screen w-auto">
-            {Sponsors.map((img) => (
-              <div key={img.alt} className={`w-auto ${img.displaySize} flex items-center`}>
+            className="flex flex-wrap justify-center gap-4 md:gap-9 max-w-screen w-auto items-center">
+            {Sponsors.map((img, index) => (
+              <motion.div 
+                variants={slideInComp}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{
+                  once: true,
+                }}
+                transition={{ delay: 2 }}
+                custom={index}
+                key={index} 
+                className={`w-auto ${img.displaySize} flex`}>
                 <Image
                   src={img.src}
                   alt={img.alt}
@@ -147,7 +156,7 @@ const WhyUs = () => {
                   height={img.height}
                   className={`rounded-1 object-contain ${img.displaySize} w-auto`}
                 />
-              </div>
+              </motion.div>
             ))}
           </motion.div>
         </Container>

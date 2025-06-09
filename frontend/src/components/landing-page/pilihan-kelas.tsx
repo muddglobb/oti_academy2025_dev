@@ -68,7 +68,7 @@ pb-20
                   mendalami keterampilan lebih lanjut
                 </span>
                 . Kelas berlangsung dari{" "}
-                <span className="font-bold">1 Juni hingga 30 Juni 2025</span>{" "}
+                <span className="font-bold">30 Juni hingga 31 Juli 2025</span>{" "}
                 dengan materi yang terstruktur dan mudah diikuti.
               </motion.p>
             </div>

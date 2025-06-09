@@ -2,7 +2,7 @@ import rateLimit from 'express-rate-limit';
 import { ApiResponse } from '../utils/api-response.js';
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
-const SERVICE_API_KEY = process.env.SERVICE_API_KEY || 'iniiIIIAD44lahAP11IiKe3yUtkCommunicate33!!!';
+const SERVICE_API_KEY = process.env.SERVICE_API_KEY;
 
 const KNOWN_SERVICE_URLS = [
   process.env.API_GATEWAY_URL || 'http://api-gateway:8000',
