@@ -24,7 +24,7 @@ const classInfo: [
   "X Modul",
   "Revy Satya Gunawan",
   "/images/foto-orang/revy.webp",
-  "",
+  "Mahasiswa Ilmu Komputer UGM dan pemenang OSN Matematika 2023 yang aktif di dunia Competitive Programming. Siap jadi teaching assistant yang andal di kelas ini.",
   "https://www.linkedin.com",
 ];
 const sessions: [string, string, string, string][] = [

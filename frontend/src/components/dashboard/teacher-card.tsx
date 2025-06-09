@@ -61,7 +61,7 @@ const teacherCardData: Record<
       "Teaching Assistant",
       "/images/foto-orang/revy.webp",
       "https://www.linkedin.com/",
-      "-",
+      "Mahasiswa Ilmu Komputer UGM dan pemenang OSN Matematika 2023 yang aktif di dunia Competitive Programming. Siap jadi teaching assistant yang andal di kelas ini.",
     ],
   ],
   "Data Science & Artificial Intelligence": [
