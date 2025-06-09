@@ -5,7 +5,7 @@ import SessionInfo from "@/components/programs/intermediate/intermediate-session
 
 const hero: [string, string, string] = [
   "Web Development",
-  "Masuki dunia ethical hacking dan praktik langsung tahapan penetration testing, dari reconnaissance hingga post-exploitation, lengkap dengan penyusunan laporan uji keamanan secara profesional.",
+  "Belajar UI dari nol: HTML, CSS, React, Tailwind, & MUI. Cocok untuk pemula yang ingin buat web responsif dan pahami komponen serta styling modern.",
   "Beginner Level",
 ];
 const classInfo: [
