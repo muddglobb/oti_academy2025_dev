@@ -6,6 +6,6 @@ import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adap
 export async function GET(request: Request) {
   // const token = request.cookies.get("access_token")?.value ?? "";
   const cookieStore = cookies() as unknown as ReadonlyRequestCookies;
-  const token = cookieStore.get("access_token")?.value ?? "";
+  const token = await cookieStore.get("access_token")?.value ?? "";
   return NextResponse.json({ token });
 }

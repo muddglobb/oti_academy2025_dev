@@ -2,8 +2,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAccessToken } from "@/lib/auth/fetch-users";
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const id = params.id;
+export async function DELETE(req: NextRequest) {
+  const body = await req.json();
+  const id = body.paymentId;
 
   try {
     const accessToken = await getAccessToken();

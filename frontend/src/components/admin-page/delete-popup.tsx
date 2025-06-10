@@ -18,8 +18,12 @@ const DeletePopup: React.FC<Props> = ({ paymentId, username, course, onClose }) 
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/delete/${paymentId}`, {
+      const res = await fetch(`/api/delete/`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ paymentId }),
       });
 
       if (!res.ok) {
