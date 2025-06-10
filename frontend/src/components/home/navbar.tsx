@@ -157,19 +157,29 @@ const Navbar = () => {
           </nav>
 
           <div className="flex flex-col gap-3">
-            <Link href="/register">
-              <Button className="w-full bg-[#113EA7] text-white hover:bg-[#0d2d7a]">
-                Get Started
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button
-                variant="outline"
-                className="w-full bg-white text-[#113EA7] border border-[#113EA7] hover:bg-[#113EA7] hover:text-white"
-              >
-                Log In
-              </Button>
-            </Link>
+            {token ? (
+              <Link href="/dashboard">
+                <Button className="w-full bg-[#113EA7] text-white hover:bg-[#0d2d7a]">
+                  Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/register">
+                <Button className="w-full bg-[#113EA7] text-white hover:bg-[#0d2d7a]">
+                  Get Started
+                </Button>
+              </Link>
+            )}
+            {!token && (
+              <Link href="/login">
+                <Button
+                  variant="outline"
+                  className="w-full bg-white text-[#113EA7] border border-[#113EA7] hover:bg-[#113EA7] hover:text-white"
+                >
+                  Log In
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       )}
