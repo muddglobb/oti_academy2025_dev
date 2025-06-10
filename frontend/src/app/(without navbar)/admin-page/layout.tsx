@@ -35,15 +35,6 @@ export default function TrollLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // mencegah siswa akses admin-page
-  try {
-    requireAdmin();
-  } catch (err) {
-    if ((err as Error).message === "NO_TOKEN") {
-      return redirect("/login");
-    }
-    return redirect("/");
-  }
   return (
     <div className="flex">
       <aside className="w-62">
