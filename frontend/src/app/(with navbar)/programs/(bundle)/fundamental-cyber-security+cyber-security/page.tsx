@@ -118,7 +118,7 @@ const bundle = () => {
           TA="Muhammad Ahsan"
           TAImage="/images/foto-orang/ahsan.webp"
           TADesc="Mahasiswa Ilmu Komputer UGM yang antusias di bidang cybersecurity. Telah menyelesaikan Google Cybersecurity Certificate dan terus belajar hal baru di dunia teknologi. Di kelas ini, dia siap jadi teaching assistant yang bisa diandalkan."
-          TALink="https://www.linkedin.com"
+          TALink="https://www.linkedin.com/in/ahsan-wiryawan-35924b326/"
           title=""
         ></BundleClassInfo>
 

@@ -142,7 +142,7 @@ const bundle = () => {
           TA="Daffa Aryza Pasya"
           TAImage="/images/foto-orang/daffa.webp"
           TADesc="Mahasiswa tahun pertama Ilmu Komputer UGM yang antusias di dunia coding, khususnya Python, C++, dan JavaScript. Finalis Data Royale Competition 2024 ini siap membimbing kamu dengan cara yang santai dan mudah dipahami."
-          TALink="https://www.linkedin.com"
+          TALink="https://www.linkedin.com/in/daffa-ap/"
           title= ""
         ></BundleClassInfo>
 

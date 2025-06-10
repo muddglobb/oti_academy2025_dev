@@ -25,7 +25,7 @@ const classInfo: [
   "Rayhan Firdaus Ardian",
   "/images/foto-orang/rehund.webp",
   "Mahasiswa Ilmu Komputer UGM tahun kedua yang fokus di web development. Siap membimbing dengan cara yang santai dan mudah dipahami, khususnya untuk pemula di dunia web.",
-  "https://www.linkedin.com",
+  "https://www.linkedin.com/in/rayhan-ardian-270705-rehund/",
 ];
 const sessions: [string, string, string, string][] = [
   [

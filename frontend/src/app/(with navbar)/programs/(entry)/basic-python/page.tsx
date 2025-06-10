@@ -25,7 +25,7 @@ const classInfo: [
   "Daffa Aryza",
   "/images/foto-orang/daffa.webp",
   "Mahasiswa tahun pertama Ilmu Komputer UGM yang antusias di dunia coding, khususnya Python, C++, dan JavaScript. Finalis Data Royale Competition 2024 ini siap membimbing kamu dengan cara yang santai dan mudah dipahami.",
-  "https://www.linkedin.com",
+  "https://www.linkedin.com/in/daffa-ap/",
 ];
 const sessions: [string, string, string, string][] = [
   [

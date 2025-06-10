@@ -101,7 +101,7 @@ const teacherCard: [string, string, string, string, string][] = [
     "Kevin Antonio",
     "Mentor",
     "/person-placeholder.jpeg",
-    "https://www.linkedin.com/in/kevinantonio/",
+    "https://www.linkedin.com/",
     "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Et, provident? Repudiandae repellat itaque aliquam accusantium. Qui vitae tenetur beatae hic quisquam eligendi molestiae minus nostrum, culpa, quam iusto dolor reprehenderit.",
   ],
   [

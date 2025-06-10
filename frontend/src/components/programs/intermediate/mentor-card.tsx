@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { div } from "framer-motion/client";
 // import { Linkedin } from "lucide-react";
 
 type MentorCardProps = {
@@ -61,7 +62,7 @@ const MentorCard = ({
               md:justify-between
           "
             >
-              <div className="w-auto max-w-[80%]">
+              <div className="w-auto max-w-full mr-3">
                 <div className="font-bold h-auto w-auto">
                   <p className="bg-primary-800 rounded-[5px] text-[22px] p-1 break-words">
                     {name}
@@ -74,25 +75,17 @@ const MentorCard = ({
                 </div>
               </div>
 
-              <Link href={linkedin}>
-                <Image
-                  src={"/icons/linkedin-icon.svg"}
-                  alt="linkedin-icon"
-                  width={35}
-                  height={35}
-                  className="bg-primary-50 rounded-[5px] mt-0 p-[5px] cursor-pointer"
-                />
-                {/* <Linkedin size={30} className="bg-primary-50 p-5 rounded-[5px]" color="#000"/> */}
-              </Link>
-              {/* <button className="w-[30px] h-[30px]">
-              <Image
-                src={"/icons/linkedin-icon.svg"}
-                alt="linkedin-icon"
-                width={30}
-                height={30}
-                className="bg-primary-50 rounded-[5px] mt-0 p-[5px] border-s-white border-[1px] "
-              />
-            </button> */}
+              {linkedin != "" && (
+                <Link href={linkedin}>
+                  <Image
+                    src={"/icons/linkedin-icon.svg"}
+                    alt="linkedin-icon"
+                    width={35}
+                    height={35}
+                    className="bg-primary-50 rounded-[5px] mt-0 p-[5px] cursor-pointer flex-shrink-0"
+                  />
+                </Link>
+              )}
             </div>
           </div>
         </div>
@@ -158,17 +151,19 @@ const MentorCard = ({
                   </p>
                 </div>
               </div>
-              <button className="w-8 h-8 cursor-pointer">
-                <Link href={linkedin}>
-                  <Image
-                    src={"/icons/linkedin-icon.svg"}
-                    alt="linkedin-icon"
-                    width={26}
-                    height={26}
-                    className="bg-primary-50 rounded-[5px] mt-0 p-[5px] cursor-pointer"
-                  />
-                </Link>
-              </button>
+              {linkedin != "" && (
+                <button className="w-8 h-8 cursor-pointer">
+                  <Link href={linkedin}>
+                    <Image
+                      src={"/icons/linkedin-icon.svg"}
+                      alt="linkedin-icon"
+                      width={26}
+                      height={26}
+                      className="bg-primary-50 rounded-[5px] mt-0 p-[5px] cursor-pointer"
+                    />
+                  </Link>
+                </button>
+              )}
             </div>
 
             <div>
