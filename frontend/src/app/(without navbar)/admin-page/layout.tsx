@@ -7,7 +7,7 @@ import { Headerz } from "@/components/admin-page/headerz";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard",
-  description: "keren",
+  description: "Online Mini Bootcamp yang menawarkan pengalaman belajar intensif, mengasah keterampilan IT, cocok untuk pemula dan yang ingin mendalami bidang spesifik.",
 };
 
 export default function TrollLayout({
