@@ -8,7 +8,7 @@ import { notAdmin } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Dashboard OmahTI Academy",
-  description: "keren",
+  description: "Online Mini Bootcamp yang menawarkan pengalaman belajar intensif, mengasah keterampilan IT, cocok untuk pemula dan yang ingin mendalami bidang spesifik.",
 };
 
 export default function TrollLayout({

@@ -22,7 +22,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "OmahTI Academy",
-  description: "keren",
+  description: "Online Mini Bootcamp yang menawarkan pengalaman belajar intensif, mengasah keterampilan IT, cocok untuk pemula dan yang ingin mendalami bidang spesifik.",
   icons: {
     icon: "/favicon.svg", // favicon default
     shortcut: "/favicon.svg", // untuk browser lama
