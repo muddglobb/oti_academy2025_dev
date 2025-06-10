@@ -16,13 +16,15 @@ export default async function AdminPage() {
   return (
     <div className="px-14 py-7">
       <WelcomeCardz />
-      <div className="flex gap-7 mt-6">
+      <div className="flex gap-7 mt-6 ">
         <div className="w-120">
           <TotalTracker />
         </div>
         <ClassTracker />
       </div>
-      <GetAllEnrollments />
+      <div className="mt-6 ">
+        <GetAllEnrollments />
+      </div>
     </div>
   );
 }

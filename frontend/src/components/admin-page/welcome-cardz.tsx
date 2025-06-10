@@ -12,7 +12,7 @@ const WelcomeCardz = async () => {
           <p>We Make IT For</p>
           <p className="font-bold">{users.data.name}</p>
         </div>
-        <p className="text-sm pt-5 max-w-100 pb-10">
+        <p className="text-sm pt-5 pb-10">
           Sudah menyatu dengan oti anjay selamat datang di admin page yang keren
           banget ini CIHUYYY
         </p>

@@ -36,11 +36,11 @@ export default function TrollLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex">
+    <div className="">
       <aside className="w-62">
         <Sidebarz />
       </aside>
-      <main className="bg-neutral-200 flex-1">
+      <main className="bg-neutral-200 flex-1 ml-62">
         <div className="flex text-neutral-900">
           <div className="flex-grow">
             <Headerz />
