@@ -40,11 +40,11 @@ const BeginnerClass = () => {
               lg:text-[32px] font-bold">
                 Kelas Pemula untuk Memulai Perjalanan Belajarmu
               </p>
-              <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center 
+              <p className="text-neutral-50 text-center 
               text-[14px]
               lg:text-[18px]">
                 Kelas pemula dengan materi esensial buat langkah pertamamu dari{" "}
-                <span className="font-bold">1 juni - 15 juni 2025</span>
+                <span className="font-bold">1 Juni - 15 Juli 2025</span>
               </p>
             </div>
             <div className="flex items-center justify-center">
