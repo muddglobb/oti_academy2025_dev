@@ -7,10 +7,10 @@ const Contact = () => {
                 Contact Person
             </h1>
             <p className="text-neutral-50 pt-4 text-[12px]">
-                Butuh Bantuan atau Masih Bingung? Tenang, kamu nggak sendiri! Kalau ada pertanyaan lebih lanjut atau mengalami kendala, kamu bisa langsung hubungi contact person kami (Nazwa) melalui WhatsApp:
+                Butuh Bantuan atau Masih Bingung? Tenang, kamu nggak sendiri! Kalau ada pertanyaan lebih lanjut atau mengalami kendala, kamu bisa langsung hubungi contact person kami (Azka) melalui WhatsApp:
             </p>
-            <div className="flex justify-end">
-                <a href="https://wa.me/628111478173" target="_blank">
+            <div className="flex justify-end my-3">
+                <a href="https://wa.me/6281906340991" target="_blank">
                     <Button className="text-[12px] px-4 py-3">
                         Hubungi Sekarang
                     </Button>
