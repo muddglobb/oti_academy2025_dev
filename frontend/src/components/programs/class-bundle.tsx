@@ -55,13 +55,13 @@ const ClassBundle = () => {
                 Nikmati Dua Keuntungan Sekaligus dengan Bundling Kelas Kami
               </p>
               <p
-                className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center 
+                className="text-neutral-50 text-center 
               text-[14px]
               lg:text-[18px]"
               >
                 Tingkatkan kemampuanmu dengan paket belajar pemula hingga
                 intermediate dari{" "}
-                <span className="font-bold">1 Juni - 30 Juni 2025</span>
+                <span className="font-bold">1 Juni - 30 Juli 2025</span>
               </p>
             </div>
             <div className="flex items-center justify-center">

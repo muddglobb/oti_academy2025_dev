@@ -93,12 +93,12 @@ const IntermediateClass = () => {
               lg:text-[32px] font-bold mt-15">
                 Kelas Intermediate untuk Naik Level Skill-mu
               </p>
-              <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center 
+              <p className="text-neutral-50 text-center 
               text-[14px]
               lg:text-[18px]">
                 Saatnya naik ke level berikutnya buat kamu yang udah paham
                 dasar-dasar dan siap eksplor lebih dalam dari{" "}
-                <span className="font-bold">1 juni - 15 juni 2025</span>
+                <span className="font-bold">16 Juli - 30 Juli 2025</span>
               </p>
             </div>
             <div className="flex items-center justify-center">
