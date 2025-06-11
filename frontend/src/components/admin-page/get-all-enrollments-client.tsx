@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Search, Check, Trash2 } from "lucide-react";
 import ApproveButton from "./approve-button";
+import DeletePopup from "./delete-popup";
 
 export type EnrichedEnrollmentPayment = {
   id: string;
@@ -27,6 +28,18 @@ export type EnrichedEnrollmentPayment = {
 
 const GetAllEnrollmentsClient = ({ data }: { data: EnrichedEnrollmentPayment[] }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedName, setSelectedName] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
+
+  const handleDelete = (id: string, name:string, course:string) => {
+    setSelectedId(id);
+    setSelectedName(name);
+    setSelectedCourse(course);
+    setShowPopup(true);
+  };
+  // console.log(data);
 
   const filteredData = data.filter((item) =>
     item.userName?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -95,7 +108,7 @@ const GetAllEnrollmentsClient = ({ data }: { data: EnrichedEnrollmentPayment[] }
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <button className="w-25 py-1 bg-neutral-200 rounded-sm cursor-pointer">
+                      <button className="py-1 bg-neutral-200 rounded-sm cursor-pointer w-full">
                         Link
                       </button>
                     </a>
@@ -113,21 +126,35 @@ const GetAllEnrollmentsClient = ({ data }: { data: EnrichedEnrollmentPayment[] }
                     </div>
                   </td>
                   <td className="py-4 px-4">
-                    <button
-                      className="p-2 hover:bg-red-100 rounded-md transition"
-                      onClick={() => {
-                        // Tambahkan fungsi delete di sini nanti
-                        console.log("Delete ID:", item.id);
-                      }}
-                    >
-                      <Trash2 className="text-red-500" size={18} />
-                    </button>
+                    {item.status !== "APPROVED" &&
+                      <button
+                        className="p-2 hover:bg-red-100 rounded-md transition"
+                        onClick={() => handleDelete(item.id, item.userName, item.courseTitle)}
+                      >
+                        <Trash2 className="text-red-500" size={18} />
+                      </button>
+                    }
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+
+          {showPopup && selectedId && (
+            <DeletePopup
+              paymentId={selectedId}
+              username={selectedName}
+              course={selectedCourse}
+              onClose={() => {
+                setShowPopup(false);
+                setSelectedId(null);
+                setSelectedName("");
+                setSelectedCourse("");
+              }}
+            />
+          )}
         </div>
+
       )}
     </div>
   );

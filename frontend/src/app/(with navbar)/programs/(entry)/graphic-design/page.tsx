@@ -25,7 +25,7 @@ const classInfo: [
   "Geraldine Hutagalung",
   "/images/foto-orang/geradline.webp",
   "Seorang mahasiswa Ilmu Komputer UGM yang dikenal dengan karya-karya desain grafisnya yang kreatif dan standout. Aktif di berbagai proyek, ia siap berbagi wawasan visual sebagai teaching assistant di kelas ini.",
-  "https://www.linkedin.com",
+  "",
 ];
 const sessions: [string, string, string, string][] = [
   [

@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/legacy/image";
 import MentorCard from "@/components/programs/intermediate/mentor-card";
+import TBACard from "../intermediate/tba-mentor";
 
 type BundleClassInfoProps = {
   date: string;
@@ -59,13 +60,19 @@ const BundleClassInfo = ({
           <div className="md:w-4xl w-sm">
             <div className="flex flex-col justify-center md:gap-x-8 gap-y-8">
               <div className="flex gap-6 flex-wrap justify-center mb-6">
+                {/* SEMENTARA GA DIPAKAI
                 <MentorCard
                   name={mentor}
                   imageUrl={mentorImage}
                   role="Mentor"
                   description={mentorDesc}
                   linkedin={mentorLink}
-                />
+                /> */}
+                <TBACard
+            name="Mentor"
+              imageUrl="/images/foto-orang/mentor-tba.webp"
+              description="To Be Announced"
+            />
 
                 <MentorCard
                   name={TA}
@@ -81,7 +88,7 @@ const BundleClassInfo = ({
                     imageUrl="/images/foto-orang/ken-bima.webp"
                     role="Teaching Assistant"
                     description="Mahasiswa Ilmu Komputer UGM dengan spesialisasi dan berpengalaman dalam berbagai kompetisi  UI/UX termasuk menjadi finalis GEMASTIK 2024. Ia siap berbagi ilmu dan jadi teaching assistant."
-                    linkedin={TALink}
+                    linkedin="https://www.linkedin.com/in/kenbimasatriagandasasmita/"
                   />
                 )}
               </div>

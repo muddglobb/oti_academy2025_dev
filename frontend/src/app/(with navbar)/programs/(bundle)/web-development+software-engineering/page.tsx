@@ -117,7 +117,7 @@ const bundle = () => {
           TA="Rayhan Firdaus Ardian"
           TAImage="/images/foto-orang/rehund.webp"
           TADesc="Mahasiswa Ilmu Komputer UGM tahun kedua yang fokus di web development. Siap membimbing dengan cara yang santai dan mudah dipahami, khususnya untuk pemula di dunia web."
-          TALink="https://www.linkedin.com"
+          TALink="https://www.linkedin.com/in/rayhan-ardian-270705-rehund/"
           title= ""
         ></BundleClassInfo>
 

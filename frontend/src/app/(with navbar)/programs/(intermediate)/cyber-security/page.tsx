@@ -26,12 +26,12 @@ const classInfo: [
   "TBA",
   "/person-placeholder.jpeg",
   "To be announced",
-  "https://www.linkedin.com/in/dhimas-sulistio/",
+  "https://www.linkedin.com",
 
   "Ahsan Zaki",
   "/images/foto-orang/ahsan.webp",
   "Mahasiswa Ilmu Komputer UGM yang antusias di bidang cybersecurity. Telah menyelesaikan Google Cybersecurity Certificate dan terus belajar hal baru di dunia teknologi. Di kelas ini, dia siap jadi teaching assistant yang bisa diandalkan.",
-  "https://www.linkedin.com/in/dhimas-sulistio/",
+  "https://www.linkedin.com/in/ahsan-wiryawan-35924b326/",
 
   "30 Juni & 16 Juli – 27 Juli 2025",
   "8 Sesi",

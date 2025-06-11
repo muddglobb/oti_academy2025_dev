@@ -130,7 +130,7 @@ const bundle = () => {
           TA="Geraldine Hutagalung"
           TAImage="/images/foto-orang/geradline.webp"
           TADesc="Mahasiswa Ilmu Komputer UGM yang dikenal dengan karya-karya desain grafisnya yang kreatif dan standout. Aktif di berbagai proyek dan siap berbagi sebagai teaching assistant."
-          TALink="https://www.linkedin.com"
+          TALink=""
           title= {hero[0]}
         ></BundleClassInfo>
 

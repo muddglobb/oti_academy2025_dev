@@ -25,7 +25,7 @@ const classInfo: [
   "Thomas Nadandra",
   "/images/foto-orang/thomas.webp",
   "Mahasiswa tahun pertama Ilmu Komputer UGM dengan minat besar dalam game development. Peraih Best Innovation di Yogyakarta Global Game Jam 2025, siap menjadi teaching assistant yang bisa diandalkan di kelas ini.",
-  "https://www.linkedin.com",
+  "",
 ];
 const sessions: [string, string, string, string][] = [
   [

@@ -26,12 +26,12 @@ const classInfo: [
   "TBA",
   "/person-placeholder.jpeg",
   "To be announced",
-  "https://www.linkedin.com/in/dhimas-sulistio/",
+  "https://www.linkedin.com/",
 
   "Rayhan Firdaus Ardian",
   "/images/foto-orang/rehund.webp",
   "Mahasiswa Ilmu Komputer UGM tahun kedua yang fokus di web development. Siap membimbing dengan cara yang santai dan mudah dipahami, khususnya untuk pemula di dunia web.",
-  "https://www.linkedin.com/in/dhimas-sulistio/",
+  "https://www.linkedin.com/in/rayhan-ardian-270705-rehund/",
 
   "30 Juni & 16 Juli – 26 Juli 2025",
   "8 Sesi",

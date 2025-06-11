@@ -2,6 +2,7 @@ import React from "react";
 // import Image from "next/image";
 import MentorCard from "./mentor-card";
 import { Calendar, Target, Clock, CircleAlert, Database } from "lucide-react";
+import TBACard from "./tba-mentor";
 
 type ClassInfoProps = {
   classInfo: [
@@ -53,12 +54,6 @@ const IntermediateClassInfo = ({ classInfo }: ClassInfoProps) => {
         style={{ backgroundImage: "url(/images/planet/saturnus.png)" }}
       ></div>
       <div className="flex-col items-center justify-center py-10">
-        {/* <Image
-          src="/images/class-info-background.png"
-          alt="stars"
-          fill
-          className="absolute top-0 left-0 w-full object-cover -z-10"
-        /> */}
 
         <div className="px-4">
           <p
@@ -75,12 +70,18 @@ const IntermediateClassInfo = ({ classInfo }: ClassInfoProps) => {
 
         <div className="px-4">
           <div className="flex gap-6 flex-wrap justify-center mb-6">
+            {/* sementara tidak dipakai
             <MentorCard
               name={mentor}
               imageUrl={mentorImage}
               role="Mentor"
               description={mentorDesc}
               linkedin={mentorLink}
+            /> */}
+            <TBACard
+            name="Mentor"
+              imageUrl="/images/foto-orang/mentor-tba.webp"
+              description="To Be Announced"
             />
 
             <MentorCard
