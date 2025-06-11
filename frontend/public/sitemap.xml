@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+
+<url>
+  <loc>https://academy.omahti.web.id/</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/login</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/register</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/software-engineering</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/data-science&amp;artificial-intelligence</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/ui-ux</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/cyber-security</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/web-development</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/competitive-programming</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/basic-python</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/fundamental-cyber-security</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/game-development</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/graphic-design</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/web-development+software-engineering</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/python+data-science&amp;artificial-intelligence</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/graphic-design+ui-ux</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/fundamental-cyber-security+cyber-security</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/forgot-password</loc>
+  <lastmod>2025-06-11T01:10:15+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+
+
+</urlset>
