@@ -208,7 +208,7 @@ export default function Login() {
               }`}
               disabled={loading}
             >
-              Submit
+              Login
             </button>
 
             {errorMessage && (
