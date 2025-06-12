@@ -42,7 +42,7 @@ const teacherCardData: Record<
       "Thomas Nadandra Aryawida",
       "Teaching Assistant",
       "/images/foto-orang/thomas.webp",
-      "https://www.linkedin.com/",
+      "",
       "Mahasiswa tahun pertama Ilmu Komputer UGM dengan minat besar dalam game development. Peraih Best Innovation di Yogyakarta Global Game Jam 2025, siap menjadi teaching assistant andal.",
     ],
   ],
@@ -51,7 +51,7 @@ const teacherCardData: Record<
       "Geraldine Hutagalung",
       "Teaching Assistant",
       "/images/foto-orang/geradline.webp",
-      "https://www.linkedin.com/",
+      "",
       "Mahasiswa Ilmu Komputer UGM yang dikenal dengan karya-karya desain grafisnya yang kreatif dan standout. Aktif di berbagai proyek dan siap berbagi sebagai teaching assistant.",
     ],
   ],
@@ -60,18 +60,12 @@ const teacherCardData: Record<
       "Revy Satya Gunawan",
       "Teaching Assistant",
       "/images/foto-orang/revy.webp",
-      "https://www.linkedin.com/",
+      "",
       "Mahasiswa Ilmu Komputer UGM dan pemenang OSN Matematika 2023 yang aktif di dunia Competitive Programming. Siap jadi teaching assistant yang andal di kelas ini.",
     ],
   ],
   "Data Science & Artificial Intelligence": [
-    [
-      "TBA",
-      "Mentor",
-      "/person-placeholder.jpeg",
-      "https://www.linkedin.com/",
-      "-",
-    ],
+    ["TBA", "Mentor", "/images/foto-orang/mentor-tba-2.webp", "", "-"],
     [
       "Daffa Aryza Pasya",
       "Teaching Assistant",
@@ -81,13 +75,7 @@ const teacherCardData: Record<
     ],
   ],
   "UI/UX": [
-    [
-      "TBA",
-      "Mentor",
-      "/person-placeholder.jpeg",
-      "https://www.linkedin.com/",
-      "-",
-    ],
+    ["TBA", "Mentor", "/images/foto-orang/mentor-tba-2.webp", "", "-"],
     [
       "Ken Bima Satria Gandasasmita",
       "Teaching Assistant",
@@ -97,13 +85,7 @@ const teacherCardData: Record<
     ],
   ],
   "Software Engineering": [
-    [
-      "TBA",
-      "Mentor",
-      "/person-placeholder.jpeg",
-      "https://www.linkedin.com/",
-      "-",
-    ],
+    ["TBA", "Mentor", "/images/foto-orang/mentor-tba-2.webp", "", "-"],
     [
       "Rayhan Firdaus Ardian",
       "Teaching Assistant",
@@ -113,13 +95,7 @@ const teacherCardData: Record<
     ],
   ],
   "Cyber Security": [
-    [
-      "XX",
-      "Mentor",
-      "/person-placeholder.jpeg",
-      "https://www.linkedin.com/",
-      "-",
-    ],
+    ["TBA", "Mentor", "/images/foto-orang/mentor-tba-2.webp", "", "-"],
     [
       "Muhammad Ahsan Zaki Wiryawan",
       "Teaching Assistant",
@@ -128,15 +104,7 @@ const teacherCardData: Record<
       "Mahasiswa Ilmu Komputer UGM yang antusias di bidang cybersecurity. Telah menyelesaikan Google Cybersecurity Certificate dan siap jadi teaching assistant andal di kelas ini.",
     ],
   ],
-  "Mentor Card": [
-    [
-      "Mentor ",
-      "Mentor",
-      "/person-placeholder.jpeg",
-      "https://www.linkedin.com/",
-      "-",
-    ],
-  ],
+  "Mentor Card": [["TBA ", "Mentor", "/person-placeholder.jpeg", "", "-"]],
 };
 const TeacherCard = ({ courseTitle }: TeacherCardProps) => {
   const teachers = teacherCardData[courseTitle] || [];
@@ -147,39 +115,89 @@ const TeacherCard = ({ courseTitle }: TeacherCardProps) => {
         Teaching Assistant & Mentor
       </p>
       <div className="flex flex-col xl:flex-row gap-15 mt-2 items-stretch">
-        {teachers.map(([name, role, imageUrl, linkedin, desc], index) => (
-          <div
-            className={`${teachers.length === 2 ? "lg:w-1/2" : "w-full"}`}
-            key={index}
-          >
-            <div className="w-full max-sm:min-w-68 flex flex-row gap-4 bg-neutral-50 text-neutral-900 rounded-[10px] min-h-34 h-full">
-              <div
-                className="w-34 bg-cover bg-center bg-no-repeat flex rounded-l-[10px]"
-                style={{
-                  backgroundImage: `url(${imageUrl})`,
-                  position: "relative",
-                }}
-              >
-                <div className="bg-neutral-200 w-7.5 h-7.5 flex justify-center items-center rounded-[5px] absolute bottom-2 right-2">
-                  <Link href={linkedin}>
-                    <Image
-                      src="/icons/linkedin-icon.svg"
-                      alt="linkedin"
-                      width={20}
-                      height={20}
-                    ></Image>
-                  </Link>
+        {teachers.map(([name, role, imageUrl, linkedin, desc], index) =>
+          name === "TBA" ? (
+            <div
+              className={`${teachers.length === 2 ? "lg:w-1/2" : "w-full"}`}
+              key={index}
+            >
+              <div className="w-full max-sm:min-w-68 flex flex-row gap-4 bg-neutral-900 border-2 border-neutral-500 text-neutral-50 rounded-[10px] min-h-34 h-full">
+                <div
+                  className="w-34 bg-cover bg-center bg-no-repeat flex rounded-l-[10px] mask-r-from-60%"
+                  style={{
+                    backgroundImage: `url(${imageUrl})`,
+                    position: "relative",
+                  }}
+                >
+                  {linkedin !== "" && (
+                    <div className="bg-neutral-200 w-7.5 h-7.5 flex justify-center items-center rounded-[5px] absolute bottom-2 right-2">
+                      <Link href={linkedin}>
+                        <Image
+                          src="/icons/linkedin-icon.svg"
+                          alt="linkedin"
+                          width={20}
+                          height={20}
+                        ></Image>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+                <div className="w-full py-2 md:py-5 px-2">
+                  <p className="text-sm font-bold">
+                    {name} | {role}
+                  </p>
+                  <p
+                    className="text-xs"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, #F8F9FF 0%, #959599 100%)",
+                      WebkitBackgroundClip: "text",
+                      backgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      color: "transparent",
+                    }}
+                  >
+                    {desc}
+                  </p>
                 </div>
               </div>
-              <div className="w-full py-2 md:py-5 px-2">
-                <p className="text-sm font-bold">
-                  {name} | {role}
-                </p>
-                <p className="text-xs">{desc}</p>
+            </div>
+          ) : (
+            <div
+              className={`${teachers.length === 2 ? "lg:w-1/2" : "w-full"}`}
+              key={index}
+            >
+              <div className="w-full max-sm:min-w-68 flex flex-row gap-4 bg-neutral-50 text-neutral-900 rounded-[10px] min-h-34 h-full">
+                <div
+                  className="w-34 bg-cover bg-center bg-no-repeat flex rounded-l-[10px]"
+                  style={{
+                    backgroundImage: `url(${imageUrl})`,
+                    position: "relative",
+                  }}
+                >
+                  {linkedin !== "" && (
+                    <div className="bg-neutral-200 w-7.5 h-7.5 flex justify-center items-center rounded-[5px] absolute bottom-2 right-2">
+                      <Link href={linkedin}>
+                        <Image
+                          src="/icons/linkedin-icon.svg"
+                          alt="linkedin"
+                          width={20}
+                          height={20}
+                        ></Image>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+                <div className="w-full py-2 md:py-5 px-2">
+                  <p className="text-sm font-bold">
+                    {name} | {role}
+                  </p>
+                  <p className="text-xs">{desc}</p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          )
+        )}
       </div>
     </div>
   );
