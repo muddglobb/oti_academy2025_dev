@@ -54,10 +54,48 @@ const ClassCapacity = async ({
     return enrollRes;
   }
 
+  async function getSelfEnroll(courseID: string) {
+    const selfEnrollRes = await fetch(
+      `${process.env.BASE_URL}/enrollments/isenrolled`,
+      {
+        cache: "no-store",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return selfEnrollRes;
+  }
+
+  const selfEnrollRes = await getSelfEnroll(CourseID);
+  const selfEnrollData = await selfEnrollRes.json();
+
+  const enrollledCourseID = selfEnrollData.data?.courseId;
+  const selfEnrollDataLength = Array.isArray(selfEnrollData.data)
+    ? selfEnrollData.data.length
+    : 0;
+
+  async function getCourseLevel(CourseID: string) {
+    const res = await fetch(`${process.env.BASE_URL}/courses/${CourseID}`, {
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res;
+  }
+
+  const getEnrolledCourseLevel = await getCourseLevel(enrollledCourseID);
+  const getEnrolledCourseLeveldata = await getEnrolledCourseLevel.json();
+
+  const enrolledCourseLevel = getEnrolledCourseLeveldata.data?.level;
+
   const enrollRes = await getEnroll(CourseID);
   const enrollData = await enrollRes.json();
 
-  let enroll: Enroll[] = Array.isArray(enrollData.data) ? enrollData.data : [];
+  // let enroll: Enroll[] = Array.isArray(enrollData.data) ? enrollData.data : [];
 
   const isEnrolled = enrollData.data?.isEnrolled;
 
@@ -109,14 +147,18 @@ const ClassCapacity = async ({
           capacity={capacity}
           percentage={percentage}
         />
-        {isEnrolled === false && currentCount !== capacity && (
-          <Link
-            href={`/payment/${ClassSlug}`}
-            className="bg-primary-500 rounded-[8px] text-xs py-2 px-14.5 w-fit"
-          >
-            <p>Enroll Now</p>
-          </Link>
-        )}
+        {isEnrolled === false &&
+          currentCount !== capacity &&
+          selfEnrollDataLength < 2 &&
+          enrolledCourseLevel &&
+          enrolledCourseLevel !== ClassLevel && (
+            <Link
+              href={`/payment/${ClassSlug}`}
+              className="bg-primary-500 rounded-[8px] text-xs py-2 px-14.5 w-fit"
+            >
+              <p>Enroll Now</p>
+            </Link>
+          )}
       </div>
     </div>
   );
