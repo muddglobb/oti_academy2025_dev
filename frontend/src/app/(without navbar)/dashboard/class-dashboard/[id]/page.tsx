@@ -234,7 +234,10 @@ export default async function Page({
                     <ClassInfo courseTitle={classData.title} />
                   </div>
                   <div className="w-1/2">
-                    <VideoTeaser slug={classData.slug} title={classData.title}/>
+                    <VideoTeaser
+                      slug={classData.slug}
+                      title={classData.title}
+                    />
                   </div>
                 </div>
                 <TeacherCard courseTitle={classData.courses[1]} />
@@ -261,7 +264,7 @@ export default async function Page({
                   <TeacherCard courseTitle="Mentor Card" />
                 </div>
                 <div className="w-1/2">
-                  <VideoTeaser slug={classData.slug} title={classData.title}/>
+                  <VideoTeaser slug={classData.slug} title={classData.title} />
                 </div>
               </div>
               <TeacherCard courseTitle={classData.courses[1]} />
@@ -287,8 +290,9 @@ export default async function Page({
                   <ClassInfo courseTitle={classData.title} />
                   <TeacherCard courseTitle={classData.courses[0]} />
                 </div>
-                <div className="w-1/2">
-                  <VideoTeaser slug={classData.slug} title={classData.title}/>
+                <div className="w-1/2 flex flex-col gap-3">
+                  <VideoTeaser slug={classData.slug} title={classData.title} />
+                  <Prerequisites courseTitle={classData.title} />
                 </div>
               </div>
 
@@ -309,14 +313,14 @@ export default async function Page({
                 ClassSlug={classData.slug}
               />
               <div className="flex flex-row gap-6 items-stretch">
-                <div className="w-1/2 flex flex-col gap-3">
+                <div className="w-1/2">
                   <ClassInfo courseTitle={classData.title} />
-                  <Prerequisites courseTitle={classData.title} />
                 </div>
                 <div className="w-1/2">
-                  <VideoTeaser slug={classData.slug} title={classData.title}/>
+                  <VideoTeaser slug={classData.slug} title={classData.title} />
                 </div>
               </div>
+              <Prerequisites courseTitle={classData.title} />
               <TeacherCard courseTitle={classData.courses[0]} />
               <SessionInfo
                 courseID1={courseID}
