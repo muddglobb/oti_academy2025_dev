@@ -29,7 +29,7 @@ const EntryClassInfo = ({ classInfo }: ClassInfoProps) => {
             Detailed Information About Our Class
           </p>
           <div className="w-full">
-            <div className="flex md:flex-row flex-col justify-center md:gap-x-8 gap-y-8 items-center">
+            <div className="flex md:flex-row flex-col justify-center md:gap-x-8 gap-y-8 items-center px-2">
               <MentorCard
                 name={mentor}
                 imageUrl={mentorImage}
@@ -38,8 +38,8 @@ const EntryClassInfo = ({ classInfo }: ClassInfoProps) => {
                 linkedin={mentorLink}
               ></MentorCard>
 
-              <div className="hidden text-sm text-white md:flex flex-col gap-2">
-                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-sm px-2.5 py-2">
+              <div className="text-sm text-white flex flex-col gap-2 w-91">
+                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg px-2.5 py-2">
                   <Image
                     src={"/icons/calendar-icon.svg"}
                     alt="calendar-icon"
@@ -48,7 +48,7 @@ const EntryClassInfo = ({ classInfo }: ClassInfoProps) => {
                   ></Image>
                   <p>{date}</p>
                 </div>
-                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-sm px-2.5 py-2">
+                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg px-2.5 py-2">
                   <Image
                     src={"/icons/target-icon.svg"}
                     alt="calendar-icon"
@@ -57,7 +57,7 @@ const EntryClassInfo = ({ classInfo }: ClassInfoProps) => {
                   ></Image>
                   <p>{sesi}</p>
                 </div>
-                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-sm px-2.5 py-2">
+                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg px-2.5 py-2">
                   <Image
                     src={"/icons/time-icon.svg"}
                     alt="calendar-icon"
@@ -66,7 +66,7 @@ const EntryClassInfo = ({ classInfo }: ClassInfoProps) => {
                   ></Image>
                   <p>{jam}</p>
                 </div>
-                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-sm px-2.5 py-2">
+                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg px-2.5 py-2">
                   <Image
                     src={"/icons/stack-icon.svg"}
                     alt="calendar-icon"
@@ -74,50 +74,6 @@ const EntryClassInfo = ({ classInfo }: ClassInfoProps) => {
                     height={21}
                   ></Image>
                   <p>{modul}</p>
-                </div>
-              </div>
-
-              <div className="md:hidden text-sm text-white flex flex-col justify-center items-center gap-1">
-                <div className="flex gap-1">
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-40 sm:w-52 px-2.5 py-2 items-center">
-                    <Image
-                      src={"/icons/calendar-icon.svg"}
-                      alt="calendar-icon"
-                      width={19}
-                      height={19}
-                    ></Image>
-                    <p>{date}</p>
-                  </div>
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-40 sm:w-52 px-2.5 py-2 items-center">
-                    <Image
-                      src={"/icons/time-icon.svg"}
-                      alt="calendar-icon"
-                      width={19}
-                      height={19}
-                    ></Image>
-                    <p>{jam}</p>
-                  </div>
-                </div>
-                <div className="flex gap-1">
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-40 sm:w-52 px-2.5 py-2 items-center">
-                    <Image
-                      src={"/icons/target-icon.svg"}
-                      alt="calendar-icon"
-                      width={19}
-                      height={19}
-                    ></Image>
-                    <p>{sesi}</p>
-                  </div>
-                  
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-40 sm:w-52 px-2.5 py-2 items-center">
-                    <Image
-                      src={"/icons/stack-icon.svg"}
-                      alt="calendar-icon"
-                      width={19}
-                      height={19}
-                    ></Image>
-                    <p>{modul}</p>
-                  </div>
                 </div>
               </div>
             </div>

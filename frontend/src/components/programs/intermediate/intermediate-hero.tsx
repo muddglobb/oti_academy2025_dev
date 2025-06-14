@@ -14,7 +14,8 @@ const IntermediateHero = ({ hero }: HeroProps) => {
       className="relative w-full overflow-hidden
     pt-35
     sm:pt-31 h-screen
-    bg-[linear-gradient(0deg,rgba(5,12,26,0.8)_0%,rgba(5,12,26,0.2)_100%)]"
+    bg-[linear-gradient(0deg,rgba(5,12,26,0.8)_0%,rgba(5,12,26,0.2)_100%)]
+    "
     >
       <div
         className="absolute inset-0 bg-cover bg-center -z-10"
@@ -28,10 +29,10 @@ const IntermediateHero = ({ hero }: HeroProps) => {
         style={{ backgroundImage: "url(/images/planet/planet-kuning.png)" }}
       ></div>
 
-      <div className="mt-2 ml-6 md:ml-15">
+      <div className="mt-2 ml-6 md:ml-10 lg:ml-15">
         <Link
           href="/programs"
-          className="flex gap-2 bg-[var(--color-primary-800)] text-[14px] font-bold px-4.5 py-3 rounded-[8px] w-fit"
+          className="flex gap-2 bg-primary-800 text-[14px] font-bold px-4.5 py-3 rounded-[8px] w-fit"
         >
           <ArrowLeft size={20} color="white" />
           <p className="text-white ">Kembali</p>
@@ -47,7 +48,9 @@ const IntermediateHero = ({ hero }: HeroProps) => {
         relative
         w-full
         lg:mb-35
+        
       "
+      style={{ height: "calc(100% - 140px)" }}
       >
         {/* bg-[linear-gradient(0deg,rgba(5,12,26,0.8)_0%,rgba(5,12,26,0.2)_100%)] */}
 
@@ -59,7 +62,7 @@ const IntermediateHero = ({ hero }: HeroProps) => {
         mt-11
         "
         >
-          <div className="flex flex-col items-center gap-3 lg:gap-10 mx-9 xl:mx-45">
+          <div className="flex flex-col items-center gap-3 lg:gap-10 mx-9 xl:mx35">
             <div className="flex flex-col gap-2.5">
               <div className="flex gap-5 items-center justify-center">
                 <div className="text-white border-solid border-1 rounded-[5px] px-4.5 py-1.5 border-white">
