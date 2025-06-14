@@ -59,7 +59,7 @@ const BundleClassInfo = ({
           </p>
           <div className="md:w-4xl w-sm">
             <div className="flex flex-col justify-center md:gap-x-8 gap-y-8">
-              <div className="flex gap-6 flex-wrap justify-center mb-6">
+              <div className="flex gap-6 flex-wrap justify-center mb-6 px-2">
                 {/* SEMENTARA GA DIPAKAI
                 <MentorCard
                   name={mentor}
@@ -69,10 +69,10 @@ const BundleClassInfo = ({
                   linkedin={mentorLink}
                 /> */}
                 <TBACard
-            name="Mentor"
-              imageUrl="/images/foto-orang/mentor-tba.webp"
-              description="To Be Announced"
-            />
+                  name="Mentor"
+                  imageUrl="/images/foto-orang/mentor-tba.webp"
+                  description="To Be Announced"
+                />
 
                 <MentorCard
                   name={TA}
@@ -93,8 +93,8 @@ const BundleClassInfo = ({
                 )}
               </div>
 
-              <div className="hidden text-sm text-white md:flex flex-col gap-2 justify-center items-center">
-                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-[619px] px-2.5 py-2">
+              <div className="text-sm text-white flex flex-col gap-2 justify-center items-center w-full">
+                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-91 px-2.5 py-2">
                   <Image
                     src={"/icons/calendar-icon.svg"}
                     alt="calendar-icon"
@@ -103,7 +103,7 @@ const BundleClassInfo = ({
                   ></Image>
                   <p>{date}</p>
                 </div>
-                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-[619px] px-2.5 py-2">
+                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-91 px-2.5 py-2">
                   <Image
                     src={"/icons/target-icon.svg"}
                     alt="calendar-icon"
@@ -112,7 +112,7 @@ const BundleClassInfo = ({
                   ></Image>
                   <p>{sesi}</p>
                 </div>
-                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-[619px] px-2.5 py-2">
+                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-91 px-2.5 py-2">
                   <Image
                     src={"/icons/time-icon.svg"}
                     alt="calendar-icon"
@@ -121,7 +121,7 @@ const BundleClassInfo = ({
                   ></Image>
                   <p>{jam}</p>
                 </div>
-                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-[619px] px-2.5 py-2">
+                <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-91 px-2.5 py-2">
                   <Image
                     src={"/icons/stack-icon.svg"}
                     alt="calendar-icon"
@@ -129,49 +129,6 @@ const BundleClassInfo = ({
                     height={21}
                   ></Image>
                   <p>{modul}</p>
-                </div>
-              </div>
-
-              <div className="md:hidden text-sm text-white flex flex-row justify-center items-center gap-1">
-                <div className="flex flex-col gap-1">
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-53 sm:w-60 px-2.5 py-2">
-                    <Image
-                      src={"/icons/calendar-icon.svg"}
-                      alt="calendar-icon"
-                      width={21}
-                      height={21}
-                    ></Image>
-                    <p>{date}</p>
-                  </div>
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-53 sm:w-60 px-2.5 py-2">
-                    <Image
-                      src={"/icons/target-icon.svg"}
-                      alt="calendar-icon"
-                      width={21}
-                      height={21}
-                    ></Image>
-                    <p>{sesi}</p>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-53 sm:w-60 px-2.5 py-2">
-                    <Image
-                      src={"/icons/time-icon.svg"}
-                      alt="calendar-icon"
-                      width={21}
-                      height={21}
-                    ></Image>
-                    <p>{jam}</p>
-                  </div>
-                  <div className="flex flex-row gap-2.5 border-s-white border-2 rounded-lg w-53 sm:w-60 px-2.5 py-2">
-                    <Image
-                      src={"/icons/stack-icon.svg"}
-                      alt="calendar-icon"
-                      width={21}
-                      height={21}
-                    ></Image>
-                    <p>{modul}</p>
-                  </div>
                 </div>
               </div>
             </div>

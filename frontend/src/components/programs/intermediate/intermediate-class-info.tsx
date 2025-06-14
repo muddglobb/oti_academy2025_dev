@@ -54,7 +54,6 @@ const IntermediateClassInfo = ({ classInfo }: ClassInfoProps) => {
         style={{ backgroundImage: "url(/images/planet/saturnus.png)" }}
       ></div>
       <div className="flex-col items-center justify-center py-10">
-
         <div className="px-4">
           <p
             className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center font-bold mb-7.5
@@ -79,7 +78,7 @@ const IntermediateClassInfo = ({ classInfo }: ClassInfoProps) => {
               linkedin={mentorLink}
             /> */}
             <TBACard
-            name="Mentor"
+              name="Mentor"
               imageUrl="/images/foto-orang/mentor-tba.webp"
               description="To Be Announced"
             />
@@ -103,37 +102,32 @@ const IntermediateClassInfo = ({ classInfo }: ClassInfoProps) => {
             md:text-[14px]
           "
           >
-            <div className="flex flex-col gap-2.5">
-              <div className="flex gap-2.5 lg:flex-col">
-                <div className="flex gap-2.5 border-2 p-2 rounded-[8px] w-[50%] lg:w-full items-center">
-                  <Calendar size={18} />
-                  {/* <p>tanggal</p> */}
-                  <p>{date}</p>
-                </div>
-                <div className="flex gap-2.5 border-2 p-2 rounded-[8px] w-[50%] lg:w-full items-center">
-                  <Target size={18} />
-                  {/* <p>sesi</p> */}
-                  <p>{session}</p>
-                </div>
+            <div className="flex flex-col gap-2.5 items-center">
+              <div className="flex gap-2.5 border-2 p-2 rounded-[8px] items-center w-91 md:w-155">
+                <Calendar size={18} />
+                {/* <p>tanggal</p> */}
+                <p>{date}</p>
               </div>
-              <div className="flex gap-2.5 lg:flex-col">
-                <div className="flex gap-2.5 border-2 p-2 rounded-[8px] w-[50%] lg:w-full items-center">
-                  <Clock size={18} />
-                  {/* <p>jam</p> */}
-                  <p>{hour}</p>
-                </div>
-                <div className="flex gap-2.5 border-2 p-2 rounded-[8px] w-[50%] lg:w-full items-center">
-                  <Database size={18} />
-                  {/* <p>modul</p> */}
-                  <p>{modul}</p>
-                </div>
+              <div className="flex gap-2.5 border-2 p-2 rounded-[8px] items-center w-91 md:w-155">
+                <Target size={18} />
+                {/* <p>sesi</p> */}
+                <p>{session}</p>
               </div>
-            </div>
-
-            <div className="flex gap-2.5 border-2 p-2 rounded-[8px] items-center">
-              <CircleAlert size={18} />
-              {/* <p>prerequisites</p> */}
-              <p>{prerequisites}</p>
+              <div className="flex gap-2.5 border-2 p-2 rounded-[8px] items-center w-91 md:w-155">
+                <Clock size={18} />
+                {/* <p>jam</p> */}
+                <p>{hour}</p>
+              </div>
+              <div className="flex gap-2.5 border-2 p-2 rounded-[8px] items-center w-91 md:w-155">
+                <Database size={18} />
+                {/* <p>modul</p> */}
+                <p>{modul}</p>
+              </div>
+              <div className="flex gap-2.5 border-2 p-2 rounded-[8px] items-center w-91 md:w-155">
+                <CircleAlert size={18} />
+                {/* <p>prerequisites</p> */}
+                <p>{prerequisites}</p>
+              </div>
             </div>
           </div>
         </div>
