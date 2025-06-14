@@ -150,7 +150,6 @@ const ClassCapacity = async ({
         {isEnrolled === false &&
           currentCount !== capacity &&
           selfEnrollDataLength < 2 &&
-          enrolledCourseLevel &&
           enrolledCourseLevel !== ClassLevel && (
             <Link
               href={`/payment/${ClassSlug}`}
