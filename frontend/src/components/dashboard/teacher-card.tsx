@@ -104,7 +104,25 @@ const teacherCardData: Record<
       "Mahasiswa Ilmu Komputer UGM yang antusias di bidang cybersecurity. Telah menyelesaikan Google Cybersecurity Certificate dan siap jadi teaching assistant andal di kelas ini.",
     ],
   ],
-  "Mentor Card": [["TBA ", "Mentor", "/person-placeholder.jpeg", "", "-"]],
+  "Mentor Card": [
+    ["TBA", "Mentor", "/images/foto-orang/mentor-tba-2.webp", "", "-"],
+  ],
+  "Graphic Design + UI/UX": [
+    [
+      "Geraldine Hutagalung",
+      "Teaching Assistant",
+      "/images/foto-orang/geradline.webp",
+      "",
+      "Mahasiswa Ilmu Komputer UGM yang dikenal dengan karya-karya desain grafisnya yang kreatif dan standout. Aktif di berbagai proyek dan siap berbagi sebagai teaching assistant.",
+    ],
+    [
+      "Ken Bima Satria Gandasasmita",
+      "Teaching Assistant",
+      "/images/foto-orang/ken-bima.webp",
+      "https://www.linkedin.com/in/kenbimasatriagandasasmita/",
+      "-",
+    ],
+  ],
 };
 const TeacherCard = ({ courseTitle }: TeacherCardProps) => {
   const teachers = teacherCardData[courseTitle] || [];
@@ -112,7 +130,7 @@ const TeacherCard = ({ courseTitle }: TeacherCardProps) => {
   return (
     <div className=" border-solid border-2 border-neutral-500 rounded-[20px] p-5">
       <p className="font-bold text-lg text-neutral-50 border-b-2 border-neutral-500 pb-2 mx-2">
-        Teaching Assistant & Mentor
+        Mentor & Teaching Assistant
       </p>
       <div className="flex flex-col xl:flex-row gap-15 mt-2 items-stretch">
         {teachers.map(([name, role, imageUrl, linkedin, desc], index) =>
