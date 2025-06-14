@@ -186,6 +186,17 @@ export default async function Page({
     courseID2 = findCourseID ? findCourseID.id : "";
   }
 
+  const resApi = await fetch(
+    `${process.env.BASE_URL}/payments/${courseID}/stats`,
+    {
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+  const apiData = await resApi.json();
+
   async function getEnroll(courseID: string) {
     const enrollRes = await fetch(
       `${process.env.BASE_URL}/enrollments/${courseID}/status`,
@@ -203,9 +214,67 @@ export default async function Page({
   const enrollRes = await getEnroll(courseID);
   const enrollData = await enrollRes.json();
 
-  let enroll: Enroll[] = Array.isArray(enrollData.data) ? enrollData.data : [];
+  // let enroll: Enroll[] = Array.isArray(enrollData.data) ? enrollData.data : [];
 
   const isEnrolled = enrollData.data?.isEnrolled;
+
+  async function getPaymentStatus() {
+    const res = await fetch(`${process.env.BASE_URL}/payments/my-payments`, {
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res;
+  }
+
+  const paymentRes = await getPaymentStatus();
+  const paymentData = await paymentRes.json();
+
+  const paymentDataLength = Array.isArray(paymentData.data)
+    ? paymentData.data.length
+    : 0;
+
+  const enrolledClassType =
+    Array.isArray(paymentData.data) && paymentData.data.length > 0
+      ? paymentData.data[0].packageType
+      : "";
+
+  async function getSelfEnroll() {
+    const selfEnrollRes = await fetch(
+      `${process.env.BASE_URL}/enrollments/me`,
+      {
+        cache: "no-store",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return selfEnrollRes;
+  }
+
+  const selfEnrollRes = await getSelfEnroll();
+  const selfEnrollData = await selfEnrollRes.json();
+  const enrollmentCount = selfEnrollData.data?.length;
+
+  const currentCount =
+    classData.ClassLevel === "ENTRY"
+      ? apiData.data?.enrollments?.entryIntermediateCount ?? 0
+      : classData.ClassLevel === "INTERMEDIATE"
+      ? apiData.data?.enrollments?.entryIntermediateCount ?? 0
+      : classData.ClassLevel === "BUNDLE"
+      ? apiData.data?.enrollments?.bundleCount ?? 0
+      : 0;
+  const capacity =
+    classData.ClassLevel === "ENTRY"
+      ? apiData.data?.quota?.entryIntermediateQuota ?? 1
+      : classData.ClassLevel === "INTERMEDIATE"
+      ? apiData.data?.quota?.entryIntermediateQuota ?? 1
+      : classData.ClassLevel === "BUNDLE"
+      ? apiData.data?.quota?.bundleQuota ?? 1
+      : 0;
 
   return (
     <>
@@ -227,6 +296,8 @@ export default async function Page({
                   ClassDesc={classData.desc}
                   ClassLevel={classData.ClassLevel}
                   CourseID={courseID}
+                  Courses1={classData.courses[0]}
+                  Courses2={classData.courses[1]}
                   ClassSlug={classData.slug}
                 />
                 <div className="flex flex-row gap-6 w-full">
@@ -234,15 +305,20 @@ export default async function Page({
                     <ClassInfo courseTitle={classData.title} />
                   </div>
                   <div className="w-1/2">
-                    <VideoTeaser slug={classData.slug} title={classData.title}/>
+                    <VideoTeaser
+                      slug={classData.slug}
+                      title={classData.title}
+                    />
                   </div>
                 </div>
+                <Prerequisites courseTitle={classData.title} />
                 <TeacherCard courseTitle={classData.courses[1]} />
                 <SessionInfo
                   courseID1={courseID}
                   courseID2={courseID2}
                   courseTitle1={classData.courses[0]}
                   courseTitle2={classData.courses[1]}
+                  ClassLevel={classData.ClassLevel}
                 />
               </div>
             )}
@@ -253,23 +329,33 @@ export default async function Page({
                 ClassDesc={classData.desc}
                 ClassLevel={classData.ClassLevel}
                 CourseID={courseID}
+                Courses1={classData.courses[0]}
+                Courses2={classData.courses[1]}
                 ClassSlug={classData.slug}
               />
               <div className="flex flex-row gap-6 w-full">
-                <div className="flex flex-col w-1/2 gap-3">
+                <div className="w-1/2">
                   <ClassInfo courseTitle={classData.title} />
-                  <TeacherCard courseTitle="Mentor Card" />
                 </div>
                 <div className="w-1/2">
-                  <VideoTeaser slug={classData.slug} title={classData.title}/>
+                  <VideoTeaser slug={classData.slug} title={classData.title} />
                 </div>
               </div>
-              <TeacherCard courseTitle={classData.courses[1]} />
+              <div className="flex flex-row gap-6 items-stretch">
+                <div className="flex-1">
+                  <TeacherCard courseTitle="Mentor Card" />
+                </div>
+                <div className="flex-1">
+                  <Prerequisites courseTitle={classData.title} />
+                </div>
+              </div>
+              <TeacherCard courseTitle={classData.title} />
               <SessionInfo
                 courseID1={courseID}
                 courseID2={courseID2}
                 courseTitle1={classData.courses[0]}
                 courseTitle2={classData.courses[1]}
+                ClassLevel={classData.ClassLevel}
               />
             </div>
           )}
@@ -281,14 +367,16 @@ export default async function Page({
                 ClassLevel={classData.ClassLevel}
                 CourseID={courseID}
                 ClassSlug={classData.slug}
+                Courses1={classData.courses[0]}
               />
               <div className="flex flex-row gap-6 items-stretch">
                 <div className="w-1/2 flex flex-col gap-3">
                   <ClassInfo courseTitle={classData.title} />
                   <TeacherCard courseTitle={classData.courses[0]} />
                 </div>
-                <div className="w-1/2">
-                  <VideoTeaser slug={classData.slug} title={classData.title}/>
+                <div className="flex flex-col gap-3 w-1/2">
+                  <VideoTeaser slug={classData.slug} title={classData.title} />
+                  <Prerequisites courseTitle={classData.title} />
                 </div>
               </div>
 
@@ -296,6 +384,7 @@ export default async function Page({
                 courseID1={courseID}
                 courseTitle1={classData.courses[0]}
                 courseTitle2={classData.courses[1]}
+                ClassLevel={classData.ClassLevel}
               />
             </div>
           )}
@@ -307,40 +396,57 @@ export default async function Page({
                 ClassLevel={classData.ClassLevel}
                 CourseID={courseID}
                 ClassSlug={classData.slug}
+                Courses1={classData.courses[0]}
               />
               <div className="flex flex-row gap-6 items-stretch">
-                <div className="w-1/2 flex flex-col gap-3">
+                <div className="w-1/2">
                   <ClassInfo courseTitle={classData.title} />
-                  <Prerequisites courseTitle={classData.title} />
                 </div>
                 <div className="w-1/2">
-                  <VideoTeaser slug={classData.slug} title={classData.title}/>
+                  <VideoTeaser slug={classData.slug} title={classData.title} />
                 </div>
               </div>
+              <Prerequisites courseTitle={classData.title} />
               <TeacherCard courseTitle={classData.courses[0]} />
               <SessionInfo
                 courseID1={courseID}
                 courseTitle1={classData.courses[0]}
                 courseTitle2={classData.courses[1]}
+                ClassLevel={classData.ClassLevel}
               />
             </div>
           )}
         </div>
 
         <div className="xl:hidden flex flex-col gap-6">
-          <ClassCapacity
-            ClassName={classData.title}
-            ClassDesc={classData.desc}
-            ClassLevel={classData.ClassLevel}
-            CourseID={courseID}
-            ClassSlug={classData.slug}
-          />
-          <VideoTeaser slug={classData.slug} title={classData.title} />
-          <ClassInfo courseTitle={classData.title} />
-          {classData.ClassLevel === "INTERMEDIATE" && (
-            <Prerequisites courseTitle={classData.title} />
+          {classData.ClassLevel === "BUNDLE" && (
+            <ClassCapacity
+              ClassName={classData.title}
+              ClassDesc={classData.desc}
+              ClassLevel={classData.ClassLevel}
+              CourseID={courseID}
+              Courses1={classData.courses[0]}
+              Courses2={classData.courses[1]}
+              ClassSlug={classData.slug}
+            />
+          )}
+          {classData.ClassLevel !== "BUNDLE" && (
+            <ClassCapacity
+              ClassName={classData.title}
+              ClassDesc={classData.desc}
+              ClassLevel={classData.ClassLevel}
+              CourseID={courseID}
+              Courses1={classData.courses[0]}
+              ClassSlug={classData.slug}
+            />
           )}
 
+          <VideoTeaser slug={classData.slug} title={classData.title} />
+          <ClassInfo courseTitle={classData.title} />
+          <Prerequisites courseTitle={classData.title} />
+          {classData.title === "Graphic Design + UI/UX" && (
+            <TeacherCard courseTitle="Mentor Card" />
+          )}
           {classData.ClassLevel === "BUNDLE" && (
             <TeacherCard courseTitle={classData.courses[1]} />
           )}
@@ -354,24 +460,32 @@ export default async function Page({
               courseID2={courseID2}
               courseTitle1={classData.courses[0]}
               courseTitle2={classData.courses[1]}
+              ClassLevel={classData.ClassLevel}
             />
           )}
           {classData.ClassLevel !== "BUNDLE" && (
             <SessionInfo
               courseID1={courseID}
               courseTitle1={classData.courses[0]}
+              ClassLevel={classData.ClassLevel}
             />
           )}
         </div>
       </div>
       <div className="md:hidden sticky z-10 w-full bottom-0 ">
-        {isEnrolled === false && (
-          <MobileBottomBar
-            CourseID={courseID}
-            ClassLevel={classData.ClassLevel}
-            ClassSlug={classData.slug}
-          />
-        )}
+        {isEnrolled === false &&
+          (paymentDataLength === 0 || classData.ClassLevel !== "BUNDLE") &&
+          enrolledClassType !== "BUNDLE" &&
+          currentCount !== capacity &&
+          paymentDataLength < 2 &&
+          enrollmentCount < 2 &&
+          enrolledClassType !== classData.ClassLevel && (
+            <MobileBottomBar
+              CourseID={courseID}
+              ClassLevel={classData.ClassLevel}
+              ClassSlug={classData.slug}
+            />
+          )}
       </div>
     </>
   );
