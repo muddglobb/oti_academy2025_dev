@@ -37,13 +37,13 @@ const sessions: [string, string, string, string][] = [
   [
     "Web Dasar tentang Struktur & Styling",
     "1 Juli 2025",
-    "14.00 – 16.00 WIB | 2 Jam",
+    "14.00 – 16.00 WIB",
     "Mulai perjalanan codingmu dengan memahami pondasi utama pembuatan halaman web. Dalam sesi ini, kamu akan belajar menyusun elemen-elemen penting HTML seperti header, section, dan footer, lalu membuat tampilan lebih menarik dengan sentuhan CSS. Tidak hanya teori, kamu juga langsung praktek lewat mini challenge seru dengan membuat layout profil sederhana. Cara terbaik untuk menguasai struktur dan styling web secara nyata dan menyenangkan.",
   ],
   [
     "Mempelajari Layouting dan Responsive Design",
     "2 Juli 2025",
-    "14.00 – 16.00 WIB | 2 Jam",
+    "14.00 – 16.00 WIB",
     "Pelajari cara menyusun tampilan web yang rapi, fleksibel, dan nyaman dilihat di semua perangkat. Sesi ini dimulai dengan konsep dasar Box Model (margin, padding, dan border) lalu berlanjut ke Flexbox untuk membuat layout yang lebih dinamis dan terstruktur. Kamu juga akan belajar membuat desain responsif yang otomatis menyesuaikan tampilan, baik di laptop maupun smartphone.",
   ],
   [
@@ -55,19 +55,19 @@ const sessions: [string, string, string, string][] = [
   [
     "Introduction to React.js",
     "6 Juli 2025",
-    "14.00 – 16.00 WIB | 2 Jam",
+    "14.00 – 16.00 WIB",
     "Dalam sesi ini, kamu akan mulai membangun UI interaktif dengan React. Kita bahas konsep dasar seperti komponen, JSX, dan props, kemudian lanjut ke hooks seperti useState dan useEffect. Langsung praktik dengan membuat komponen kartu produk, lengkap dengan tombol interaktif yang bisa mengubah tampilannya secara real-time.",
   ],
   [
     "Mempelajari Styling Modern dengan Tailwind & Material UI",
     "7 Juli 2025",
-    "14.00 – 16.00 WIB | 2 Jam",
+    "14.00 – 16.00 WIB",
     "Kenalan dengan dua pendekatan populer untuk mempercantik tampilan React-mu, yaitu Tailwind CSS dan Material UI. Kamu akan belajar cara menggunakan utility-first CSS di Tailwind, styling komponen dengan efisien, serta bagaimana melakukan setup dan eksplorasi komponen dari MUI. Lewat latihan langsung, kamu akan membangun dua versi kartu produk lalu membandingkan kelebihan dan kekurangannya secara langsung.",
   ],
   [
     "Live Coding Session",
     "10 Juli 2025",
-    "14.00 – 16.00 WIB | 2 Jam",
+    "14.00 – 16.00 WIB",
     "Dalam sesi ini, kamu akan menggabungkan semua materi dari pertemuan sebelumnya dalam satu sesi live coding. Kita akan membangun satu halaman web lengkap dengan pendekatan modular menggunakan komponen. Sesi ini juga jadi pondasi untuk Final Project. Plus, dalam sesi ini akan ada pengumuman tema dan tantangan Final Project yang akan dikumpulkan nanti.",
   ],
   [

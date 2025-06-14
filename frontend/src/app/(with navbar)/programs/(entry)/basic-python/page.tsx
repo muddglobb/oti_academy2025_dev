@@ -43,31 +43,31 @@ const sessions: [string, string, string, string][] = [
   [
     "Mempelajari Dasar-Dasar Python",
     "1 Juli 2025",
-    "09.00 – 11.00 WIB | 2 Jam",
+    "09.00 – 11.00 WIB",
     "Masuk ke inti dunia pemrograman bareng Python! Dalam sesi ini, kamu akan belajar menulis kode pertamamu, memahami sintaks dasar, mencetak output, menulis komentar, serta mengenal variabel, tipe data, input pengguna, dan operasi matematika sederhana. Langsung praktik lewat mini assignment seru yang merangkum semua konsep dasar yang kamu pelajari.",
   ],
   [
     "Logika dan Kontrol Alur Program Python",
     "2 Juli 2025",
-    "09.00 – 11.00 WIB | 2 Jam",
+    "09.00 – 11.00 WIB",
     "Sesi ini mengenalkan cara mengontrol alur program menggunakan operator logika, ekspresi kondisional (if, nested if), serta perulangan (for & while). Selain itu, kamu juga akan mengeksplorasi cara manipulasi string dan indexing. Untuk memperdalam pemahaman, kamu akan membangun Password Validator dan berlatih pattern printing.",
   ],
   [
     "Struktur Data dan Fungsi Python",
     "3 Juli 2025 ",
-    "09.00 – 11.00 WIB | 2 Jam",
+    "09.00 – 11.00 WIB",
     "Kenali berbagai struktur data seperti Array, List, Tuple, Set, dan Dictionary yang sangat penting dalam Python. Dalam sesi ini, kamu juga akan mengenal fungsi dan scope dalam Python. Selain itu, kamu akan belajar cara mengimpor library dan menggunakan NumPy untuk perhitungan lebih kompleks. Semua konsep ini akan langsung kamu terapkan dalam studi kasus nyata.",
   ],
   [
     "Pengenalan OOP dan Pemrograman Berbasis Objek",
     "7 Juli 2025",
-    "09.00 – 11.00 WIB | 2 Jam",
+    "09.00 – 11.00 WIB",
     "Masuki dunia Object-Oriented Programming (OOP) dan mulai menulis kode Python yang lebih rapi, terstruktur, dan mudah dikembangkan. Dalam sesi ini, kamu akan belajar konsep dasar seperti class, object, method, attribute, hingga method overloading & overriding. OOP adalah fondasi penting untuk membangun program berskala besar dan profesional dan sesi ini akan jadi langkah awalmu ke arah sana.",
   ],
   [
     "Data Structures 101 Dari Linked List ke Tree",
     "8 Juli 2025",
-    "09.00 – 11.00 WIB | 2 Jam",
+    "09.00 – 11.00 WIB",
     "Sesi ini akan memperkenalkan konsep dasar struktur data dan algoritma, kamu akan mempelajari cara kerja Linked List dan Tree, serta bagaimana mengimplementasikannya menggunakan Python. Untuk memperdalam pemahaman, kamu akan membangun Organization Tree sebagai studi kasus nyata. Di akhir sesi, akan diumumkan detail Final Project yang akan menjadi tantangan utama dan penutup dari perjalanan belajar kamu.",
   ],
   [

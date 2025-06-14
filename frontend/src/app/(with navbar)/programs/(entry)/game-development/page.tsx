@@ -37,37 +37,37 @@ const sessions: [string, string, string, string][] = [
   [
     "Mengenal Dasar Game Development dan Game Design",
     "30 Juni 2025",
-    "14.00 – 16.00 WIB | 2 Jam",
+    "14.00 – 16.00 WIB",
     "Mulai petualanganmu di dunia game dengan memahami rahasia di balik desain game. Dalam sesi ini, kamu akan belajar bagaimana game dibangun dari konsep hingga jadi pengalaman interaktif yang seru dan memikat. Kamu juga akan diajak untuk menuangkan semua ide kreatifmu ke dalam Game Design Document (GDD), yaitu panduan wajib sebelum coding dimulai.",
   ],
   [
     "Pengenalan MDA Framework",
     "1 Juli 2025",
-    "14.00 – 16.00 WIB | 2 Jam",
+    "14.00 – 16.00 WIB",
     "Sesi ini membahas MDA Framework (Mechanics, Dynamics, Aesthetics) sebagai pendekatan untuk merancang pengalaman bermain yang menarik. Kamu akan belajar bagaimana framework ini membantu menyusun desain game yang lebih terarah dan efektif. Sebagai latihan, kamu akan membuat Game Design Document (GDD) dengan mengacu pada konsep MDA.",
   ],
   [
     "GDevelop dan Pembuatan Game Dasar",
     "3 Juli 2025",
-    "14.00 – 16.00 WIB | 2 Jam",
+    "14.00 – 16.00 WIB",
     "Dalam sesi ini, kamu akan dikenalkan pada GDevelop yaitu software no-code untuk membuat game 2D. Kamu akan belajar membuat elemen dasar seperti event, movement, sprites, tiles, UI, dan object, serta langsung mempraktekkannya lewat tugas pembuatan Game Prototype I. Sesi ini dirancang agar kamu bisa mulai membangun game pertamamu dengan langkah-langkah yang mudah dipahami.",
   ],
   [
     "Pendalaman Sistem Event di GDevelop",
     "4 Juli 2025",
-    "14.00 – 16.00 WIB | 2 Jam",
+    "14.00 – 16.00 WIB",
     "Sesi ini akan mengajak kamu memahami lebih dalam bagaimana sistem event di GDevelop bekerja. Fokus utama mencakup pengelolaan waktu, perubahan state objek, dan penerapan physics untuk menciptakan interaksi yang lebih realistis dan dinamis dalam game. Pemahaman ini akan membantumu menyusun logika game yang lebih kompleks dan responsif.",
   ],
   [
     "Persiapan GameJam",
     "5 Juli 2025",
-    "14.00 – 16.00 WIB | 2 Jam",
+    "14.00 – 16.00 WIB",
     "Kenali konsep GameJam sebagai ajang kolaboratif untuk menciptakan game dalam waktu terbatas. Kamu akan memahami alur dan timeline GameJam. Kamu akan mempelajari bagaimana alur kerja dalam GameJam. Sesi ini juga akan membahas roadmap dan timeline GameJam. Di akhir sesi, Final Project akan diumumkan sebagai tantangan utama untuk menerapkan seluruh kemampuan yang telah kamu pelajari.",
   ],
   [
     "Sesi Konsultasi",
     "9 & 11 Juli 2025",
-    "15.00 – 17.00 WIB | 2 Jam",
+    "15.00 – 17.00 WIB",
     "Selama sesi ini, kamu juga bisa konsultasi langsung lewat Zoom. Kalau ada pertanyaan atau butuh arahan, silahkan masuk ke ruang Zoom dan bertanya langsung dengan Teaching Assistant kami. Ruang konsultasi ini akan dibuka dari pagi hingga sore, jadi kamu bisa tanya kapan pun selama jam tersebut.",
   ],
 ];
