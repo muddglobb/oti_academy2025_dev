@@ -12,7 +12,7 @@ const BeginnerClass = () => {
             aria-hidden="true"
         />
       <div
-        className="w-full pb-25 bg-cover bg-center flex flex-col items-center justify-center
+        className="w-full py-25 bg-cover bg-center flex flex-col items-center justify-center
           bg-[linear-gradient(0deg,rgba(5,12,26,0.9)_0%,rgba(5,12,26,0.6)_100%)]
           relative
         "

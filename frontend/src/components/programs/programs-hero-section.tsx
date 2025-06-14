@@ -14,8 +14,8 @@ const ProgramsHero = () => {
       "
     >
       <div className="flex-col items-center justify-center 
-      px-10
-      lg:px-60">
+      px-3
+      lg:px-28">
         {/* bintang dan planet */}
         <>
           <Image

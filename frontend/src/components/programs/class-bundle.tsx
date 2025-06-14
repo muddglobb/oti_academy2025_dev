@@ -12,15 +12,15 @@ const ClassBundle = () => {
         aria-hidden="true"
       />
       <div
-        className="w-full pb-25 bg-cover bg-center flex flex-col items-center justify-center
+        className="w-full py-25 bg-cover bg-center flex flex-col items-center justify-center
           bg-[linear-gradient(0deg,rgba(5,12,26,0.6)_0%,rgba(5,12,26,0.9)_100%)]
           relative
         "
       >
         <div
           className="flex-col items-center justify-center 
-        px-10
-        lg:px-60"
+        px-2
+        lg:px-0"
         >
           {/* bintang dan planet */}
           <>
