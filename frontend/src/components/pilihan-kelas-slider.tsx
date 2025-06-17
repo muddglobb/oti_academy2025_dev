@@ -64,6 +64,7 @@ const PilihanKelasSlider =() => {
         nextArrow: <NextArrow/>,
         prevArrow: <PrevArrow/>,
         slidesToShow: 4,
+        initialSlide: 0, // Set the initial slide to index 1
         responsive: [
             {
                 breakpoint: 1400,
