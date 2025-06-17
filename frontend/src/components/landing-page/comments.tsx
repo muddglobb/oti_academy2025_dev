@@ -156,8 +156,10 @@ const Comments = () => {
                 <div className="hidden lg:flex 2xl:gap-8 gap-5 mt-10 h-full">
                     {/* kiri dua */}
                     <motion.div 
-                        initial={{ opacity: 0, y: 60 }}
+                        initial={{ opacity: 0, y: 100 }}
                         animate={{ opacity: 1, y: 0 }}
+                        whileInView="visible"
+                        viewport={{ once: true }}
                         transition={{ duration: 3, delay: 0.7, type: "spring" }}
                         className="flex flex-col 2xl:gap-10 gap-5 max-w-104"
                     >
