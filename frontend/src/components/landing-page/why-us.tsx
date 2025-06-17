@@ -1,12 +1,17 @@
 "use client";
 
 import Container from "@/components/container";
-import { SquarePen, Database, Clipboard, UserPlus } from "lucide-react";
+import { Users, SquarePen, Database, Clipboard, UserPlus } from "lucide-react";
 import Image from "next/image";
 import * as motion from "motion/react-client"
 import { fadeIn, fadeInComp, slideInComp } from "@/lib/animation";
 
 const WhyUsContent = [
+  {
+    icon: Users,
+    header: "Terbuka untuk siapa saja",
+    content: "Mau pelajar, mahasiswa, atau baru mulai belajar — semua bisa ikut",
+  },
   {
     icon: SquarePen,
     header: "Belajar dengan Praktik",
@@ -43,6 +48,13 @@ const Sponsors = [
     width: 180,
     height: 180,
     displaySize: "h-[180px]"
+  },
+  {
+    src: "/images/sponsors/s-mixue.webp",
+    alt: "sponsor 3",
+    width: 103,
+    height: 103,
+    displaySize: "h-[103px]"
   },
 ];
 
@@ -129,6 +141,7 @@ const WhyUs = () => {
             })}
           </motion.div>
 
+          {/* sponsor */}
           <motion.div 
             variants={fadeIn}
             initial="hidden"
@@ -136,7 +149,18 @@ const WhyUs = () => {
             viewport={{
               once: true,
             }}
-            className="flex flex-wrap justify-center gap-4 md:gap-9 max-w-screen w-auto items-center">
+            className="flex flex-col justify-center gap-4 md:gap-9 max-w-screen w-auto items-center">
+            <motion.h1 
+              variants={fadeIn}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{
+                once: true,
+              }}
+              className="pt-10 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
+              Sponsor Kami untuk Acara ini
+          </motion.h1>
+          <div className="flex flex-row justify-center items-center gap-4">
             {Sponsors.map((img, index) => (
               <motion.div 
                 variants={slideInComp}
@@ -145,7 +169,7 @@ const WhyUs = () => {
                 viewport={{
                   once: true,
                 }}
-                transition={{ delay: 2 }}
+                transition={{ delay: 3 }}
                 custom={index}
                 key={index} 
                 className={`w-auto ${img.displaySize} flex`}>
@@ -158,6 +182,7 @@ const WhyUs = () => {
                 />
               </motion.div>
             ))}
+            </div>
           </motion.div>
         </Container>
       </div>

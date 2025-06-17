@@ -52,18 +52,8 @@ const Kenali = () => {
                       <KenaliSlider/>
                   </div>
               <p className="pt-0 md:pt-10 lg:px-24 px-9 text-neutral-50 text-center text-[12px] sm:text-[18px]">
-                Dulu dikenal sebagai OEM-OEM dan OLC, sekarang OmahTI Academy
-                hadir sebagai{" "}
-                <span className="font-bold">
-                  program belajar IT yang lebih komprehensif
-                </span>
-                . Di sini, pemula bisa mulai dari dasar, sementara peserta tingkat{" "}
-                <span className="font-bold">
-                  intermediate bisa mendalami bidang yang mereka minati
-                </span>
-                . Selain belajar, program ini juga membuka wawasan teknologi dan
-                memberi kesempatan untuk terhubung langsung dengan{" "}
-                <span className="font-bold">profesional di industri</span>.
+                Dulu dikenal sebagai OEM-OEM dan OLC, sekarang OmahTI Academy hadir sebagai <span className="font-bold"> program belajar IT yang lebih komprehensif</span> dan <span className="font-bold">terbuka untuk umum</span>. Di sini, pemula bisa mulai dari dasar, sementara peserta tingkat <span className="font-bold"> intermediate bisa mendalami bidang yang mereka minati</span>. Selain belajar, program ini juga membuka wawasan teknologi dan
+                memberi kesempatan untuk terhubung langsung dengan<span className="font-bold">profesional di industri</span>.
               </p>
             </Container>
           </motion.div>
