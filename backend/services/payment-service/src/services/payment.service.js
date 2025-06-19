@@ -45,72 +45,62 @@ export class PaymentService {
    * @returns {Promise<Array>} List of payments
    */
   static async getAllPayments(filters = {}) {
-    const {
-      status,
-      type,
-      backStatus,
-      startDate,
-      endDate,
-      page = 1,
-      limit = 10
-    } = filters;
-    
-    const skip = (page - 1) * limit;
-    
-    // Build where conditions based on filters
-    const where = {};
-    
-    if (status) {
-      where.status = status;
-    }
-    
-    if (type) {
-      where.type = type;
-    }
-    
-    if (backStatus) {
-      where.backStatus = backStatus;
-    }
-    
-    // Date range filter
-    if (startDate || endDate) {
-      where.createdAt = {};
-      
-      if (startDate) {
-        where.createdAt.gte = startDate;
-      }
-      
-      if (endDate) {
-        where.createdAt.lte = endDate;
-      }
-    }
-    
-    // Get paginated results
-    const [payments, total] = await Promise.all([
-      prisma.payment.findMany({
-        where,
-        orderBy: {
-          createdAt: 'desc'
-        },
-        skip,
-        take: limit
-      }),
-      prisma.payment.count({ where })
-    ]);
-
-    // Enhance payments with package info and price
-    const enhancedPayments = await this.enhancePaymentsWithPrice(payments);
-    
-    return {
-      payments: enhancedPayments,
-      pagination: {
-        total,
-        page,
-        limit,
-        pages: Math.ceil(total / limit)
-      }
-    };
+  const {
+    status,
+    type,
+    backStatus,
+    startDate,
+    endDate
+  } = filters;
+  
+  // Build where conditions based on filters
+  const where = {};
+  
+  if (status) {
+    where.status = status;
   }
+  
+  if (type) {
+    where.type = type;
+  }
+  
+  if (backStatus) {
+    where.backStatus = backStatus;
+  }
+  
+  // Date range filter
+  if (startDate || endDate) {
+    where.createdAt = {};
+    
+    if (startDate) {
+      where.createdAt.gte = startDate;
+    }
+    
+    if (endDate) {
+      where.createdAt.lte = endDate;
+    }
+  }
+  
+  const payments = await prisma.payment.findMany({
+    where,
+    orderBy: [
+      {
+        status: 'desc' 
+      },
+      {
+        createdAt: 'desc' 
+      }
+    ]
+  });
+
+  // Enhance payments with package info and price
+  const enhancedPayments = await this.enhancePaymentsWithPrice(payments);
+  
+  return {
+    payments: enhancedPayments,
+    total: enhancedPayments.length
+  };
+}
   
   /**
    * Get payment by ID
