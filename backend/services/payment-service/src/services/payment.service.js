@@ -85,7 +85,7 @@ export class PaymentService {
     where,
     orderBy: [
       {
-        status: 'desc' 
+        status: 'asc' 
       },
       {
         createdAt: 'desc' 
