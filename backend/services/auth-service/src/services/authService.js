@@ -416,7 +416,6 @@ getCookieOptions(tokenType) {
         phone: true,
         role: true,
         type: true,
-        nim: true,
       }
     });
 
