@@ -40,7 +40,7 @@ router.get('/verify-reset/:token', standardLimiter, verifyResetToken);
 router.post('/validate-token', validateTokenRequest, validateToken);
 
 // Protected routes
-router.post('/logout', logout);
+router.post('/logout', authenticateJWT, logout);
 
 router.patch('/change-password', authenticateJWT, validateChangePassword, changePassword);
 router.patch('/update-profile', authenticateJWT, validateUpdateProfile, updateProfile);

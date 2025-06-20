@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { ApiResponse } from '../utils/api-response.js';
 import { asyncHandler } from '../middleware/async.middleware.js';
+import authService from '../services/authService.js';
 
 const prisma = new PrismaClient();
 
@@ -10,6 +11,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
             id: true,
             name: true,
             email: true,
+            phone: true,
             role: true,
             type: true,
             nim: true,
@@ -33,14 +35,13 @@ export const getUserById = asyncHandler(async (req, res) => {
         return res.status(403).json(
             ApiResponse.error('Not authorized to access this user profile')
         );
-    }
-
-    const user = await prisma.user.findUnique({
+    }    const user = await prisma.user.findUnique({
         where: { id: userId },
         select: {
             id: true,
             name: true,
             email: true,
+            phone: true,
             role: true,
             type: true,
             nim: true,
@@ -63,7 +64,7 @@ export const getUserById = asyncHandler(async (req, res) => {
 export const updateUser = asyncHandler(async (req, res) => {
     // Change: Remove parseInt to keep the ID as a string for UUID compatibility
     const userId = req.params.id;
-    const { name, email } = req.body;
+    const { name, email, phone } = req.body;
 
     if (req.user.id !== userId && req.user.role !== 'ADMIN') {
         return res.status(403).json(
@@ -83,9 +84,43 @@ export const updateUser = asyncHandler(async (req, res) => {
         }
     }
 
+    // Phone validation jika ada
+    if (phone) {
+        // Normalize phone
+        let normalizedPhone = phone;
+        if (phone.startsWith('+62')) {
+            normalizedPhone = '0' + phone.substring(3);
+        } else if (phone.startsWith('62')) {
+            normalizedPhone = '0' + phone.substring(2);
+        }
+
+        const existingPhone = await prisma.user.findFirst({
+            where: { 
+                phone: normalizedPhone,
+                id: { not: userId }
+            },
+        });
+
+        if (existingPhone) {
+            return res.status(400).json(
+                ApiResponse.error('Phone number already in use')
+            );
+        }
+    }
+
     const updateData = {};
     if (name) updateData.name = name;
     if (email) updateData.email = email;
+    if (phone) {
+        // Normalize phone untuk updateData
+        let normalizedPhone = phone;
+        if (phone.startsWith('+62')) {
+            normalizedPhone = '0' + phone.substring(3);
+        } else if (phone.startsWith('62')) {
+            normalizedPhone = '0' + phone.substring(2);
+        }
+        updateData.phone = normalizedPhone;
+    }
 
     const updatedUser = await prisma.user.update({
         where: { id: userId },
@@ -94,6 +129,7 @@ export const updateUser = asyncHandler(async (req, res) => {
             id: true,
             name: true,
             email: true,
+            phone: true,
             role: true,
             type: true,
             nim: true,
@@ -140,18 +176,7 @@ export const deleteUser = asyncHandler(async (req, res) => {
 // @access  Private
 export const getMe = asyncHandler(async (req, res) => {
 
-    const user = await prisma.user.findUnique({
-        where: { id: req.user.id },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            role: true,
-            type: true,
-            nim: true,
-            createdAt: true,
-        }
-    });
+    const user = await authService.getUserProfile(req.user.id);
 
   if (!user) {
     return res.status(404).json(
