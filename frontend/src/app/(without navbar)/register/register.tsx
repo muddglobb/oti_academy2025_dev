@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { User, Mail, Lock, ArrowLeft, Eye, EyeOff } from 'react-feather';
+import { User, Mail, Lock, ArrowLeft, Eye, EyeOff, Phone } from 'react-feather';
 import { useForm, SubmitHandler, useWatch } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 
@@ -11,6 +11,7 @@ interface FormData {
   name: string;
   password: string;
   confirmPassword: string;
+  phone: string;
   //nim: string;
 }
 
@@ -65,6 +66,7 @@ export default function Register() {
           name: data.name,
           password: data.password,
           type: "UMUM",
+          phone: data.phone,
           //nim: isDike ? data.nim : undefined,
         }),
       });
@@ -169,6 +171,29 @@ export default function Register() {
             }
             h-4 w-4`} size={20}/>
           {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
+        </div>
+
+        <div className="relative">
+          <h2 className="font-bold mb-1 mt-3">Nomor Telepon</h2>
+          <input
+            type="text"
+            id="phone"
+            placeholder="081234567899"
+            {...register("phone", {
+              required: "Nomor telepon wajib diisi" ,
+              pattern: {
+                value: /^[0-9]+$/,
+                message: "Nomor telepon hanya boleh berisi angka",
+              }},)}
+            className="w-full bg-white text-black border-3 rounded-md px-10 py-2"
+          />
+          <Phone className={`absolute left-3
+            ${errors.phone
+              ? 'top-[50%] -translate-y-[45%] text-gray-600'
+              : 'top-[66%] -translate-y-[45%] text-gray-600'
+            }
+            h-4 w-4`} size={20}/>
+          {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>}
         </div>
 
         <div className="relative">
