@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import React from "react";
 import GetAllEnrollments from "@/components/admin-page/get-all-enrollments";
 import { ArrowLeft } from "lucide-react";

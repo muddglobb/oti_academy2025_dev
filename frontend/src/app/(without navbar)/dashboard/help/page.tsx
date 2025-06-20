@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import Container from '@/components/container'
 import HelpFAQ from '@/components/help-center/help-faq'
 import Contact from '@/components/help-center/contact'

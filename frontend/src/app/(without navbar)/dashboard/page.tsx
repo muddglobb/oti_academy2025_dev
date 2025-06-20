@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import React from "react";
 import { WelcomeCard } from "@/components/dashboard/welcome-card";
 import SecondContent from "@/components/dashboard/second-content";

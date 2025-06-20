@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import ClassTracker from "@/components/admin-page/class-tracker";
 import WelcomeCardz from "@/components/admin-page/welcome-cardz";
 import TotalTracker from "@/components/admin-page/total-tracker";

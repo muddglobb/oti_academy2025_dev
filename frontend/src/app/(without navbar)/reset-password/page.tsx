@@ -1,12 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import Change from './reset';
 
 const LoginPage = () => {
   return (
     <div className="relative overflow-x-hidden">
-      <Change />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Change />
+      </Suspense>
     </div>
   );
 };
