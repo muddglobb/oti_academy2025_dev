@@ -13,36 +13,173 @@ const prisma = new PrismaClient();
  */
 export class AssignmentService {
   /**
+   * Helper function to format assignment response with WIB timezone
+   * @param {Object} assignment - Assignment object
+   * @returns {Object} Formatted assignment with WIB dates
+   */
+  static formatAssignmentResponse(assignment) {
+    if (!assignment) return assignment;
+    
+    const formattedAssignment = { ...assignment };
+    
+    // Convert dueDate from UTC to WIB
+    if (assignment.dueDate) {
+      const utcDate = new Date(assignment.dueDate);
+      
+      // Add 7 hours to convert UTC to WIB
+      const wibDate = new Date(utcDate.getTime() + (7 * 60 * 60 * 1000));
+      
+      // Return as ISO string with +07:00 timezone indicator
+      formattedAssignment.dueDate = wibDate.toISOString().replace('Z', '+07:00');
+      
+      // Keep the existing dueDateWib for human-readable format
+      formattedAssignment.dueDateWib = DateHelper.utcToWibString(utcDate, true);
+      
+      // Real-time isPastDue calculation using original UTC time
+      formattedAssignment.isPastDue = DateHelper.isPastDue(utcDate);
+    } else {
+      formattedAssignment.isPastDue = false;
+    }
+    
+    return formattedAssignment;
+  }
+
+  /**
    * Create a new assignment
    * @param {Object} data - Assignment data
    * @returns {Promise<Object>} Created assignment
    */  static async createAssignment(data) {
-    try {
-      // Verify course exists
+    try {      // Verify course exists
       const courseExists = await this.verifyCourse(data.courseId);
       if (!courseExists) {
         throw new Error('Course not found');
       }      
       
-    // Konversi dueDate dari WIB (UTC+7) ke UTC jika ada
-      let dueDateUTC = data.dueDate ? DateHelper.wibToUtc(data.dueDate) : null;
-      
-      console.log('📅 Original input dueDate:', data.dueDate);
-      console.log('📅 Converted UTC dueDate:', dueDateUTC);
-      console.log('📅 UTC ISO string:', dueDateUTC ? dueDateUTC.toISOString() : null);
-      
-      // Create assignment
-      const assignment = await prisma.assignment.create({
-        data: {
-          title: data.title,
-          description: data.description,
-          courseId: data.courseId,
-          dueDate: dueDateUTC ? dueDateUTC.toISOString() : null, // Menggunakan tanggal yang sudah dikonversi, pastikan dalam ISO string
-          points: data.points || 100,
-          resourceUrl: data.resourceUrl,
-          status: 'ACTIVE'
+      // Process dueDate - langsung gunakan input tanggal karena database sudah diset timezone Asia/Jakarta
+      let processedDueDate = null;
+      if (data.dueDate) {
+        // Pastikan format tanggal valid
+        processedDueDate = new Date(data.dueDate);
+        if (isNaN(processedDueDate.getTime())) {
+          throw new Error('Invalid due date format');
         }
+      }
+        console.log('📅 Original input dueDate:', data.dueDate);
+      console.log('📅 Processed dueDate:', processedDueDate);
+      console.log('📅 Final ISO string:', processedDueDate ? processedDueDate.toISOString() : null);
+        // ✅ PRE-INVALIDATE CACHE - Before creating assignment
+      console.log(`🧹 Pre-invalidating cache for course: ${data.courseId}`);
+      try {
+        const preInvalidateResult = await CacheService.invalidate(`course-assignments-${data.courseId}`, false);
+        console.log(`🧹 Pre-invalidation result: ${preInvalidateResult}`);
+      } catch (cacheError) {
+        console.error('Pre-cache invalidation error (non-critical):', cacheError.message);
+      }
+      
+      // ✅ Use transaction to ensure consistency
+      console.log('🧪 Starting database transaction...');
+      const assignment = await prisma.$transaction(async (tx) => {
+        const newAssignment = await tx.assignment.create({
+          data: {
+            title: data.title,
+            description: data.description,
+            courseId: data.courseId,
+            dueDate: processedDueDate ? processedDueDate.toISOString() : null,
+            points: data.points || 100,
+            resourceUrl: data.resourceUrl,
+            status: 'ACTIVE'
+          }
+        });
+        
+        console.log('🧪 Assignment created in transaction:', newAssignment.id);
+        
+        // Verify it's really there within the transaction
+        const verification = await tx.assignment.findUnique({
+          where: { id: newAssignment.id }
+        });
+        
+        if (!verification) {
+          throw new Error('Transaction verification failed - assignment not found after creation');
+        }
+        
+        console.log('🧪 Transaction verification passed');
+        return newAssignment;
       });
+
+      console.log(`✅ Assignment created successfully with transaction: ${assignment.id} for course: ${data.courseId}`);
+
+      // ✅ IMMEDIATE VERIFICATION - Check if assignment exists in database
+      console.log('🧪 Immediate verification - checking if assignment exists in database...');
+      try {
+        const verificationQuery = await prisma.assignment.findUnique({
+          where: { id: assignment.id }
+        });
+        console.log('🧪 Verification result:', verificationQuery ? 'FOUND' : 'NOT FOUND');
+
+        if (verificationQuery) {
+          console.log('🧪 Verified assignment data:', {
+            id: verificationQuery.id,
+            title: verificationQuery.title,
+            status: verificationQuery.status,
+            courseId: verificationQuery.courseId,
+            createdAt: verificationQuery.createdAt
+          });
+        }
+
+        // ✅ TEST getAllAssignments immediately after create
+        console.log('🧪 Testing getAllAssignments immediately after create...');
+        const allAssignmentsAfterCreate = await this.getAllAssignments();
+        const foundInGetAll = allAssignmentsAfterCreate.find(a => a.id === assignment.id);
+        console.log('🧪 Assignment found in getAllAssignments:', foundInGetAll ? 'YES' : 'NO');
+        
+        if (!foundInGetAll) {
+          console.log('🧪 Assignment NOT found in getAllAssignments! Debugging...');
+          console.log('🧪 Total assignments returned by getAllAssignments:', allAssignmentsAfterCreate.length);
+          console.log('🧪 Assignment IDs from getAllAssignments:', allAssignmentsAfterCreate.map(a => a.id));
+        }
+      } catch (verificationError) {
+        console.error('🧪 Verification error:', verificationError.message);
+      }      // ✅ POST-INVALIDATE CACHE - After creating assignment
+      console.log(`🔄 Post-invalidating cache for course: ${data.courseId}`);
+      try {
+        // ✅ Check cache before invalidation
+        const beforeCache = await CacheService.get(`course-assignments-${data.courseId}`);
+        console.log(`🧪 Cache before invalidation: ${beforeCache ? `${beforeCache.length} items` : 'null'}`);
+        
+        // ✅ Invalidate course-specific cache
+        const postInvalidateResult = await CacheService.invalidate(`course-assignments-${data.courseId}`, false);
+        console.log(`🔄 Post-invalidation result: ${postInvalidateResult}`);
+        
+        // ✅ TAMBAHKAN: Invalidate all-assignments cache juga
+        console.log('🧹 Invalidating all-assignments cache pattern...');
+        await CacheService.invalidate('all-assignments', true); // Pattern invalidation
+        console.log('✅ All-assignments cache pattern invalidated');
+        
+        // ✅ Verify cache is actually cleared
+        const afterCache = await CacheService.get(`course-assignments-${data.courseId}`);
+        console.log(`🧪 Cache after invalidation: ${afterCache ? `${afterCache.length} items - FAILED TO CLEAR!` : 'null - SUCCESS'}`);
+        
+        // ✅ If cache still exists, force clear all cache
+        if (afterCache) {
+          console.log(`⚠️ Cache still exists! Forcing clear all cache...`);
+          await CacheService.clearAll();
+          const finalCheck = await CacheService.get(`course-assignments-${data.courseId}`);
+          console.log(`🧪 Final cache check: ${finalCheck ? 'STILL EXISTS' : 'CLEARED'}`);
+        }
+      } catch (cacheError) {
+        console.error('Post-cache invalidation error (non-critical):', cacheError.message);
+      }
+
+      // ✅ FORCE CLEAR ALL ASSIGNMENT-RELATED CACHE - Ensure fresh data
+      try {
+        console.log('🗑️ Force invalidating all assignment-related cache patterns...');
+        await CacheService.invalidate('course-assignments', true);
+        await CacheService.invalidate('all-assignments', true);
+        await CacheService.invalidate('assignment-', true);
+        console.log('✅ All assignment-related cache patterns invalidated');
+      } catch (patternCacheError) {
+        console.error('Pattern cache invalidation error (non-critical):', patternCacheError.message);
+      }
 
       return assignment;
     } catch (error) {
@@ -50,14 +187,30 @@ export class AssignmentService {
       throw error;
     }
   }
-
   /**
    * Get assignment by ID with optional submission data
    * @param {string} id - Assignment ID
    * @param {boolean} includeSubmissions - Whether to include submissions
-   * @returns {Promise<Object>} Assignment with optional submissions
+   * @returns {Promise<Object} Assignment with optional submissions
    */  static async getAssignmentById(id, includeSubmissions = false) {
     try {
+      // Try to get from cache first (only if not including submissions)
+      const cacheKey = `assignment-${id}`;
+      let cachedAssignment = null;
+      
+      if (!includeSubmissions) {
+        try {
+          cachedAssignment = await CacheService.get(cacheKey);          if (cachedAssignment) {
+            console.log(`📦 Retrieved assignment ${id} from cache`);
+            // Format cached assignment with WIB timezone
+            return this.formatAssignmentResponse(cachedAssignment);
+          }
+        } catch (cacheError) {
+          console.error(`Cache retrieval error (non-critical): ${cacheError.message}`);
+        }
+      }
+
+      // Get fresh data from database
       const assignment = await prisma.assignment.findUnique({
         where: { id },
         include: {
@@ -66,16 +219,22 @@ export class AssignmentService {
       });
 
       if (!assignment) {
-        throw new Error('Assignment not found');
-      }
-      
-      // Tambahkan format tanggal WIB untuk kebutuhan display
-      if (assignment.dueDate) {
-        assignment.dueDateWib = DateHelper.utcToWibString(assignment.dueDate, true);
-        assignment.isPastDue = DateHelper.isPastDue(assignment.dueDate);
+        throw new Error('Assignment not found');      }      // Format response with WIB timezone
+
+      // Cache the assignment data (without isPastDue and submissions)
+      if (!includeSubmissions) {
+        try {
+          const { submissions, isPastDue, dueDateWib, ...cacheData } = assignment;
+          
+          await CacheService.set(cacheKey, cacheData, 3600); // 1 hour cache
+          console.log(`✅ Cached assignment ${id}`);
+        } catch (cacheError) {
+          console.error(`Cache setting error (non-critical): ${cacheError.message}`);
+        }
       }
 
-      return assignment;
+      // Format response with WIB timezone
+      return this.formatAssignmentResponse(assignment);
     } catch (error) {
       console.error(`Error fetching assignment ${id}:`, error);
       throw error;
@@ -94,11 +253,24 @@ export class AssignmentService {
       if (!courseExists) {
         console.log(`❌ Course not found: ${courseId}`);
         throw new Error('Course not found');
+      }      console.log(`✅ Course verification successful: ${courseId}`);
+
+      // Try to get from cache first
+      const cacheKey = `course-assignments-${courseId}`;
+      let cachedAssignments = null;
+      
+      try {
+        cachedAssignments = await CacheService.get(cacheKey);        if (cachedAssignments) {
+          console.log(`📦 Retrieved ${cachedAssignments.length} assignments from cache for course ${courseId}`);
+          
+          // Format cached assignments with WIB timezone
+          return cachedAssignments.map(assignment => this.formatAssignmentResponse(assignment));
+        }
+      } catch (cacheError) {
+        console.error(`Cache retrieval error (non-critical): ${cacheError.message}`);
       }
 
-      console.log(`✅ Course verification successful: ${courseId}`);
-
-      // Bypass cache for troubleshooting and get fresh data
+      // Get fresh data from database if no cache
       const assignments = await prisma.assignment.findMany({
         where: { 
           courseId,
@@ -106,41 +278,23 @@ export class AssignmentService {
         },
         orderBy: { dueDate: 'asc' }
       });
+        console.log(`📋 Found ${assignments.length} assignments for course ${courseId}`);      
+      // Format all assignments with WIB timezone
+      const enhancedAssignments = assignments.map(assignment => this.formatAssignmentResponse(assignment));
       
-      console.log(`📋 Found ${assignments.length} assignments for course ${courseId}`);
-      
-      // Add WIB date format for display
-      const enhancedAssignments = assignments.map(assignment => {
-        if (assignment.dueDate) {
-          return {
-            ...assignment,
-            dueDateWib: DateHelper.utcToWibString(assignment.dueDate, true),
-            isPastDue: DateHelper.isPastDue(assignment.dueDate)
-          };
-        }
-        return assignment;
+      // Prepare cache data (without isPastDue for caching)
+      const cacheData = enhancedAssignments.map(assignment => {
+        const { isPastDue, ...assignmentForCache } = assignment;
+        return assignmentForCache;
       });
       
-      // Try to update cache, but don't let cache issues break the main functionality
+      // Cache the data (without isPastDue)
       try {
-        const cacheKey = `course-assignments-${courseId}`;
-        // Invalidate any existing cache
-        try {
-          CacheService.invalidate(cacheKey);
-        } catch (cacheError) {
-          console.error(`Cache invalidation error (non-critical): ${cacheError.message}`);
-        }
-        
-        // Set new cache
-        try {
-          CacheService.set(cacheKey, enhancedAssignments, 3600);
-        } catch (cacheError) {
-          console.error(`Cache setting error (non-critical): ${cacheError.message}`);
-        }
+        await CacheService.set(cacheKey, cacheData, 3600); // 1 hour cache
+        console.log(`✅ Cached ${cacheData.length} assignments for course ${courseId}`);
       } catch (cacheError) {
-        console.error(`Cache handling error (non-critical): ${cacheError.message}`);
+        console.error(`Cache setting error (non-critical): ${cacheError.message}`);
       }
-      
       return enhancedAssignments;
     } catch (error) {
       console.error(`❌ Error fetching assignments for course ${courseId}:`, error);
@@ -157,28 +311,35 @@ export class AssignmentService {
   static async updateAssignment(id, data) {
     try {
       const assignment = await this.getAssignmentById(id);
-      
-      // Process dueDate if it exists in the update data
+        // Process dueDate if it exists in the update data
       const updateData = { ...data };
       
       if (updateData.dueDate) {
-        // Convert dueDate from WIB to UTC
-        const dueDateUTC = DateHelper.wibToUtc(updateData.dueDate);
-        console.log('📅 Update - Original input dueDate:', updateData.dueDate);
-        console.log('📅 Update - Converted UTC dueDate:', dueDateUTC);
+        // Process dueDate - langsung gunakan input tanggal
+        const processedDueDate = new Date(updateData.dueDate);
+        if (isNaN(processedDueDate.getTime())) {
+          throw new Error('Invalid due date format');
+        }
         
-        // Make sure we store the date as ISO string
-        updateData.dueDate = dueDateUTC.toISOString();
-        console.log('📅 Update - Final UTC ISO string:', updateData.dueDate);
+        console.log('📅 Update - Original input dueDate:', updateData.dueDate);
+        console.log('📅 Update - Processed dueDate:', processedDueDate);
+        
+        // Store as ISO string
+        updateData.dueDate = processedDueDate.toISOString();
+        console.log('📅 Update - Final ISO string:', updateData.dueDate);
       }
-      
-      const updatedAssignment = await prisma.assignment.update({
+        const updatedAssignment = await prisma.assignment.update({
         where: { id },
         data: updateData
-      });
-
-      // Invalidate cache
-      await CacheService.invalidate(`course-assignments-${assignment.courseId}`, false);
+      });      // Invalidate multiple cache types
+      try {
+        await CacheService.invalidate(`course-assignments-${assignment.courseId}`, false);
+        await CacheService.invalidate(`assignment-${id}`, false);
+        await CacheService.invalidate('all-assignments', true); // ✅ Tambahkan ini
+        console.log(`✅ Cache invalidated for assignment ${id} and course ${assignment.courseId}`);
+      } catch (cacheError) {
+        console.error('Cache invalidation error (non-critical):', cacheError.message);
+      }
       
       return updatedAssignment;
     } catch (error) {
@@ -200,16 +361,21 @@ export class AssignmentService {
       const submissionCount = await prisma.submission.count({
         where: { assignmentId: id }
       });
-      
-      if (submissionCount > 0) {
+        if (submissionCount > 0) {
         // Soft delete if there are submissions
         const deletedAssignment = await prisma.assignment.update({
           where: { id },
           data: { status: 'DELETED' }
         });
-        
-        // Invalidate cache
-        await CacheService.invalidate(`course-assignments-${assignment.courseId}`, false);
+          // Invalidate cache
+        try {
+          await CacheService.invalidate(`course-assignments-${assignment.courseId}`, false);
+          await CacheService.invalidate(`assignment-${id}`, false);
+          await CacheService.invalidate('all-assignments', true); // ✅ Tambahkan ini
+          console.log(`✅ Cache invalidated for soft-deleted assignment ${id} and course ${assignment.courseId}`);
+        } catch (cacheError) {
+          console.error('Cache invalidation error (non-critical):', cacheError.message);
+        }
         
         return deletedAssignment;
       } else {
@@ -217,9 +383,15 @@ export class AssignmentService {
         const deletedAssignment = await prisma.assignment.delete({
           where: { id }
         });
-        
-        // Invalidate cache
-        await CacheService.invalidate(`course-assignments-${assignment.courseId}`, false);
+          // Invalidate cache
+        try {
+          await CacheService.invalidate(`course-assignments-${assignment.courseId}`, false);
+          await CacheService.invalidate(`assignment-${id}`, false);
+          await CacheService.invalidate('all-assignments', true); // ✅ Tambahkan ini
+          console.log(`✅ Cache invalidated for hard-deleted assignment ${id} and course ${assignment.courseId}`);
+        } catch (cacheError) {
+          console.error('Cache invalidation error (non-critical):', cacheError.message);
+        }
         
         return deletedAssignment;
       }
@@ -392,81 +564,88 @@ export class AssignmentService {
     }
   }
 
-  /**
-   * Get all assignments with pagination and optional filters
-   * @param {Object} options - Pagination and filter options
-   * @returns {Promise<Object>} Assignments with pagination info
-   */  static async getAllAssignments(options = {}) {
-    try {
-      const { 
-        skip = 0, 
-        limit = 10, 
-        status = null, 
-        courseId = null,
-        searchTerm = null,
-        orderBy = { dueDate: 'desc' }
-      } = options;
+/**
+ * Get all assignments with optional filters
+ * @param {Object} options - Filter options
+ * @returns {Promise<Array>} All assignments
+ */
+static async getAllAssignments(options = {}) {
+  try {
+    console.log('🔍 getAllAssignments called with options:', options);
+    
+    const { 
+      status = null, 
+      courseId = null,
+      searchTerm = null,
+      orderBy = { createdAt: 'desc' }
+    } = options;
 
-      // Build where clause based on filters
-      const where = {};
-      
-      if (status) {
-        where.status = status;
-      }
-      
-      if (courseId) {
-        where.courseId = courseId;
-      }
-      
-      if (searchTerm) {
-        where.OR = [
-          { title: { contains: searchTerm, mode: 'insensitive' } },
-          { description: { contains: searchTerm, mode: 'insensitive' } }
-        ];
-      }
-      
-      // Get paginated results and total count
-      const [assignments, total] = await Promise.all([
-        prisma.assignment.findMany({
-          where,
-          include: {
-            _count: {
-              select: { submissions: true }
-            }
-          },
-          orderBy,
-          skip,
-          take: limit
-        }),
-        prisma.assignment.count({ where })
-      ]);
-      
-      // Tambahkan format WIB untuk due date
-      const enhancedAssignments = assignments.map(assignment => {
-        if (assignment.dueDate) {
-          return {
-            ...assignment,
-            dueDateWib: DateHelper.utcToWibString(assignment.dueDate, true),
-            isPastDue: DateHelper.isPastDue(assignment.dueDate)
-          };
-        }
-        return assignment;
-      });
-      
-      return {
-        assignments: enhancedAssignments,
-        pagination: {
-          total,
-          page: Math.floor(skip / limit) + 1,
-          limit,
-          pages: Math.ceil(total / limit)
-        }
-      };
-    } catch (error) {
-      console.error('Error fetching all assignments:', error);
-      throw error;
+    // Build where clause based on filters
+    const where = {};
+    
+    if (status) {
+      where.status = status;
     }
+    
+    if (courseId) {
+      where.courseId = courseId;
+    }
+    
+    if (searchTerm) {
+      where.OR = [
+        { title: { contains: searchTerm, mode: 'insensitive' } },
+        { description: { contains: searchTerm, mode: 'insensitive' } }
+      ];
+    }
+    
+    console.log('🔍 Where clause:', JSON.stringify(where, null, 2));
+    console.log('🔍 Order by:', JSON.stringify(orderBy, null, 2));
+    
+    // ✅ TAMBAHKAN: Test query langsung untuk assignment yang baru dibuat
+    console.log('🧪 Testing direct query for latest assignments...');
+    const latestAssignments = await prisma.assignment.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 5
+    });
+    console.log('🧪 Latest 5 assignments from database:', latestAssignments.map(a => ({
+      id: a.id,
+      title: a.title,
+      status: a.status,
+      createdAt: a.createdAt
+    })));
+    
+    // Get all assignments without pagination
+    const assignments = await prisma.assignment.findMany({
+      where,
+      include: {
+        _count: {
+          select: { submissions: true }
+        }
+      },
+      orderBy
+    });
+    
+    console.log(`📋 Found ${assignments.length} total assignments`);
+    console.log('📋 All assignment IDs:', assignments.map(a => a.id));
+    console.log('📋 Latest 5 assignments:', assignments.slice(0, 5).map(a => ({
+      id: a.id,
+      title: a.title,
+      status: a.status,
+      createdAt: a.createdAt
+    })));
+
+    // ✅ CHECK: Apakah ada assignment dengan status ACTIVE yang baru dibuat?
+    const activeAssignments = assignments.filter(a => a.status === 'ACTIVE');
+    console.log(`📋 Active assignments: ${activeAssignments.length} out of ${assignments.length}`);    // Format all assignments with WIB timezone
+    const enhancedAssignments = assignments.map(assignment => this.formatAssignmentResponse(assignment));
+    
+    console.log(`✅ Returning ${enhancedAssignments.length} enhanced assignments`);
+    return enhancedAssignments;
+  } catch (error) {
+    console.error('❌ Error fetching all assignments:', error);
+    throw error;
   }
+}
 
   /**
    * Get all submissions with pagination and optional filters
@@ -617,15 +796,23 @@ export class AssignmentService {
       
       // Enhance submissions with user data and WIB date format
       const enhancedSubmissions = await UserHelper.enhanceSubmissionsWithUserData(submissions);
-      
-      // Add WIB date format to each submission's assignment
+        // Add date format to each submission's assignment
       const finalSubmissions = enhancedSubmissions.map(submission => {
         if (submission.assignment && submission.assignment.dueDate) {
+          const dueDate = new Date(submission.assignment.dueDate);
           return {
             ...submission,
             assignment: {
               ...submission.assignment,
-              dueDateWib: DateHelper.utcToWibString(submission.assignment.dueDate, true)
+              dueDateWib: dueDate.toLocaleDateString('id-ID', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'Asia/Jakarta'
+              })
             }
           };
         }

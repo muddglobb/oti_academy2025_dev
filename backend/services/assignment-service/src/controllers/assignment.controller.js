@@ -21,14 +21,13 @@ export const createAssignment = asyncHandler(async (req, res) => {
       ApiResponse.error('Title, description, and course ID are required')
     );
   }
-    try {
-    console.log('📅 Controller - Creating assignment with dueDate:', dueDate);
-    
+
+  try {
     const assignment = await AssignmentService.createAssignment({
       title,
       description,
       courseId,
-      dueDate: dueDate || undefined, // Pass as is, let the service handle conversion
+      dueDate: dueDate || undefined,
       points,
       resourceUrl
     });
@@ -52,24 +51,17 @@ export const createAssignment = asyncHandler(async (req, res) => {
  * @access  Admin only
  */
 export const getAllAssignments = asyncHandler(async (req, res) => {
-  // Pagination options
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const skip = (page - 1) * limit;
-  
   // Filter options
   const { status, courseId, search } = req.query;
   
-  const result = await AssignmentService.getAllAssignments({
-    skip,
-    limit,
+  const assignments = await AssignmentService.getAllAssignments({
     status,
     courseId,
     searchTerm: search
   });
   
   res.status(200).json(
-    ApiResponse.success(result)
+    ApiResponse.success(assignments)
   );
 });
 
@@ -81,22 +73,14 @@ export const getAllAssignments = asyncHandler(async (req, res) => {
 export const getAssignmentsByCourse = asyncHandler(async (req, res) => {
   const { courseId } = req.params;
   
-  console.log(`🔍 Fetching assignments for course: ${courseId}`);
-  
   try {
     const assignments = await AssignmentService.getAssignmentsByCourse(courseId);
-    
-    console.log(`✅ Found ${assignments ? assignments.length : 0} assignments for course ${courseId}`);
-    
-    // Memastikan selalu mengembalikan array (kosong jika tidak ada data)
     const result = assignments || [];
     
     res.status(200).json(
       ApiResponse.success(result)
     );
   } catch (error) {
-    console.error(`❌ Error fetching assignments for course ${courseId}:`, error);
-    
     if (error.message === 'Course not found') {
       return res.status(404).json(
         ApiResponse.error('Course not found')
@@ -143,17 +127,13 @@ export const updateAssignment = asyncHandler(async (req, res) => {
   const { title, description, dueDate, points, status, resourceUrl } = req.body;
   
   const updateData = {};
-  
   if (title !== undefined) updateData.title = title;
   if (description !== undefined) updateData.description = description;
-  if (dueDate !== undefined) {
-    // Pass the dueDate as a string or Date object, let the service handle the conversion
-    updateData.dueDate = dueDate;
-    console.log('📅 Controller - dueDate received:', dueDate);
-  }
+  if (dueDate !== undefined) updateData.dueDate = dueDate;
   if (points !== undefined) updateData.points = points;
   if (status !== undefined) updateData.status = status;
   if (resourceUrl !== undefined) updateData.resourceUrl = resourceUrl;
+
   try {
     const assignment = await AssignmentService.updateAssignment(id, updateData);
     
@@ -443,15 +423,23 @@ export const getMySubmissions = asyncHandler(async (req, res) => {
     const submissions = await AssignmentService.getStudentSubmissions(userId);
     
     console.log(`✅ Found ${submissions ? submissions.length : 0} submissions for user ${userId}`);
-    
-    // Enhance submission data with assignment information
+      // Enhance submission data with assignment information
     const enhancedSubmissions = submissions.map(submission => {
       if (submission.assignment && submission.assignment.dueDate) {
+        const dueDate = new Date(submission.assignment.dueDate);
         return {
           ...submission,
           assignment: {
             ...submission.assignment,
-            dueDateWib: DateHelper.utcToWibString(submission.assignment.dueDate, true)
+            dueDateWib: dueDate.toLocaleDateString('id-ID', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              timeZone: 'Asia/Jakarta'
+            })
           }
         };
       }
