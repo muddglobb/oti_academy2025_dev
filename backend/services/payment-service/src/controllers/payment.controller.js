@@ -217,18 +217,23 @@ export const createPayment = async (req, res) => {
  */
 export const getAllPayments = async (req, res) => {
   try {
-    // Extract pagination parameters
-    const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 10;
+    // Validate and parse query filters (remove pagination parameters)
+    const filters = {
+      status: req.query.status,
+      type: req.query.type,
+      backStatus: req.query.backStatus,
+      startDate: req.query.startDate ? new Date(req.query.startDate) : undefined,
+      endDate: req.query.endDate ? new Date(req.query.endDate) : undefined
+    };
     
-    // Validate and parse query filters
-    const filters = paymentFilterSchema.parse({
-      ...req.query,
-      page,
-      limit: pageSize
+    // Remove undefined values
+    Object.keys(filters).forEach(key => {
+      if (filters[key] === undefined) {
+        delete filters[key];
+      }
     });
     
-    // Get paginated payments with basic information
+    // Get all payments without pagination
     const result = await PaymentService.getAllPayments(filters);
     
     // Extract user IDs for batch fetching
@@ -243,15 +248,10 @@ export const getAllPayments = async (req, res) => {
       userInfoMap
     );
     
-    // Prepare paginated response
+    // Prepare response without pagination meta
     const response = {
       payments: formattedPayments,
-      meta: {
-        page: result.pagination.page,
-        pageSize: result.pagination.limit,
-        totalItems: result.pagination.total,
-        totalPages: result.pagination.pages
-      }
+      total: result.total
     };
     
     res.status(200).json(

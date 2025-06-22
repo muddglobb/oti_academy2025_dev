@@ -74,7 +74,7 @@ getCookieOptions(tokenType) {
    * @returns {Object} User object and auth tokens
    */
   async register(userData) {
-    const { name, email, password, type, nim } = userData;
+    const { name, email, password, type, nim, phone} = userData;
 
     const existingEmail = await prisma.user.findUnique({
       where: { email }
@@ -91,6 +91,25 @@ getCookieOptions(tokenType) {
 
       if (existingUserWithNim) {
         throw new Error('NIM already registered by anouther account, if you are the owner of this account, please contact the admin to recover your account');
+      }
+    }
+
+    if (phone) {
+      let normalizedPhone = phone;
+      if (phone.startsWith('+62')) {
+        normalizedPhone = '0' + phone.substring(3);
+      } else if (phone.startsWith('62')) {
+        normalizedPhone = '0' + phone.substring(2);
+      }
+    
+      // Check if phone number already exists for another user
+      const existingUserWithPhone = await prisma.user.findFirst({
+        where: {
+          phone: normalizedPhone,
+        }})
+      
+      if (existingUserWithPhone) {
+        throw new Error('Nomor HP sudah digunakan oleh user lain');
       }
     }
 
@@ -112,6 +131,7 @@ getCookieOptions(tokenType) {
         password: hashedPassword,
         type,
         nim: type === 'DIKE' ? nim : null,
+        phone: phone ? (phone.startsWith('+62') ? '0' + phone.substring(3) : phone.startsWith('62') ? '0' + phone.substring(2) : phone) : null,
         role,  
       },
     });
@@ -133,6 +153,7 @@ getCookieOptions(tokenType) {
         id: user.id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
         type: user.type,
       },
@@ -181,6 +202,7 @@ getCookieOptions(tokenType) {
         id: user.id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
         type: user.type,
       },
@@ -296,8 +318,7 @@ getCookieOptions(tokenType) {
     if (!validRoles.includes(newRole)) {
       throw new Error(`Invalid role. Must be one of: ${validRoles.join(', ')}`);
     }
-    
-    // Update user role
+      // Update user role
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: { role: newRole },
@@ -305,6 +326,7 @@ getCookieOptions(tokenType) {
         id: true,
         name: true,
         email: true,
+        phone: true,
         role: true,
         type: true,
         nim: true
@@ -334,22 +356,128 @@ getCookieOptions(tokenType) {
     }
   }
 
-  async cleanupExpiredTokens() {
-  try {
-    const result = await prisma.refreshToken.deleteMany({
+  /**
+   * Update user phone number
+   * @param {string} userId - User ID
+   * @param {string} phone - Phone number (already validated by middleware)
+   * @returns {Object} Updated user
+   */
+  async updateUserPhone(userId, phone) {
+    // Normalize phone number (middleware sudah validate format)
+    let normalizedPhone = phone;
+    if (phone.startsWith('+62')) {
+      normalizedPhone = '0' + phone.substring(3);
+    } else if (phone.startsWith('62')) {
+      normalizedPhone = '0' + phone.substring(2);
+    }
+
+    // Check if phone number already exists for another user
+    const existingUser = await prisma.user.findFirst({
       where: {
-        expiresAt: { lt: new Date() }
+        phone: normalizedPhone,
+        id: { not: userId }
       }
     });
-    
-    console.log(`🧹 Cleaned up ${result.count} expired refresh tokens`);
-    return result.count;
-  } catch (error) {
-    console.error('Error cleaning up expired tokens:', error);
-    return 0;
-  }
-}
 
+    if (existingUser) {
+      throw new Error('Nomor HP sudah digunakan oleh user lain');
+    }
+
+    // Update user phone
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { phone: normalizedPhone },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        type: true,
+        nim: true
+      }
+    });
+
+    return updatedUser;
+  }
+
+    /**
+   * Get user profile by ID
+   * @param {string} userId - User ID
+   * @returns {Object} User profile
+   */
+  async getUserProfile(userId) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        type: true,
+      }
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
+  }
+
+  /**
+   * Update user profile (name and/or phone)
+   * @param {string} userId - User ID
+   * @param {Object} updateData - Data to update (already validated by middleware)
+   * @returns {Object} Updated user
+   */
+  async updateUserProfile(userId, updateData) {
+    const { name, phone } = updateData;
+    
+    const updateFields = {};
+    
+    if (name) updateFields.name = name;
+    
+    if (phone) {
+      // Normalize phone to start with 0
+      let normalizedPhone = phone;
+      if (phone.startsWith('+62')) {
+        normalizedPhone = '0' + phone.substring(3);
+      } else if (phone.startsWith('62')) {
+        normalizedPhone = '0' + phone.substring(2);
+      }
+
+      // Check uniqueness
+      const existingUser = await prisma.user.findFirst({
+        where: {
+          phone: normalizedPhone,
+          id: { not: userId }
+        }
+      });
+
+      if (existingUser) {
+        throw new Error('Nomor HP sudah digunakan oleh user lain');
+      }
+
+      updateFields.phone = normalizedPhone;
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: updateFields,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        role: true,
+        type: true
+      }
+    });
+
+    return updatedUser;
+  }
 
 }
 

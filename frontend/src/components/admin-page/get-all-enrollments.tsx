@@ -19,6 +19,7 @@ export type EnrollmentPayment = {
   courseName: string;
   userName: string;
   userEmail: string;
+  userPhone: string;
   userType: "UMUM" | "MAHASISWA" | string;
 };
 

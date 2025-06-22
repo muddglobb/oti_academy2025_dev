@@ -13,10 +13,10 @@ const prisma = new PrismaClient();
 // @route   POST /register
 // @access  Public
 export const register = asyncHandler(async (req, res) => {
-  const { name, email, password, type, nim } = req.body;
+  const { name, email, password, type, nim, phone } = req.body;
   
   try {
-    const result = await authService.register({ name, email, password, type, nim });
+    const result = await authService.register({ name, email, password, type, nim, phone });
     
     // Set HTTP-only cookies for both tokens
     res.cookie('access_token', result.accessToken, authService.getCookieOptions('access'));
@@ -356,37 +356,19 @@ export const changePassword = asyncHandler(async (req, res) => {
 // @route   PATCH /update-profile
 // @access  Private
 export const updateProfile = asyncHandler(async (req, res) => {
-  const { name } = req.body;
+  const { name, phone } = req.body; // Tambah phone
 
-  // Prepare data update object
-  const updateData = {};
-  if (name) updateData.name = name;
-
-  // Prevent empty updates
-  if (Object.keys(updateData).length === 0) {
-    return res.status(400).json(
-      ApiResponse.error('No fields to update provided')
+  try {
+    const result = await authService.updateUserProfile(req.user.id, { name, phone });
+    
+    res.status(200).json(
+      ApiResponse.success(result, 'Profile updated successfully')
+    );
+  } catch (error) {
+    res.status(400).json(
+      ApiResponse.error(error.message)
     );
   }
-
-  // Update user profile
-  const updatedUser = await prisma.user.update({
-    where: { id: req.user.id },
-    data: updateData,
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      type: true,
-      nim: true,
-      createdAt: true,
-    }
-  });
-
-  res.status(200).json(
-    ApiResponse.success(updatedUser)
-  );
 });
 
 export const getAllUsers = asyncHandler(async (req, res) => {
@@ -395,6 +377,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
       id: true,
       name: true,
       email: true,
+      phone: true,
       role: true,
       type: true,
       nim: true,
@@ -425,6 +408,7 @@ export const getUserById = asyncHandler(async (req, res) => {
       id: true,
       name: true,
       email: true, 
+      phone: true,
       role: true,
       type: true,
       nim: true,
@@ -440,52 +424,6 @@ export const getUserById = asyncHandler(async (req, res) => {
 
   res.status(200).json(
     ApiResponse.success(user)
-  );
-});
-
-
-export const updateUser = asyncHandler(async (req, res) => {
-  const userId = req.params.id;
-  const { name, email } = req.body;
-
-  if(req.user.id !== userId && req.user.role !== 'ADMIN') {
-    return res.status(403).json(
-      ApiResponse.error('Not authorized to update this user profile')
-    );
-  }
-
-  if(email){
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (existingUser && existingUser.id !== userId) {
-      return res.status(400).json(
-        ApiResponse.error('Email already in use')
-      );
-    }
-  }
-
-  const updateData = {};
-  if (name) updateData.name = name;
-  if (email) updateData.email = email;
-
-  const updatedUser = await prisma.user.update({
-    where: { id: userId },
-    data: updateData,
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      type: true,
-      nim: true,
-      createdAt: true
-    }
-  });
-
-  res.status(200).json(
-    ApiResponse.success(updatedUser, 'User updated successfully')
   );
 });
 
@@ -515,6 +453,23 @@ export const deleteUser = asyncHandler(async (req, res) => {
   res.status(200).json(
     ApiResponse.success(null, 'User deleted successfully')
   );
+});
+
+// @desc    Get current user profile
+// @route   GET /profile
+// @access  Private
+export const getProfile = asyncHandler(async (req, res) => {
+  try {
+    const user = await authService.getUserProfile(req.user.id);
+    
+    res.status(200).json(
+      ApiResponse.success(user)
+    );
+  } catch (error) {
+    res.status(404).json(
+      ApiResponse.error(error.message)
+    );
+  }
 });
 
 export const validateToken = asyncHandler(async (req, res) => {

@@ -45,72 +45,62 @@ export class PaymentService {
    * @returns {Promise<Array>} List of payments
    */
   static async getAllPayments(filters = {}) {
-    const {
-      status,
-      type,
-      backStatus,
-      startDate,
-      endDate,
-      page = 1,
-      limit = 10
-    } = filters;
-    
-    const skip = (page - 1) * limit;
-    
-    // Build where conditions based on filters
-    const where = {};
-    
-    if (status) {
-      where.status = status;
-    }
-    
-    if (type) {
-      where.type = type;
-    }
-    
-    if (backStatus) {
-      where.backStatus = backStatus;
-    }
-    
-    // Date range filter
-    if (startDate || endDate) {
-      where.createdAt = {};
-      
-      if (startDate) {
-        where.createdAt.gte = startDate;
-      }
-      
-      if (endDate) {
-        where.createdAt.lte = endDate;
-      }
-    }
-    
-    // Get paginated results
-    const [payments, total] = await Promise.all([
-      prisma.payment.findMany({
-        where,
-        orderBy: {
-          createdAt: 'desc'
-        },
-        skip,
-        take: limit
-      }),
-      prisma.payment.count({ where })
-    ]);
-
-    // Enhance payments with package info and price
-    const enhancedPayments = await this.enhancePaymentsWithPrice(payments);
-    
-    return {
-      payments: enhancedPayments,
-      pagination: {
-        total,
-        page,
-        limit,
-        pages: Math.ceil(total / limit)
-      }
-    };
+  const {
+    status,
+    type,
+    backStatus,
+    startDate,
+    endDate
+  } = filters;
+  
+  // Build where conditions based on filters
+  const where = {};
+  
+  if (status) {
+    where.status = status;
   }
+  
+  if (type) {
+    where.type = type;
+  }
+  
+  if (backStatus) {
+    where.backStatus = backStatus;
+  }
+  
+  // Date range filter
+  if (startDate || endDate) {
+    where.createdAt = {};
+    
+    if (startDate) {
+      where.createdAt.gte = startDate;
+    }
+    
+    if (endDate) {
+      where.createdAt.lte = endDate;
+    }
+  }
+  
+  const payments = await prisma.payment.findMany({
+    where,
+    orderBy: [
+      {
+        status: 'asc' 
+      },
+      {
+        createdAt: 'desc' 
+      }
+    ]
+  });
+
+  // Enhance payments with package info and price
+  const enhancedPayments = await this.enhancePaymentsWithPrice(payments);
+  
+  return {
+    payments: enhancedPayments,
+    total: enhancedPayments.length
+  };
+}
   
   /**
    * Get payment by ID
@@ -1444,9 +1434,7 @@ static async getAllCoursesEnrollmentCount() {
       console.error('Error checking enrollment status:', error.message);
       return { enrolled: false };
     }
-  }
-
-  /**
+  }  /**
    * Format payments for list view with user information
    * @param {Array} payments - List of payments
    * @param {Object} userInfoMap - Map of user information keyed by user ID
@@ -1457,6 +1445,7 @@ static async getAllCoursesEnrollmentCount() {
       const user = userInfoMap[payment.userId] || { 
         name: 'Unknown User',
         email: 'unknown@example.com',
+        phone: null,
         type: 'UNKNOWN'
       };
       
@@ -1464,6 +1453,7 @@ static async getAllCoursesEnrollmentCount() {
         ...payment,
         userName: user.name,
         userEmail: user.email,
+        userPhone: user.phone,
         userType: user.type
       };
     });
@@ -1542,27 +1532,25 @@ static async getAllCoursesEnrollmentCount() {
     }
 
     // Check enrollment status
-    const enrollmentStatus = await this.checkEnrollmentStatus(payment.id);
-
-    // Format detailed payment
+    const enrollmentStatus = await this.checkEnrollmentStatus(payment.id);    // Format detailed payment
     return {
       ...payment,
       user: userInfo ? {
         id: userInfo.id,
         name: userInfo.name,
         email: userInfo.email,
+        phone: userInfo.phone,
         type: userInfo.type
-      } : { name: 'Unknown User', email: 'unknown@example.com', type: 'UNKNOWN' },
+      } : { 
+        name: 'Unknown User', 
+        email: 'unknown@example.com', 
+        phone: null,
+        type: 'UNKNOWN' 
+      },
       course: courseInfo,
       bundleCourses: payment.packageType === 'BUNDLE' ? allCoursesInPackage : null,
       enrollmentStatus: enrollmentStatus.enrolled,
       paymentDate: payment.createdAt
     };
   }
-
-  /**
-   * Create enrollment queue file as backup mechanism
-   * @param {Object} payment - Payment object
-   * @returns {Promise<void>}
-   */
 }

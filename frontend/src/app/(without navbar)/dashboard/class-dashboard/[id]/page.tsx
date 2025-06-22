@@ -5,6 +5,7 @@ import TeacherCard from "@/components/dashboard/teacher-card";
 import Prerequisites from "@/components/dashboard/prerequisites";
 import SessionInfo from "@/components/dashboard/session-info";
 import MobileBottomBar from "@/components/dashboard/mobile-bottombar";
+import AccessAlert from "@/components/dashboard/access-alert";
 import Link from "next/link";
 import { cookies } from "next/headers";
 
@@ -214,6 +215,19 @@ export default async function Page({
   const enrollRes = await getEnroll(courseID);
   const enrollData = await enrollRes.json();
 
+  const enrollRes1 = await getEnroll(courseID);
+  const enrollData1 = await enrollRes1.json();
+
+  let enrollRes2, enrollData2;
+
+  if (courseID2 && courseID2 !== courseID) {
+    enrollRes2 = await getEnroll(courseID2);
+    enrollData2 = await enrollRes2.json();
+  }
+
+  const isEnrolled1 = enrollData1.data?.isEnrolled;
+  const isEnrolled2 = enrollData2?.data?.isEnrolled;
+
   // let enroll: Enroll[] = Array.isArray(enrollData.data) ? enrollData.data : [];
 
   const isEnrolled = enrollData.data?.isEnrolled;
@@ -231,6 +245,11 @@ export default async function Page({
 
   const paymentRes = await getPaymentStatus();
   const paymentData = await paymentRes.json();
+
+  const paymentStatus =
+    Array.isArray(paymentData.data) && paymentData.data.length > 0
+      ? paymentData.data[0].status
+      : undefined;
 
   const paymentDataLength = Array.isArray(paymentData.data)
     ? paymentData.data.length
@@ -471,6 +490,17 @@ export default async function Page({
             />
           )}
         </div>
+        {((classData.ClassLevel === "BUNDLE" &&
+          isEnrolled1 === true &&
+          isEnrolled2 === true &&
+          paymentStatus === "APPROVED") ||
+          (classData.ClassLevel !== "BUNDLE" &&
+            (isEnrolled1 === true || isEnrolled2 === true) &&
+            paymentStatus === "APPROVED")) && (
+          <div className="z-10 fixed bottom-4 md:bottom-6 max-md:left-1/2 transform max-md:-translate-x-1/2 md:right-5 w-80 md:w-106">
+            <AccessAlert />
+          </div>
+        )}
       </div>
       <div className="md:hidden sticky z-10 w-full bottom-0 ">
         {isEnrolled === false &&

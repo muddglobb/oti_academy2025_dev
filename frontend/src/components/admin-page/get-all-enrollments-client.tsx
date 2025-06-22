@@ -22,6 +22,7 @@ export type EnrichedEnrollmentPayment = {
   userName: string;
   userEmail: string;
   userType: string;
+  userPhone: string;
   courseTitle: string; // properti tambahan yang tidak ada di response awal
 };
 

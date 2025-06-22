@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { fetchPackage} from "@/lib/package/fetch-package";
 import React from "react";
 import PackageCard from "@/components/dashboard/package-card";
