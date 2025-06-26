@@ -3,7 +3,6 @@ import React from "react";
 import WelcomeCard from "@/components/dashboard/welcome-card";
 import SecondContent from "@/components/dashboard/second-content";
 import SelectClass from "@/components/dashboard/select-class";
-import Image from "next/image";
 import { getUsers } from "@/lib/auth/fetch-users";
 
 const Dashboard = async () => {

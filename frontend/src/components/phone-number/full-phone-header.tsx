@@ -1,8 +1,21 @@
+"use client";
 import React from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function PhoneHeader() {
+type PhoneFormProps = {
+  Phone: string | null;
+};
+export default function PhoneHeader({ Phone }: PhoneFormProps) {
+  const router = useRouter();
+  useEffect(() => {
+    if (Phone != null) {
+      router.push("/dashboard");
+    }
+  }, [Phone, router]);
+
   return (
     <header className="bg-neutral-900 flex justify-between items-center py-4 px-6 border-b border-gray-800">
       <div>
