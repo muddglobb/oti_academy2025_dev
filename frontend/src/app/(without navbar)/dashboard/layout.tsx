@@ -7,27 +7,37 @@ import { redirect } from "next/navigation";
 import { notAdmin } from "@/lib/auth";
 
 export const metadata: Metadata = {
-  title: "OmahTI Academy",
-  description: "Online Mini Bootcamp yang menawarkan pengalaman belajar intensif, mengasah keterampilan IT, cocok untuk pemula dan yang ingin mendalami bidang spesifik.",
+  title: "Dashboard - OmahTI Academy",
+  description: "Dashboard mahasiswa OmahTI Academy - Akses materi pembelajaran, tugas, progress, dan sertifikat bootcamp IT terbaik Indonesia.",
+  keywords: ["dashboard OmahTI", "pembelajaran online", "progress bootcamp", "materi IT", "sertifikat programming"],
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
   },
   openGraph: {
-    title: "OmahTI Academy",
-    description: "Online Mini Bootcamp yang menawarkan pengalaman belajar intensif, mengasah keterampilan IT, cocok untuk pemula dan yang ingin mendalami bidang spesifik.",
-    url: "https://academy.omahti.web.id", 
+    title: "Dashboard - OmahTI Academy",
+    description: "Dashboard mahasiswa OmahTI Academy - Akses materi pembelajaran, tugas, progress, dan sertifikat bootcamp IT terbaik Indonesia.",
+    url: "https://academy.omahti.web.id/dashboard", 
     siteName: "OmahTI Academy",
     images: [
       {
         url: "https://res.cloudinary.com/dyjvctxme/image/upload/v1749565631/omahti_academy_pqqfea.png", 
         width: 1200,
         height: 630,
-        alt: "OmahTI Academy - Online Mini Bootcamp",
+        alt: "Dashboard OmahTI Academy - Bootcamp IT Online",
       },
     ],
     locale: "id_ID",
     type: "website",
+  },
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
   },
 };
 
