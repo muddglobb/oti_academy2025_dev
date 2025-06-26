@@ -156,7 +156,7 @@ export default function Register() {
 
 
         <div className="relative">
-          <h2 className="font-bold mb-1 mt-3">Nama</h2>
+          <h2 className="font-bold mb-1 mt-3">Nama Lengkap</h2>
           <input
             type="text"
             id="nama"
