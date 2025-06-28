@@ -6,7 +6,10 @@ import {
   completeBackSchema,
   updatePaymentSchema
 } from '../schemas/payment.schema.js';
+import { PrismaClient } from '@prisma/client';
 import axios from 'axios';
+
+const prisma = new PrismaClient();
 
 /**
  * Create a new payment
@@ -50,6 +53,17 @@ export const createPayment = async (req, res) => {
       return res.status(404).json(
         ApiResponse.error('Paket tidak ditemukan')
       );
+    }
+
+    // Check if user already enrolled in any INTERMEDIATE course
+    if (packageInfo.type === 'INTERMEDIATE') {
+      const existingIntermediateEnrollment = await PaymentService.checkExistingIntermediateEnrollment(userId);
+      
+      if (existingIntermediateEnrollment.hasEnrollment) {
+        return res.status(400).json(
+          ApiResponse.error(`Anda sudah terdaftar di kelas INTERMEDIATE: ${existingIntermediateEnrollment.courseName}. Hanya boleh mengambil 1 kelas INTERMEDIATE.`)
+        );
+      }
     }
 
     // Check if package is a bundle
@@ -288,17 +302,24 @@ export const getPaymentById = async (req, res) => {
     }
     
     // Check if user is allowed to access this payment
-    if (req.user.role !== 'ADMIN' && req.user.id !== payment.userId) {
+    // For regular payments: user must be owner or admin
+    // For group payments: user must be creator, invited member, or admin
+    let isAuthorized = req.user.role === 'ADMIN' || req.user.id === payment.userId;
+    
+    // Additional check for group payments
+    if (!isAuthorized && payment.isGroupPayment && payment.invitedUserIds) {
+      isAuthorized = payment.invitedUserIds.includes(req.user.id);
+    }
+    
+    if (!isAuthorized) {
       return res.status(403).json(
         ApiResponse.error('You are not authorized to view this payment')
       );
     }
     
-    // Get user info from Auth-Service
-    const userInfo = await PaymentService.getUserInfo(payment.userId);
-    
     // Format detailed payment with all required information
-    const detailedPayment = await PaymentService.formatDetailedPayment(payment, userInfo);
+    // Pass the requesting user ID to get the correct course info for group payments
+    const detailedPayment = await PaymentService.formatDetailedPayment(payment, req.user.id);
     
     res.status(200).json(
       ApiResponse.success(detailedPayment, 'Payment retrieved successfully')
@@ -335,16 +356,10 @@ export const getUserPayments = async (req, res) => {
       );
     }
     
-    // Get user info for the payment details
-    const userInfo = await PaymentService.getUserInfo(userId);
-    
-    // Format each payment with detailed information
-    const detailedPayments = await Promise.all(
-      payments.map(payment => PaymentService.formatDetailedPayment(payment, userInfo))
-    );
-    
+    // PERBAIKAN: Payments sudah di-format oleh getPaymentsByUserId dengan userId yang benar
+    // Tidak perlu format ulang di sini karena sudah dilakukan di service
     res.status(200).json(
-      ApiResponse.success(detailedPayments, 'User payments retrieved successfully')
+      ApiResponse.success(payments, 'User payments retrieved successfully')
     );
   } catch (error) {
     console.error('Error fetching user payment history:', error);
@@ -385,11 +400,9 @@ export const updatePayment = async (req, res) => {
       // Update payment
       const updatedPayment = await PaymentService.updatePayment(id, validatedData, userId);
       
-      // Get user info for the complete response
-      const userInfo = await PaymentService.getUserInfo(userId);
-      
+      // PERBAIKAN: Pass userId (string) bukan userInfo (object)
       // Format detailed payment with all required information
-      const detailedPayment = await PaymentService.formatDetailedPayment(updatedPayment, userInfo);
+      const detailedPayment = await PaymentService.formatDetailedPayment(updatedPayment, userId);
       
       return res.status(200).json(
         ApiResponse.success(detailedPayment, 'Payment updated successfully')
@@ -442,6 +455,13 @@ export const approvePayment = async (req, res) => {
       );
     }
     
+    // Check if this is a group payment - should use group payment approval endpoint instead
+    if (payment.isGroupPayment) {
+      return res.status(400).json(
+        ApiResponse.error('Ini adalah group payment. Gunakan endpoint /group-payments/:id/approve untuk approve group payment.')
+      );
+    }
+    
     // Check if payment is already approved
     if (payment.status === 'APPROVED') {
       return res.status(400).json(
@@ -452,9 +472,6 @@ export const approvePayment = async (req, res) => {
       // The approval process now handles both payment approval and enrollment creation in a transaction
       const result = await PaymentService.approvePayment(id);
       const updatedPayment = result.payment || result;
-      
-      // Get user info for the complete response
-      const userInfo = await PaymentService.getUserInfo(updatedPayment.userId);
       
       // Invalidate enrollment cache for the associated course and all courses in bundles
       try {
@@ -490,8 +507,9 @@ export const approvePayment = async (req, res) => {
       
       console.log('✅ Payment approved and enrollments created successfully');
       
+      // PERBAIKAN: Pass userId (bukan userInfo object)
       // Format detailed payment with all required information
-      const detailedPayment = await PaymentService.formatDetailedPayment(updatedPayment, userInfo);
+      const detailedPayment = await PaymentService.formatDetailedPayment(updatedPayment, updatedPayment.userId);
       
       // Success response
       res.status(200).json(
@@ -555,11 +573,9 @@ export const completeBack = async (req, res) => {
     // Complete the back payment
     const updatedPayment = await PaymentService.completeBack(id);
     
-    // Get user info for the complete response
-    const userInfo = await PaymentService.getUserInfo(updatedPayment.userId);
-    
+    // PERBAIKAN: Pass userId (bukan userInfo object)
     // Format detailed payment with all required information
-    const detailedPayment = await PaymentService.formatDetailedPayment(updatedPayment, userInfo);
+    const detailedPayment = await PaymentService.formatDetailedPayment(updatedPayment, updatedPayment.userId);
     
     res.status(200).json(
       ApiResponse.success(detailedPayment, 'Back payment completed successfully')
@@ -698,4 +714,60 @@ export const getNeedToApprovePayments = async (req, res) => {
       ApiResponse.error('An unexpected error occurred while processing the request')
     );
   }
-}
+};
+
+/**
+ * Debug: Clear cache and check enrollment count
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+export const debugEnrollmentCount = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    
+    // Clear cache first
+    const { invalidateCache } = await import('../utils/cache-helper.js');
+    invalidateCache('enrollment', courseId);
+    invalidateCache('all-enrollments', 'all-enrollments');
+    
+    // Get fresh enrollment count
+    const enrollmentCount = await PaymentService.getCourseEnrollmentCount(courseId);
+    
+    // Get all payments for this course for debugging
+    const allPayments = await prisma.payment.findMany({
+      where: {
+        courseId,
+        status: 'APPROVED'
+      },
+      select: {
+        id: true,
+        userId: true,
+        isGroupPayment: true,
+        totalParticipants: true,
+        groupStatus: true,
+        createdAt: true
+      }
+    });
+    
+    res.status(200).json({
+      success: true,
+      data: {
+        courseId,
+        enrollmentCount,
+        allPayments: allPayments.map(p => ({
+          id: p.id.substring(0, 8),
+          isGroup: p.isGroupPayment,
+          participants: p.totalParticipants || 1,
+          groupStatus: p.groupStatus,
+          createdAt: p.createdAt
+        })),
+        totalPayments: allPayments.length
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
+};

@@ -5,7 +5,9 @@ import {
   getUserById, 
   updateUser, 
   deleteUser, 
-  getMe
+  getMe,
+  getUserByEmail,
+  getBatchUsers
 } from '../controllers/user.controller.js';
 
 const router = Router();
@@ -13,8 +15,18 @@ const router = Router();
 // Protect all routes
 router.use(authenticateJWT);
 
-// Get all users - Admin and Service
-router.get('/', authorizeRoles('ADMIN', 'SERVICE'), getAllUsers);
+// Get multiple users by IDs - Service only (for batch operations like group payments)
+router.get('/', (req, res, next) => {
+  // If query has 'ids' parameter, route to getBatchUsers
+  if (req.query.ids) {
+    return getBatchUsers(req, res, next);
+  }
+  // Otherwise, route to getAllUsers
+  return getAllUsers(req, res, next);
+});
+
+// Get user by email - Service only (for group payment validation)
+router.get('/by-email/:email', authorizeRoles('SERVICE'), getUserByEmail);
 
 router.get('/me', getMe);
 

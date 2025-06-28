@@ -22,16 +22,31 @@ enum EnrollmentStatus {
   NOT_ENROLLED
 }
 
+enum GroupPaymentStatus {
+  PENDING
+  APPROVED
+}
+
 model Payment {
   id                String            @id @default(uuid())
   userId            String
   packageId         String
-  courseId          String            @default("00000000-0000-0000-0000-000000000000") 
+  courseId          String?           @default("00000000-0000-0000-0000-000000000000") // UBAH: tambahkan ? untuk nullable
   type              UserType
   proofLink         String
   status            PaymentStatus     @default(PAID)
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
+  
+  // Group Payment Fields
+  isGroupPayment    Boolean           @default(false)
+  inviteEmails      Json?             // Array email yang diinvite
+  invitedUserIds    Json?             // Array user IDs yang divalidasi
+  groupStatus       GroupPaymentStatus? // Status khusus group payment
+  originalAmount    Decimal?          // Harga asli (90rb)
+  discountedAmount  Decimal?          // Harga diskon (81rb)
+  totalParticipants Int?              // Jumlah total participants
+  memberCourses     Json?             // Array course choices per member
   
   // Relation to enrollments
   enrollments       Enrollment[]

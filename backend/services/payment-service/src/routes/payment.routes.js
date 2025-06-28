@@ -183,4 +183,11 @@ router.get(
   asyncHandler(controller.getPaymentById)
 );
 
+// Debug endpoint untuk clear cache dan check enrollment count
+router.get('/:courseId/debug-enrollment', 
+  authenticate, 
+  permit(['ADMIN']), 
+  controller.debugEnrollmentCount
+);
+
 export default router;
