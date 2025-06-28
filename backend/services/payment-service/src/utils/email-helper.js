@@ -140,6 +140,7 @@ export const sendEnrollmentConfirmationEmail = async (payment, userInfo, package
       'Basic Python': '30 Juni–21 Juli 2025'
     };
     
+    // PERBAIKAN: Handle group payments dengan per-member course selection
     // If courseNames is null or empty, try to fetch them
     if (!courseNames || !Array.isArray(courseNames) || courseNames.length === 0 || 
         courseNames.every(name => name === 'Unknown Course')) {
@@ -149,20 +150,24 @@ export const sendEnrollmentConfirmationEmail = async (payment, userInfo, package
         // Import PaymentService dynamically to avoid circular dependencies
         const { PaymentService } = await import('../services/payment.service.js');
         
-        if (payment.courseId) {
-          // For single course payments
+        if (payment.courseId && payment.courseId !== '00000000-0000-0000-0000-000000000000') {
+          // For single course payments (including specific course in group payment)
           const courseInfo = await PaymentService.getCourseInfo(payment.courseId);
           if (courseInfo && courseInfo.title) {
             courseNames = [courseInfo.title];
             console.log(`Fetched course title: ${courseInfo.title}`);
           }
-        } else if (payment.packageId) {
-          // For bundle packages, get all courses in the package
+        } else if (payment.packageId && !payment.isGroupPayment) {
+          // For bundle packages (non-group), get all courses in the package
           const coursesInBundle = await PaymentService.getCoursesInPackage(payment.packageId);
           if (coursesInBundle && Array.isArray(coursesInBundle) && coursesInBundle.length > 0) {
             courseNames = coursesInBundle.map(course => course.title || course.name).filter(Boolean);
             console.log(`Fetched ${courseNames.length} course names from bundle`);
           }
+        } else if (payment.isGroupPayment && payment.memberCourses) {
+          // SPECIAL CASE: For group payments, don't auto-fetch all courses
+          // The courseNames should already be provided as the specific course for this member
+          console.log('Group payment detected, using provided courseNames for specific member');
         }
       } catch (error) {
         console.error('Error fetching course information for email:', error.message);

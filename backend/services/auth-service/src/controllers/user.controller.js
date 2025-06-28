@@ -188,3 +188,81 @@ export const getMe = asyncHandler(async (req, res) => {
     ApiResponse.success(user)
   );
 });
+
+// @desc    Get user by email (for service-to-service communication)
+// @route   GET /users/by-email/:email
+// @access  Service only
+export const getUserByEmail = asyncHandler(async (req, res) => {
+    const { email } = req.params;
+    
+    const user = await prisma.user.findUnique({
+        where: { email },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            role: true,
+            type: true,
+            createdAt: true
+        }
+    });
+
+    if (!user) {
+        return res.status(404).json(
+            ApiResponse.error('User not found')
+        );
+    }
+
+    res.status(200).json(
+        ApiResponse.success(user)
+    );
+});
+
+// @desc    Get multiple users by IDs (for service-to-service communication)  
+// @route   GET /users?ids=id1,id2,id3
+// @access  Service only
+export const getBatchUsers = asyncHandler(async (req, res) => {
+    const { ids } = req.query;
+    
+    if (!ids) {
+        return res.status(400).json(
+            ApiResponse.error('User IDs are required')
+        );
+    }
+
+    // Parse comma-separated IDs
+    const userIds = ids.split(',').map(id => id.trim()).filter(Boolean);
+    
+    if (userIds.length === 0) {
+        return res.status(400).json(
+            ApiResponse.error('At least one valid user ID is required')
+        );
+    }
+
+    // Limit to prevent abuse
+    if (userIds.length > 100) {
+        return res.status(400).json(
+            ApiResponse.error('Maximum 100 users can be requested at once')
+        );
+    }
+
+    const users = await prisma.user.findMany({
+        where: {
+            id: { in: userIds }
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            phone: true,
+            type: true,
+            role: true,
+            createdAt: true
+        }
+    });
+
+    res.status(200).json(
+        ApiResponse.success(users, 'Users retrieved successfully')
+    );
+});
