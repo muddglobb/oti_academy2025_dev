@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 
 import React from "react";
 import Image from "next/image";
+import * as motion from "motion/react-client";
 
 const Hero = () => {
   return (
@@ -54,9 +55,13 @@ const Hero = () => {
         </>
 
         {/* isi */}
-        <>
-          <div className=" flex flex-col items-center justify-center z-0">
-            <div className="flex flex-row gap-5 md:flex-col lg:pt-0 pb-7">
+        <div>
+          <div className=" flex flex-col items-center justify-center z-10">
+            <motion.div 
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 2 }}
+              className="flex flex-row gap-5 md:flex-col lg:pt-0 pb-10 z-10">
               <div className="justify-center items-center flex lg:pt-3">
                 <Link
                   href="https://omahti.web.id/"
@@ -73,13 +78,21 @@ const Hero = () => {
               <div className="text-white border-solid border-1 rounded-[5px] px-4.5 py-1.5 border-white">
                 <CountdownTimer targetDate={"2025-06-30T23:59:59"} />
               </div>
-            </div>
+            </motion.div>
             <div className="gap-4 flex flex-col px-9">
-              <h1 className="lg:leading-17 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
-                Pelatihan IT Terstruktur yang Dirancang untuk Semua Tingkat
-                Keahlian
-              </h1>
-              <p className="lg:px-24 px-9 text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[14px] sm:text-[18px]">
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 2, type: "spring" }}
+                className="lg:leading-17 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold"
+                >
+                  Pelatihan IT Terstruktur yang Dirancang untuk Semua Tingkat Keahlian
+              </motion.h1>
+              <motion.p 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 5, type: "spring" }}
+                className="lg:px-24 px-9 text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[14px] sm:text-[18px]">
                 <span className="font-bold"> Online Mini Bootcamp </span> yang
                 menawarkan pengalaman belajar intensif, mengasah keterampilan
                 IT, cocok untuk{" "}
@@ -87,34 +100,50 @@ const Hero = () => {
                   {" "}
                   pemula dan yang ingin mendalami bidang spesifik.
                 </span>
-              </p>
-              <div className="flex justify-center">
+              </motion.p>
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 2 }}
+                className="flex justify-center">
                 <Link href="/register" aria-label="Register for Bootcamp">
                   <Button className="h-11">Begin Your Journey Here</Button>
                 </Link>
-              </div>
+              </motion.div>
             </div>
             <div className="flex flex-col lg:flex-row gap-5 lg:gap-20 pt-14">
               <div className="flex flex-row gap-5 lg:gap-20">
-                <div className="flex flex-col w-35 sm:w-55">
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 5, delay: 0.1, type: "spring" }}
+                  className="flex flex-col w-35 sm:w-55">
                   <p className="flex-inline text-neutral-50 font-bold text-center text-[14px] sm:text-[2em]">
                     500+
                   </p>
                   <p className="flex-inline text-neutral-50 text-center text-[14px] sm:text-[22px] align-stretch tracking-[-0.22px]">
                     Participants
                   </p>
-                </div>
-                <div className="flex flex-col w-35 sm:w-55">
+                </motion.div>
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 5, delay: 0.3, type: "spring" }}
+                  className="flex flex-col w-35 sm:w-55">
                   <p className="flex-inline text-neutral-50 font-bold text-center text-[14px] sm:text-[2em]">
                     4+ Years
                   </p>
                   <p className="flex-inline text-neutral-50 text-center text-[14px] sm:text-[22px] align-stretch tracking-[-0.22px]">
                     Program Running
                   </p>
-                </div>
+                </motion.div>
               </div>
-              <div className="flex justify-center items-center">
-                <div className="flex flex-col w-35 sm:w-55 justify-center items-center">
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 5, delay: 0.5, type: "spring" }}
+                className="flex justify-center items-center">
+                <div className="flex flex-col w-35 sm:w-55 justify-center items-center z-10">
                   <p className="flex-inline text-neutral-50 font-bold text-center text-[14px] sm:text-[2em]">
                     20+
                   </p>
@@ -122,10 +151,10 @@ const Hero = () => {
                     Industry Connection
                   </p>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
-        </>
+        </div>
       </div>
     </div>
   );

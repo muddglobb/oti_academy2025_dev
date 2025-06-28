@@ -12,16 +12,13 @@ const Sidebarz = () => {
   
   const handleLogout = async () => {
     try {
-      const res = await fetch("/api/logout", {
-        method: "POST",
-        credentials: "include", 
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include', // Ensure cookies are sent
+      })
       
       if (res.ok) {
-        console.log("Logout sukses");
         router.push("/");
       } else {
         const errorData = await res.json();
@@ -33,11 +30,9 @@ const Sidebarz = () => {
   };
 
   return (
-    <div className="w-62 bg-neutral-50 flex flex-col border-r fixed h-screen items-center">
+    <div className="w-62 bg-neutral-50 flex flex-col border-r fixed h-full items-center">
       <Link href={"/"}>
         <div className="pt-6.5">
-          {/* <h1 className="text-xl font-bold">OmahTI</h1>
-          <p className="text-sm text-gray-400">ACADEMY</p> */}
           <Image
             src={"/images/logo/oti-academy-ireng.webp"}
             width={150}

@@ -34,19 +34,13 @@ export default function Login() {
       });
 
       const data = await res.json(); // ambil pesan error
-      // console.log(data.data.user.role);
       const ROLE = data.data.user.role;
-      // console.log("RES", res)
       if (res.ok) {
-        // console.log("CEKKKK" + res.headers);
-        // console.log("Login berhasil!");\
         if(ROLE === "ADMIN") router.push("/admin-page");
         else router.push("/dashboard");
         return;
       }
 
-      // const data = await res.json(); // ambil pesan error
-      // console.log(data);
       if (data.message === "User not found") {
         setErrorMessage("Kamu belum punya akun. Silakan daftar terlebih dulu.");
       } else if (data.message === "Incorrect password") {
@@ -214,7 +208,7 @@ export default function Login() {
               }`}
               disabled={loading}
             >
-              Submit
+              Login
             </button>
 
             {errorMessage && (

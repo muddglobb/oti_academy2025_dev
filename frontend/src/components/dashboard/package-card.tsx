@@ -1,34 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-
-const getCourseImage = (title: string): string => {
-    switch (title) {
-        case "Basic Python":
-            return "/images/class-profile/hako.jpg";
-        case "Graphic Design":
-            return "/images/class-profile/hako.jpg";
-        case "Competitive Programming":
-            return "/images/class-profile/hako.jpg";
-        case "Game Development":
-            return "/images/class-profile/hako.jpg";
-        case "Web Development":
-            return "/images/class-profile/hako.jpg";
-        case "Fundamental Cyber Security":
-            return "/images/class-profile/hako.jpg";
-        // intermediate
-        case "Software Engineering":
-            return "/images/class-profile/hako.jpg";
-        case "Data Science & Artificial Intelligence":
-            return "/images/class-profile/hako.jpg";
-        case "UI/UX":
-            return "/images/class-profile/hako.jpg";
-        case "Cyber Security":
-            return "/images/class-profile/hako.jpg";
-        default:
-            return "/images/class-profile/hako.jpg";
-    }
-};
+import { getFirstTeacher, getImageByTitle, getSecTeacher, getShortDescByTitle, getThirdTeacher } from "@/lib/course-props/course-props";
+import CourseCard from "./course-card";
 
 const getTeacherPic = (title: string): string => {
     switch (title) {
@@ -139,48 +113,70 @@ function getSlugByTitle(title: string) {
             <div className="grid gap-5 grid-cols-1 xl:grid-cols-2 pt-4">                
                 {pkg.type === "ENTRY" && 
                     pkg.courses.map((course) => (
-                    <div
-                        key={course.courseId}
-                        className="flex flex-col border-2 rounded-[12px] border-neutral-500 bg-white w-full"
-                    >
-                        
-                        <div>
-                            <div className="flex flex-row">
-                            <Image
-                                src={getCourseImage(course.title)}
-                                alt={course.title}
-                                width={165}
-                                height={165}
-                                className="rounded-l-[10px]"
-                            />
+                    // <div
+                    //     key={course.courseId}
+                    //     className="flex flex-col border-2 rounded-[12px] border-neutral-500 bg-white w-full"
+                    // >
+                    //     <Link href={`/dashboard/class-dashboard/${getSlugByTitle(course.title)}`}>
+                    //     <div>
+                    //         <div className="flex flex-row">
+                    //         <Image
+                    //             src={getImageByTitle(course.title)}
+                    //             alt={course.title}
+                    //             width={165}
+                    //             height={165}
+                    //             className="rounded-l-[10px]"
+                    //         />
 
-                                <div className="flex flex-col mx-5 my-4 justify-between w-full">
-                                    <div>
-                                        <div className="flex flex-row justify-between items-center">
-                                            <h2 className="text-[14px] font-bold text-neutral-900">{course.title}</h2>
-                                                <div className="bg-primary-500 rounded-[5px] self-start">
-                                                    {/* <Link href={`/dashboard/class-dashboard/${pkg.id}`}> */}
-                                                    <Link href={`/dashboard/class-dashboard/${getSlugByTitle(course.title)}`}>
-                                                        <ArrowUpRight className="p-[5px]" size={25} />
-                                                    </Link>
-                                                </div>
-                                        </div>
-                                        <p className="text-neutral-900 my-3 text-[12px]">{course.description}</p>
-                                    </div>
-                                        <div className="flex flex-row justify-between items-center">
-                                            <Image
-                                                src={getTeacherPic(course.title)}
-                                                alt="Teacher"
-                                                width={30}
-                                                height={30}
-                                                className="rounded-full"
-                                            />
-                                            <p className="text-neutral-900 text-[12px]">4 Jam/Session</p>      
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    //             <div className="flex flex-col mx-5 my-4 w-full">
+                    //                 <div>
+                    //                     <div className="flex flex-row justify-between items-center">
+                    //                         <h2 className="text-[14px] font-bold text-neutral-900">{course.title}</h2>
+                    //                             <div className="bg-primary-500 rounded-[5px] self-start">
+                    //                                 {/* <Link href={`/dashboard/class-dashboard/${pkg.id}`}> */}
+                    //                                 {/* <Link href={`/dashboard/class-dashboard/${getSlugByTitle(course.title)}`}> */}
+                    //                                     <ArrowUpRight className="p-[5px]" size={25} />
+                    //                                 {/* </Link> */}
+                    //                             </div>
+                    //                     </div>
+                    //                     <p className="text-neutral-900 my-3 text-[12px]">{course.description}</p>
+                    //                 </div>
+                    //                 <div className="flex flex-row justify-between items-center">
+                    //                 <div className="flex flex-row gap-2">
+                    //                     <Image
+                    //                         src={getFirstTeacher(course.title)}
+                    //                         alt="Teacher"
+                    //                         width={30}
+                    //                         height={30}
+                    //                         className="rounded-full"
+                    //                     />
+                    //                     {getSecTeacher(course.title)!== "" &&
+                    //                     <Image
+                    //                         src={getSecTeacher(course.title)}
+                    //                         alt="Mentor"
+                    //                         width={30}
+                    //                         height={30}
+                    //                         className="rounded-full"
+                    //                     />
+                    //                     }
+                    //                 </div>
+                    //         </div>
+                    //             </div>
+                    //             </div>
+                    //         </div>
+                    //     </Link>
+                    //     </div>
+                    <div key={course.courseId}>
+                        <CourseCard 
+                        slug={getSlugByTitle(course.title)} 
+                        image={getImageByTitle(course.title)} 
+                        title={course.title} 
+                        description={getShortDescByTitle(course.title)} 
+                        firstTeacher={getFirstTeacher(course.title)} 
+                        secTeacher={getSecTeacher(course.title)}
+                        thirdTeacher={getThirdTeacher(course.title)}
+                        />
+                    </div>
                     ))
                 }
             </div>
@@ -190,52 +186,15 @@ function getSlugByTitle(title: string) {
                 pkg.courses.map((course) => (
                 <div
                     key={course.courseId}
-                    className="flex flex-col border-2 rounded-[12px] border-neutral-500 bg-white w-full"
                 >
-                    <div className="flex flex-row">
-                    <Image
-                        src={getCourseImage(course.title)}
-                        alt={course.title}
-                        width={165}
-                        height={165}
-                        className="rounded-l-[10px]"
-                    />
-
-                        <div className="flex flex-col mx-5 my-4 justify-between w-full">
-                            <div>
-                                <div className="flex flex-row justify-between items-center">
-                                    <h2 className="text-[14px] font-bold text-neutral-900">{course.title}</h2>
-                                        <div className="bg-primary-500 rounded-[5px] self-start">
-                                            {/* <Link href={`/dashboard/class-dashboard/${pkg.id}`}> */}
-                                            <Link href={`/dashboard/class-dashboard/${getSlugByTitle(course.title)}`}>
-                                                <ArrowUpRight className="p-[5px]" size={25} />
-                                            </Link>
-                                        </div>
-                                </div>
-                                <p className="text-neutral-900 my-3 text-[12px]">{course.description}</p>
-                            </div>
-
-                            <div className="flex flex-row justify-between items-center">
-                                <div className="flex flex-row gap-2">
-                                    <Image
-                                        src={getTeacherPic(course.title)}
-                                        alt="Teacher"
-                                        width={30}
-                                        height={30}
-                                        className="rounded-full"
-                                    />
-                                    <Image
-                                        src={getMentorPic(course.title)}
-                                        alt="Mentor"
-                                        width={30}
-                                        height={30}
-                                        className="rounded-full"
-                                    />
-                                </div>
-                                <p className="text-neutral-900 text-[12px]">4 Jam/Session</p>      
-                            </div>
-                        </div>
-                    </div>
+                    <CourseCard 
+                        slug={getSlugByTitle(course.title)} 
+                        image={getImageByTitle(course.title)} 
+                        title={course.title} 
+                        description={course.description} 
+                        firstTeacher={getFirstTeacher(course.title)} 
+                        secTeacher={getSecTeacher(course.title)}
+                        thirdTeacher={getThirdTeacher(course.title)}/>
                     </div>
                 ))}
             </div>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+<!-- Homepage - Priority tertinggi -->
+<url>
+  <loc>https://academy.omahti.web.id/</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>1.00</priority>
+  <changefreq>weekly</changefreq>
+</url>
+
+<!-- Halaman Programs utama -->
+<url>
+  <loc>https://academy.omahti.web.id/programs</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.90</priority>
+  <changefreq>weekly</changefreq>
+</url>
+
+<!-- Program Individual - Priority tinggi -->
+<url>
+  <loc>https://academy.omahti.web.id/programs/cyber-security</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.85</priority>
+  <changefreq>monthly</changefreq>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/web-development</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.85</priority>
+  <changefreq>monthly</changefreq>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/data-science&amp;artificial-intelligence</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.85</priority>
+  <changefreq>monthly</changefreq>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/software-engineering</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.85</priority>
+  <changefreq>monthly</changefreq>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/ui-ux</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.80</priority>
+  <changefreq>monthly</changefreq>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/basic-python</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.80</priority>
+  <changefreq>monthly</changefreq>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/fundamental-cyber-security</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.80</priority>
+  <changefreq>monthly</changefreq>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/competitive-programming</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.75</priority>
+  <changefreq>monthly</changefreq>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/game-development</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.75</priority>
+  <changefreq>monthly</changefreq>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/graphic-design</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.75</priority>
+  <changefreq>monthly</changefreq>
+</url>
+
+<!-- Program Bundle/Kombinasi - Priority sedang -->
+<url>
+  <loc>https://academy.omahti.web.id/programs/web-development+software-engineering</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.90</priority>
+  <changefreq>monthly</changefreq>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/python+data-science&amp;artificial-intelligence</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.90</priority>
+  <changefreq>monthly</changefreq>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/graphic-design+ui-ux</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.90</priority>
+  <changefreq>monthly</changefreq>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/programs/fundamental-cyber-security+cyber-security</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.90</priority>
+  <changefreq>monthly</changefreq>
+</url>
+
+<!-- Auth pages - Priority rendah, tapi tetap penting untuk user flow -->
+<url>
+  <loc>https://academy.omahti.web.id/login</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.50</priority>
+  <changefreq>yearly</changefreq>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/register</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.50</priority>
+  <changefreq>yearly</changefreq>
+</url>
+<url>
+  <loc>https://academy.omahti.web.id/forgot-password</loc>
+  <lastmod>2025-06-25T00:00:00+00:00</lastmod>
+  <priority>0.30</priority>
+  <changefreq>yearly</changefreq>
+</url>
+
+</urlset>

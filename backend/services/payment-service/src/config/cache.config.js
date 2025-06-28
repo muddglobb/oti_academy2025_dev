@@ -6,8 +6,8 @@
 export const CACHE_CONFIG = {
   // TTL (Time To Live) settings in seconds
   ttl: {
-    packages: 15 * 60, // 15 minutes
-    courses: 15 * 60, // 15 minutes
+    packages: 2 * 60 * 60, // 15 minutes
+    courses: 2 * 60 * 60, // 15 minutes
     enrollments: 1 * 60, // 1 minutes
     users: 30 * 60, // 30 minutes
     default: 5 * 60 // 5 minutes default

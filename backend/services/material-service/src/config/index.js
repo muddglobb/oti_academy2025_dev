@@ -28,12 +28,11 @@ export default {
 
   // Cache configuration
   CACHE_TTL: parseInt(process.env.CACHE_TTL) || 3600, // 1 hour default
-  
-  // Redis cache TTL configurations (in seconds)
+    // Redis cache TTL configurations (in seconds)
   CACHE: {
     TTL: {
       MATERIAL: parseInt(process.env.CACHE_TTL_MATERIAL) || 1800, // 30 minutes
-      COURSE_MATERIALS: parseInt(process.env.CACHE_TTL_COURSE_MATERIALS) || 900, // 15 minutes
+      COURSE_MATERIALS: parseInt(process.env.CACHE_TTL_COURSE_MATERIALS) || 300, // 5 minutes for quick unlock response
       ALL_MATERIALS: parseInt(process.env.CACHE_TTL_ALL_MATERIALS) || 600, // 10 minutes
       COURSE_INFO: parseInt(process.env.CACHE_TTL_COURSE_INFO) || 1800, // 30 minutes
       DEFAULT: parseInt(process.env.CACHE_TTL_DEFAULT) || 3600 // 1 hour

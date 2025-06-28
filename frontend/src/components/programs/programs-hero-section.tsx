@@ -5,15 +5,17 @@ const ProgramsHero = () => {
   // bg-[url('/images/background-programs.png')]
   return (
     <div
-      className="w-full h-screen bg-cover bg-center flex flex-col items-center justify-center
+      className="w-full bg-cover bg-center flex flex-col items-center justify-center
         bg-[linear-gradient(0deg,rgba(5,12,26,0.8)_0%,rgba(5,12,26,0.2)_100%)]
         relative
         pt-31
+        h-155
+        md:h-screen
       "
     >
       <div className="flex-col items-center justify-center 
-      px-10
-      lg:px-60">
+      px-3
+      lg:px-28">
         {/* bintang dan planet */}
         <>
           <Image

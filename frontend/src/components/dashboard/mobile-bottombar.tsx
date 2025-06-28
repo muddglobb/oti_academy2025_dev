@@ -16,12 +16,15 @@ const MobileBottomBar = async ({
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
 
-  const res = await fetch(`${process.env.BASE_URL}/payments/${CourseID}/stats`, {
-    cache: "no-store",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  const res = await fetch(
+    `${process.env.BASE_URL}/payments/${CourseID}/stats`,
+    {
+      cache: "no-store",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
   const apiData = await res.json();
 
   const currentCount =
@@ -40,6 +43,7 @@ const MobileBottomBar = async ({
       : ClassLevel === "BUNDLE"
       ? apiData.data?.quota?.bundleQuota ?? 1
       : 0;
+
   return (
     <div
       className="border-t-2 border-neutral-500 sticky w-full bottom-0 z-20 flex flex-row justify-between py-6 px-6 rounded-t-[10px]"

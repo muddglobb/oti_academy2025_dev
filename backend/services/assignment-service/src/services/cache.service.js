@@ -1,39 +1,44 @@
 import NodeCache from 'node-cache';
 
-// Membuat cache instance dengan standar TTL 60 menit
+// Production-optimized cache instance
 const cache = new NodeCache({
-  stdTTL: 60 * 60, // 1 jam dalam detik
-  checkperiod: 120, // Cek data yang expired setiap 2 menit
-  useClones: false // Untuk menghindari deep cloning yang bisa memperlambat
+  stdTTL: 60 * 60, // 1 hour in seconds
+  checkperiod: 120, // Check for expired keys every 2 minutes
+  useClones: false, // Avoid deep cloning for performance
+  deleteOnExpire: true,
+  enableLegacyCallbacks: false
 });
 
-// Helper functions untuk operasi cache
-const getCache = (key) => {
-  return cache.get(key);
-};
-
-const setCache = (key, data, ttl = 3600) => {
-  return cache.set(key, data, ttl);
-};
-
-const deleteCache = (key) => {
-  return cache.del(key);
-};
-
-const flushCache = () => {
-  return cache.flushAll();
-};
+// Optimized helper functions
+const getCache = (key) => cache.get(key);
+const setCache = (key, data, ttl = 3600) => cache.set(key, data, ttl);
+const deleteCache = (key) => cache.del(key);
+const flushCache = () => cache.flushAll();
 
 const deleteCacheByPattern = (pattern) => {
   const keys = cache.keys();
   const keysToDelete = keys.filter(key => key.includes(pattern));
-  return cache.del(keysToDelete);
+  return keysToDelete.length > 0 ? cache.del(keysToDelete) : 0;
 };
 
 /**
  * Service untuk menangani caching data assignment
  */
 export class CacheService {
+  /**
+   * Mendapatkan data dari cache berdasarkan key
+   * @param {string} key - Cache key
+   * @returns {any} Data dari cache atau null jika tidak ada
+   */
+  static get(key) {
+    try {
+      return getCache(key);
+    } catch (error) {
+      console.error(`Cache get error for key ${key}: ${error.message}`);
+      return null;
+    }
+  }
+
   /**
    * Menyimpan data ke cache
    * @param {string} key - Cache key
@@ -43,22 +48,59 @@ export class CacheService {
    */
   static set(key, data, ttl = 3600) {
     return setCache(key, data, ttl);
-  }
-  
-  /**
+  }    /**
    * Menghapus cache berdasarkan key atau pattern
    * @param {string} keyOrPattern - Key atau pattern cache yang akan dihapus
    * @param {boolean} isPattern - Jika true, akan menghapus semua key yang cocok dengan pattern
-   * @returns {number} Jumlah key yang dihapus
+   * @returns {Promise<boolean>} Success status
    */
-  static invalidate(keyOrPattern, isPattern = false) {
-    console.log(`🗑️ Invalidating cache for key: ${keyOrPattern}`);
-    if (isPattern) {
-      return deleteCacheByPattern(keyOrPattern);
+  static async invalidate(keyOrPattern, isPattern = false) {
+    try {
+      console.log(`🗑️ Invalidating cache for ${isPattern ? 'pattern' : 'key'}: ${keyOrPattern}`);
+      
+      // ✅ Add debug logging - Before invalidation
+      const beforeKeys = cache.keys();
+      console.log(`📋 Total cache keys before invalidation: ${beforeKeys.length}`);
+      
+      if (isPattern) {
+        const matchingKeys = beforeKeys.filter(key => key.includes(keyOrPattern));
+        console.log(`🔍 Keys matching pattern "${keyOrPattern}":`, matchingKeys);
+        
+        if (matchingKeys.length > 0) {
+          const deletedCount = deleteCacheByPattern(keyOrPattern);
+          console.log(`🗑️ Deleted ${deletedCount} cache keys by pattern: ${keyOrPattern}`);
+        } else {
+          console.log(`⚠️ No keys found matching pattern: ${keyOrPattern}`);
+        }
+      } else {
+        const keyExists = beforeKeys.includes(keyOrPattern);
+        console.log(`🔍 Key "${keyOrPattern}" exists: ${keyExists}`);
+        
+        if (keyExists) {
+          const deleteResult = deleteCache(keyOrPattern);
+          console.log(`🗑️ Delete result for key "${keyOrPattern}": ${deleteResult}`);
+        } else {
+          console.log(`⚠️ Key "${keyOrPattern}" not found in cache`);
+        }
+      }
+      
+      // ✅ Add debug logging - After invalidation
+      const afterKeys = cache.keys();
+      console.log(`📋 Total cache keys after invalidation: ${afterKeys.length}`);
+      
+      // ✅ Verify specific key is gone
+      if (!isPattern) {
+        const stillExists = afterKeys.includes(keyOrPattern);
+        console.log(`🧪 Key "${keyOrPattern}" still exists after invalidation: ${stillExists}`);
+      }
+      
+      console.log(`✅ Cache invalidation completed for: ${keyOrPattern}`);
+      return true;
+    } catch (error) {
+      console.error(`❌ Cache invalidation error: ${error.message}`);
+      return false;
     }
-    return deleteCache(keyOrPattern);
   }
-  
   /**
    * Mendapatkan cache untuk sebuah key, atau menyimpan hasil dari callback jika cache tidak ada
    * @param {string} key - Cache key
@@ -91,27 +133,46 @@ export class CacheService {
       return callback();
     }
   }
-  
+
   /**
-   * Menghapus cache untuk sebuah key atau pattern
-   * @param {string} keyOrPattern - Cache key atau pattern (dengan *)
-   * @param {boolean} isPattern - Apakah key adalah pattern
-   * @returns {Promise<boolean>} Success status
+   * Clear all cache - untuk debugging
+   * @returns {boolean} Success status
    */
-  static async invalidate(keyOrPattern, isPattern = false) {
+  static clearAll() {
     try {
-      console.log(`🗑️ Invalidating cache for ${isPattern ? 'pattern' : 'key'}: ${keyOrPattern}`);
+      console.log('🧹 Clearing all cache');
+      const beforeCount = cache.keys().length;
+      console.log(`📋 Cache keys before clear: ${beforeCount}`);
       
-      if (isPattern) {
-        deleteCacheByPattern(keyOrPattern);
-      } else {
-        deleteCache(keyOrPattern);
-      }
+      flushCache();
       
+      const afterCount = cache.keys().length;
+      console.log(`📋 Cache keys after clear: ${afterCount}`);
+      console.log('✅ All cache cleared');
       return true;
     } catch (error) {
-      console.error(`Cache invalidation error: ${error.message}`);
+      console.error(`Cache clear error: ${error.message}`);
       return false;
+    }
+  }
+
+  /**
+   * Get cache statistics for debugging
+   * @returns {Object} Cache statistics
+   */
+  static getStats() {
+    try {
+      const keys = cache.keys();
+      const stats = cache.getStats();
+      
+      return {
+        totalKeys: keys.length,
+        keys: keys,
+        stats: stats
+      };
+    } catch (error) {
+      console.error(`Cache stats error: ${error.message}`);
+      return { error: error.message };
     }
   }
 }

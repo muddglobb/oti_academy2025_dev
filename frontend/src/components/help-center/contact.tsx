@@ -6,15 +6,17 @@ const Contact = () => {
             <h1 className="text-neutral-50 text-[14px] lg:text-[18px] font-bold border-b-2 border-neutral-500 pb-3">
                 Contact Person
             </h1>
-            <p className="text-neutral-50 pt-4 text-[12px]">
-                Butuh Bantuan atau Masih Bingung? Tenang, kamu nggak sendiri! Kalau ada pertanyaan lebih lanjut atau mengalami kendala, kamu bisa langsung hubungi contact person kami (Nazwa) melalui WhatsApp:
-            </p>
-            <div className="flex justify-end">
-                <a href="https://wa.me/628111478173" target="_blank">
-                    <Button className="text-[12px] px-4 py-3">
-                        Hubungi Sekarang
-                    </Button>
-                </a>
+            <div className="flex flex-col gap-7">
+                <p className="text-neutral-50 pt-4 text-[12px]">
+                    Masih bingung atau butuh bantuan? Tenang, kamu nggak sendiri! Langsung hubungi CP kami, Jose via WhatsApp kalau ada pertanyaan atau kendala.
+                </p>
+                <div className="flex justify-end">
+                    <a href="https://wa.me/6281325076332" target="_blank">
+                        <Button className="text-[12px] px-4 py-3">
+                            Hubungi Sekarang
+                        </Button>
+                    </a>
+                </div>
             </div>
         </div>
     )

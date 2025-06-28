@@ -1,118 +1,61 @@
 "use client";
 
 import React from "react";
-// import React, { useEffect, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Card from "./card";
 import NextArrow from "./ui/next-arrow";
 import PrevArrow from "./ui/prev-arrow";
+import { getDescByTitle, getFirstTeacher, getImageByTitle, getSecTeacher, getSlugByTitle } from "@/lib/course-props/course-props";
+import * as motion from "motion/react-client"
+import { slideInComp } from "@/lib/animation";
 
 const Kelas = [
     {
         type: "Beginner",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
         title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
     },
     {
         type: "Beginner",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        title: "Competitive Programming",
     },
     {
         type: "Beginner",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        title: "Basic Python",
     },
     {
         type: "Beginner",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        title: "Fundamental Cyber Security",
+    },
+    {
+        type: "Beginner",
+        title: "Game Development",
+    },
+    {
+        type: "Beginner",
+        title: "Graphic Design",
     },
     {
         type: "Intermediate",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        teacher2: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        title: "Software Engineering",
     },
     {
         type: "Intermediate",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        teacher2: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        title: "Data Science & Artificial Intelligence",
     },
     {
         type: "Intermediate",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        teacher2: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        title: "UI/UX",
     },
     {
         type: "Intermediate",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        teacher2: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
-    },
-    {
-        type: "Intermediate",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        teacher2: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
-    },
-    {
-        type: "Intermediate",
-        image: "/images/class-profile/hako.jpg",
-        teacher1: "/images/teacher/faris.jpg",
-        teacher2: "/images/teacher/faris.jpg",
-        title: "Web Development",
-        href: "https://www.youtube.com/watch?v=chWiR1H_6AY",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod temporut labore..."
+        title: "Cyber Security",
     },
 
 ]
 
 const PilihanKelasSlider =() => {
-    // const [isMobile, setIsMobile] = useState(false);
-    
-    // useEffect(() => {
-    //     const checkMobile = () => {
-    //       setIsMobile(window.innerWidth <= 769);
-    //     };
-    
-    //     checkMobile();
-    //     window.addEventListener("resize", checkMobile);
-    
-    //     return () => window.removeEventListener("resize", checkMobile);
-    // }, []);
-
     const settings = {
         arrows: true,
         infinite: true,
@@ -121,13 +64,14 @@ const PilihanKelasSlider =() => {
         nextArrow: <NextArrow/>,
         prevArrow: <PrevArrow/>,
         slidesToShow: 4,
+        initialSlide: 0, // Set the initial slide to index 1
         responsive: [
             {
                 breakpoint: 1400,
                 settings: {
                     slidesToShow: 3,
                     centerMode: true,
-                    centerPadding: "50px",
+                    centerPadding: "30px",
                 }
             },
             {
@@ -143,7 +87,7 @@ const PilihanKelasSlider =() => {
                 settings: {
                     slidesToShow: 1,
                     centerMode: true,
-                    centerPadding: "50px",
+                    centerPadding: "20px",
                 }
             }
         ]
@@ -153,18 +97,28 @@ const PilihanKelasSlider =() => {
         <div className="w-full lg:max-w-7xl mx-auto ">
             <Slider {...settings}>
                 {Kelas.map((card, index) => (
-                    <div key={index} className="px-2">
+                    <motion.div 
+                        variants={slideInComp}
+                        initial="hidden"
+                        whileInView="visible"
+                        custom={index}
+                        viewport={{
+                        once: true,
+                        }}
+                        key={index} 
+                        className="px-2 gap-5"
+                    >
                         <Card
                             key={index}
                             type={card.type}
-                            image={card.image}
-                            teacher1={card.teacher1}
-                            teacher2={card.teacher2}
+                            image={getImageByTitle(card.title)}
+                            teacher1={getFirstTeacher(card.title)}
+                            teacher2={getSecTeacher(card.title)}
                             title={card.title}
-                            href={card.href}
-                            description={card.description}
+                            href={`programs/${getSlugByTitle(card.title)}`}
+                            description={getDescByTitle(card.title)}
                         />
-                    </div>
+                    </motion.div>
                 ))}
             </Slider>
         </div>

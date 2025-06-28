@@ -1,5 +1,6 @@
 import { MaterialService } from '../services/material.service.js';
 import { MaterialEnhancer } from '../services/material-enhancer.service.js';
+import { CacheService } from '../services/cache.service.js';
 import { ApiResponse } from '../utils/api-response.js';
 import { asyncHandler } from '../middlewares/async.middleware.js';
 import config from '../config/index.js';
@@ -36,15 +37,17 @@ export const createMaterial = asyncHandler(async (req, res) => {
       return res.status(400).json(
         ApiResponse.error('Invalid unlock date format')
       );
-    }
-
-    const material = await MaterialService.createMaterial({
+    }    const material = await MaterialService.createMaterial({
       courseId,
       title,
       description,
       resourceUrl,
       unlockDate: utcUnlockDate
     });
+    
+    // Invalidate related caches
+    await CacheService.invalidate(`materials:course:${courseId}`);
+    await CacheService.invalidate('materials:all');
     
     // For create response, use direct material data (no need to format)
     res.status(201).json(
@@ -96,42 +99,50 @@ export const getMaterialsByCourse = asyncHandler(async (req, res) => {
   try {
     const materials = await MaterialService.getMaterialsByCourse(courseId);
     
-    // For non-admin users, filter materials by unlockDate
-    let filteredMaterials = materials;
-    if (!isAdmin) {
-      const now = new Date();
-      console.log('Current date for unlock filter:', now);
-        // TEMPORARY: Bypass unlock date check
-      const BYPASS_UNLOCK_DATE = true; // Set to true to temporarily bypass unlock date check - Show all materials but hide resourceUrl
-      
-      if (!BYPASS_UNLOCK_DATE) {
-        filteredMaterials = materials.filter(material => {
-          // Handle different material.unlockDate structures
-          if (material.unlockDate && typeof material.unlockDate === 'object' && material.unlockDate.utc) {
-            // New format with utc/wib objects
-            return new Date(material.unlockDate.utc.iso) <= now;
-          } else if (material.unlockDate instanceof Date) {
-            // Direct Date object
-            return material.unlockDate <= now;
-          } else if (material.unlockDate) {
-            // String or timestamp
-            return new Date(material.unlockDate) <= now;
-          }
-          
-          // If unlockDate is missing or invalid, show the material
-          return true;
-        });
-          console.log(`Filtered ${materials.length} materials to ${filteredMaterials.length} available now`);
-      } else {
-        console.log(`Unlock date check bypassed - showing all ${materials.length} materials with resourceUrl hidden for future materials`);
-      }
+    if (materials.length === 0) {
+      return res.status(404).json(
+        ApiResponse.error('No materials found for this course')
+      );
     }
     
-    // Enhance materials with unlock status but WITHOUT course information
-    const enhancedMaterials = await MaterialEnhancer.enhanceWithCourseInfo(filteredMaterials, false, isAdmin);
+    // Use MaterialEnhancer to properly handle unlock dates and resource URLs
+    const enhancedMaterials = await MaterialEnhancer.enhanceWithCourseInfo(materials, false, isAdmin);
+    
+    // Transform materials based on user role and unlock dates (similar to public endpoint)
+    const transformedMaterials = enhancedMaterials.map(material => {
+      const baseMaterial = {
+        id: material.id,
+        courseId: material.courseId,
+        title: material.title,
+        description: material.description,
+        unlockDate: material.unlockDate,
+        createdAt: material.createdAt,
+        updatedAt: material.updatedAt
+      };
+
+      // Determine if material is unlocked (admin always sees as unlocked)
+      const isUnlocked = isAdmin || material.unlocked;
+      
+      // For authenticated enrolled users
+      if (isAdmin) {
+        baseMaterial.resourceUrl = material.resourceUrl || MaterialEnhancer.getHiddenResourceUrl(material);
+        baseMaterial.enrollmentStatus = 'admin_access';
+      } else {
+        // For enrolled users, show resourceUrl only if material is unlocked
+        if (isUnlocked) {
+          baseMaterial.resourceUrl = material.resourceUrl || MaterialEnhancer.getHiddenResourceUrl(material);
+        } else {
+          baseMaterial.resourceUrl = null;
+          baseMaterial.message = `This material will be available from ${material.availableFrom || 'soon'}`;
+        }
+        baseMaterial.enrollmentStatus = 'enrolled';
+      }
+
+      return baseMaterial;
+    });
 
     res.status(200).json(
-      ApiResponse.success(enhancedMaterials, 'Materials retrieved successfully')
+      ApiResponse.success(transformedMaterials, 'Materials retrieved successfully')
     );
   } catch (error) {
     console.error(`Error retrieving materials:`, error);
@@ -160,37 +171,32 @@ export const getMaterial = asyncHandler(async (req, res) => {
     }    // Check if material is available based on unlockDate
     const isAdmin = userRole === 'ADMIN';
     if (!isAdmin) {
-      // TEMPORARY: Bypass unlock date check
-      const BYPASS_UNLOCK_DATE = false; // Set to false to enforce proper unlock date check
+      const now = new Date();
       
-      if (!BYPASS_UNLOCK_DATE) {
-        const now = new Date();
-        
-        let isUnlocked = true;
-        let availableFrom = null;
-        
-        if (material.unlockDate && typeof material.unlockDate === 'object' && material.unlockDate.utc) {
-          // New format with utc/wib objects
-          isUnlocked = new Date(material.unlockDate.utc.iso) <= now;
-          availableFrom = material.unlockDate.wib.iso;
-        } else if (material.unlockDate instanceof Date) {
-          // Direct Date object
-          isUnlocked = material.unlockDate <= now;
-          const wibDate = DateHelper.convertUtcToWib(material.unlockDate);
-          availableFrom = wibDate.toISOString();
-        } else if (material.unlockDate) {
-          // String or timestamp
-          isUnlocked = new Date(material.unlockDate) <= now;
-          const unlockDate = new Date(material.unlockDate);
-          const wibDate = DateHelper.convertUtcToWib(unlockDate);
-          availableFrom = wibDate.toISOString();
-        }
-        
-        if (!isUnlocked) {
-          return res.status(403).json(
-            ApiResponse.error(`This material will be available from ${availableFrom}`)
-          );
-        }
+      let isUnlocked = true;
+      let availableFrom = null;
+      
+      if (material.unlockDate && typeof material.unlockDate === 'object' && material.unlockDate.utc) {
+        // New format with utc/wib objects
+        isUnlocked = new Date(material.unlockDate.utc.iso) <= now;
+        availableFrom = material.unlockDate.wib.iso;
+      } else if (material.unlockDate instanceof Date) {
+        // Direct Date object
+        isUnlocked = material.unlockDate <= now;
+        const wibDate = DateHelper.convertUtcToWib(material.unlockDate);
+        availableFrom = wibDate.toISOString();
+      } else if (material.unlockDate) {
+        // String or timestamp
+        isUnlocked = new Date(material.unlockDate) <= now;
+        const unlockDate = new Date(material.unlockDate);
+        const wibDate = DateHelper.convertUtcToWib(unlockDate);
+        availableFrom = wibDate.toISOString();
+      }
+      
+      if (!isUnlocked) {
+        return res.status(403).json(
+          ApiResponse.error(`This material will be available from ${availableFrom}`)
+        );
       }
     }
     
@@ -249,9 +255,12 @@ export const updateMaterial = asyncHandler(async (req, res) => {
       }
       
       updatedData.unlockDate = utcUnlockDate;
-    }
+    }    const material = await MaterialService.updateMaterial(id, updatedData);
 
-    const material = await MaterialService.updateMaterial(id, updatedData);
+    // Invalidate related caches
+    await CacheService.invalidate(`materials:${id}`);
+    await CacheService.invalidate(`materials:course:${existingMaterial.courseId}`);
+    await CacheService.invalidate('materials:all');
 
     // Return the material directly without date conversions
     res.status(200).json(
@@ -280,9 +289,12 @@ export const deleteMaterial = asyncHandler(async (req, res) => {
       return res.status(404).json(
         ApiResponse.error('Material not found')
       );
-    }
+    }    await MaterialService.deleteMaterial(id);
 
-    await MaterialService.deleteMaterial(id);
+    // Invalidate related caches
+    await CacheService.invalidate(`materials:${id}`);
+    await CacheService.invalidate(`materials:course:${material.courseId}`);
+    await CacheService.invalidate('materials:all');
 
     res.status(200).json(
       ApiResponse.success(null, 'Material deleted successfully')

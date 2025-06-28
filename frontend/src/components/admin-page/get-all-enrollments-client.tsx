@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Search, Check, Trash2 } from "lucide-react";
 import ApproveButton from "./approve-button";
+import DeletePopup from "./delete-popup";
 
 export type EnrichedEnrollmentPayment = {
   id: string;
@@ -21,12 +22,25 @@ export type EnrichedEnrollmentPayment = {
   userName: string;
   userEmail: string;
   userType: string;
+  userPhone: string;
   courseTitle: string; // properti tambahan yang tidak ada di response awal
 };
 
 
 const GetAllEnrollmentsClient = ({ data }: { data: EnrichedEnrollmentPayment[] }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedName, setSelectedName] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
+
+  const handleDelete = (id: string, name:string, course:string) => {
+    setSelectedId(id);
+    setSelectedName(name);
+    setSelectedCourse(course);
+    setShowPopup(true);
+  };
+  // console.log(data);
 
   const filteredData = data.filter((item) =>
     item.userName?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -63,11 +77,12 @@ const GetAllEnrollmentsClient = ({ data }: { data: EnrichedEnrollmentPayment[] }
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="">
             <thead>
               <tr className="border-b border-gray-200">
                 <th className="text-left py-4 px-4 font-semibold text-neutral-900">Email</th>
                 <th className="text-left py-4 px-4 font-semibold text-neutral-900">Nama</th>
+                <th className="text-left py-4 px-4 font-semibold text-neutral-900">Phone</th>
                 <th className="text-left py-4 px-4 font-semibold text-neutral-900">Kelas</th>
                 <th className="text-left py-4 px-4 font-semibold text-neutral-900">Bukti Transfer</th>
                 <th className="text-left py-4 px-4 font-semibold text-neutral-900">Status</th>
@@ -82,10 +97,11 @@ const GetAllEnrollmentsClient = ({ data }: { data: EnrichedEnrollmentPayment[] }
                     index % 2 === 0 ? "bg-neutral-50" : "bg-neutral-100"
                   }`}
                 >
-                  <td className="py-4 px-4 text-gray-900 font-medium">
+                  <td className="py-4 px-4 text-gray-900 font-medium max-w-40 break-words">
                     {item.userEmail}
                   </td>
-                  <td className="py-4 px-4 text-gray-900">{item.userName}</td>
+                  <td className="py-4 px-4 text-gray-900 max-w-40 break-words">{item.userName}</td>
+                  <td className="py-4 px-4 text-gray-900">{item.userPhone}</td>
                   <td className="py-4 px-4 text-gray-900">
                     {item.courseTitle}
                   </td>
@@ -95,7 +111,7 @@ const GetAllEnrollmentsClient = ({ data }: { data: EnrichedEnrollmentPayment[] }
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <button className="w-25 py-1 bg-neutral-200 rounded-sm cursor-pointer">
+                      <button className="py-1 bg-neutral-200 rounded-sm cursor-pointer w-full">
                         Link
                       </button>
                     </a>
@@ -113,21 +129,35 @@ const GetAllEnrollmentsClient = ({ data }: { data: EnrichedEnrollmentPayment[] }
                     </div>
                   </td>
                   <td className="py-4 px-4">
-                    <button
-                      className="p-2 hover:bg-red-100 rounded-md transition"
-                      onClick={() => {
-                        // Tambahkan fungsi delete di sini nanti
-                        console.log("Delete ID:", item.id);
-                      }}
-                    >
-                      <Trash2 className="text-red-500" size={18} />
-                    </button>
+                    {item.status !== "APPROVED" &&
+                      <button
+                        className="p-2 hover:bg-red-100 rounded-md transition"
+                        onClick={() => handleDelete(item.id, item.userName, item.courseTitle)}
+                      >
+                        <Trash2 className="text-red-500" size={18} />
+                      </button>
+                    }
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+
+          {showPopup && selectedId && (
+            <DeletePopup
+              paymentId={selectedId}
+              username={selectedName}
+              course={selectedCourse}
+              onClose={() => {
+                setShowPopup(false);
+                setSelectedId(null);
+                setSelectedName("");
+                setSelectedCourse("");
+              }}
+            />
+          )}
         </div>
+
       )}
     </div>
   );

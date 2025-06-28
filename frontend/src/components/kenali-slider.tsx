@@ -8,54 +8,59 @@ import Slider from "react-slick";
 
 const images = [
   { 
-    src: "/images/kenali-omahti/satyeah-wirawr.jpeg", 
+    src: "/images/kenali-omahti/kenali-1.webp", 
     alt: "Kenali 1" 
   },
   { 
-    src: "/images/class-profile/hako.jpg", 
+    src: "/images/kenali-omahti/kenali-2.webp", 
     alt: "Kenali 2" 
   },
   { 
-    src: "/images/teacher/faris.jpg", 
+    src: "/images/kenali-omahti/kenali-3.webp", 
     alt: "Kenali 3" 
   },
   { 
-    src: "/logo.jpeg", 
+    src: "/images/kenali-omahti/kenali-4.webp", 
     alt: "Kenali 4" 
   },
 ];
 
 const KenaliSlider = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 769);
+    const checkScreenSize = () => {
+      const width = window.innerWidth;
+      setIsMobile(width <= 768);
+      setIsTablet(width > 768 && width <= 1024);
     };
 
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
 
-    return () => window.removeEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   const settings = {
+    onClick: false,
     arrows: false,
-    infinite: isMobile,
-    autoplay: isMobile,
+    infinite: true,
+    autoplay: isMobile || isTablet,
     autoplaySpeed: 2000,
     slidesToShow: 4,
     responsive: [
       {
         breakpoint: 1024,
         settings: { 
-          slidesToShow: 2,
+          slidesToShow: 3,
+          centerPadding: "10px",
          },
       },
       {
-        breakpoint: 769, 
+        breakpoint: 768, 
         settings: { 
-          slidesToShow: 1.5,
+          slidesToShow: 2,
           centerMode: true,
           centerPadding: "20px",
         },
@@ -63,6 +68,28 @@ const KenaliSlider = () => {
     ],
   };
 
+  // For screens larger than 1024px, render as a simple grid
+  if (!isMobile && !isTablet) {
+    return (
+      <div className="w-full max-w-7xl mx-auto">
+        <div className="flex justify-center items-center gap-4 px-2">
+          {images.map((img) => (
+            <div key={img.alt} className="flex-1 max-w-[312px]">
+              <Image
+                src={img.src}
+                alt={img.alt}
+                width={312}
+                height={224}
+                className="rounded-lg object-cover aspect-[312/224] w-full h-auto"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // For mobile and tablet, use the slider
   return (
     <div className="max-w-screen mx-auto">
       <Slider key={isMobile ? "mobile" : "desktop"} {...settings}>

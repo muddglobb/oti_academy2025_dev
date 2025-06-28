@@ -39,7 +39,7 @@ export async function enrollNoBundle({
 
     const result = await res.json();
     return result;
-    console.log("BERHASIL");
+    // console.log("BERHASIL");
   } catch (error) {
     console.error("Terjadi kesalahan saat melakukan pembayaran:", error);
     throw error;

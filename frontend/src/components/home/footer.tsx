@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { Instagram, Mail } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -37,7 +38,7 @@ const Footer = () => {
         flex-col
         justify-between
         
-        bg-[linear-gradient(0deg,rgba(5,12,26,1.0)_0%,rgba(5,12,26,0.8)_100%)]
+        bg-[linear-gradient(0deg,rgba(5,12,26,1.0)_0%,rgba(5,12,26,0.7)_100%)]
         relative
       "
       >
@@ -54,7 +55,7 @@ const Footer = () => {
 
         <div className="flex flex-col items-center justify-center h-full
         px-[30px]
-        md:px-[100px]">
+        md:px-[260px]">
           <p className="text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center font-bold
           text-[22px]
           lg:text-[46px]">
@@ -62,7 +63,7 @@ const Footer = () => {
           </p>
           <div className="flex justify-center mt-4">
             <Link href="/register">
-              <Button>Get Started</Button>
+              <Button className="px-5 py-4 text-[16px] font-white">Get Started</Button>
             </Link>
           </div>
         </div>
@@ -89,18 +90,20 @@ const Footer = () => {
           </div>
 
           <div className="flex gap-[20px] items-end">
-            <Image
-              src="/mail-icon.png"
-              alt="Mail Icon"
-              width={28}
-              height={28}
-            ></Image>
-            <Image
-              src="/instagram-icon.png"
-              alt="Mail Icon"
-              width={28}
-              height={28}
-            ></Image>
+            <Link href="mailto:omahti.mipa@ugm.ac.id">
+              <Mail
+                width={28}
+                height={28}
+                color="#f8f9ff"
+              />
+            </Link>
+            <Link href="https://www.instagram.com/omahti_ugm/">
+              <Instagram
+                width={28}
+                height={28}
+                color="#f8f9ff"
+              />
+            </Link>
           </div>
         </div>
       </div>

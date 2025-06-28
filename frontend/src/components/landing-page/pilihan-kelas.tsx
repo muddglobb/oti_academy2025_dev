@@ -2,6 +2,8 @@ import Container from "@/components/container";
 import React from "react";
 import PilihanKelasSlider from "@/components/pilihan-kelas-slider";
 import Image from "next/image";
+import * as motion from "motion/react-client"
+import { fadeIn } from "@/lib/animation";
 
 const PilihanKelas = () => {
   return (
@@ -39,10 +41,24 @@ pb-20
           />
           <div className="flex flex-col items-center justify-center">
             <div className="m-1">
-              <h1 className="pt-10 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
+              <motion.h1 
+                variants={fadeIn}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{
+                  once: true,
+                }}
+                className="pt-10 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
                 Pilihan Kelas untuk Semua Tingkatan
-              </h1>
-              <p className="pt-0 pb-10 lg:px-24 px-9 text-transparent bg-clip-text bg-gradient-to-b from-[var(--color-neutral-50)] to-[var(--color-neutral-400)] text-center text-[12px] sm:text-[18px]">
+              </motion.h1>
+              <motion.p 
+                  variants={fadeIn}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{
+                    once: true,
+                  }}
+                className="pt-0 pb-10 lg:px-24 px-9 text-neutral-50 text-center text-[12px] sm:text-[18px]">
                 Online program ini mencakup{" "}
                 <span className="font-bold">6 kelas untuk pemula</span> yang
                 dirancang membangun pemahaman dasar IT dari{" "}
@@ -52,9 +68,9 @@ pb-20
                   mendalami keterampilan lebih lanjut
                 </span>
                 . Kelas berlangsung dari{" "}
-                <span className="font-bold">1 Juni hingga 30 Juni 2025</span>{" "}
+                <span className="font-bold">30 Juni hingga 31 Juli 2025</span>{" "}
                 dengan materi yang terstruktur dan mudah diikuti.
-              </p>
+              </motion.p>
             </div>
             <div className="w-full pt-0 md:pt-10 flex justify-center ">
               <PilihanKelasSlider />

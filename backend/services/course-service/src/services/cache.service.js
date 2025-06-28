@@ -11,7 +11,7 @@ export class CacheService {
    * @param {number} ttl - Time-to-live dalam detik
    * @returns {Promise<any>} Data dari cache atau hasil callback
    */
-  static async getOrSet(key, callback, ttl = 3600) {
+  static async getOrSet(key, callback, ttl = 7200) {
     try {
       // Try to get data from cache first
       const cachedData = await getCache(key);
@@ -34,6 +34,36 @@ export class CacheService {
       console.error(`Cache service error for key ${key}: ${error.message}`);
       // If anything goes wrong with cache, just return the callback result
       return callback();
+    }
+  }
+
+  /**
+   * **TAMBAHAN: Method set untuk menyimpan data ke cache**
+   * @param {string} key - Cache key
+   * @param {any} data - Data yang akan disimpan
+   * @param {number} ttl - Time-to-live dalam detik
+   * @returns {Promise<boolean>} Status keberhasilan operasi
+   */
+  static async set(key, data, ttl = 7200) {
+    try {
+      return await setCache(key, data, ttl);
+    } catch (error) {
+      console.error(`Cache set error for key ${key}: ${error.message}`);
+      return false;
+    }
+  }
+
+  /**
+   * **TAMBAHAN: Method get untuk mengambil data dari cache**
+   * @param {string} key - Cache key
+   * @returns {Promise<any>} Data dari cache atau null
+   */
+  static async get(key) {
+    try {
+      return await getCache(key);
+    } catch (error) {
+      console.error(`Cache get error for key ${key}: ${error.message}`);
+      return null;
     }
   }
   

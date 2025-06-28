@@ -29,6 +29,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true // Enable credentials (cookies, auth headers)
 }));
+app.set('trust proxy', 1);
 
 // Request logger middleware
 app.use((req, res, next) => {

@@ -6,6 +6,8 @@ import ChosenClass from "@/components/payment/chosen-class";
 import Receipt from "@/components/payment/receipt";
 import { BuktiPembayaran } from "@/components/payment/bukti-pembayaran";
 import PaymentPopUp from "@/components/payment/payment-popup";
+import { getMyPayments } from "@/lib/payment/fetch-payment";
+import TolakPopUp from "@/components/payment/tolak-popup";
 // type CourseStat = {
 //   id: string;
 //   title: string;
@@ -99,7 +101,7 @@ const teacherCard: [string, string, string, string, string][] = [
     "Kevin Antonio",
     "Mentor",
     "/person-placeholder.jpeg",
-    "https://www.linkedin.com/in/kevinantonio/",
+    "https://www.linkedin.com/",
     "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Et, provident? Repudiandae repellat itaque aliquam accusantium. Qui vitae tenetur beatae hic quisquam eligendi molestiae minus nostrum, culpa, quam iusto dolor reprehenderit.",
   ],
   [
@@ -286,6 +288,23 @@ export default async function Page({
     prices = matchingCourse[0]?.price;
   }
 
+  const payments = await getMyPayments();
+  // console.log("meli", payments);
+  // console.log("fefsd", payments[0].packageType);
+
+  let checkBundle = "NO";
+  let checkEntry = "NO";
+  let checkIntermediate = "NO";
+
+  if (payments[0]?.packageType == "BUNDLE") checkBundle = "YES";
+  else {
+    for (let i = 0; i < 2; i++) {
+      if (payments[i]?.packageType == "ENTRY") checkEntry = "YES";
+      else if (payments[i]?.packageType == "INTERMEDIATE")
+        checkIntermediate = "YES";
+    }
+  }
+
   return (
     <div className="text-white py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4">
       <Link
@@ -295,11 +314,19 @@ export default async function Page({
         <ArrowLeft size={20} color="white" />
         <p className="text-white">Kembali</p>
       </Link>
-      
-      <PaymentPopUp />
+
+      {/* <PaymentPopUp /> */}
+      {checkBundle == "YES" && <TolakPopUp type="Bundle"/>}
+      {checkBundle == "NO" && classData?.ClassLevel == "BUNDLE" && checkIntermediate == "YES" && <TolakPopUp type="Intermediate"/>}
+      {checkBundle == "NO" && classData?.ClassLevel == "BUNDLE" && checkEntry == "YES" && <TolakPopUp type="Entry"/>}
+      {checkBundle == "NO" && classData?.ClassLevel == "BUNDLE" && checkEntry == "NO" && checkIntermediate == "NO" && <PaymentPopUp/>}
+      {checkBundle == "NO" && classData?.ClassLevel == "INTERMEDIATE" && checkIntermediate == "YES" && <TolakPopUp type="Intermediate"/>}
+      {checkBundle == "NO" && classData?.ClassLevel == "INTERMEDIATE" && checkIntermediate == "NO" && <PaymentPopUp/>}
+      {checkBundle == "NO" && classData?.ClassLevel == "ENTRY" && checkEntry == "YES" && <TolakPopUp type="Entry"/>}
+      {checkBundle == "NO" && classData?.ClassLevel == "ENTRY" && checkEntry == "NO" && <PaymentPopUp/>}
 
       <div className="flex flex-col xl:flex-row gap-6">
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 xl:w-240">
           <Konfirmasi />
           <ChosenClass
             courseId={matchedCourseId}
@@ -307,8 +334,15 @@ export default async function Page({
           />
         </div>
         <div className="w-full xl:w-2/5 flex flex-col gap-6">
-          <Receipt name={classData?.title} prices={prices} level={classData?.ClassLevel}/>
-          <BuktiPembayaran courseId={matchedCourseId} packageId={matchedPackageId}/>
+          <Receipt
+            name={classData?.title}
+            prices={prices}
+            level={classData?.ClassLevel}
+          />
+          <BuktiPembayaran
+            courseId={matchedCourseId}
+            packageId={matchedPackageId}
+          />
         </div>
       </div>
     </div>

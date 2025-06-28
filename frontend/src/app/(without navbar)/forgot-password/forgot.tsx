@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form";
 //import { useRouter } from "next/navigation";
 import { Mail, ArrowLeft } from "react-feather";
-import axios from "axios";
 
 interface FormData {
   email: string;
@@ -24,21 +23,25 @@ export default function Forgot() {
     setErrorMessage(null);
     setSuccessMessage(null);
 
-    try {
-      const res = await axios.post(`${process.env.BASE_URL}/auth/forgot-password`, {
-        email: formData.email
+   try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/forgot-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: formData.email }),
       });
 
-      if (res.status === 200) {
+      const data = await res.json();
+
+      if (res.ok) {
         setSuccessMessage("Email reset password telah dikirim!");
-      // router.push("/auth/login");
+      } else {
+        setErrorMessage(data.message || "Terjadi kesalahan saat mengirim permintaan.");
       }
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        setErrorMessage(error.response?.data?.message || "Terjadi kesalahan saat mengirim permintaan.");
-      }else{
-        setErrorMessage("Terjadi kesalahan.");
-      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      setErrorMessage("Terjadi kesalahan.");
     } finally {
       setLoading(false);
     }

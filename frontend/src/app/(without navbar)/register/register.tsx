@@ -1,9 +1,9 @@
 "use client";
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
-import { User, Mail, Lock, ArrowLeft, Eye, EyeOff } from 'react-feather';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useState, useEffect } from 'react';
+import { User, Mail, Lock, ArrowLeft, Eye, EyeOff, Phone } from 'react-feather';
+import { useForm, SubmitHandler, useWatch } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 
 interface FormData {
@@ -11,6 +11,7 @@ interface FormData {
   name: string;
   password: string;
   confirmPassword: string;
+  phone: string;
   //nim: string;
 }
 
@@ -21,17 +22,27 @@ export default function Register() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isRefillVisible, setIsRefillVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hasSubmittedWithError, setHasSubmittedWithError] = useState(false);
 
   const router = useRouter();
-
   const {
       register,
       handleSubmit,
+      control,
       watch,
       formState: { errors },
     } = useForm<FormData>();
 
   const password = watch('password');
+  const formValues = useWatch({ control });
+
+  useEffect(() => {
+    if (hasSubmittedWithError) {
+      setErrorMessage(null);      
+      setHasSubmittedWithError(false);  
+      setLoading(false);             
+    }
+  }, [formValues]);
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     if (data.password !== data.confirmPassword) {
@@ -55,8 +66,8 @@ export default function Register() {
           name: data.name,
           password: data.password,
           type: "UMUM",
+          phone: data.phone,
           //nim: isDike ? data.nim : undefined,
-
         }),
       });
 
@@ -67,7 +78,6 @@ export default function Register() {
       }
 
       localStorage.setItem("token", responseData.token);
-      alert("Registrasi berhasil!");
       router.push("/login");
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -75,7 +85,10 @@ export default function Register() {
       } else {
         setErrorMessage("Terjadi kesalahan saat registrasi.");
       }
-}
+      setHasSubmittedWithError(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -143,7 +156,7 @@ export default function Register() {
 
 
         <div className="relative">
-          <h2 className="font-bold mb-1 mt-3">Nama</h2>
+          <h2 className="font-bold mb-1 mt-3">Nama Lengkap</h2>
           <input
             type="text"
             id="nama"
@@ -158,6 +171,29 @@ export default function Register() {
             }
             h-4 w-4`} size={20}/>
           {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
+        </div>
+
+        <div className="relative">
+          <h2 className="font-bold mb-1 mt-3">Nomor Telepon</h2>
+          <input
+            type="text"
+            id="phone"
+            placeholder="081234567899"
+            {...register("phone", {
+              required: "Nomor telepon wajib diisi" ,
+              pattern: {
+                value: /^[0-9]+$/,
+                message: "Nomor telepon hanya boleh berisi angka",
+              }},)}
+            className="w-full bg-white text-black border-3 rounded-md px-10 py-2"
+          />
+          <Phone className={`absolute left-3
+            ${errors.phone
+              ? 'top-[50%] -translate-y-[45%] text-gray-600'
+              : 'top-[66%] -translate-y-[45%] text-gray-600'
+            }
+            h-4 w-4`} size={20}/>
+          {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>}
         </div>
 
         <div className="relative">

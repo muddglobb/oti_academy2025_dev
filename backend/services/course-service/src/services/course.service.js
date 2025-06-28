@@ -88,6 +88,7 @@ export const CourseService = {
       CacheService.invalidate('courses:*', true)
     ]);
   },
+
   /**
    * Get multiple courses by IDs (for batch operations)
    * @param {Array<string>} ids - Array of course IDs
@@ -110,7 +111,8 @@ export const CourseService = {
       
       for (const id of uniqueIds) {
         try {
-          const cached = await CacheService.getorSet(`course:${id}`);
+          // Fix: Use get() method instead of getOrSet() for cache lookup
+          const cached = await CacheService.get(`course:${id}`);
           if (cached) {
             cachedCourses.push(cached);
           } else {
@@ -131,6 +133,7 @@ export const CourseService = {
         // Cache the newly fetched courses with error handling
         for (const course of dbCourses) {
           try {
+            // Fix: Use set() method instead of getOrSet() for caching
             await CacheService.set(`course:${course.id}`, course, 30 * 60);
           } catch (cacheError) {
             console.warn(`Failed to cache course ${course.id}:`, cacheError.message);
@@ -162,5 +165,5 @@ export const CourseService = {
         throw new Error(`Failed to fetch courses: ${dbError.message}`);
       }
     }
-  },
-};
+  }
+}

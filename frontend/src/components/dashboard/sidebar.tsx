@@ -5,6 +5,7 @@ import { LogOut, Clipboard, House, Book, Info } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
+// import { toast } from 'sonner'
 
 const Sidebar = () => {
   const router = useRouter();
@@ -12,16 +13,12 @@ const Sidebar = () => {
 
 const handleLogout = async () => {
   try {
-    const res = await fetch("/api/logout", {
-      method: "POST",
-      credentials: "include", 
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      })
     
     if (res.ok) {
-      console.log("Logout sukses");
       router.push("/");
     } else {
       const errorData = await res.json();
@@ -31,13 +28,10 @@ const handleLogout = async () => {
     console.error("Error saat logout:", err);
   }
 };
-
   return (
     <div className="w-62 bg-gray-950 flex flex-col border-r-2 border-neutral-500 fixed top-0 left-0 h-screen items-center">
       <Link href={"/"}>
         <div className="pt-6.5">
-          {/* <h1 className="text-xl font-bold">OmahTI</h1>
-          <p className="text-sm text-gray-400">ACADEMY</p> */}
           <Image
             src={"/images/logo/oti-academy.webp"}
             width={150}

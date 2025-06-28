@@ -4,6 +4,7 @@ import { Clock } from "lucide-react";
 import KelasKosong from "./kelass-kosong";
 import MenyiapkanKelas from "./menyiapkan-kelas";
 import ApprovedClass from "./approved-class";
+import { getShortDescByTitle } from "@/lib/course-props/course-props";
 
 export type PaidBundle = {
   id: string;
@@ -17,14 +18,14 @@ export type User = {
   name: string;
   email: string;
   type: string; // Bisa dijadikan union type kalau nilainya terbatas, misal: 'UMUM' | 'DIKE'
-}
+};
 
 export type Course = {
   id: string;
   title: string;
   description: string;
   level: string; // Bisa jadi: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
-}
+};
 
 export type EnrollmentDetail = {
   id: string;
@@ -45,16 +46,14 @@ export type EnrollmentDetail = {
   bundleCourses: null | Course[];
   enrollmentStatus: boolean;
   paymentDate: string;
-}
+};
 
-const EnrolledClass = async () => {
+type PropsType = {
+  check: string;
+};
+const EnrolledClass = async ({ check }: PropsType) => {
   const payments = await getMyPayments();
-  // const now = new Date();
-  // const targetDate = new Date("2025-05-28T13:52:14.495Z");
-  // console.log(targetDate > now); // true jika targetDate sudah lewat
 
-  // console.log("Payments", payments.length);
-  // console.log("Payments", payments[0]);
   return (
     <div className="border-2 border-neutral-500 rounded-[20px]">
       <div className="rounded-[20px] p-6 ">
@@ -73,7 +72,8 @@ const EnrolledClass = async () => {
               <div key={paidClass.id}>
                 <MenyiapkanKelas
                   title={paidClass.title}
-                  description={paidClass.description}
+                  // description={paidClass.description}
+                  description={getShortDescByTitle(paidClass.title)}
                 />
               </div>
             ))}
@@ -84,7 +84,8 @@ const EnrolledClass = async () => {
               <div key={paidClass.id}>
                 <ApprovedClass
                   title={paidClass.title}
-                  description={paidClass.description}
+                  // description={paidClass.description}
+                  description={getShortDescByTitle(paidClass.title)}
                 />
               </div>
             ))}
@@ -96,12 +97,14 @@ const EnrolledClass = async () => {
                   {paidClass.status === "PAID" ? (
                     <MenyiapkanKelas
                       title={paidClass.course.title}
-                      description={paidClass.course.description}
+                      // description={paidClass.course.description}
+                      description={getShortDescByTitle(paidClass.course.title)}
                     />
                   ) : (
                     <ApprovedClass
                       title={paidClass.course.title}
-                      description={paidClass.course.description}
+                      // description={paidClass.course.description}
+                      description={getShortDescByTitle(paidClass.course.title)}
                     />
                   )}
                 </div>
@@ -111,13 +114,25 @@ const EnrolledClass = async () => {
 
           {payments.length === 0 && (
             <>
-              <KelasKosong />
-              <KelasKosong />
+              <KelasKosong
+                title="Hmm, daftar kelasmu masih kosong nih!"
+                desc="Gimana kalau kita isi sekarang? Ada banyak kelas keren yang bisa kamu pilih!"
+                check={check}
+              />
+              <KelasKosong
+                title="Satu lagi biar komplit!"
+                desc="Masih ada slot kosong nih, isi sekarang biar makin mantap!"
+                check={check}
+              />
             </>
           )}
 
           {payments.length === 1 && payments[0]?.packageType !== "BUNDLE" && (
-            <KelasKosong />
+            <KelasKosong
+              title="Hmm, daftar kelasmu masih kosong nih!"
+              desc="Gimana kalau kita isi sekarang? Ada banyak kelas keren yang bisa kamu pilih!"
+              check={check}
+            />
           )}
         </div>
       </div>

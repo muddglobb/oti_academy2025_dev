@@ -1,6 +1,9 @@
 import { z } from 'zod';
 import { ApiResponse } from '../utils/api-response.js';
 
+// Phone number validation regex (Indonesia format)
+const phoneRegex = /^(\+62|62|0)[0-9]{9,13}$/;
+
 // Registration schema
 const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -10,6 +13,9 @@ const registerSchema = z.object({
     errorMap: () => ({ message: 'Type must be either DIKE or UMUM' }),
   }),
   nim: z.string().optional(),
+  phone: z.string()
+    .regex(phoneRegex, 'Format nomor HP tidak valid. Gunakan format: 08xxxxxxxxxx, +62xxxxxxxxx, atau 62xxxxxxxxx')
+    .optional() // Optional untuk backward compatibility
 }).refine(data => {
   // If type is DIKE, nim is required
   if (data.type === 'DIKE' && !data.nim) {
@@ -44,6 +50,22 @@ const changePasswordSchema = z.object({
   newPassword: z.string().min(6, 'New password must be at least 6 characters'),
 });
 
+// Update profile schema - UPDATED untuk include phone
+const updateProfileSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters').optional(),
+  phone: z.string()
+    .regex(phoneRegex, 'Format nomor HP tidak valid. Gunakan format: 08xxxxxxxxxx, +62xxxxxxxxx, atau 62xxxxxxxxx')
+    .optional()
+});
+
+// BARU: Phone update schema untuk payment flow
+const updatePhoneSchema = z.object({
+  phone: z.string()
+    .regex(phoneRegex, 'Format nomor HP tidak valid. Gunakan format: 08xxxxxxxxxx, +62xxxxxxxxx, atau 62xxxxxxxxx')
+    .min(10, 'Nomor HP minimal 10 digit')
+    .max(15, 'Nomor HP maksimal 15 digit')
+});
+
 // Validation middleware factory
 const validate = (schema) => (req, res, next) => {
   try {
@@ -62,11 +84,6 @@ const validate = (schema) => (req, res, next) => {
   }
 };
 
-// Update profile schema
-const updateProfileSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters').optional(),
-});
-
 // Refresh token schema
 const refreshTokenSchema = z.object({
   refreshToken: z.string().min(1, 'Refresh token is required'),
@@ -78,6 +95,7 @@ const validateTokenSchema = z.object({
 
 export const validateTokenRequest = validate(validateTokenSchema);
 export const validateUpdateProfile = validate(updateProfileSchema);
+export const validateUpdatePhone = validate(updatePhoneSchema); // BARU
 export const validateRefreshToken = validate(refreshTokenSchema);
 export const validateRegistration = validate(registerSchema);
 export const validateLogin = validate(loginSchema);

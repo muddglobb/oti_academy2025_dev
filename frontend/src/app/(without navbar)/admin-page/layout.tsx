@@ -6,8 +6,28 @@ import Sidebarz from "@/components/admin-page/sidebarz";
 import { Headerz } from "@/components/admin-page/headerz";
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard",
-  description: "keren",
+  title: "OmahTI Academy",
+  description: "Online Mini Bootcamp yang menawarkan pengalaman belajar intensif, mengasah keterampilan IT, cocok untuk pemula dan yang ingin mendalami bidang spesifik.",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+  },
+  openGraph: {
+    title: "OmahTI Academy",
+    description: "Online Mini Bootcamp yang menawarkan pengalaman belajar intensif, mengasah keterampilan IT, cocok untuk pemula dan yang ingin mendalami bidang spesifik.",
+    url: "https://academy.omahti.web.id", 
+    siteName: "OmahTI Academy",
+    images: [
+      {
+        url: "https://res.cloudinary.com/dyjvctxme/image/upload/v1749565631/omahti_academy_pqqfea.png", 
+        width: 1200,
+        height: 630,
+        alt: "OmahTI Academy - Online Mini Bootcamp",
+      },
+    ],
+    locale: "id_ID",
+    type: "website",
+  },
 };
 
 export default function TrollLayout({
@@ -15,21 +35,12 @@ export default function TrollLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // mencegah siswa akses admin-page
-  try {
-    requireAdmin();
-  } catch (err) {
-    if ((err as Error).message === "NO_TOKEN") {
-      return redirect("/login");
-    }
-    return redirect("/");
-  }
   return (
-    <div className="flex">
+    <div className="">
       <aside className="w-62">
         <Sidebarz />
       </aside>
-      <main className="bg-neutral-200 flex-1">
+      <main className="bg-neutral-200 flex-1 ml-62">
         <div className="flex text-neutral-900">
           <div className="flex-grow">
             <Headerz />

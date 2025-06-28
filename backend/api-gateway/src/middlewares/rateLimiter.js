@@ -27,17 +27,33 @@ const createRateLimiter = (options = {}) => {
       // Rate limit by user ID if authenticated, otherwise by IP
       const userId = req.user?.id;
       const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'unknown';
+      
+      // Debug logging untuk troubleshooting
+      if (process.env.DEBUG_RATE_LIMIT === 'true') {
+        console.log(`🔍 Rate Limit Key: ${userId ? `user:${userId}` : `ip:${ip}`} for ${req.method} ${req.path}`);
+      }
+      
       return userId ? `user:${userId}` : `ip:${ip}`;
     },
     skip: (req) => {
       // Skip rate limiting for service-to-service requests
       const serviceKey = req.headers['x-service-key'] || req.headers['x-api-key'];
-      return serviceKey === process.env.SERVICE_API_KEY;
+      const isServiceCall = serviceKey === process.env.SERVICE_API_KEY;
+      
+      // Skip untuk development environment jika perlu
+      const isDevelopment = process.env.NODE_ENV === 'development';
+      const skipForDev = isDevelopment && req.headers['x-dev-bypass'] === 'true';
+      
+      return isServiceCall || skipForDev;
     },
     handler: (req, res) => {
+      // Fix: gunakan windowMs dari scope yang benar
+      const retryAfter = Math.round(windowMs / 1000) || 900;
+      
       res.status(429).json({
-        error: 'Too many requests from this IP, please try again later.',
-        retryAfter: Math.round(options.windowMs / 1000) || 900
+        error: 'Too many requests, please try again later.',
+        retryAfter,
+        message: message || 'Rate limit exceeded'
       });
     }
   });
@@ -63,7 +79,7 @@ export const passwordResetLimiter = createRateLimiter({
 // Payment endpoints - moderate rate limiting
 export const paymentLimiter = createRateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50, // 50 payment requests per 15 minutes
+  max: 500, // 200 payment requests per 15 minutes (fixed comment)
   message: 'Too many payment requests. Please try again later.',
   skipSuccessfulRequests: false
 });
@@ -86,8 +102,8 @@ export const uploadLimiter = createRateLimiter({
 
 // Public API endpoints - standard rate limiting
 export const publicApiLimiter = createRateLimiter({
-  windowMs: config.RATE_LIMIT.windowMs,
-  max: config.RATE_LIMIT.max,
+  windowMs: config.RATE_LIMIT?.windowMs || 15 * 60 * 1000,
+  max: config.RATE_LIMIT?.max || 100,
   message: 'Too many requests to public API. Please try again later.',
   skipSuccessfulRequests: false
 });

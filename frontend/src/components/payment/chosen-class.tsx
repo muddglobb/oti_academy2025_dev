@@ -2,6 +2,7 @@ import React from "react";
 import { CircleAlert } from "lucide-react";
 import { getAllPackage } from "@/lib/package/fetch-package";
 import { getCoursesById } from "@/lib/courses/fetch-courses";
+import ChosenCard from "./chosen-card";
 
 export type CourseData = {
   packageId: string;
@@ -27,7 +28,7 @@ const ChosenClass = async ({
   packageId: string | null | undefined;
 }) => {
   const packageData = await getAllPackage();
-  console.log(packageData);
+  // console.log(packageData);
   let name = null;
   if (courseId === null || courseId === undefined) {
     name = packageData.data.find((item: PackageData) => item.id === packageId)?.name;
@@ -39,18 +40,20 @@ const ChosenClass = async ({
   return (
     <div className="items-center justify-between border-3 border-neutral-500 rounded-xl p-4">
       <div className="w-full pb-3 mb-3 border-b-3 border-neutral-500">
-        <p className="text-lg font-bold">Chosen Class</p>
+        <p className="text-lg font-bold">Kelas yang dipilih</p>
         <div className="flex items-center gap-2">
           <CircleAlert />
           <p className="">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            Kamu bisa daftar 2 kelas: 1 Intermediate dan 1 Entry atau 1 Bundle
           </p>
         </div>
       </div>
 
-      <div className="h-50 w-full bg-neutral-50 text-neutral-900 rounded-md p-4">
+
+      {/* <div className="h-50 w-full bg-neutral-50 text-neutral-900 rounded-md p-4">
         {name}
-      </div>
+      </div> */}
+      <ChosenCard title={name}/>
     </div>
   );
 };

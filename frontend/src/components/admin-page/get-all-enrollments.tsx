@@ -19,6 +19,7 @@ export type EnrollmentPayment = {
   courseName: string;
   userName: string;
   userEmail: string;
+  userPhone: string;
   userType: "UMUM" | "MAHASISWA" | string;
 };
 
@@ -44,7 +45,6 @@ const GetAllEnrollments = async () => {
     })
   );
 
-  // console.log("MELINDA ", enrichedData);
 
   return <GetAllEnrollmentsClient data={enrichedData} />;
 };

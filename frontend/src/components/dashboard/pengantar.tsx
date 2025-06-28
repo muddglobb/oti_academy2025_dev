@@ -40,7 +40,7 @@ const Pengantar = () => {
 
         {/* Left Column */}
         <div className="lg:col-span-2">
-          <EnrolledClass />
+          <EnrolledClass check="YES"/>
         </div>
 
         {/* Right Column */}

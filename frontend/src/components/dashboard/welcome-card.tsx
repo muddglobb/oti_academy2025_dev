@@ -1,10 +1,21 @@
+'use client'
 import React from "react";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from "next/image";
-import { getUsers } from "@/lib/auth/fetch-users";
 
-export async function WelcomeCard() {
-  const users = await getUsers();
+type WelcomeCardProps = {
+  userName: string;
+  Phone: string | null;
+};
+export default function WelcomeCard({ userName, Phone }: WelcomeCardProps) {
+  const router = useRouter();
   // console.log("Data pengguna:", users);
+    useEffect(() => {
+    if (Phone == null) {
+      router.push('/fill-phone-number'); // ganti dengan route yang kamu inginkan
+    }
+  }, [Phone, router]);
 
   return (
     <div>
@@ -35,7 +46,8 @@ export async function WelcomeCard() {
         {/* Konten */}
         <div className="p-4 relative z-10">
           <h2 className="text-xl mb-2">Welcome to Our Academy,</h2>
-          <h1 className="text-2xl font-bold mb-4">{users.data.name}!</h1>
+          {/* <h1 className="text-2xl font-bold mb-4">{users.data.name}!</h1> */}
+          <h1 className="text-2xl font-bold mb-4">{userName}!</h1>
           <p className="text-sm text-gray-300">
             Siap-siap untuk transformasi seru dan setiap programmu akan kita
             rayakan bersama!

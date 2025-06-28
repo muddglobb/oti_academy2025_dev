@@ -8,7 +8,7 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
 const navbarItems = [
-  { name: "About Us", href: "/about" },
+  { name: "About Us", href: "/#about" },
   { name: "Programs", href: "/programs" },
 ];
 
@@ -29,7 +29,7 @@ const Navbar = () => {
   };
 
   return (
-    <main className="w-full fixed z-10 backdrop-blur-md">
+    <main className="w-full fixed z-20 backdrop-blur-md ">
       <div className="bg-[#06163c] text-white text-center text-[12px] px-5 py-4">
         <div className="flex justify-center items-center gap-2">
           <span>
@@ -125,7 +125,7 @@ const Navbar = () => {
       </Container>
 
       {isMenuOpen && (
-        <div className="fixed top-0 left-0 w-1/4 h-screen z-[1000] bg-[#050c1a] text-white flex flex-col justify-between px-6 py-8">
+        <div className="fixed top-0 left-0 w-50 h-screen z-[1000] bg-[#050c1a] text-white flex flex-col justify-between px-6 py-8">
           <div className="flex justify-end">
             <button onClick={toggleMenu}>
               <svg
@@ -157,19 +157,29 @@ const Navbar = () => {
           </nav>
 
           <div className="flex flex-col gap-3">
-            <Link href="/register">
-              <Button className="w-full bg-[#113EA7] text-white hover:bg-[#0d2d7a]">
-                Get Started
-              </Button>
-            </Link>
-            <Link href="/login">
-              <Button
-                variant="outline"
-                className="w-full bg-white text-[#113EA7] border border-[#113EA7] hover:bg-[#113EA7] hover:text-white"
-              >
-                Log In
-              </Button>
-            </Link>
+            {token ? (
+              <Link href="/dashboard">
+                <Button className="w-full bg-[#113EA7] text-white hover:bg-[#0d2d7a]">
+                  Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/register">
+                <Button className="w-full bg-[#113EA7] text-white hover:bg-[#0d2d7a]">
+                  Get Started
+                </Button>
+              </Link>
+            )}
+            {!token && (
+              <Link href="/login">
+                <Button
+                  variant="outline"
+                  className="w-full bg-white text-[#113EA7] border border-[#113EA7] hover:bg-[#113EA7] hover:text-white"
+                >
+                  Log In
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       )}
