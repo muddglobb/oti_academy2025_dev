@@ -2095,11 +2095,27 @@ static async formatDetailedPayment(payment, requestingUserId) {
           throw new Error(`Creator course validation failed: ${courseAvailability.message}`);
         }
 
-        // 8. Create group payment dengan member courses
-        const allMembersCourses = [
-          { userId: creatorId, courseId: creatorCourseId }, // Creator
-          ...memberValidation.validMembers.map(m => ({ userId: m.userId, courseId: m.courseId })) // Members
-        ];
+        // 8. Create group payment dengan member courses (including course names)
+        // First, get all course names
+        const allMembersCourses = [];
+        
+        // Add creator course
+        const creatorCourseInfo = await this.getCourseInfo(creatorCourseId);
+        allMembersCourses.push({ 
+          userId: creatorId, 
+          courseId: creatorCourseId, 
+          courseName: creatorCourseInfo?.title || 'Unknown Course'
+        });
+        
+        // Add member courses
+        for (const member of memberValidation.validMembers) {
+          const memberCourseInfo = await this.getCourseInfo(member.courseId);
+          allMembersCourses.push({ 
+            userId: member.userId, 
+            courseId: member.courseId, 
+            courseName: memberCourseInfo?.title || 'Unknown Course'
+          });
+        }
 
         const groupPayment = await tx.payment.create({
           data: {
@@ -2116,8 +2132,8 @@ static async formatDetailedPayment(payment, requestingUserId) {
             originalAmount: packageInfo.price * totalParticipants,
             discountedAmount: totalAmount,
             totalParticipants,
-            // TAMBAHAN: Store member course choices
-            memberCourses: allMembersCourses // JSON field
+            // PERBAIKAN: Store member course choices WITH course names
+            memberCourses: allMembersCourses // JSON field with courseName included
           }
         });
 
@@ -2131,18 +2147,7 @@ static async formatDetailedPayment(payment, requestingUserId) {
           // Continue anyway since payment creation was successful
         }
 
-        // 10. Get course names for response
-        const courseNames = await Promise.all(
-          allMembersCourses.map(async (mc) => {
-            const courseInfo = await this.getCourseInfo(mc.courseId);
-            return {
-              userId: mc.userId,
-              courseId: mc.courseId,
-              courseName: courseInfo?.title || 'Unknown Course'
-            };
-          })
-        );
-
+        // 10. Prepare response data (course names already included in allMembersCourses)
         return {
           ...groupPayment,
           creator: await this.getUserInfo(creatorId),
@@ -2151,15 +2156,15 @@ static async formatDetailedPayment(payment, requestingUserId) {
               ...(await this.getUserInfo(creatorId)), 
               role: 'creator',
               courseId: creatorCourseId,
-              courseName: courseNames.find(c => c.userId === creatorId)?.courseName
+              courseName: allMembersCourses.find(c => c.userId === creatorId)?.courseName
             },
             ...memberValidation.validMembers.map(m => ({ 
               ...m, 
               role: 'member',
-              courseName: courseNames.find(c => c.userId === m.userId)?.courseName
+              courseName: allMembersCourses.find(c => c.userId === m.userId)?.courseName
             }))
           ],
-          memberCourses: courseNames,
+          memberCourses: allMembersCourses, // Already includes courseName
           totalMembers: totalParticipants
         };
       });
@@ -2452,12 +2457,16 @@ static async formatDetailedPayment(payment, requestingUserId) {
           const userInfo = await this.getUserInfo(userId);
           
           if (userInfo && userInfo.email) {
-            // Create payment object for email
+            // Create payment object for email with proper group payment data
             const paymentForEmail = {
               id: groupPayment.id,
               amount: 81000, // Fixed amount per person for group payment
               createdAt: groupPayment.createdAt,
-              courseId: groupPayment.courseId
+              courseId: groupPayment.courseId,
+              // IMPORTANT: Mark as group payment dan provide member courses
+              isGroupPayment: true,
+              memberCourses: groupPayment.memberCourses || [],
+              userId: userId  // Ensure the email helper knows which user this email is for
             };
             
             await sendPaymentConfirmationEmail(paymentForEmail, userInfo, packageInfo);
