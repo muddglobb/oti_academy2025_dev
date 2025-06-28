@@ -14,10 +14,12 @@ export function BuktiPembayaran({
   const [proofLink, setProofLink] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // ✅ new
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(""); // clear old error
+    setIsSubmitting(true);
 
     const payload = {
       courseId,
@@ -51,13 +53,18 @@ export function BuktiPembayaran({
     } catch (err) {
       console.error(err);
       setErrorMessage("Gagal terhubung ke server."); // ✅ fallback error
+    } finally {
+      setIsSubmitting(false); // ✅ aktifkan kembali tombol
     }
   };
 
   return (
     <>
       {showPopup && (
-        <PerhatianPayment show={showPopup} onClose={() => setShowPopup(false)} />
+        <PerhatianPayment
+          show={showPopup}
+          onClose={() => setShowPopup(false)}
+        />
       )}
 
       <div className="rounded-xl border-3 border-neutral-500">
@@ -85,19 +92,33 @@ export function BuktiPembayaran({
             </div>
 
             {/* ✅ Error Message */}
-            {errorMessage == `{"status":"error","message":"Validation failed"}` && (
-              <p className="text-error-300 text-sm font-medium">Terjadi kesalahan pada link</p>
+            {errorMessage ==
+              `{"status":"error","message":"Validation failed"}` && (
+              <p className="text-error-300 text-sm font-medium">
+                Terjadi kesalahan pada link
+              </p>
             )}
-            {errorMessage == `{"status":"error","message":"Anda tidak dapat mendaftar kelas baru karena sudah terdaftar di paket bundle"}` && (
-              <p className="text-error-300 text-sm font-medium">Anda tidak dapat mendaftar kelas baru karena sudah terdaftar di paket bundle</p>
+            {errorMessage ==
+              `{"status":"error","message":"Anda tidak dapat mendaftar kelas baru karena sudah terdaftar di paket bundle"}` && (
+              <p className="text-error-300 text-sm font-medium">
+                Anda tidak dapat mendaftar kelas baru karena sudah terdaftar di
+                paket bundle
+              </p>
             )}
-            {errorMessage == `{"status":"error","message":"Anda sudah terdaftar di kelas entry. Tidak dapat mendaftar di kelas entry lainnya"}`&& (
-              <p className="text-error-300 text-sm font-medium">Anda sudah terdaftar di kelas entry. Tidak dapat mendaftar di kelas entry lainnya</p>
+            {errorMessage ==
+              `{"status":"error","message":"Anda sudah terdaftar di kelas entry. Tidak dapat mendaftar di kelas entry lainnya"}` && (
+              <p className="text-error-300 text-sm font-medium">
+                Anda sudah terdaftar di kelas entry. Tidak dapat mendaftar di
+                kelas entry lainnya
+              </p>
             )}
-            {errorMessage == `{"status":"error","message":"Anda sudah terdaftar di kelas intermediate. Tidak dapat mendaftar di kelas intermediate lainnya"}` && (
-              <p className="text-error-300 text-sm font-medium">Anda sudah terdaftar di kelas intermediate. Tidak dapat mendaftar di kelas intermediate lainnya</p>
+            {errorMessage ==
+              `{"status":"error","message":"Anda sudah terdaftar di kelas intermediate. Tidak dapat mendaftar di kelas intermediate lainnya"}` && (
+              <p className="text-error-300 text-sm font-medium">
+                Anda sudah terdaftar di kelas intermediate. Tidak dapat
+                mendaftar di kelas intermediate lainnya
+              </p>
             )}
-
 
             <form
               onSubmit={handleSubmit}
@@ -116,9 +137,10 @@ export function BuktiPembayaran({
 
               <button
                 type="submit"
-                className="w-full py-2 px-3 rounded-lg font-semibold cursor-pointer bg-primary-500 text-white"
+                className="w-full py-2 px-3 rounded-lg font-semibold cursor-pointer bg-primary-500 text-white disabled:opacity-60 disabled:cursor-not-allowed"
+                disabled={isSubmitting}
               >
-                Submit
+                {isSubmitting ? "Mengirim data..." : "Submit"}
               </button>
             </form>
           </div>
