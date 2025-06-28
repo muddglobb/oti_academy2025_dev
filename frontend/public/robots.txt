@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Sitemap: https://academy.omahti.web.id/sitemap.xml
+
+# Disallow admin and private routes
+Disallow: /admin-page/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/

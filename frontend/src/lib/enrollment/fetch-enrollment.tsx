@@ -25,3 +25,27 @@ export async function getMyEnrollment() {
     throw error;
   }
 }
+
+
+export async function getisEnrolled(courseId: string) {
+  try {
+    const accessToken = await getAccessToken();
+    const res = await fetch(`${process.env.BASE_URL}/enrollments/${courseId}/status`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!res.ok) {
+      console.error("Gagal mendapatkan status enrollment:", res.statusText);
+      throw new Error("Gagal memuat status enrollment.");
+    }
+
+    const enrolled = await res.json();
+    return enrolled.data;
+  } catch (error) {
+    console.error("Terjadi kesalahan saat mengambil status kenrollment:", error);
+    throw error;
+  }
+}

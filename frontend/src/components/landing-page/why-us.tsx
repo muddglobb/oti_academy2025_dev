@@ -40,21 +40,28 @@ const Sponsors = [
     alt: "sponsor 1",
     width: 103,
     height: 103,
-    displaySize: "h-[103px]"
+    displaySize: "h-[70px] md:h-[103px] w-[70px] md:w-[103px]"
   },
   {
     src: "/images/sponsors/l-asn.webp",
     alt: "sponsor 2",
     width: 180,
     height: 180,
-    displaySize: "h-[180px]"
+    displaySize: "h-[130px] md:h-[180px]"
+  },
+  {
+    src: "/images/sponsors/l-isystemasia.webp",
+    alt: "sponsor 4",
+    width: 600,
+    height: 180,
+    displaySize: "h-[90px] md:h-[180px]"
   },
   {
     src: "/images/sponsors/s-mixue.webp",
     alt: "sponsor 3",
     width: 103,
     height: 103,
-    displaySize: "h-[103px]"
+    displaySize: "h-[70px] md:h-[103px] w-[70px] md:w-[103px]"
   },
 ];
 
@@ -159,29 +166,79 @@ const WhyUs = () => {
               }}
               className="pt-10 lg:w-full text-transparent bg-clip-text bg-gradient-to-b from-neutral-50 to-neutral-400 text-center text-[22px] lg:text-[32px] font-bold">
               Sponsor Kami untuk Acara ini
-          </motion.h1>
-          <div className="flex flex-row justify-center items-center gap-4">
-            {Sponsors.map((img, index) => (
-              <motion.div 
+            </motion.h1>
+            <div className="flex flex-wrap justify-center items-center gap-4 w-full">
+              {/* Sponsor 1 */}
+              <motion.div
                 variants={slideInComp}
                 initial="hidden"
                 whileInView="visible"
-                viewport={{
-                  once: true,
-                }}
-                transition={{ delay: 3 }}
-                custom={index}
-                key={index} 
-                className={`w-auto ${img.displaySize} flex`}>
+                custom={0}
+                viewport={{ once: true }}
+                className={`w-auto order-1 md:order-1 flex justify-center`}
+              >
                 <Image
-                  src={img.src}
-                  alt={img.alt}
-                  width={img.width}
-                  height={img.height}
-                  className={`rounded-1 object-contain ${img.displaySize} w-auto`}
+                  src={Sponsors[0].src}
+                  alt={Sponsors[0].alt}
+                  width={Sponsors[0].width}
+                  height={Sponsors[0].height}
+                  className={`object-contain ${Sponsors[0].displaySize}`}
                 />
               </motion.div>
-            ))}
+
+              {/* Sponsor 3 */}
+              <motion.div
+                variants={slideInComp}
+                initial="hidden"
+                whileInView="visible"
+                custom={1}
+                viewport={{ once: true }}
+                className={`w-auto order-2 md:order-4 flex justify-center`}
+              >
+                <Image
+                  src={Sponsors[3].src}
+                  alt={Sponsors[3].alt}
+                  width={Sponsors[3].width}
+                  height={Sponsors[3].height}
+                  className={`object-contain ${Sponsors[3].displaySize}`}
+                />
+              </motion.div>
+
+              {/* Sponsor 2 */}
+              <motion.div
+                variants={slideInComp}
+                initial="hidden"
+                whileInView="visible"
+                custom={2}
+                viewport={{ once: true }}
+                className={`order-3 md:order-2 flex justify-center`}
+              >
+                <Image
+                  src={Sponsors[1].src}
+                  alt={Sponsors[1].alt}
+                  width={Sponsors[1].width}
+                  height={Sponsors[1].height}
+                  className={`object-contain ${Sponsors[1].displaySize}`}
+                />
+              </motion.div>
+
+              {/* Sponsor 4 */}
+              <motion.div
+                variants={slideInComp}
+                initial="hidden"
+                whileInView="visible"
+                custom={3}
+                viewport={{ once: true }}
+                className={`w-auto order-4 md:order-3 flex justify-center`}
+              >
+                <Image
+                  src={Sponsors[2].src}
+                  alt={Sponsors[2].alt}
+                  width={Sponsors[2].width}
+                  height={Sponsors[2].height}
+                  className={`${Sponsors[2].displaySize}`}
+                />
+              </motion.div>
             </div>
           </motion.div>
         </Container>
@@ -191,3 +248,29 @@ const WhyUs = () => {
 };
 
 export default WhyUs;
+
+
+
+// <div className="flex flex-row justify-center items-center gap-4">
+//             {Sponsors.map((img, index) => (
+//               <motion.div 
+//                 variants={slideInComp}
+//                 initial="hidden"
+//                 whileInView="visible"
+//                 viewport={{
+//                   once: true,
+//                 }}
+//                 transition={{ delay: 3 }}
+//                 custom={index}
+//                 key={index} 
+//                 className={`w-auto ${img.displaySize} flex`}>
+//                 <Image
+//                   src={img.src}
+//                   alt={img.alt}
+//                   width={img.width}
+//                   height={img.height}
+//                   className={`rounded-1 object-contain ${img.displaySize} w-auto`}
+//                 />
+//               </motion.div>
+//             ))}
+//             </div>

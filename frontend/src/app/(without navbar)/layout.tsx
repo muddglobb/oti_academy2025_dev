@@ -21,17 +21,22 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: "OmahTI Academy",
+    default: "OmahTI Academy - Online Mini Bootcamp IT",
     template: "%s | OmahTI Academy",
   },
-  description: "Online Mini Bootcamp yang menawarkan pengalaman belajar intensif, mengasah keterampilan IT, cocok untuk pemula dan yang ingin mendalami bidang spesifik.",
+  description: "OmahTI Academy adalah platform Online Mini Bootcamp terbaik untuk belajar IT, cybersecurity, programming, web development, dan data science. Program belajar intensif cocok untuk pemula hingga intermediate dengan mentor profesional industri.",
+  keywords: ["OmahTI Academy", "bootcamp IT", "belajar programming", "cybersecurity", "web development", "data science", "online course", "bootcamp Indonesia", "kursus IT", "pelatihan programming"],
+  authors: [{ name: "OmahTI Academy" }],
+  creator: "OmahTI Academy",
+  publisher: "OmahTI Academy",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
   },
   openGraph: {
-    title: "OmahTI Academy",
-    description: "Online Mini Bootcamp yang menawarkan pengalaman belajar intensif, mengasah keterampilan IT, cocok untuk pemula dan yang ingin mendalami bidang spesifik.",
+    title: "OmahTI Academy - Online Mini Bootcamp IT",
+    description: "Platform Online Mini Bootcamp terbaik untuk belajar IT, cybersecurity, programming, web development, dan data science. Program intensif dengan mentor profesional industri.",
     url: "https://academy.omahti.web.id", 
     siteName: "OmahTI Academy",
     images: [
@@ -39,7 +44,7 @@ export const metadata: Metadata = {
         url: "https://res.cloudinary.com/dyjvctxme/image/upload/v1749565631/omahti_academy_pqqfea.png", 
         width: 1200,
         height: 630,
-        alt: "OmahTI Academy - Online Mini Bootcamp",
+        alt: "OmahTI Academy - Online Mini Bootcamp IT",
       },
     ],
     locale: "id_ID",
@@ -47,9 +52,23 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "OmahTI Academy",
-    description: "Online Mini Bootcamp yang menawarkan pengalaman belajar intensif",
+    title: "OmahTI Academy - Online Mini Bootcamp IT",
+    description: "Platform Online Mini Bootcamp terbaik untuk belajar IT, cybersecurity, programming, web development, dan data science dengan mentor profesional industri.",
     images: ["https://res.cloudinary.com/dyjvctxme/image/upload/v1749565631/omahti_academy_pqqfea.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: "https://academy.omahti.web.id",
   },
 };
 

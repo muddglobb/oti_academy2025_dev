@@ -77,11 +77,12 @@ const GetAllEnrollmentsClient = ({ data }: { data: EnrichedEnrollmentPayment[] }
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="">
             <thead>
               <tr className="border-b border-gray-200">
                 <th className="text-left py-4 px-4 font-semibold text-neutral-900">Email</th>
                 <th className="text-left py-4 px-4 font-semibold text-neutral-900">Nama</th>
+                <th className="text-left py-4 px-4 font-semibold text-neutral-900">Phone</th>
                 <th className="text-left py-4 px-4 font-semibold text-neutral-900">Kelas</th>
                 <th className="text-left py-4 px-4 font-semibold text-neutral-900">Bukti Transfer</th>
                 <th className="text-left py-4 px-4 font-semibold text-neutral-900">Status</th>
@@ -96,10 +97,11 @@ const GetAllEnrollmentsClient = ({ data }: { data: EnrichedEnrollmentPayment[] }
                     index % 2 === 0 ? "bg-neutral-50" : "bg-neutral-100"
                   }`}
                 >
-                  <td className="py-4 px-4 text-gray-900 font-medium">
+                  <td className="py-4 px-4 text-gray-900 font-medium max-w-40 break-words">
                     {item.userEmail}
                   </td>
-                  <td className="py-4 px-4 text-gray-900">{item.userName}</td>
+                  <td className="py-4 px-4 text-gray-900 max-w-40 break-words">{item.userName}</td>
+                  <td className="py-4 px-4 text-gray-900">{item.userPhone}</td>
                   <td className="py-4 px-4 text-gray-900">
                     {item.courseTitle}
                   </td>
