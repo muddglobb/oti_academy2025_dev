@@ -23,7 +23,7 @@ const AjakTeman = () => {
         <strong>yang berbeda</strong> sesuai minat masing-masing.
       </p>
       <div className="self-end">
-        <Link href={"/"}>
+        <Link href={"/group-payment"}>
           <button className="flex items-center gap-2 bg-primary-400 px-3 py-2 rounded-[8px] cursor-pointer">
             <p>Beli Sekarang</p>
             <ArrowUpRight />
