@@ -1,9 +1,52 @@
-import React from 'react'
+import React from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { getMyPayments } from "@/lib/payment/fetch-payment";
+import TolakPopUp from "@/components/payment/tolak-popup";
+import Konfirmasi from "@/components/payment/konfirmasi";
+import ChooseClassGroup from "@/components/group-payment/choose-class";
+import { getUsers } from "@/lib/auth/fetch-users";
 
-const GroupPayment = () => {
+const GroupPayment = async () => {
+    const payments = await getMyPayments();
+    const users = await getUsers();
+
+    let checkBundle = "NO";
+    let checkEntry = "NO";
+    let checkIntermediate = "NO";
+  
+    if (payments[0]?.packageType == "BUNDLE") checkBundle = "YES";
+    else {
+      for (let i = 0; i < 2; i++) {
+        if (payments[i]?.packageType == "ENTRY") checkEntry = "YES";
+        else if (payments[i]?.packageType == "INTERMEDIATE")
+          checkIntermediate = "YES";
+      }
+    }
+  
   return (
-    <div className='text-neutral-50 py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4'>GroupPayment</div>
-  )
-}
+    <div className="text-neutral-50 py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4">
+      <Link
+        href="/dashboard/dashboard"
+        className="flex gap-2 bg-primary-900 text-sm font-bold px-3.5 py-2 rounded-[8px] w-fit self-start"
+      >
+        <ArrowLeft size={20} color="white" />
+        <p className="text-white">Kembali</p>
+      </Link>
 
-export default GroupPayment
+      {checkBundle == "YES" && <TolakPopUp type="Bundle" isGroup={true}/>}
+      {checkBundle == "NO" && checkIntermediate == "YES" && <TolakPopUp type="Intermediate" isGroup={true}/>}
+
+      <div className="flex flex-col xl:flex-row gap-6">
+        <div className="flex flex-col gap-6 xl:w-240">
+          <Konfirmasi />
+          <ChooseClassGroup myEmail={users.data.email}/>
+        </div>
+        <div className="w-full xl:w-2/5 flex flex-col gap-6">
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default GroupPayment;

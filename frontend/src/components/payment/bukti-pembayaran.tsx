@@ -67,9 +67,9 @@ export function BuktiPembayaran({
         />
       )}
 
-      <div className="rounded-xl border-3 border-neutral-500">
+      <div className="rounded-[20px] border-3 border-neutral-500">
         <div
-          className="w-full flex justify-between relative border-neutral-500 rounded-xl"
+          className="w-full flex justify-between relative border-neutral-500 rounded-[17px]"
           style={{
             backgroundImage: 'url("/images/stars-hero-programs.png")',
             backgroundSize: "cover",
@@ -77,9 +77,9 @@ export function BuktiPembayaran({
           }}
         >
           <div className="absolute inset-0 z-0 pointer-events-none">
-            <div className="absolute inset-0 bg-[var(--color-primary-300)] opacity-50 rounded-xl" />
-            <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 to-transparent rounded-xl" />
-            <div className="absolute inset-0 bg-gradient-to-l from-neutral-900 to-transparent rounded-xl" />
+            <div className="absolute inset-0 bg-[var(--color-primary-300)] opacity-50 rounded-[17px]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 to-transparent rounded-[17px]" />
+            <div className="absolute inset-0 bg-gradient-to-l from-neutral-900 to-transparent rounded-[17px]" />
           </div>
 
           <div className="p-4 z-10 w-full flex flex-col gap-3">

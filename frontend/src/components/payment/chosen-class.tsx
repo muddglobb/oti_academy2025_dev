@@ -38,7 +38,7 @@ const ChosenClass = async ({
     name = courseData.data.title;
   }
   return (
-    <div className="items-center justify-between border-3 border-neutral-500 rounded-xl p-4">
+    <div className="items-center justify-between border-3 border-neutral-500 rounded-[20px] p-4">
       <div className="w-full pb-3 mb-3 border-b-3 border-neutral-500">
         <p className="text-lg font-bold">Kelas yang dipilih</p>
         <div className="flex items-center gap-2">
