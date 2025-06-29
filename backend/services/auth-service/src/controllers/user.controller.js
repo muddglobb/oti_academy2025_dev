@@ -241,11 +241,11 @@ export const getBatchUsers = asyncHandler(async (req, res) => {
     }
 
     // Limit to prevent abuse
-    if (userIds.length > 100) {
-        return res.status(400).json(
-            ApiResponse.error('Maximum 100 users can be requested at once')
-        );
-    }
+    // if (userIds.length > 100) {
+    //     return res.status(400).json(
+    //         ApiResponse.error('Maximum 100 users can be requested at once')
+    //     );
+    // }
 
     const users = await prisma.user.findMany({
         where: {
