@@ -3,7 +3,7 @@ import { CircleAlert } from "lucide-react";
 
 const Konfirmasi = () => {
   return (
-    <div className="flex flex-col sm:flex-row border-3 gap-3 sm:gap-0 justify-between border-neutral-500 rounded-xl p-4">
+    <div className="flex flex-col sm:flex-row border-3 gap-3 sm:gap-0 justify-between border-neutral-500 rounded-[20px] p-4">
       <div className="flex gap-2 sm:w-2/3">
         <CircleAlert className="w-6 h-6 shrink-0" />
         <p className="text-wraper">

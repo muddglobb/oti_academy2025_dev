@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 
-export default function TolakPopUp({ type }: { type: string }) {
+export default function TolakPopUp({ type, isGroup = false }: { type: string, isGroup?: boolean }) {
   const [showPopup, setShowPopup] = useState(false);
 
   // Tampilkan popup saat halaman pertama kali dimuat
@@ -52,11 +52,16 @@ export default function TolakPopUp({ type }: { type: string }) {
               </p>
             )}
             <div className="flex gap-2 pt-3 justify-end">
-              <Link href="/dashboard/class-dashboard">
+              {isGroup ? <Link href="/dashboard">
                 <button className="px-4 py-2 bg-primary-700 text-white rounded-sm cursor-pointer">
                   Kembali
                 </button>
-              </Link>
+              </Link> :<Link href="/dashboard/class-dashboard">
+                <button className="px-4 py-2 bg-primary-700 text-white rounded-sm cursor-pointer">
+                  Kembali
+                </button>
+              </Link>}
+              
             </div>
           </div>
         </div>

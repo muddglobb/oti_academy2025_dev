@@ -31,6 +31,7 @@ export const validateInviteEmails = async (req, res) => {
     // Use existing validateInviteEmails method (email only)
     const validation = await PaymentService.validateInviteEmails(emails);
     
+
     // Format response dengan bundle information
     const response = {
       validEmails: validation.validEmails || [],
@@ -82,6 +83,7 @@ export const validateInviteEmails = async (req, res) => {
 export const createGroupPayment = async (req, res) => {
   try {
     const creatorId = req.user.id;
+
     
     // Validate request body with schema
     const validatedData = createGroupPaymentSchema.parse(req.body);
@@ -108,7 +110,7 @@ export const createGroupPayment = async (req, res) => {
         ApiResponse.error('Validation error', errors)
       );
     }
-    
+
     console.error('Error creating group payment:', error);
     res.status(500).json(
       ApiResponse.error(error.message || 'Terjadi kesalahan saat membuat group payment')

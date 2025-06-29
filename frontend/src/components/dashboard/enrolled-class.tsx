@@ -27,6 +27,30 @@ export type Course = {
   level: string; // Bisa jadi: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
 };
 
+export type MemberGroup = {
+  userId: string;
+  courseId: string;
+  courseName: string;
+  userName: string;
+  userEmail: string;
+  role: string;
+}
+export type CreaterGroup = {
+  userId: string;
+  courseId: string;
+  courseName: string;
+  userName: string;
+  userEmail: string;
+  role: string;
+}
+export type Group = {
+  isGroupPayment: boolean;
+  totalMembers: number;
+  groupStatus: string;
+  allMemberCourses: MemberGroup[];
+  createrInfo: CreaterGroup;
+}
+
 export type EnrollmentDetail = {
   id: string;
   userId: string;
@@ -46,6 +70,7 @@ export type EnrollmentDetail = {
   bundleCourses: null | Course[];
   enrollmentStatus: boolean;
   paymentDate: string;
+  groupPayemntDetails?: Group;
 };
 
 type PropsType = {

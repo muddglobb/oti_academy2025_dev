@@ -5,7 +5,7 @@ const Receipt = ({ name, prices, level }: {name: string | undefined, prices: num
   else if (level === "INTERMEDIATE") level = "Intermediate";
   else level = "Bundle";
   return (
-    <div className="w-full border-3 border-neutral-500 rounded-xl p-4">
+    <div className="w-full border-3 border-neutral-500 rounded-[20px] p-4">
       <p className="text-lg font-bold pb-3 border-b-3 border-neutral-500">
         Pembayaran
       </p>
