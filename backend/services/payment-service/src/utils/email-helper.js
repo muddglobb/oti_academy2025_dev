@@ -52,21 +52,85 @@ export const sendPaymentConfirmationEmail = async (payment, userInfo, packageInf
       year: 'numeric'
     });
 
-    // Get the actual course name - NEW SECTION
-    let courseName = packageInfo.name;
-    if (payment.courseId) {
-      try {
+    // PERBAIKAN: Get the actual course name - Handle group payments
+    let courseName = packageInfo.name; // Default fallback
+    
+    // Log payment details for debugging
+    console.log(`📧 Payment confirmation - Payment ID: ${payment.id}, User: ${userInfo.id}, IsGroupPayment: ${payment.isGroupPayment || false}`);
+    console.log(`📧 Payment courseId: ${payment.courseId}, Package: ${packageInfo.name}`);
+    
+    try {
+      // PERBAIKAN: Handle group payments first
+      if (payment.isGroupPayment && payment.memberCourses && Array.isArray(payment.memberCourses)) {
+        console.log(`📧 Group payment detected - looking for course for user ${userInfo.id}`);
+        
+        // For group payments, find the specific course for this user
+        const userMemberCourse = payment.memberCourses.find(mc => mc.userId === userInfo.id);
+        
+        if (userMemberCourse && userMemberCourse.courseName) {
+          // Use the course name directly from memberCourses
+          courseName = userMemberCourse.courseName;
+          console.log(`📧 Found user's course in group payment: ${courseName}`);
+        } else if (userMemberCourse && userMemberCourse.courseId) {
+          // If courseName not available, try to fetch from course service
+          try {
+            const { PaymentService } = await import('../services/payment.service.js');
+            const courseInfo = await PaymentService.getCourseInfo(userMemberCourse.courseId);
+            if (courseInfo && courseInfo.title) {
+              courseName = courseInfo.title;
+              console.log(`📧 Fetched course title for group payment: ${courseName}`);
+            }
+          } catch (courseError) {
+            console.error(`❌ Error fetching course info for group payment: ${courseError.message}`);
+          }
+        } else {
+          console.warn(`⚠️ User ${userInfo.id} not found in memberCourses for group payment ${payment.id}`);
+          // Fallback: use the first available course name from memberCourses
+          const firstMemberCourse = payment.memberCourses.find(mc => mc.courseName);
+          if (firstMemberCourse) {
+            courseName = firstMemberCourse.courseName;
+            console.log(`📧 Using first available course name for group payment: ${courseName}`);
+          }
+        }
+      } 
+      // PERBAIKAN: Handle individual payments
+      else if (payment.courseId && payment.courseId !== '00000000-0000-0000-0000-000000000000') {
+        console.log(`📧 Individual payment detected - fetching course info for ${payment.courseId}`);
+        
         // Import CourseService directly to avoid circular dependencies
         const { CourseService } = await import('../services/course.service.js');
         const courseDetails = await CourseService.getCourseById(payment.courseId);
         if (courseDetails?.title) {
           courseName = courseDetails.title;
-          console.log(`Using course title "${courseName}" for payment confirmation email`);
+          console.log(`📧 Using course title "${courseName}" for individual payment confirmation email`);
+        } else {
+          // Fallback: try PaymentService
+          const { PaymentService } = await import('../services/payment.service.js');
+          const courseInfo = await PaymentService.getCourseInfo(payment.courseId);
+          if (courseInfo && courseInfo.title) {
+            courseName = courseInfo.title;
+            console.log(`📧 Using PaymentService course title "${courseName}" for payment confirmation email`);
+          }
         }
-      } catch (error) {
-        console.error('Error getting course title for email:', error.message);
       }
+      // Bundle packages - use package name
+      else if (payment.packageType === 'BUNDLE' || payment.courseId === '00000000-0000-0000-0000-000000000000') {
+        console.log(`📧 Bundle payment detected - using package name: ${packageInfo.name}`);
+        courseName = packageInfo.name;
+      }
+      
+    } catch (error) {
+      console.error('❌ Error getting course title for payment confirmation email:', error.message);
+      // Keep the package name as fallback
     }
+
+    // Final validation - ensure we have a valid course name
+    if (!courseName || courseName === 'Unknown Course') {
+      courseName = packageInfo.name || 'Course Package';
+      console.warn(`⚠️ Using package name as final fallback: ${courseName}`);
+    }
+
+    console.log(`📧 Final course name for payment confirmation: "${courseName}"`);
 
     // Create token
     const token = generateServiceToken();
@@ -96,10 +160,10 @@ export const sendPaymentConfirmationEmail = async (payment, userInfo, packageInf
       });
     });
     
-    console.log(`Payment confirmation email sent to: ${userInfo.email} with course name: ${courseName}`);
+    console.log(`✅ Payment confirmation email sent to: ${userInfo.email} with course name: ${courseName}`);
     return true;
   } catch (error) {
-    console.error('Failed to send payment confirmation email:', error.message);
+    console.error('❌ Failed to send payment confirmation email:', error.message);
     return false;
   }
 };

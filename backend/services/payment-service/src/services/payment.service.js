@@ -50,7 +50,8 @@ export class PaymentService {
     type,
     backStatus,
     startDate,
-    endDate
+    endDate,
+    isGroupPayment
   } = filters;
   
   // Build where conditions based on filters
@@ -66,6 +67,10 @@ export class PaymentService {
   
   if (backStatus) {
     where.backStatus = backStatus;
+  }
+
+  if (typeof isGroupPayment === 'boolean') {
+    where.isGroupPayment = isGroupPayment;
   }
   
   // Date range filter
@@ -84,21 +89,53 @@ export class PaymentService {
   const payments = await prisma.payment.findMany({
     where,
     orderBy: [
-      {
-        status: 'asc' 
-      },
-      {
-        createdAt: 'desc' 
-      }
+      { createdAt: 'desc' }
     ]
   });
 
+  // Custom sorting untuk memastikan APPROVED di atas, PAID di bawah
+  const sortedPayments = payments.sort((a, b) => {
+    // Define status priority: APPROVED = 1, PAID = 2, others = 3
+    const getStatusPriority = (status) => {
+      switch (status) {
+        case 'APPROVED': return 2;
+        case 'PAID': return 1;
+        default: return 3;
+      }
+    };
+    
+    const priorityA = getStatusPriority(a.status);
+    const priorityB = getStatusPriority(b.status);
+    
+    // Sort by status priority first
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB;
+    }
+    
+    // If same status, sort by group payment (group payments first)
+    if (a.isGroupPayment !== b.isGroupPayment) {
+      return b.isGroupPayment - a.isGroupPayment;
+    }
+    
+    // If same status and group type, sort by creation date (newest first)
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
   // Enhance payments with package info and price
-  const enhancedPayments = await this.enhancePaymentsWithPrice(payments);
+  const enhancedPayments = await this.enhancePaymentsWithPrice(sortedPayments);
+  
+  // Get unique user IDs from payments
+  const userIds = [...new Set(enhancedPayments.map(p => p.userId))];
+  
+  // Batch fetch user info
+  const userInfoMap = await this.getBatchUserInfo(userIds);
+  
+  // Format payments with user information
+  const formattedPayments = this.formatPaymentsForList(enhancedPayments, userInfoMap);
   
   return {
-    payments: enhancedPayments,
-    total: enhancedPayments.length
+    payments: formattedPayments,
+    total: formattedPayments.length
   };
 }
   
@@ -121,20 +158,39 @@ export class PaymentService {
     return null;
   }
   
-  /**
-   * Get payments by user ID
-   * @param {string} userId - User ID
-   * @returns {Promise<Array>} User's payments
-   */
-  static async getPaymentsByUserId(userId) {
-    const payments = await prisma.payment.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' }
-    });
+/**
+ * Get payments by user ID - UNIFIED RESPONSE FORMAT
+ * @param {string} userId - User ID
+ * @returns {Promise<Array>} User's payments with consistent format
+ */
+static async getPaymentsByUserId(userId) {
+  const payments = await prisma.payment.findMany({
+    where: { 
+      OR: [
+        { userId }, // User sebagai pembuat payment
+        { 
+          AND: [
+            { isGroupPayment: true },
+            { invitedUserIds: { array_contains: userId } } // User sebagai invited member
+          ]
+        }
+      ]
+    },
+    orderBy: { createdAt: 'desc' }
+  });
 
-    // Enhance payments with package info and price
-    return this.enhancePaymentsWithPrice(payments);
-  }
+  // console.log(`🔍 Found ${payments.length} payments for user ${userId} (including group payments)`);
+
+  // Enhance payments with package info and price
+  const enhancedPayments = await this.enhancePaymentsWithPrice(payments);
+  
+  // Format all payments with unified structure, passing the requesting userId
+  return Promise.all(
+    enhancedPayments.map(async (payment) => {
+      return await this.formatDetailedPayment(payment, userId); // Pass userId as requesting user
+    })
+  );
+}
 
   /**
    * Get user information by ID from auth-service
@@ -166,7 +222,7 @@ export class PaymentService {
         'Authorization': `Bearer ${serviceToken}`
       };
       
-      console.log('Making request to:', `${authServiceUrl}/users/${userId}`);
+      // console.log('Making request to:', `${authServiceUrl}/users/${userId}`);
       
       // Call to Auth Service API to get user info with valid JWT token
       const response = await axios.get(`${authServiceUrl}/users/${userId}`, { headers });
@@ -219,7 +275,7 @@ export class PaymentService {
         'Authorization': `Bearer ${serviceToken}`
       };
       
-      console.log('Making batch request to Auth Service for users:', uniqueUserIds.length);
+      // console.log('Making batch request to Auth Service for users:', uniqueUserIds.length);
       
       // Call to Auth Service API to get users info with comma-separated IDs
       const response = await axios.get(`${authServiceUrl}/users`, { 
@@ -288,7 +344,7 @@ export class PaymentService {
           'Authorization': `Bearer ${serviceToken}`
         };
         
-        console.log('Cache miss - making request to:', `${packageServiceUrl}/packages/${packageId}`);
+        // console.log('Cache miss - making request to:', `${packageServiceUrl}/packages/${packageId}`);
         
         // Call to Package Service API with circuit breaker and retry
         return executeWithCircuitBreaker('package', async () => {
@@ -447,12 +503,10 @@ static async validateCourseAvailability(courseId, packageType) {
  */
 static async getCoursePendingEnrollmentCount(courseId) {
   try {
-    // Similar to getCourseEnrollmentCount but for 'PAID' status
-    const packageTypeCache = new Map();
-    const bundleCourseCache = new Map();
+    // Get all pending payments (status 'PAID') that include this course
     
-    // 1. Get direct pending payments for this course
-    const directPayments = await prisma.payment.findMany({
+    // 1. Get direct pending payments for this specific course
+    const directPendingPayments = await prisma.payment.findMany({
       where: {
         courseId,
         status: 'PAID'
@@ -460,71 +514,118 @@ static async getCoursePendingEnrollmentCount(courseId) {
       select: {
         id: true,
         packageId: true,
-        userId: true 
+        userId: true,
+        isGroupPayment: true,
+        memberCourses: true // For group payments with per-member courses
       }
     });
     
-    // 2. Process direct payments
-    const uniquePackageIds = [...new Set(directPayments.map(p => p.packageId))];
-    let entryIntermediateCount = 0;
-    
-    // Get package types for direct payments
-    await Promise.all(uniquePackageIds.map(async (packageId) => {
-      if (!packageTypeCache.has(packageId)) {
-        const packageInfo = await this.getPackageInfo(packageId);
-        if (packageInfo) {
-          packageTypeCache.set(packageId, packageInfo.type);
-        }
-      }
-    }));
-    
-    // Count non-bundle pending payments
-    for (const payment of directPayments) {
-      const packageType = packageTypeCache.get(payment.packageId);
-      if (packageType && packageType !== 'BUNDLE') {
-        entryIntermediateCount++;
-      }
-    }
-    
-    // 3. Get bundle pending payments
-    const bundlePayments = await prisma.payment.findMany({
+    // 2. Get group payments with per-member course selection that include this course
+    const groupPendingPayments = await prisma.payment.findMany({
       where: {
         status: 'PAID',
-        courseId: '00000000-0000-0000-0000-000000000000'
+        isGroupPayment: true,
+        courseId: null // Group payments have null courseId
       },
       select: {
         id: true,
         packageId: true,
-        userId: true 
+        memberCourses: true
       }
     });
     
-    // Count pending bundle enrollments
+    // 3. Get bundle payments that might include this course
+    const bundlePendingPayments = await prisma.payment.findMany({
+      where: {
+        status: 'PAID',
+        courseId: '00000000-0000-0000-0000-000000000000' // Bundle payments use zero UUID
+      },
+      select: {
+        id: true,
+        packageId: true,
+        userId: true
+      }
+    });
+    
+    // Get all relevant package IDs for batch processing
+    const allPackageIds = [
+      ...new Set([
+        ...directPendingPayments.map(p => p.packageId),
+        ...groupPendingPayments.map(p => p.packageId),
+        ...bundlePendingPayments.map(p => p.packageId)
+      ])
+    ];
+    
+    // Batch fetch package info
+    const { batchPreloadPackageInfo } = await import('../utils/cache-helper.js');
+    await batchPreloadPackageInfo(allPackageIds, async (packageId) => {
+      return await this.getPackageInfo(packageId);
+    });
+    
+    const packageTypeCache = new Map();
+    
+    // Load package types into cache
+    await Promise.all(allPackageIds.map(async (packageId) => {
+      const packageInfo = await this.getPackageInfo(packageId);
+      if (packageInfo) {
+        packageTypeCache.set(packageId, packageInfo.type);
+      }
+    }));
+    
+    let entryIntermediateCount = 0;
     let bundleCount = 0;
     
-    for (const payment of bundlePayments) {
-      // Get package type if not already cached
-      if (!packageTypeCache.has(payment.packageId)) {
-        const packageInfo = await this.getPackageInfo(payment.packageId);
-        if (packageInfo) {
-          packageTypeCache.set(payment.packageId, packageInfo.type);
+    // Count direct pending payments
+    for (const payment of directPendingPayments) {
+      const packageType = packageTypeCache.get(payment.packageId);
+      
+      if (payment.isGroupPayment && payment.memberCourses) {
+        // For group payments, count only members enrolled in this specific course
+        const membersInThisCourse = payment.memberCourses.filter(mc => mc.courseId === courseId);
+        const count = membersInThisCourse.length;
+        
+        if (packageType === 'BUNDLE') {
+          bundleCount += count;
+        } else if (packageType === 'ENTRY' || packageType === 'INTERMEDIATE') {
+          entryIntermediateCount += count;
+        }
+      } else {
+        // Regular individual payment
+        if (packageType === 'BUNDLE') {
+          bundleCount += 1;
+        } else if (packageType === 'ENTRY' || packageType === 'INTERMEDIATE') {
+          entryIntermediateCount += 1;
         }
       }
+    }
     
+    // Count group payments with per-member course selection
+    for (const payment of groupPendingPayments) {
       const packageType = packageTypeCache.get(payment.packageId);
-    
-      if (packageType === 'BUNDLE') {
-        // Get courses in bundle if not already cached
-         if (!bundleCourseCache.has(payment.packageId)) {
-          const coursesInBundle = await this.getCoursesInPackage(payment.packageId);
-          bundleCourseCache.set(payment.packageId, coursesInBundle || []);
-        }
       
-        const coursesInBundle = bundleCourseCache.get(payment.packageId);
+      if (payment.memberCourses && Array.isArray(payment.memberCourses)) {
+        const membersInThisCourse = payment.memberCourses.filter(mc => mc.courseId === courseId);
+        const count = membersInThisCourse.length;
+        
+        if (packageType === 'BUNDLE') {
+          bundleCount += count;
+        } else if (packageType === 'ENTRY' || packageType === 'INTERMEDIATE') {
+          entryIntermediateCount += count;
+        }
+      }
+    }
+    
+    // Count bundle payments
+    for (const payment of bundlePendingPayments) {
+      const packageType = packageTypeCache.get(payment.packageId);
+      
+      if (packageType === 'BUNDLE') {
+        // Check if this course is in the bundle
+        const coursesInBundle = await this.getCoursesInPackage(payment.packageId);
         const isCourseInBundle = coursesInBundle.some(c => String(c.id) === String(courseId));
         
         if (isCourseInBundle) {
-          bundleCount++;
+          bundleCount += 1;
         }
       }
     }
@@ -555,37 +656,36 @@ static async getCourseEnrollmentCount(courseId) {
     const { getCourseEnrollmentCountCached, batchPreloadPackageInfo } = await import('../utils/cache-helper.js');
     
     return await getCourseEnrollmentCountCached(courseId, async () => {
-      console.log(`Cache miss - calculating enrollment count for course ${courseId}`);
+      // console.log(`📊 Cache miss - calculating enrollment count for course ${courseId}`);
       
-      // In-memory cache for this calculation session
-      const packageTypeCache = new Map();
-      const bundleCourseCache = new Map();
-      
-      // 1. Get direct enrollments (non-bundle) for this course
-      const directPayments = await prisma.payment.findMany({
+      // NEW APPROACH: Count actual enrollments from Enrollment table
+      // This is more accurate for group payments with per-member course selection
+      const enrollments = await prisma.enrollment.findMany({
         where: {
           courseId,
-          status: 'APPROVED'
+          status: 'ENROLLED'
         },
         select: {
           id: true,
+          userId: true,
           packageId: true,
-          userId: true 
+          paymentId: true
         }
       });
       
-      // 2. Process direct payments with batch package info retrieval
-      const uniquePackageIds = [...new Set(directPayments.map(p => p.packageId))];
-      let entryIntermediateCount = 0;
+      // console.log(`🔍 Found ${enrollments.length} actual enrollments for course ${courseId}`);
       
-      // Batch fetch package info for direct payments
+      // Get unique package IDs for batch processing
+      const uniquePackageIds = [...new Set(enrollments.map(e => e.packageId))];
+      const packageTypeCache = new Map();
+      
+      // Batch fetch package info
       if (uniquePackageIds.length > 0) {
-        // First, try to preload all package info at once
         await batchPreloadPackageInfo(uniquePackageIds, async (packageId) => {
           return await this.getPackageInfo(packageId);
         });
         
-        // Get package types from already cached info
+        // Load package types into cache
         await Promise.all(uniquePackageIds.map(async (packageId) => {
           if (!packageTypeCache.has(packageId)) {
             const packageInfo = await this.getPackageInfo(packageId);
@@ -594,79 +694,31 @@ static async getCourseEnrollmentCount(courseId) {
             }
           }
         }));
-        
-        // Count non-bundle enrollments
-        for (const payment of directPayments) {
-          const packageType = packageTypeCache.get(payment.packageId);
-          if (packageType && packageType !== 'BUNDLE') {
-            entryIntermediateCount++;
-          }
-        }
       }
       
-      // 3. Get bundle enrollments more efficiently by using cached data and batching queries
-      const bundlePayments = await prisma.payment.findMany({
-        where: {
-          status: 'APPROVED'
-        },
-        select: {
-          id: true,
-          packageId: true,
-          userId: true 
-        }
-      });
-      
-      // Get unique package IDs from all payments
-      const allPackageIds = [...new Set(bundlePayments.map(p => p.packageId))];
-      
-      // Preload all package info at once
-      await batchPreloadPackageInfo(allPackageIds, async (packageId) => {
-        return await this.getPackageInfo(packageId);
-      });
-      
-      // Fetch package info for all packages in one batch (using cached data when available)
-      await Promise.all(allPackageIds.map(async (packageId) => {
-        if (!packageTypeCache.has(packageId)) {
-          const packageInfo = await this.getPackageInfo(packageId);
-          if (packageInfo) {
-            packageTypeCache.set(packageId, packageInfo.type);
-          }
-        }
-      }));
-      
-      // Filter to only bundle payments
-      const bundlePackageIds = allPackageIds.filter(
-        packageId => packageTypeCache.get(packageId) === 'BUNDLE'
-      );
-      
-      // Batch fetch courses for all bundle packages (will use cache when available)
+      // Count enrollments by package type
+      let entryIntermediateCount = 0;
       let bundleCount = 0;
-      await Promise.all(bundlePackageIds.map(async (packageId) => {
-        try {
-          const coursesInBundle = await this.getCoursesInPackage(packageId);
-          bundleCourseCache.set(packageId, coursesInBundle);
-        } catch (error) {
-          console.error(`Error fetching courses for bundle ${packageId}:`, error.message);
-        }
-      }));
       
-      // Count bundle enrollments
-      for (const payment of bundlePayments) {
-        const packageType = packageTypeCache.get(payment.packageId);
+      for (const enrollment of enrollments) {
+        const packageType = packageTypeCache.get(enrollment.packageId);
+        
         if (packageType === 'BUNDLE') {
-          const coursesInBundle = bundleCourseCache.get(payment.packageId) || [];
-          const isCourseInBundle = coursesInBundle.some(c => String(c.id) === String(courseId));
-          if (isCourseInBundle) {
-            bundleCount++;
-          }
+          bundleCount += 1;
+        } else if (packageType === 'ENTRY' || packageType === 'INTERMEDIATE') {
+          entryIntermediateCount += 1;
         }
       }
       
-      return {
+      const finalResult = {
         total: entryIntermediateCount + bundleCount,
         bundleCount,
         entryIntermediateCount
       };
+      
+      // console.log(`📊 Final enrollment count for course ${courseId}:`, finalResult);
+      
+      return finalResult;
     });
   } catch (error) {
     console.error('Error getting course enrollment count:', error.message);
@@ -759,7 +811,7 @@ static async getAllCoursesEnrollmentCount() {
     
     // Use a distinct cache key for the entire result
     return await getAllCoursesEnrollmentCountCached('all-enrollments', async () => {
-      console.log('Cache miss - calculating enrollment counts for all courses');
+      // console.log('Cache miss - calculating enrollment counts for all courses');
       
       // Dapatkan semua kursus dari course-service
       const { CourseService } = await import('./course.service.js');
@@ -1219,54 +1271,105 @@ static async getAllCoursesEnrollmentCount() {
     return enhancedPayment;
   }
 
-  /**
-   * Enhance payments with price information from package
-   * @param {Array} payments - List of payments
-   * @returns {Promise<Array>} Enhanced payments with price info
-   */
-  static async enhancePaymentsWithPrice(payments) {
-    return Promise.all(
-      payments.map(async (payment) => {
-        // Get package info to get price
-        const packageInfo = await this.getPackageInfo(payment.packageId);
-        
-        // Get course info for direct course enrollment
-        let courseName = null;
-        if (payment.courseId && payment.courseId !== '00000000-0000-0000-0000-000000000000') {
-          // Import CourseService at the point of use to prevent circular dependencies
-          const { CourseService } = await import('./course.service.js');
-          const courseInfo = await CourseService.getCourseById(payment.courseId);
-          if (courseInfo) {
-            courseName = courseInfo.title;
-          }
-        } else if (packageInfo?.type === 'BUNDLE') {
-          // For bundle payments, get all courses in the bundle
-          const coursesInBundle = await this.getCoursesInPackage(payment.packageId);
-          if (coursesInBundle && Array.isArray(coursesInBundle) && coursesInBundle.length > 0) {
-            // Create a comma-separated list of course names
-            courseName = coursesInBundle.map(course => course.title).join(', ');
-          }
+/**
+ * Enhance payments with price information from package - OPTIMIZED VERSION
+ * @param {Array} payments - List of payments
+ * @returns {Promise<Array>} Enhanced payments with price info
+ */
+static async enhancePaymentsWithPrice(payments) {
+  // Batch collect all unique user IDs and course IDs for optimization
+  const allUserIds = new Set();
+  const allCourseIds = new Set();
+  
+  payments.forEach(payment => {
+    allUserIds.add(payment.userId);
+    
+    if (payment.courseId && payment.courseId !== '00000000-0000-0000-0000-000000000000') {
+      allCourseIds.add(payment.courseId);
+    }
+    
+    if (payment.isGroupPayment && payment.memberCourses && Array.isArray(payment.memberCourses)) {
+      payment.memberCourses.forEach(mc => {
+        allUserIds.add(mc.userId);
+        allCourseIds.add(mc.courseId);
+      });
+    }
+  });
+  
+  // Batch fetch user info and course info
+  const userInfoMap = await this.getBatchUserInfo([...allUserIds]);
+  const courseInfoMap = new Map();
+  
+  // Batch fetch course info
+  await Promise.all([...allCourseIds].map(async (courseId) => {
+    try {
+      const courseInfo = await this.getCourseInfo(courseId);
+      if (courseInfo) {
+        courseInfoMap.set(courseId, courseInfo);
+      }
+    } catch (error) {
+      console.error(`Error fetching course info for ${courseId}:`, error.message);
+    }
+  }));
+
+  return Promise.all(
+    payments.map(async (payment) => {
+      // Get package info to get price
+      const packageInfo = await this.getPackageInfo(payment.packageId);
+      
+      // Get course info for direct course enrollment
+      let courseName = null;
+      if (payment.courseId && payment.courseId !== '00000000-0000-0000-0000-000000000000') {
+        const courseInfo = courseInfoMap.get(payment.courseId);
+        courseName = courseInfo?.title || 'Unknown Course';
+      } else if (packageInfo?.type === 'BUNDLE') {
+        // For bundle payments, get all courses in the bundle
+        const coursesInBundle = await this.getCoursesInPackage(payment.packageId);
+        if (coursesInBundle && Array.isArray(coursesInBundle) && coursesInBundle.length > 0) {
+          courseName = coursesInBundle.map(course => course.title).join(', ');
         }
-        
-        // If package info is available, add price to payment
-        if (packageInfo) {
+      } else if (payment.isGroupPayment && payment.memberCourses) {
+        // For group payments, show summary of courses from cache
+        const uniqueCourseIds = [...new Set(payment.memberCourses.map(mc => mc.courseId))];
+        const courseNames = uniqueCourseIds.map(courseId => {
+          const courseInfo = courseInfoMap.get(courseId);
+          return courseInfo?.title || 'Unknown Course';
+        });
+        courseName = courseNames.join(', ');
+      }
+
+      // Enhance memberCourses dengan course names dan user names dari cache
+      let enhancedMemberCourses = null;
+      if (payment.isGroupPayment && payment.memberCourses && Array.isArray(payment.memberCourses)) {
+        enhancedMemberCourses = payment.memberCourses.map(memberCourse => {
+          const courseInfo = courseInfoMap.get(memberCourse.courseId);
+          const userInfo = userInfoMap[memberCourse.userId];
+          
           return {
-            ...payment,
-            packageName: packageInfo.name,
-            packageType: packageInfo.type,
-            price: packageInfo.price,
-            courseName: courseName || 'Unknown Course'
+            ...memberCourse,
+            courseName: courseInfo?.title || 'Unknown Course',
+            userName: userInfo?.name || 'Unknown User',
+            userEmail: userInfo?.email || 'unknown@example.com',
+            role: memberCourse.userId === payment.userId ? 'creator' : 'member'
           };
-        }
-        
-        // Return original payment if package info not available
-        return {
-          ...payment,
-          courseName: courseName || 'Unknown Course'
-        };
-      })
-    );
-  }
+        });
+      }
+      
+      // Return enhanced payment dengan validasi
+      const enhancedPayment = {
+        ...payment,
+        id: payment.id || 'unknown-payment',
+        courseName: courseName || payment.courseName || 'Unknown Course',
+        memberCourses: enhancedMemberCourses || payment.memberCourses || null,
+        packageName: packageInfo?.name || 'Unknown Package',
+        packageType: packageInfo?.type || 'UNKNOWN',
+        price: packageInfo?.price || 0
+      };
+
+      return enhancedPayment;
+    })
+  );
+}
 
   /**
    * Get courses in a package
@@ -1293,7 +1396,7 @@ static async getAllCoursesEnrollmentCount() {
         // URL for package-service API
         const packageServiceUrl = process.env.PACKAGE_SERVICE_URL || 'http://package-service-api:8005';
         
-        console.log('Cache miss - fetching courses for package:', packageId);
+        // console.log('Cache miss - fetching courses for package:', packageId);
         
         // Call to Package Service API with circuit breaker and retry
         const response = await executeWithCircuitBreaker('package', async () => {
@@ -1368,7 +1471,7 @@ static async getAllCoursesEnrollmentCount() {
       }
       
       // If CourseService fails, try getting info from package courses as backup
-      console.log(`Course not found with ID ${courseId}, trying to find in packages`);
+      // console.log(`Course not found with ID ${courseId}, trying to find in packages`);
       
       // Get all active payments to check their packages
       const payments = await prisma.payment.findMany({
@@ -1403,7 +1506,7 @@ static async getAllCoursesEnrollmentCount() {
   /**
    * Check enrollment status for a payment
    * @param {string} paymentId - Payment ID
-   * @returns {Promise<Object>} Enrollment status
+   * @returns {Promise<Object} Enrollment status
    */  static async checkEnrollmentStatus(paymentId) {
     try {
       if (!paymentId) {
@@ -1441,123 +1544,1069 @@ static async getAllCoursesEnrollmentCount() {
       console.error('Error checking enrollment status:', error.message);
       return { enrolled: false };
     }
-  }  /**
-   * Format payments for list view with user information
-   * @param {Array} payments - List of payments
-   * @param {Object} userInfoMap - Map of user information keyed by user ID
-   * @returns {Array} Formatted payments with user information
-   */
-  static formatPaymentsForList(payments, userInfoMap) {
-    return payments.map(payment => {
-      const user = userInfoMap[payment.userId] || { 
-        name: 'Unknown User',
-        email: 'unknown@example.com',
-        phone: null,
-        type: 'UNKNOWN'
+  }  
+
+  /**
+ * Format payments for list view with user information
+ * @param {Array} payments - List of payments
+ * @param {Object} userInfoMap - Map of user information keyed by user ID
+ * @returns {Array} Formatted payments with user information
+ */
+static formatPaymentsForList(payments, userInfoMap) {
+  return payments.map(payment => {
+    const user = userInfoMap[payment.userId] || { 
+      id: 'unknown-user',
+      name: 'Unknown User',
+      email: 'unknown@example.com',
+      phone: null,
+      type: 'UNKNOWN'
+    };
+    
+    // PERBAIKAN: Handle courseId untuk group payments
+    let finalCourseId = payment.courseId;
+    let finalCourseName = payment.courseName || 'Unknown Course';
+    
+    // Untuk group payments dengan memberCourses, ambil courseId creator
+    if (payment.isGroupPayment && payment.memberCourses && Array.isArray(payment.memberCourses)) {
+      // Cari course creator (pembuat payment)
+      const creatorCourse = payment.memberCourses.find(mc => mc.userId === payment.userId);
+      
+      if (creatorCourse) {
+        finalCourseId = creatorCourse.courseId;
+        finalCourseName = creatorCourse.courseName || payment.courseName || 'Unknown Course';
+      } else {
+        // Fallback: gunakan course pertama jika creator tidak ditemukan
+        finalCourseId = payment.memberCourses[0]?.courseId || 'group-courses';
+        finalCourseName = payment.memberCourses[0]?.courseName || payment.courseName || 'Multiple Courses';
+      }
+    }
+    
+    // PERBAIKAN: Pastikan courseId tidak pernah null
+    if (!finalCourseId || finalCourseId === 'null') {
+      if (payment.packageType === 'BUNDLE') {
+        finalCourseId = '00000000-0000-0000-0000-000000000000';
+      } else if (payment.isGroupPayment) {
+        finalCourseId = 'group-courses';
+      } else {
+        finalCourseId = 'unknown-course';
+      }
+    }
+    
+    return {
+      ...payment,
+      id: payment.id || 'unknown-payment',
+      courseId: finalCourseId, // NEVER NULL - always has a valid value
+      userName: user.name,
+      userEmail: user.email,
+      userPhone: user.phone,
+      userType: user.type,
+      // Ensure course info is always present
+      courseName: finalCourseName,
+      packageName: payment.packageName || 'Unknown Package',
+      packageType: payment.packageType || 'UNKNOWN',
+      price: payment.price || 0,
+      
+      // TAMBAHAN: Info tambahan untuk group payments
+      ...(payment.isGroupPayment && {
+        groupPaymentInfo: {
+          isGroupPayment: true,
+          totalMembers: payment.totalParticipants || (payment.memberCourses?.length || 0),
+          creatorCourse: payment.memberCourses?.find(mc => mc.userId === payment.userId) || null,
+          allMemberCourses: payment.memberCourses || [],
+          groupStatus: payment.groupStatus || 'PENDING'
+        }
+      })
+    };
+  });
+}
+
+
+/**
+ * Format detailed payment with all required information
+ * @param {Object} payment - Payment object
+ * @param {string} requestingUserId - ID of user requesting the payment details
+ * @returns {Object} Detailed payment with user and course info
+ */
+static async formatDetailedPayment(payment, requestingUserId) {
+  // Get courses information if needed
+  let courseInfo = null;
+  let allCoursesInPackage = [];
+  let finalCourseId = payment.courseId;
+
+  // PERBAIKAN: Validasi awal courseId
+  if (!finalCourseId || finalCourseId === 'null' || finalCourseId === 'undefined') {
+    console.warn(`⚠️ Invalid courseId detected for payment ${payment.id}: ${finalCourseId}`);
+    
+    // Set courseId berdasarkan konteks payment
+    if (payment.isGroupPayment && payment.memberCourses && Array.isArray(payment.memberCourses)) {
+      // Untuk group payments, cari course untuk requesting user
+      const userMemberCourse = payment.memberCourses.find(mc => mc.userId === requestingUserId);
+      finalCourseId = userMemberCourse?.courseId || 'group-courses';
+    } else if (payment.packageType === 'BUNDLE') {
+      finalCourseId = '00000000-0000-0000-0000-000000000000';
+    } else {
+      finalCourseId = 'unknown-course';
+    }
+  }
+
+  // PERBAIKAN: Handle group payments dengan per-member courses
+  if (payment.isGroupPayment && payment.memberCourses && Array.isArray(payment.memberCourses)) {
+    // For group payments, find the specific course for the requesting user
+    const userMemberCourse = payment.memberCourses.find(mc => mc.userId === requestingUserId);
+    
+    if (userMemberCourse && userMemberCourse.courseId) {
+      // Use the specific course for this user
+      finalCourseId = userMemberCourse.courseId;
+      
+      try {
+        const courseData = await this.getCourseInfo(userMemberCourse.courseId);
+        if (courseData) {
+          courseInfo = {
+            id: userMemberCourse.courseId,
+            title: courseData.title,
+            description: courseData.description || '',
+            level: courseData.level || 'INTERMEDIATE'
+          };
+        }
+      } catch (error) {
+        console.error(`Error getting course info for ${userMemberCourse.courseId}:`, error.message);
+      }
+    }
+    
+    // If still no courseInfo (user not found in memberCourses), create summary
+    if (!courseInfo) {
+      const uniqueCourseIds = [...new Set(payment.memberCourses.map(mc => mc.courseId).filter(id => id && id !== 'null'))];
+      const courseNames = [];
+      
+      for (const courseId of uniqueCourseIds) {
+        try {
+          const courseData = await this.getCourseInfo(courseId);
+          if (courseData && courseData.title) {
+            courseNames.push(courseData.title);
+          }
+        } catch (error) {
+          console.error(`Error getting course info for ${courseId}:`, error.message);
+        }
+      }
+      
+      // Create summary course object for group payments when user not found in members
+      courseInfo = {
+        id: 'group-courses',
+        title: courseNames.length > 0 ? courseNames.join(', ') : 'Multiple Courses',
+        description: `Group payment dengan ${payment.totalParticipants || payment.memberCourses.length} peserta`,
+        level: 'INTERMEDIATE',
+        isGroupSummary: true
+      };
+      finalCourseId = 'group-courses';
+    }
+  } else if (finalCourseId && finalCourseId !== '00000000-0000-0000-0000-000000000000' && finalCourseId !== 'null') {
+    // If payment has a valid courseId, get course info from course-service
+    try {
+      // Fetch course directly from course service
+      const courseServiceUrl = process.env.COURSE_SERVICE_URL || 'http://course-service-api:8002';
+      const serviceToken = this.generateServiceToken();
+      
+      const headers = {
+        'Authorization': `Bearer ${serviceToken}`
       };
       
-      return {
-        ...payment,
-        userName: user.name,
-        userEmail: user.email,
-        userPhone: user.phone,
-        userType: user.type
+      // console.log(`Making direct API call to course service for ID: ${finalCourseId}`);
+      const response = await axios.get(`${courseServiceUrl}/courses/${finalCourseId}`, { headers });
+      
+      if (response.data && response.data.data) {
+        const courseData = response.data.data;
+        courseInfo = {
+          id: finalCourseId,
+          title: courseData.title || `Course ${finalCourseId.substring(0, 8)}`,
+          description: courseData.description || '',
+          level: courseData.level || null
+        };
+        console.log(`Retrieved course title: ${courseInfo.title}`);
+      } else {
+        // Try getting course info from package-service as fallback
+        const coursesInPackage = await this.getCoursesInPackage(payment.packageId);
+        const matchingCourse = coursesInPackage.find(c => c.id === finalCourseId);
+        
+        if (matchingCourse) {
+          console.log(`Found course info in package: ${matchingCourse.title}`);
+          courseInfo = {
+            id: finalCourseId,
+            title: matchingCourse.title,
+            description: matchingCourse.description || '',
+            level: matchingCourse.level || null
+          };
+        } else {
+          courseInfo = {
+            id: finalCourseId,
+            title: `Course ${finalCourseId.substring(0, 8)}`,
+            description: '',
+            level: 'UNKNOWN'
+          };
+        }
+      }
+    } catch (error) {
+      console.error(`Error fetching course details for ${finalCourseId}: ${error.message}`);
+      courseInfo = {
+        id: finalCourseId,
+        title: `Course ${finalCourseId.substring(0, 8)}`,
+        description: '',
+        level: 'UNKNOWN'
       };
-    });
+    }
+  }
+
+  // For bundle packages, get all courses in the bundle
+  if (payment.packageType === 'BUNDLE') {
+    // Get courses from the package-service
+    allCoursesInPackage = await this.getCoursesInPackage(payment.packageId);
+  }
+
+  // FALLBACK: Jika courseInfo masih null, buat default course object
+  if (!courseInfo) {
+    if (payment.packageType === 'BUNDLE') {
+      courseInfo = {
+        id: '00000000-0000-0000-0000-000000000000',
+        title: payment.packageName || 'Bundle Package',
+        description: 'Bundle package with multiple courses',
+        level: 'BUNDLE'
+      };
+      finalCourseId = '00000000-0000-0000-0000-000000000000';
+    } else {
+      courseInfo = {
+        id: finalCourseId || 'unknown-course',
+        title: payment.courseName || payment.packageName || 'Unknown Course',
+        description: 'Course information not available',
+        level: payment.packageType || 'UNKNOWN'
+      };
+      finalCourseId = finalCourseId || 'unknown-course';
+    }
+  }
+
+  // Check enrollment status
+  const enrollmentStatus = await this.checkEnrollmentStatus(payment.id);
+
+  // PERBAIKAN: Get user info for the requesting user
+  // console.log(`🔍 Getting user info for requesting user: ${requestingUserId}`);
+  const userInfo = await this.getUserInfo(requestingUserId);
+  
+  if (!userInfo) {
+    console.error(`❌ Failed to get user info for user: ${requestingUserId}`);
+  } else {
+    console.log(`✅ Successfully got user info for ${userInfo.name} (${userInfo.email})`);
+  }
+
+  // PERBAIKAN: Pastikan user object selalu ada dengan semua property yang diperlukan
+  const userObject = userInfo ? {
+    id: userInfo.id || requestingUserId,
+    name: userInfo.name || 'Unknown User',
+    email: userInfo.email || 'unknown@example.com',
+    phone: userInfo.phone || null,
+    type: userInfo.type || 'UNKNOWN'
+  } : { 
+    id: requestingUserId,
+    name: 'Unknown User', 
+    email: 'unknown@example.com', 
+    phone: null,
+    type: 'UNKNOWN' 
+  };
+
+  // PERBAIKAN: Pastikan finalCourseId tidak pernah null dalam response
+  if (!finalCourseId || finalCourseId === 'null' || finalCourseId === 'undefined') {
+    if (payment.packageType === 'BUNDLE') {
+      finalCourseId = '00000000-0000-0000-0000-000000000000';
+    } else if (payment.isGroupPayment) {
+      finalCourseId = 'group-courses';
+    } else {
+      finalCourseId = 'unknown-course';
+    }
+    console.warn(`⚠️ Setting fallback courseId for payment ${payment.id}: ${finalCourseId}`);
+  }
+
+  // Format detailed payment with unified structure
+  return {
+    id: payment.id,
+    userId: payment.userId,
+    packageId: payment.packageId,
+    courseId: finalCourseId, // NEVER NULL - always has a valid value, specific to requesting user for group payments
+    type: payment.type,
+    proofLink: payment.proofLink,
+    status: payment.status,
+    createdAt: payment.createdAt,
+    updatedAt: payment.updatedAt,
+    packageName: payment.packageName,
+    packageType: payment.packageType,
+    price: payment.price,
+    courseName: courseInfo?.title || payment.courseName || 'Unknown Course',
+    user: userObject, // SEKARANG SELALU ADA VALUE dengan data user yang benar
+    course: courseInfo, // SEKARANG SELALU ADA VALUE (tidak null)
+    bundleCourses: payment.packageType === 'BUNDLE' ? allCoursesInPackage : undefined, // Only for bundles
+    enrollmentStatus: enrollmentStatus.enrolled,
+    paymentDate: payment.createdAt,
+    
+    // TAMBAHAN: Group payment info untuk detailed view
+    ...(payment.isGroupPayment && {
+      groupPaymentDetails: {
+        isGroupPayment: true,
+        totalMembers: payment.totalParticipants || (payment.memberCourses?.length || 0),
+        groupStatus: payment.groupStatus || 'PENDING',
+        allMemberCourses: payment.memberCourses || [],
+        creatorInfo: payment.memberCourses?.find(mc => mc.userId === payment.userId) || null
+      }
+    })
+  };
+}
+
+  // ============== GROUP PAYMENT METHODS ==============
+
+  /**
+   * Check if user already has INTERMEDIATE enrollment
+   * @param {string} userId - User ID to check
+   * @returns {Promise<Object>} Enrollment status
+   */
+  static async checkExistingIntermediateEnrollment(userId) {
+    try {
+      // Get all approved payments for this user
+      const userPayments = await prisma.payment.findMany({
+        where: {
+          userId,
+          status: 'APPROVED'
+        },
+        select: {
+          id: true,
+          packageId: true,
+          courseId: true
+        }
+      });
+
+      // Check each payment's package type
+      for (const payment of userPayments) {
+        const packageInfo = await this.getPackageInfo(payment.packageId);
+        
+        if (packageInfo && packageInfo.type === 'INTERMEDIATE') {
+          // Get course name for better error message
+          let courseName = 'Unknown Course';
+          
+          if (payment.courseId && payment.courseId !== '00000000-0000-0000-0000-000000000000') {
+            const courseInfo = await this.getCourseInfo(payment.courseId);
+            courseName = courseInfo ? courseInfo.title : 'Unknown Course';
+          }
+          
+          return {
+            hasEnrollment: true,
+            courseName,
+            paymentId: payment.id,
+            packageInfo
+          };
+        }
+      }
+
+      return { hasEnrollment: false };
+    } catch (error) {
+      console.error('Error checking existing intermediate enrollment:', error.message);
+      return { hasEnrollment: false };
+    }
   }
 
   /**
-   * Format detailed payment with all required information
-   * @param {Object} payment - Payment object
-   * @param {Object} userInfo - User information
-   * @returns {Object} Detailed payment with user and course info
+   * Validate invite emails dengan auth service
+   * @param {Array} emails - Array of email addresses to validate
+   * @returns {Promise<Object>} Validation results
    */
-  static async formatDetailedPayment(payment, userInfo) {
-    // Get courses information if needed
-    let courseInfo = null;
-    let allCoursesInPackage = [];
+  static async validateInviteEmails(emails) {
+    try {
+      const results = {
+        validEmails: [],
+        invalidEmails: [],
+        existingUsers: [],
+        nonExistingEmails: [],
+        usersWithIntermediateEnrollment: []
+      };
 
-    // If payment has a courseId, get course info from course-service
-    if (payment.courseId) {
-      // Import CourseService at the top level to avoid circular dependencies
-      const { CourseService } = await import('./course.service.js');
-      
-      try {
-        // Fetch course directly from course service
-        const courseServiceUrl = process.env.COURSE_SERVICE_URL || 'http://course-service-api:8002';
-        const serviceToken = this.generateServiceToken();
-        
-        const headers = {
-          'Authorization': `Bearer ${serviceToken}`
-        };
-        
-        console.log(`Making direct API call to course service for ID: ${payment.courseId}`);
-        const response = await axios.get(`${courseServiceUrl}/courses/${payment.courseId}`, { headers });
-        
-        if (response.data && response.data.data) {
-          const courseData = response.data.data;
-          courseInfo = {
-            id: payment.courseId,
-            title: courseData.title || `Course ${payment.courseId.substring(0, 8)}`,
-            description: courseData.description || '',
-            level: courseData.level || null
-          };
-          console.log(`Retrieved course title: ${courseInfo.title}`);
-        } else {
-          // Try getting course info from package-service as fallback
-          const coursesInPackage = await this.getCoursesInPackage(payment.packageId);
-          const matchingCourse = coursesInPackage.find(c => c.id === payment.courseId);
+      // Check each email with auth service
+      for (const email of emails) {
+        try {
+          const userExists = await this.checkUserByEmail(email);
           
-          if (matchingCourse) {
-            console.log(`Found course info in package: ${matchingCourse.title}`);
-            courseInfo = {
-              id: payment.courseId,
-              title: matchingCourse.title,
-              description: matchingCourse.description || '',
-              level: matchingCourse.level || null
-            };
+          if (userExists) {
+            // Check if user already has INTERMEDIATE enrollment
+            const intermediateEnrollment = await this.checkExistingIntermediateEnrollment(userExists.id);
+            
+            if (intermediateEnrollment.hasEnrollment) {
+              results.invalidEmails.push(email);
+              results.usersWithIntermediateEnrollment.push({
+                email,
+                userId: userExists.id,
+                name: userExists.name,
+                courseName: intermediateEnrollment.courseName
+              });
+            } else {
+              results.validEmails.push(email);
+              results.existingUsers.push({
+                email,
+                userId: userExists.id,
+                name: userExists.name,
+                type: userExists.type
+              });
+            }
           } else {
-            courseInfo = {
-              id: payment.courseId,
-              title: `Course ${payment.courseId.substring(0, 8)}`  // Show truncated ID as fallback
-            };
+            results.invalidEmails.push(email);
+            results.nonExistingEmails.push(email);
+          }
+        } catch (error) {
+          results.invalidEmails.push(email);
+          results.nonExistingEmails.push(email);
+        }
+      }
+
+      return results;
+    } catch (error) {
+      throw new Error('Gagal validasi email: ' + error.message);
+    }
+  }
+
+  /**
+   * Check user by email via auth service
+   * @param {string} email - Email address to check
+   * @returns {Promise<Object|null>} User data if exists, null otherwise
+   */
+  static async checkUserByEmail(email) {
+    try {
+      const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://auth-service-api:8001';
+      const serviceToken = this.generateServiceToken();
+      
+      const response = await axios.get(`${authServiceUrl}/users/by-email/${email}`, {
+        headers: { 'Authorization': `Bearer ${serviceToken}` }
+      });
+      
+      return response.data?.data || null;
+    } catch (error) {
+      if (error.response?.status === 404) {
+        return null; // User not found
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Create group payment dengan member-specific courses - APPROACH 2
+   * @param {Object} data - Group payment data
+   * @returns {Promise<Object>} Created group payment
+   */
+  static async createGroupPayment(data) {
+    const { creatorId, packageId, creatorCourseId, members, proofLink } = data;
+    
+    try {
+      return await prisma.$transaction(async (tx) => {
+        // 1. Validate creator's course
+        const creatorCourseValidation = await this.validateCourseInPackage(packageId, creatorCourseId);
+        if (!creatorCourseValidation) {
+          throw new Error('Course yang dipilih creator tidak tersedia dalam package ini');
+        }
+
+        // 2. Validate and process invited members
+        const memberValidation = {
+          validMembers: [],
+          invalidMembers: [],
+          courseValidationErrors: []
+        };
+
+        for (const member of members) {
+          try {
+            // Check if user exists
+            const userExists = await this.checkUserByEmail(member.email);
+            if (!userExists) {
+              memberValidation.invalidMembers.push({
+                email: member.email,
+                error: 'User tidak ditemukan'
+              });
+              continue;
+            }
+
+            // Check if user already has INTERMEDIATE enrollment
+            const existingEnrollment = await this.checkExistingIntermediateEnrollment(userExists.id);
+            if (existingEnrollment.hasEnrollment) {
+              memberValidation.invalidMembers.push({
+                email: member.email,
+                error: `Sudah terdaftar di: ${existingEnrollment.courseName}`
+              });
+              continue;
+            }
+
+            // Validate member's course choice
+            const courseValidation = await this.validateCourseInPackage(packageId, member.courseId);
+            if (!courseValidation) {
+              memberValidation.courseValidationErrors.push({
+                email: member.email,
+                courseId: member.courseId,
+                error: 'Course tidak tersedia dalam package'
+              });
+              continue;
+            }
+
+            // All validations passed
+            memberValidation.validMembers.push({
+              email: member.email,
+              courseId: member.courseId,
+              userId: userExists.id,
+              name: userExists.name,
+              type: userExists.type
+            });
+
+          } catch (error) {
+            memberValidation.invalidMembers.push({
+              email: member.email,
+              error: error.message
+            });
           }
         }
-      } catch (error) {
-        console.error(`Error fetching course details: ${error.message}`);
-        courseInfo = {
-          id: payment.courseId,
-          title: `Course ${payment.courseId.substring(0, 8)}`  // Show truncated ID as fallback
+
+        // 3. Check validation results
+        if (memberValidation.validMembers.length === 0) {
+          throw new Error('Tidak ada member yang valid untuk diundang');
+        }
+
+        if (memberValidation.invalidMembers.length > 0) {
+          const errorMessages = memberValidation.invalidMembers
+            .map(m => `${m.email}: ${m.error}`)
+            .join(', ');
+          throw new Error(`Member tidak valid: ${errorMessages}`);
+        }
+
+        if (memberValidation.courseValidationErrors.length > 0) {
+          const errorMessages = memberValidation.courseValidationErrors
+            .map(m => `${m.email} memilih course yang tidak tersedia`)
+            .join(', ');
+          throw new Error(`Course validation error: ${errorMessages}`);
+        }
+
+        // 4. Check creator doesn't have existing enrollment
+        const creatorExistingEnrollment = await this.checkExistingIntermediateEnrollment(creatorId);
+        if (creatorExistingEnrollment.hasEnrollment) {
+          throw new Error(`Anda sudah terdaftar di: ${creatorExistingEnrollment.courseName}`);
+        }
+
+        // 5. Get package info for pricing
+        const packageInfo = await this.getPackageInfo(packageId);
+        if (!packageInfo || packageInfo.type !== 'INTERMEDIATE') {
+          throw new Error('Package tidak valid untuk group payment');
+        }
+
+        // 6. Calculate pricing
+        const discountedPrice = 81000; // Fixed discount per person
+        const totalParticipants = memberValidation.validMembers.length + 1; // +1 for creator
+        const totalAmount = discountedPrice * totalParticipants;
+
+        // 7. Validate course availability for creator
+        const courseAvailability = await this.validateCourseAvailability(creatorCourseId, 'INTERMEDIATE');
+        if (!courseAvailability.valid) {
+          throw new Error(`Creator course validation failed: ${courseAvailability.message}`);
+        }
+
+        // 8. Create group payment dengan member courses (including course names)
+        // First, get all course names
+        const allMembersCourses = [];
+        
+        // Add creator course
+        const creatorCourseInfo = await this.getCourseInfo(creatorCourseId);
+        allMembersCourses.push({ 
+          userId: creatorId, 
+          courseId: creatorCourseId, 
+          courseName: creatorCourseInfo?.title || 'Unknown Course'
+        });
+        
+        // Add member courses
+        for (const member of memberValidation.validMembers) {
+          const memberCourseInfo = await this.getCourseInfo(member.courseId);
+          allMembersCourses.push({ 
+            userId: member.userId, 
+            courseId: member.courseId, 
+            courseName: memberCourseInfo?.title || 'Unknown Course'
+          });
+        }
+
+        const groupPayment = await tx.payment.create({
+          data: {
+            userId: creatorId,
+            packageId,
+            courseId: null, // No single course for group payment with different courses
+            type: 'UMUM',
+            proofLink,
+            status: 'PAID',
+            isGroupPayment: true,
+            inviteEmails: memberValidation.validMembers.map(m => m.email),
+            invitedUserIds: memberValidation.validMembers.map(m => m.userId),
+            groupStatus: 'PENDING',
+            originalAmount: packageInfo.price * totalParticipants,
+            discountedAmount: totalAmount,
+            totalParticipants,
+            // PERBAIKAN: Store member course choices WITH course names
+            memberCourses: allMembersCourses // JSON field with courseName included
+          }
+        });
+
+        // 9. Send payment confirmation emails to all group members
+        try {
+          const allUserIds = [creatorId, ...memberValidation.validMembers.map(m => m.userId)];
+          await this.sendGroupPaymentEmails(groupPayment, allUserIds, packageInfo);
+          console.log('Group payment confirmation emails sent successfully');
+        } catch (emailError) {
+          console.error('Failed to send group payment emails:', emailError);
+          // Continue anyway since payment creation was successful
+        }
+
+        // 10. Prepare response data (course names already included in allMembersCourses)
+        return {
+          ...groupPayment,
+          creator: await this.getUserInfo(creatorId),
+          members: [
+            { 
+              ...(await this.getUserInfo(creatorId)), 
+              role: 'creator',
+              courseId: creatorCourseId,
+              courseName: allMembersCourses.find(c => c.userId === creatorId)?.courseName
+            },
+            ...memberValidation.validMembers.map(m => ({ 
+              ...m, 
+              role: 'member',
+              courseName: allMembersCourses.find(c => c.userId === m.userId)?.courseName
+            }))
+          ],
+          memberCourses: allMembersCourses, // Already includes courseName
+          totalMembers: totalParticipants
         };
+      });
+    } catch (error) {
+      throw new Error('Gagal membuat group payment: ' + error.message);
+    }
+  }
+
+  /**
+   * Get all group payments
+   * @returns {Promise<Array>} List of group payments
+   */
+  static async getGroupPayments() {
+    try {
+      const groupPayments = await prisma.payment.findMany({
+        where: { isGroupPayment: true },
+        orderBy: [
+          { groupStatus: 'asc' }, // PENDING first
+          { createdAt: 'desc' }
+        ]
+      });
+    // Enhance with user info
+    const enhanced = await Promise.all(
+      groupPayments.map(async (payment) => {
+        const creator = await this.getUserInfo(payment.userId);
+        
+        // Get course name instead of full package info
+        const courseInfo = await this.getCourseInfo(payment.courseId);
+        const courseName = courseInfo?.title || 'Unknown Course';
+        
+        // Get invited users info
+        const invitedUsers = [];
+        if (payment.invitedUserIds && Array.isArray(payment.invitedUserIds)) {
+          for (const userId of payment.invitedUserIds) {
+            try {
+              const userInfo = await this.getUserInfo(userId);
+              invitedUsers.push(userInfo);
+            } catch (error) {
+              console.error(`Error getting user info for ${userId}:`, error.message);
+            }
+          }
+        }
+
+        // Get ALL members (creator + invited users)
+        const allMembers = [
+          { ...creator, role: 'creator' },
+          ...invitedUsers.map(user => ({ ...user, role: 'member' }))
+        ].filter(Boolean);
+
+        return {
+          ...payment,
+          creator,
+          members: allMembers, // All members without hierarchy
+          courseName,
+          inviteEmails: payment.inviteEmails || [],
+          totalMembers: allMembers.length
+        };
+      })
+    );
+
+      return enhanced;
+    } catch (error) {
+      throw new Error('Gagal mengambil group payments: ' + error.message);
+    }
+  }
+
+  /**
+   * Get group payment by ID - UPDATED untuk show member courses
+   * @param {string} paymentId - Payment ID
+   * @returns {Promise<Object>} Group payment details
+   */
+  static async getGroupPaymentById(paymentId) {
+    try {
+      const groupPayment = await prisma.payment.findUnique({
+        where: { 
+          id: paymentId,
+          isGroupPayment: true 
+        }
+      });
+
+      if (!groupPayment) {
+        throw new Error('Group payment tidak ditemukan');
       }
-    }
 
-    // For bundle packages, get all courses in the bundle
-    if (payment.packageType === 'BUNDLE') {
-      // Get courses from the package-service
-      allCoursesInPackage = await this.getCoursesInPackage(payment.packageId);
-    }
+      // Enhance with user info dan course info per member
+      const creator = await this.getUserInfo(groupPayment.userId);
+      const memberCourses = groupPayment.memberCourses || [];
+      
+      // Get detailed member info with their course choices
+      const membersWithCourses = await Promise.all(
+        memberCourses.map(async (mc) => {
+          try {
+            const userInfo = await this.getUserInfo(mc.userId);
+            const courseInfo = await this.getCourseInfo(mc.courseId);
+            
+            return {
+              ...userInfo,
+              role: mc.userId === groupPayment.userId ? 'creator' : 'member',
+              courseChoice: {
+                courseId: mc.courseId,
+                courseName: courseInfo?.title || 'Unknown Course'
+              }
+            };
+          } catch (error) {
+            console.error(`Error getting info for user ${mc.userId}:`, error.message);
+            return null;
+          }
+        })
+      );
 
-    // Check enrollment status
-    const enrollmentStatus = await this.checkEnrollmentStatus(payment.id);    // Format detailed payment
-    return {
-      ...payment,
-      user: userInfo ? {
-        id: userInfo.id,
-        name: userInfo.name,
-        email: userInfo.email,
-        phone: userInfo.phone,
-        type: userInfo.type
-      } : { 
-        name: 'Unknown User', 
-        email: 'unknown@example.com', 
-        phone: null,
-        type: 'UNKNOWN' 
-      },
-      course: courseInfo,
-      bundleCourses: payment.packageType === 'BUNDLE' ? allCoursesInPackage : null,
-      enrollmentStatus: enrollmentStatus.enrolled,
-      paymentDate: payment.createdAt
-    };
+      const validMembers = membersWithCourses.filter(Boolean);
+
+      return {
+        ...groupPayment,
+        creator,
+        members: validMembers,
+        memberCourses: memberCourses,
+        totalMembers: validMembers.length
+      };
+    } catch (error) {
+      throw new Error('Gagal mengambil group payment: ' + error.message);
+    }
+  }
+
+  /**
+   * Approve group payment and create enrollments for all participants - UPDATED FOR DIFFERENT COURSES
+   * @param {string} paymentId - Payment ID to approve
+   * @returns {Promise<Object>} Approval result
+   */
+  static async approveGroupPayment(paymentId) {
+    try {
+      return await prisma.$transaction(async (tx) => {
+        // Get group payment
+        const groupPayment = await tx.payment.findUnique({
+          where: { id: paymentId }
+        });
+
+        if (!groupPayment || !groupPayment.isGroupPayment) {
+          throw new Error('Group payment tidak ditemukan');
+        }
+
+        if (groupPayment.groupStatus === 'APPROVED') {
+          throw new Error('Group payment sudah diapprove');
+        }
+
+        // console.log('=== GROUP PAYMENT APPROVAL (DIFFERENT COURSES) ===');
+        // console.log('Payment ID:', groupPayment.id);
+        // console.log('Member Courses:', groupPayment.memberCourses);
+
+        // Update payment status
+        const updatedPayment = await tx.payment.update({
+          where: { id: paymentId },
+          data: { 
+            status: 'APPROVED',
+            groupStatus: 'APPROVED'
+          }
+        });
+
+        // Create enrollments based on memberCourses (each member gets their chosen course)
+        const memberCourses = groupPayment.memberCourses || [];
+        
+        if (memberCourses.length === 0) {
+          throw new Error('No member course data found');
+        }
+
+        console.log(`📝 Creating enrollments for ${memberCourses.length} members with their chosen courses`);
+        
+        const enrollments = [];
+        for (const memberCourse of memberCourses) {
+          try {
+            const enrollment = await tx.enrollment.create({
+              data: {
+                userId: memberCourse.userId,
+                courseId: memberCourse.courseId, // Each member gets their chosen course
+                paymentId: groupPayment.id,
+                packageId: groupPayment.packageId,
+                status: 'ENROLLED'
+              }
+            });
+            enrollments.push(enrollment);
+            console.log(`✅ Created enrollment for user ${memberCourse.userId} in course ${memberCourse.courseId}:`, enrollment.id);
+          } catch (enrollmentError) {
+            console.error(`❌ Failed to create enrollment for user ${memberCourse.userId}:`, enrollmentError);
+            throw new Error(`Failed to create enrollment for user ${memberCourse.userId}: ${enrollmentError.message}`);
+          }
+        }
+
+        console.log(`🎉 Successfully created ${enrollments.length} enrollments`);
+
+        // Clear cache for ALL courses involved
+        try {
+          const { invalidateCache } = await import('../utils/cache-helper.js');
+          
+          // Get unique course IDs from memberCourses
+          const uniqueCourseIds = [...new Set(memberCourses.map(mc => mc.courseId))];
+          
+          // Clear cache for each course
+          for (const courseId of uniqueCourseIds) {
+            invalidateCache('enrollment', courseId);
+            console.log(`🔄 Cache cleared for course: ${courseId}`);
+          }
+          
+          // Clear all-enrollments cache
+          invalidateCache('all-enrollments', 'all-enrollments');
+          
+          console.log('🔄 All enrollment caches cleared after group payment approval');
+        } catch (cacheError) {
+          console.error('❌ Error clearing cache:', cacheError.message);
+        }
+
+        // Send notification emails to all members
+        try {
+          await this.sendGroupEnrollmentEmails(groupPayment, memberCourses);
+          console.log('📧 Group enrollment emails sent successfully');
+        } catch (emailError) {
+          console.error('❌ Failed to send group enrollment emails:', emailError);
+        }
+
+        return {
+          payment: updatedPayment,
+          enrollments,
+          totalEnrolled: enrollments.length,
+          memberIds: memberCourses.map(mc => mc.userId),
+
+          courseEnrollments: memberCourses.map(mc => ({
+            userId: mc.userId,
+            courseId: mc.courseId
+          }))
+        };
+      });
+    } catch (error) {
+      console.error('❌ Error in approveGroupPayment:', error);
+      throw new Error('Gagal approve group payment: ' + error.message);
+    }
+  }
+
+  /**
+   * Delete group payment (admin only)
+   * @param {string} paymentId - Payment ID to delete
+   * @returns {Promise<Object>} Deletion result
+   */
+  static async deleteGroupPayment(paymentId) {
+    try {
+      return await prisma.$transaction(async (tx) => {
+        // Get group payment
+        const groupPayment = await tx.payment.findUnique({
+          where: { id: paymentId }
+        });
+
+        if (!groupPayment || !groupPayment.isGroupPayment) {
+          throw new Error('Group payment tidak ditemukan');
+        }
+
+        if (groupPayment.groupStatus === 'APPROVED') {
+          throw new Error('Tidak dapat menghapus group payment yang sudah diapprove');
+        }
+
+        // Delete related enrollments first (if any)
+        await tx.enrollment.deleteMany({
+          where: { paymentId }
+        });
+
+        // Delete the payment
+        await tx.payment.delete({
+          where: { id: paymentId }
+        });
+
+        return {
+          message: 'Group payment berhasil dihapus',
+          deletedPaymentId: paymentId
+        };
+      });
+    } catch (error) {
+      throw new Error('Gagal menghapus group payment: ' + error.message);
+    }
+  }
+
+  /**
+   * Send payment confirmation emails to all group members
+   * @param {Object} groupPayment - Group payment data
+   * @param {Array} userIds - Array of user IDs (creator + invited users)
+   * @param {Object} packageInfo - Package information
+   */
+  static async sendGroupPaymentEmails(groupPayment, userIds, packageInfo) {
+    try {
+      const { sendPaymentConfirmationEmail } = await import('../utils/email-helper.js');
+      
+      for (const userId of userIds) {
+        try {
+          const userInfo = await this.getUserInfo(userId);
+          
+          if (userInfo && userInfo.email) {
+            // Create payment object for email with proper group payment data
+            const paymentForEmail = {
+              id: groupPayment.id,
+              amount: 81000, // Fixed amount per person for group payment
+              createdAt: groupPayment.createdAt,
+              courseId: groupPayment.courseId,
+              // IMPORTANT: Mark as group payment dan provide member courses
+              isGroupPayment: true,
+              memberCourses: groupPayment.memberCourses || [],
+              userId: userId  // Ensure the email helper knows which user this email is for
+            };
+            
+            await sendPaymentConfirmationEmail(paymentForEmail, userInfo, packageInfo);
+            console.log(`Payment confirmation email sent to member: ${userInfo.email}`);
+          }
+        } catch (error) {
+          console.error(`Error sending payment email to member ${userId}:`, error.message);
+        }
+      }
+    } catch (error) {
+      console.error('Error sending group payment emails:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Send enrollment emails to all group members
+   * @param {Object} groupPayment - Group payment data
+   * @param {Array} memberCourses - Array of {userId, courseId, email} objects
+   */
+  static async sendGroupEnrollmentEmails(groupPayment, memberCourses) {
+    try {
+      const { sendEnrollmentConfirmationEmail } = await import('../utils/email-helper.js');
+      
+      for (const memberCourse of memberCourses) {
+        try {
+          const userInfo = await this.getUserInfo(memberCourse.userId);
+          const packageInfo = await this.getPackageInfo(groupPayment.packageId);
+          
+          // Get course name for the specific course this member is enrolled in
+          let courseNames = null;
+          if (memberCourse.courseId) {
+            try {
+              const courseInfo = await this.getCourseInfo(memberCourse.courseId);
+              courseNames = courseInfo ? [courseInfo.title] : null;
+            } catch (error) {
+              console.error('Error getting course info for enrollment email:', error.message);
+            }
+          }
+          
+          if (userInfo && userInfo.email) {
+            // Create payment object for enrollment email with member's specific course
+            const paymentForEmail = {
+              id: groupPayment.id,
+              courseId: memberCourse.courseId, // Use member's specific course
+              packageId: groupPayment.packageId
+            };
+            
+            await sendEnrollmentConfirmationEmail(paymentForEmail, userInfo, packageInfo, courseNames);
+            console.log(`Enrollment confirmation email sent to member: ${userInfo.email} for course: ${memberCourse.courseId}`);
+          }
+        } catch (error) {
+          console.error(`Error sending enrollment email to member ${memberCourse.userId}:`, error.message);
+        }
+      }
+    } catch (error) {
+      console.error('Error sending group enrollment emails:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Validate member emails dan course choices secara bersamaan
+   * @param {Array} members - Array of {email, courseId} objects
+   * @returns {Promise<Object>} Validation results dengan course info
+   */
+  static async validateMemberEmailsAndCourses(members) {
+    try {
+      const results = {
+        validMembers: [],
+        invalidMembers: [],
+        usersWithIntermediateEnrollment: [],
+        courseValidationErrors: []
+      };
+
+      for (const member of members) {
+        try {
+          // Check if user exists by email
+          const userExists = await this.checkUserByEmail(member.email);
+          
+          if (!userExists) {
+            results.invalidMembers.push({
+              email: member.email,
+              courseId: member.courseId,
+              error: 'User tidak ditemukan'
+            });
+            continue;
+          }
+
+          // Check if user already has INTERMEDIATE enrollment
+          const intermediateEnrollment = await this.checkExistingIntermediateEnrollment(userExists.id);
+          
+          if (intermediateEnrollment.hasEnrollment) {
+            results.usersWithIntermediateEnrollment.push({
+              email: member.email,
+              courseId: member.courseId,
+              courseName: intermediateEnrollment.courseName,
+              error: `Sudah terdaftar di: ${intermediateEnrollment.courseName}`
+            });
+            continue;
+          }
+
+          // Validate course choice (akan divalidasi lebih lanjut di createGroupPayment)
+          // Untuk sekarang, asumsikan course valid jika ada courseId
+          if (!member.courseId) {
+            results.courseValidationErrors.push({
+              email: member.email,
+              error: 'Course ID harus diisi'
+            });
+            continue;
+          }
+
+          // All validations passed
+          results.validMembers.push({
+            email: member.email,
+            courseId: member.courseId,
+            userId: userExists.id,
+            name: userExists.name,
+            type: userExists.type
+          });
+
+        } catch (error) {
+          results.invalidMembers.push({
+            email: member.email,
+            courseId: member.courseId,
+            error: error.message
+          });
+        }
+      }
+
+      return results;
+    } catch (error) {
+      throw new Error('Gagal validasi members: ' + error.message);
+    }
   }
 }

@@ -8,6 +8,7 @@ import { PrismaClient } from '@prisma/client';
 
 import paymentRoutes from './routes/payment.routes.js';
 import enrollmentRoutes from './routes/enrollment.routes.js';
+import groupPaymentRoutes from './routes/group-payment.routes.js';
 import { createRateLimiter } from './middlewares/rateLimiter.js';
 
 // Load environment variables
@@ -44,6 +45,7 @@ const apiLimiter = createRateLimiter({
 app.use(Array.isArray(apiLimiter) ? apiLimiter : [apiLimiter]);
 // Routes
 app.use('/payments', paymentRoutes);
+app.use('/group-payments', groupPaymentRoutes);
 app.use('/enrollments', enrollmentRoutes);
 
 // Health check endpoint
