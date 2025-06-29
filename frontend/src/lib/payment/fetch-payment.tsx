@@ -139,7 +139,7 @@ export async function getAllEnrolledStats() {
 export async function getAllEnrollment() {
   try {
     const accessToken = await getAccessToken();
-    const res = await fetch(`${process.env.BASE_URL}/payments`, {
+    const res = await fetch(`${process.env.BASE_URL}/payments?page=1&limit=3`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
