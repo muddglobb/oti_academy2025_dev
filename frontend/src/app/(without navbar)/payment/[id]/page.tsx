@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { fetchPackage } from "@/lib/package/fetch-package";
+import { fetchPackage, getPackageById } from "@/lib/package/fetch-package";
 import Konfirmasi from "@/components/payment/konfirmasi";
 import ChosenClass from "@/components/payment/chosen-class";
 import Receipt from "@/components/payment/receipt";
@@ -8,6 +8,7 @@ import { BuktiPembayaran } from "@/components/payment/bukti-pembayaran";
 import PaymentPopUp from "@/components/payment/payment-popup";
 import { getMyPayments } from "@/lib/payment/fetch-payment";
 import TolakPopUp from "@/components/payment/tolak-popup";
+import { getCourseAvailabity } from "@/lib/enrollment/fetch-enrollment";
 // type CourseStat = {
 //   id: string;
 //   title: string;
@@ -304,6 +305,22 @@ export default async function Page({
         checkIntermediate = "YES";
     }
   }
+  // console.log("course id: ", matchedCourseId);
+  // const availability = await getCourseAvailabity(matchedCourseId ? matchedCourseId : "");
+  // console.log("Availability: ", availability.available);
+  // console.log("Availability: ", availability.available.entryIntermediateAvailable);
+  // console.log(checkBundle, checkEntry, checkIntermediate);
+  
+  // console.log(matchedPackageId);
+  if(!matchedCourseId) {
+    const packages = await getPackageById(matchedPackageId || "");
+    // console.log("packages: ", packages.courses[0].courseId);
+    matchedCourseId = packages.courses[0].courseId;
+  }
+  // console.log("matchedCourseId: ", matchedCourseId);
+  const availability = await getCourseAvailabity(matchedCourseId ? matchedCourseId : "");
+  console.log("Availability: ", availability.available.bundleAvailable);
+  console.log("Availability: ", availability.available.entryIntermediateAvailable);
 
   return (
     <div className="text-white py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4">
@@ -342,6 +359,7 @@ export default async function Page({
           <BuktiPembayaran
             courseId={matchedCourseId}
             packageId={matchedPackageId}
+            availability={matchedPackageId ? availability.available.bundleAvailable : availability.available.entryIntermediateAvailable}
           />
         </div>
       </div>

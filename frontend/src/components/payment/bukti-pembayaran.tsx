@@ -1,20 +1,30 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CircleAlert } from "lucide-react";
 import { Link } from "lucide-react";
 import PerhatianPayment from "@/components/payment/perhatian-payment";
+import { useRouter } from "next/navigation";
 
 export function BuktiPembayaran({
   courseId,
   packageId,
+  availability,
 }: {
   courseId: string | null | undefined;
   packageId: string | null | undefined;
+  availability: number;
 }) {
+  const router = useRouter();
   const [proofLink, setProofLink] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // ✅ new
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (availability <= 0) {
+      router.push("/dashboard");
+    }
+  }, [availability, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
