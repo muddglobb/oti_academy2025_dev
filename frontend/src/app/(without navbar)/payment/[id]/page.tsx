@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { fetchPackage } from "@/lib/package/fetch-package";
+import { fetchPackage, getPackageById } from "@/lib/package/fetch-package";
 import Konfirmasi from "@/components/payment/konfirmasi";
 import ChosenClass from "@/components/payment/chosen-class";
 import Receipt from "@/components/payment/receipt";
@@ -8,6 +8,7 @@ import { BuktiPembayaran } from "@/components/payment/bukti-pembayaran";
 import PaymentPopUp from "@/components/payment/payment-popup";
 import { getMyPayments } from "@/lib/payment/fetch-payment";
 import TolakPopUp from "@/components/payment/tolak-popup";
+import { getCourseAvailabity } from "@/lib/enrollment/fetch-enrollment";
 // type CourseStat = {
 //   id: string;
 //   title: string;
@@ -304,7 +305,41 @@ export default async function Page({
         checkIntermediate = "YES";
     }
   }
+  // console.log("course id: ", matchedCourseId);
+  // const availability = await getCourseAvailabity(matchedCourseId ? matchedCourseId : "");
+  // console.log("Availability: ", availability.available);
+  // console.log("Availability: ", availability.available.entryIntermediateAvailable);
+  // console.log(checkBundle, checkEntry, checkIntermediate);
+  const noBundle = matchedCourseId && matchedPackageId ? "NO" : "YES";
 
+  // console.log("fkoe", noBundle);
+  // console.log(matchedPackageId);
+  if (!matchedCourseId) {
+    const packages = await getPackageById(matchedPackageId || "");
+    // console.log("packages: ", packages.courses[0].courseId);
+    matchedCourseId = packages.courses[0].courseId;
+  }
+  // console.log("matchedCourseId: ", matchedCourseId);
+  const availability = await getCourseAvailabity(
+    matchedCourseId ? matchedCourseId : ""
+  );
+  // console.log("Availability: ", availability.available.bundleAvailable);
+  // console.log("Availability: ", availability.available.entryIntermediateAvailable);
+  const availabilityzz = noBundle
+    ? availability.available.entryIntermediateAvailable
+    : availability.available.bundleAvailable;
+  // console.log("availabilityzz: ", availabilityzz);
+
+  // console.log("fjoef", matchedCourseId,)
+  // console.log("akwoaw", matchedPackageId)
+
+  if (availabilityzz <= 0) {
+    return (
+      <div className="text-white py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4 items-center font-bold text-3xl">
+        Pendaftaran Untuk Kelas Ini Sudah ditutup
+      </div>
+    );
+  }
   return (
     <div className="text-neutral-50 py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4">
       <Link
@@ -316,14 +351,29 @@ export default async function Page({
       </Link>
 
       {/* <PaymentPopUp /> */}
-      {checkBundle == "YES" && <TolakPopUp type="Bundle"/>}
-      {checkBundle == "NO" && classData?.ClassLevel == "BUNDLE" && checkIntermediate == "YES" && <TolakPopUp type="Intermediate"/>}
-      {checkBundle == "NO" && classData?.ClassLevel == "BUNDLE" && checkEntry == "YES" && <TolakPopUp type="Entry"/>}
-      {checkBundle == "NO" && classData?.ClassLevel == "BUNDLE" && checkEntry == "NO" && checkIntermediate == "NO" && <PaymentPopUp/>}
-      {checkBundle == "NO" && classData?.ClassLevel == "INTERMEDIATE" && checkIntermediate == "YES" && <TolakPopUp type="Intermediate"/>}
-      {checkBundle == "NO" && classData?.ClassLevel == "INTERMEDIATE" && checkIntermediate == "NO" && <PaymentPopUp/>}
-      {checkBundle == "NO" && classData?.ClassLevel == "ENTRY" && checkEntry == "YES" && <TolakPopUp type="Entry"/>}
-      {checkBundle == "NO" && classData?.ClassLevel == "ENTRY" && checkEntry == "NO" && <PaymentPopUp/>}
+      {checkBundle == "YES" && <TolakPopUp type="Bundle" />}
+      {checkBundle == "NO" &&
+        classData?.ClassLevel == "BUNDLE" &&
+        checkIntermediate == "YES" && <TolakPopUp type="Intermediate" />}
+      {checkBundle == "NO" &&
+        classData?.ClassLevel == "BUNDLE" &&
+        checkEntry == "YES" && <TolakPopUp type="Entry" />}
+      {checkBundle == "NO" &&
+        classData?.ClassLevel == "BUNDLE" &&
+        checkEntry == "NO" &&
+        checkIntermediate == "NO" && <PaymentPopUp />}
+      {checkBundle == "NO" &&
+        classData?.ClassLevel == "INTERMEDIATE" &&
+        checkIntermediate == "YES" && <TolakPopUp type="Intermediate" />}
+      {checkBundle == "NO" &&
+        classData?.ClassLevel == "INTERMEDIATE" &&
+        checkIntermediate == "NO" && <PaymentPopUp />}
+      {checkBundle == "NO" &&
+        classData?.ClassLevel == "ENTRY" &&
+        checkEntry == "YES" && <TolakPopUp type="Entry" />}
+      {checkBundle == "NO" &&
+        classData?.ClassLevel == "ENTRY" &&
+        checkEntry == "NO" && <PaymentPopUp />}
 
       <div className="flex flex-col xl:flex-row gap-6">
         <div className="flex flex-col gap-6 xl:w-240">
@@ -342,6 +392,11 @@ export default async function Page({
           <BuktiPembayaran
             courseId={matchedCourseId}
             packageId={matchedPackageId}
+            availability={
+              noBundle
+                ? availability.available.entryIntermediateAvailable
+                : availability.available.bundleAvailable
+            }
           />
         </div>
       </div>

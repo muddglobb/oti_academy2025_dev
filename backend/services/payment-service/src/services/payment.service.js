@@ -10,6 +10,26 @@ const prisma = new PrismaClient();
  * Payment Service - Handles all database operations related to payments
  */
 export class PaymentService {
+  
+  /**
+   * Get quota configuration from environment variables
+   * @returns {Object} Quota configuration
+   */
+  static getQuotaConfig() {
+    const config = {
+      entryQuota: parseInt(process.env.ENTRY_QUOTA) || 15,
+      intermediateQuota: parseInt(process.env.INTER_QUOTA) || 15,
+      bundleQuota: parseInt(process.env.BUNDLE_QUOTA) || 30
+    };
+    
+    // Quota configuration loaded from environment variables
+    if (!this._quotaLogged) {
+      this._quotaLogged = true;
+    }
+    
+    return config;
+  }
+
   /**
    * Generate a valid JWT token for service-to-service communication
    * @returns {string} JWT token
@@ -179,8 +199,6 @@ static async getPaymentsByUserId(userId) {
     orderBy: { createdAt: 'desc' }
   });
 
-  // console.log(`🔍 Found ${payments.length} payments for user ${userId} (including group payments)`);
-
   // Enhance payments with package info and price
   const enhancedPayments = await this.enhancePaymentsWithPrice(payments);
   
@@ -221,8 +239,6 @@ static async getPaymentsByUserId(userId) {
       const headers = {
         'Authorization': `Bearer ${serviceToken}`
       };
-      
-      // console.log('Making request to:', `${authServiceUrl}/users/${userId}`);
       
       // Call to Auth Service API to get user info with valid JWT token
       const response = await axios.get(`${authServiceUrl}/users/${userId}`, { headers });
@@ -274,8 +290,6 @@ static async getPaymentsByUserId(userId) {
       const headers = {
         'Authorization': `Bearer ${serviceToken}`
       };
-      
-      // console.log('Making batch request to Auth Service for users:', uniqueUserIds.length);
       
       // Call to Auth Service API to get users info with comma-separated IDs
       const response = await axios.get(`${authServiceUrl}/users`, { 
@@ -343,9 +357,7 @@ static async getPaymentsByUserId(userId) {
         const headers = {
           'Authorization': `Bearer ${serviceToken}`
         };
-        
-        // console.log('Cache miss - making request to:', `${packageServiceUrl}/packages/${packageId}`);
-        
+
         // Call to Package Service API with circuit breaker and retry
         return executeWithCircuitBreaker('package', async () => {
           const response = await retryWithBackoff(async () => {
@@ -423,12 +435,12 @@ static async getPaymentsByUserId(userId) {
     }
   }
 
-  /**
-   * Validasi quota course berdasarkan tipe package
-   * @param {string} courseId - ID course yang akan divalidasi
-   * @param {string} packageType - Tipe package (ENTRY, INTERMEDIATE, BUNDLE)
-   * @returns {Promise<Object>} Hasil validasi dengan status dan pesan
-   */  
+/**
+ * Validasi quota course berdasarkan tipe package
+ * @param {string} courseId - ID course yang akan divalidasi
+ * @param {string} packageType - Tipe package (ENTRY, INTERMEDIATE, BUNDLE)
+ * @returns {Promise<Object>} Hasil validasi dengan status dan pesan
+ */  
 static async validateCourseAvailability(courseId, packageType) {
   try {
     // Import CourseService at the top level to avoid circular dependencies
@@ -440,44 +452,60 @@ static async validateCourseAvailability(courseId, packageType) {
       return { valid: false, message: 'Kelas tidak ditemukan' };
     }
     
-    // Use env variables with fallback to new quota values
-    const entryQuota = course.entryQuota || 0;
-    const bundleQuota = course.bundleQuota || 0;
+    // Use quota configuration helper
+    const quotaConfig = this.getQuotaConfig();
+    
+    // Determine applicable quota based on package type
+    let applicableQuota;
+    if (packageType === 'BUNDLE') {
+      applicableQuota = quotaConfig.bundleQuota;
+    } else if (packageType === 'INTERMEDIATE') {
+      applicableQuota = quotaConfig.intermediateQuota;
+    } else { // ENTRY
+      applicableQuota = quotaConfig.entryQuota;
+    }
     
     // If trying to enroll in a bundle but course doesn't support bundles
-    if (packageType === 'BUNDLE' && bundleQuota === 0) {
+    if (packageType === 'BUNDLE' && quotaConfig.bundleQuota === 0) {
       return { 
         valid: false, 
         message: `Kursus "${course.title}" tidak tersedia dalam paket bundle` 
       };
     }
     
-    // Get both approved and pending enrollment counts for this course
+    // HANYA HITUNG APPROVED ENROLLMENTS, BUKAN PENDING PAYMENTS
+    // Ini memungkinkan multiple users submit payment bahkan jika quota hampir penuh
     const approvedCounts = await this.getCourseEnrollmentCount(courseId);
     
-    // Also check pending payments (status 'PAID')
+    // Optional: Get pending counts untuk logging/monitoring (tidak digunakan untuk validasi)
     const pendingCounts = await this.getCoursePendingEnrollmentCount(courseId);
     
-    // Total counts including pending payments
-    const totalCounts = {
-      total: approvedCounts.total + pendingCounts.total,
+    // Log warning jika ada banyak pending payments yang bisa menyebabkan overbooking
+    const totalWithPending = {
       bundleCount: approvedCounts.bundleCount + pendingCounts.bundleCount,
       entryIntermediateCount: approvedCounts.entryIntermediateCount + pendingCounts.entryIntermediateCount
     };
     
-    // Check against the relevant quota based on package type
+    // Warning untuk admin jika mendekati potensi overbooking
+    if (packageType === 'BUNDLE' && totalWithPending.bundleCount > quotaConfig.bundleQuota * 1.2) {
+      console.warn(`⚠️ Warning: Course ${courseId} has ${totalWithPending.bundleCount} total bundle payments (approved + pending) against quota ${quotaConfig.bundleQuota}`);
+    } else if (packageType !== 'BUNDLE' && totalWithPending.entryIntermediateCount > applicableQuota * 1.2) {
+      console.warn(`⚠️ Warning: Course ${courseId} has ${totalWithPending.entryIntermediateCount} total ${packageType.toLowerCase()} payments (approved + pending) against quota ${applicableQuota}`);
+    }
+    
+    // Check against the relevant quota based on package type - HANYA APPROVED
     if (packageType === 'BUNDLE') {
-      if (totalCounts.bundleCount >= bundleQuota) {
+      if (approvedCounts.bundleCount >= quotaConfig.bundleQuota) {
         return { 
           valid: false, 
-          message: `Kuota kelas bundle untuk "${course.title}" sudah penuh (${totalCounts.bundleCount}/${bundleQuota}). Total kuota minimal: ${entryQuota + bundleQuota}` 
+          message: `Kuota kelas bundle untuk "${course.title}" sudah penuh (${approvedCounts.bundleCount}/${quotaConfig.bundleQuota})` 
         };
       }
     } else { // ENTRY or INTERMEDIATE
-      if (totalCounts.entryIntermediateCount >= entryQuota) {
+      if (approvedCounts.entryIntermediateCount >= applicableQuota) {
         return { 
           valid: false, 
-          message: `Kuota kelas ${packageType.toLowerCase()} untuk "${course.title}" sudah penuh (${totalCounts.entryIntermediateCount}/${entryQuota}). Total kuota minimal: ${entryQuota + bundleQuota}` 
+          message: `Kuota kelas ${packageType.toLowerCase()} untuk "${course.title}" sudah penuh (${approvedCounts.entryIntermediateCount}/${applicableQuota})` 
         };
       }
     }
@@ -649,8 +677,6 @@ static async getCourseEnrollmentCount(courseId) {
     const { getCourseEnrollmentCountCached, batchPreloadPackageInfo } = await import('../utils/cache-helper.js');
     
     return await getCourseEnrollmentCountCached(courseId, async () => {
-      // console.log(`📊 Cache miss - calculating enrollment count for course ${courseId}`);
-      
       // NEW APPROACH: Count actual enrollments from Enrollment table
       // This is more accurate for group payments with per-member course selection
       const enrollments = await prisma.enrollment.findMany({
@@ -665,8 +691,6 @@ static async getCourseEnrollmentCount(courseId) {
           paymentId: true
         }
       });
-      
-      // console.log(`🔍 Found ${enrollments.length} actual enrollments for course ${courseId}`);
       
       // Get unique package IDs for batch processing
       const uniquePackageIds = [...new Set(enrollments.map(e => e.packageId))];
@@ -708,8 +732,6 @@ static async getCourseEnrollmentCount(courseId) {
         bundleCount,
         entryIntermediateCount
       };
-      
-      // console.log(`📊 Final enrollment count for course ${courseId}:`, finalResult);
       
       return finalResult;
     });
@@ -804,8 +826,6 @@ static async getAllCoursesEnrollmentCount() {
     
     // Use a distinct cache key for the entire result
     return await getAllCoursesEnrollmentCountCached('all-enrollments', async () => {
-      // console.log('Cache miss - calculating enrollment counts for all courses');
-      
       // Dapatkan semua kursus dari course-service
       const { CourseService } = await import('./course.service.js');
       const allCourses = await CourseService.getAllCourses();
@@ -866,7 +886,8 @@ static async getAllCoursesEnrollmentCount() {
         },
         select: {
           id: true,
-          packageId: true
+          packageId: true,
+          userId: true
         }
       });
       
@@ -935,7 +956,7 @@ static async getAllCoursesEnrollmentCount() {
               }
             }
           } else {
-            console.log(`No courses found in bundle package ${payment.packageId}`);
+            // No courses found in bundle package - skip processing
           }
         }
       }
@@ -959,14 +980,27 @@ static async getAllCoursesEnrollmentCount() {
           bundleCount: 0
         };
         
+        // Use quota configuration helper
+        const quotaConfig = this.getQuotaConfig();
+        
+        // Determine applicable quota based on course level
+        let applicableEntryQuota;
+        if (course.level === 'INTERMEDIATE') {
+          applicableEntryQuota = quotaConfig.intermediateQuota;
+        } else {
+          applicableEntryQuota = quotaConfig.entryQuota;
+        }
+        
+        const totalQuota = applicableEntryQuota + quotaConfig.bundleQuota;
+        
         return {
           id: course.id,
           title: course.title,
           level: course.level,
           quota: {
-            total: course.quota || 0,
-            entryQuota: course.entryQuota || 0,
-            bundleQuota: course.bundleQuota || 0
+            total: totalQuota,
+            entryQuota: applicableEntryQuota,
+            bundleQuota: quotaConfig.bundleQuota
           },
           enrollment: {
             total: enrollmentCount.total || 0,
@@ -984,8 +1018,8 @@ static async getAllCoursesEnrollmentCount() {
             bundleCount: (enrollmentCount.bundleCount || 0) + pendingCount.bundleCount
           },
           remaining: {
-            entryIntermediate: (course.entryQuota || 0) - (enrollmentCount.entryIntermediateCount || 0),
-            bundle: (course.bundleQuota || 0) - (enrollmentCount.bundleCount || 0)
+            entryIntermediate: applicableEntryQuota - (enrollmentCount.entryIntermediateCount || 0),
+            bundle: quotaConfig.bundleQuota - (enrollmentCount.bundleCount || 0)
           }
         };
       });
@@ -1135,7 +1169,6 @@ static async getAllCoursesEnrollmentCount() {
         try {
           const { sendEnrollmentConfirmationEmail } = await import('../utils/email-helper.js');
           await sendEnrollmentConfirmationEmail(updatedPayment, userInfo, packageInfo, courseNames);
-          console.log('Enrollment confirmation email sent successfully');
         } catch (emailError) {
           console.error('Failed to send enrollment confirmation email:', emailError.message);
           // Continue anyway since enrollment was successful
@@ -1714,7 +1747,6 @@ static async formatDetailedPayment(payment, requestingUserId) {
           description: courseData.description || '',
           level: courseData.level || null
         };
-        console.log(`Retrieved course title: ${courseInfo.title}`);
       } else {
         // Try getting course info from package-service as fallback
         const coursesInPackage = await this.getCoursesInPackage(payment.packageId);
@@ -1779,13 +1811,10 @@ static async formatDetailedPayment(payment, requestingUserId) {
   const enrollmentStatus = await this.checkEnrollmentStatus(payment.id);
 
   // PERBAIKAN: Get user info for the requesting user
-  // console.log(`🔍 Getting user info for requesting user: ${requestingUserId}`);
   const userInfo = await this.getUserInfo(requestingUserId);
   
   if (!userInfo) {
     console.error(`❌ Failed to get user info for user: ${requestingUserId}`);
-  } else {
-    console.log(`✅ Successfully got user info for ${userInfo.name} (${userInfo.email})`);
   }
 
   // PERBAIKAN: Pastikan user object selalu ada dengan semua property yang diperlukan
@@ -1852,14 +1881,14 @@ static async formatDetailedPayment(payment, requestingUserId) {
   // ============== GROUP PAYMENT METHODS ==============
 
   /**
-   * Check if user already has INTERMEDIATE enrollment
+   * Check if user already has INTERMEDIATE or BUNDLE enrollment/payment
    * @param {string} userId - User ID to check
    * @returns {Promise<Object>} Enrollment status
    */
   static async checkExistingIntermediateEnrollment(userId) {
     try {
-      // Get all approved payments for this user
-      const userPayments = await prisma.payment.findMany({
+      // 1. Check for approved payments (enrollments)
+      const approvedPayments = await prisma.payment.findMany({
         where: {
           userId,
           status: 'APPROVED'
@@ -1871,31 +1900,96 @@ static async formatDetailedPayment(payment, requestingUserId) {
         }
       });
 
-      // Check each payment's package type
-      for (const payment of userPayments) {
+      for (const payment of approvedPayments) {
         const packageInfo = await this.getPackageInfo(payment.packageId);
         
-        if (packageInfo && packageInfo.type === 'INTERMEDIATE') {
-          // Get course name for better error message
-          let courseName = 'Unknown Course';
-          
-          if (payment.courseId && payment.courseId !== '00000000-0000-0000-0000-000000000000') {
-            const courseInfo = await this.getCourseInfo(payment.courseId);
-            courseName = courseInfo ? courseInfo.title : 'Unknown Course';
+        if (packageInfo) {
+          // Check for INTERMEDIATE enrollment
+          if (packageInfo.type === 'INTERMEDIATE') {
+            let courseName = 'Unknown Course';
+            
+            if (payment.courseId && payment.courseId !== '00000000-0000-0000-0000-000000000000') {
+              const courseInfo = await this.getCourseInfo(payment.courseId);
+              courseName = courseInfo ? courseInfo.title : 'Unknown Course';
+            }
+            
+            return {
+              hasEnrollment: true,
+              enrollmentType: 'INTERMEDIATE',
+              courseName,
+              paymentId: payment.id,
+              packageInfo,
+              isPending: false
+            };
           }
           
-          return {
-            hasEnrollment: true,
-            courseName,
-            paymentId: payment.id,
-            packageInfo
-          };
+          // Check for BUNDLE enrollment
+          if (packageInfo.type === 'BUNDLE') {
+            return {
+              hasEnrollment: true,
+              enrollmentType: 'BUNDLE',
+              courseName: 'Paket Bundle',
+              paymentId: payment.id,
+              packageInfo,
+              isPending: false
+            };
+          }
+        }
+      }
+
+      // 2. Check for pending payments (not yet approved)
+      const pendingPayments = await prisma.payment.findMany({
+        where: {
+          userId,
+          status: 'PAID' // PAID status means waiting for approval
+        },
+        select: {
+          id: true,
+          packageId: true,
+          courseId: true
+        }
+      });
+
+      for (const payment of pendingPayments) {
+        const packageInfo = await this.getPackageInfo(payment.packageId);
+        
+        if (packageInfo) {
+          // Check for pending INTERMEDIATE payment
+          if (packageInfo.type === 'INTERMEDIATE') {
+            let courseName = 'Unknown Course';
+            
+            if (payment.courseId && payment.courseId !== '00000000-0000-0000-0000-000000000000') {
+              const courseInfo = await this.getCourseInfo(payment.courseId);
+              courseName = courseInfo ? courseInfo.title : 'Unknown Course';
+            }
+            
+            return {
+              hasEnrollment: true,
+              enrollmentType: 'INTERMEDIATE_PENDING',
+              courseName,
+              paymentId: payment.id,
+              packageInfo,
+              isPending: true
+            };
+          }
+          
+          // Check for pending BUNDLE payment
+          if (packageInfo.type === 'BUNDLE') {
+            return {
+              hasEnrollment: true,
+              enrollmentType: 'BUNDLE_PENDING',
+              courseName: 'Paket Bundle (Menunggu Approval)',
+              paymentId: payment.id,
+              packageInfo,
+              isPending: true
+            };
+          }
         }
       }
 
       return { hasEnrollment: false };
     } catch (error) {
-      console.error('Error checking existing intermediate enrollment:', error.message);
+      console.error('Error checking existing enrollment:', error.message);
       return { hasEnrollment: false };
     }
   }
@@ -1912,7 +2006,8 @@ static async formatDetailedPayment(payment, requestingUserId) {
         invalidEmails: [],
         existingUsers: [],
         nonExistingEmails: [],
-        usersWithIntermediateEnrollment: []
+        usersWithIntermediateEnrollment: [],
+        usersWithBundleEnrollment: [] // Tambahan untuk bundle
       };
 
       // Check each email with auth service
@@ -1921,17 +2016,32 @@ static async formatDetailedPayment(payment, requestingUserId) {
           const userExists = await this.checkUserByEmail(email);
           
           if (userExists) {
-            // Check if user already has INTERMEDIATE enrollment
-            const intermediateEnrollment = await this.checkExistingIntermediateEnrollment(userExists.id);
+            // Check if user already has INTERMEDIATE or BUNDLE enrollment
+            const existingEnrollment = await this.checkExistingIntermediateEnrollment(userExists.id);
             
-            if (intermediateEnrollment.hasEnrollment) {
+            if (existingEnrollment.hasEnrollment) {
               results.invalidEmails.push(email);
-              results.usersWithIntermediateEnrollment.push({
-                email,
-                userId: userExists.id,
-                name: userExists.name,
-                courseName: intermediateEnrollment.courseName
-              });
+              
+              // Categorize by enrollment type
+              if (existingEnrollment.enrollmentType.includes('BUNDLE')) {
+                results.usersWithBundleEnrollment.push({
+                  email,
+                  userId: userExists.id,
+                  name: userExists.name,
+                  courseName: existingEnrollment.courseName,
+                  enrollmentType: existingEnrollment.enrollmentType,
+                  isPending: existingEnrollment.isPending || false
+                });
+              } else {
+                results.usersWithIntermediateEnrollment.push({
+                  email,
+                  userId: userExists.id,
+                  name: userExists.name,
+                  courseName: existingEnrollment.courseName,
+                  enrollmentType: existingEnrollment.enrollmentType,
+                  isPending: existingEnrollment.isPending || false
+                });
+              }
             } else {
               results.validEmails.push(email);
               results.existingUsers.push({
@@ -1953,6 +2063,7 @@ static async formatDetailedPayment(payment, requestingUserId) {
 
       return results;
     } catch (error) {
+      console.error('Error validating invite emails:', error.message);
       throw new Error('Gagal validasi email: ' + error.message);
     }
   }
@@ -1989,6 +2100,11 @@ static async formatDetailedPayment(payment, requestingUserId) {
     const { creatorId, packageId, creatorCourseId, members, proofLink } = data;
     
     try {
+      // Validate proofLink at service level
+      if (!this.isValidProofLink(proofLink)) {
+        throw new Error('Proof link harus berupa URL HTTPS yang valid');
+      }
+
       return await prisma.$transaction(async (tx) => {
         // 1. Validate creator's course
         const creatorCourseValidation = await this.validateCourseInPackage(packageId, creatorCourseId);
@@ -1996,7 +2112,7 @@ static async formatDetailedPayment(payment, requestingUserId) {
           throw new Error('Course yang dipilih creator tidak tersedia dalam package ini');
         }
 
-        // 2. Validate and process invited members
+        // 2. Validate and process invited members        
         const memberValidation = {
           validMembers: [],
           invalidMembers: [],
@@ -2015,12 +2131,20 @@ static async formatDetailedPayment(payment, requestingUserId) {
               continue;
             }
 
-            // Check if user already has INTERMEDIATE enrollment
+            // Check if user already has INTERMEDIATE or BUNDLE enrollment
             const existingEnrollment = await this.checkExistingIntermediateEnrollment(userExists.id);
             if (existingEnrollment.hasEnrollment) {
+              let errorMessage = '';
+              
+              if (existingEnrollment.enrollmentType.includes('BUNDLE')) {
+                errorMessage = `Sudah terdaftar di paket BUNDLE${existingEnrollment.isPending ? ' (menunggu approval)' : ''}`;
+              } else {
+                errorMessage = `Sudah terdaftar di: ${existingEnrollment.courseName}${existingEnrollment.isPending ? ' (menunggu approval)' : ''}`;
+              }
+              
               memberValidation.invalidMembers.push({
                 email: member.email,
-                error: `Sudah terdaftar di: ${existingEnrollment.courseName}`
+                error: errorMessage
               });
               continue;
             }
@@ -2058,19 +2182,20 @@ static async formatDetailedPayment(payment, requestingUserId) {
           throw new Error('Tidak ada member yang valid untuk diundang');
         }
 
-        if (memberValidation.invalidMembers.length > 0) {
-          const errorMessages = memberValidation.invalidMembers
-            .map(m => `${m.email}: ${m.error}`)
-            .join(', ');
-          throw new Error(`Member tidak valid: ${errorMessages}`);
-        }
+        // COMMENTED OUT: Don't throw error for invalid members, just proceed with valid ones
+        // if (memberValidation.invalidMembers.length > 0) {
+        //   const errorMessages = memberValidation.invalidMembers
+        //     .map(m => `${m.email}: ${m.error}`)
+        //     .join(', ');
+        //   throw new Error(`Member tidak valid: ${errorMessages}`);
+        // }
 
-        if (memberValidation.courseValidationErrors.length > 0) {
-          const errorMessages = memberValidation.courseValidationErrors
-            .map(m => `${m.email} memilih course yang tidak tersedia`)
-            .join(', ');
-          throw new Error(`Course validation error: ${errorMessages}`);
-        }
+        // if (memberValidation.courseValidationErrors.length > 0) {
+        //   const errorMessages = memberValidation.courseValidationErrors
+        //     .map(m => `${m.email} memilih course yang tidak tersedia`)
+        //     .join(', ');
+        //   throw new Error(`Course validation error: ${errorMessages}`);
+        // }
 
         // 4. Check creator doesn't have existing enrollment
         const creatorExistingEnrollment = await this.checkExistingIntermediateEnrollment(creatorId);
@@ -2539,6 +2664,7 @@ static async formatDetailedPayment(payment, requestingUserId) {
         validMembers: [],
         invalidMembers: [],
         usersWithIntermediateEnrollment: [],
+        usersWithBundleEnrollment: [], // Tambahan untuk bundle
         courseValidationErrors: []
       };
 
@@ -2556,16 +2682,29 @@ static async formatDetailedPayment(payment, requestingUserId) {
             continue;
           }
 
-          // Check if user already has INTERMEDIATE enrollment
-          const intermediateEnrollment = await this.checkExistingIntermediateEnrollment(userExists.id);
+          // Check if user already has INTERMEDIATE or BUNDLE enrollment
+          const existingEnrollment = await this.checkExistingIntermediateEnrollment(userExists.id);
           
-          if (intermediateEnrollment.hasEnrollment) {
-            results.usersWithIntermediateEnrollment.push({
-              email: member.email,
-              courseId: member.courseId,
-              courseName: intermediateEnrollment.courseName,
-              error: `Sudah terdaftar di: ${intermediateEnrollment.courseName}`
-            });
+          if (existingEnrollment.hasEnrollment) {
+            if (existingEnrollment.enrollmentType.includes('BUNDLE')) {
+              results.usersWithBundleEnrollment.push({
+                email: member.email,
+                userId: userExists.id,
+                name: userExists.name,
+                courseName: existingEnrollment.courseName,
+                enrollmentType: existingEnrollment.enrollmentType,
+                isPending: existingEnrollment.isPending || false
+              });
+            } else {
+              results.usersWithIntermediateEnrollment.push({
+                email: member.email,
+                userId: userExists.id,
+                name: userExists.name,
+                courseName: existingEnrollment.courseName,
+                enrollmentType: existingEnrollment.enrollmentType,
+                isPending: existingEnrollment.isPending || false
+              });
+            }
             continue;
           }
 
@@ -2600,6 +2739,37 @@ static async formatDetailedPayment(payment, requestingUserId) {
       return results;
     } catch (error) {
       throw new Error('Gagal validasi members: ' + error.message);
+    }
+  }
+
+  /**
+   * Validate proof link format
+   * @param {string} proofLink - Proof link to validate
+   * @returns {boolean} Is valid proof link
+   */
+  static isValidProofLink(proofLink) {
+    if (!proofLink || typeof proofLink !== 'string') {
+      return false;
+    }
+
+    // Minimum length check
+    if (proofLink.length < 10) {
+      return false;
+    }
+
+    // Check if it's a valid URL
+    try {
+      const url = new URL(proofLink);
+      
+      // Allow only HTTPS for security
+      if (url.protocol !== 'https:') {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      // If URL parsing fails, it's not a valid URL
+      return false;
     }
   }
 }

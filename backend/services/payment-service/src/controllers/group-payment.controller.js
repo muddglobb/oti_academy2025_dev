@@ -1,5 +1,6 @@
 import { PaymentService } from '../services/payment.service.js';
 import { ApiResponse } from '../utils/api-response.js';
+import { createGroupPaymentSchema } from '../schemas/payment.schema.js';
 
 /**
  * Validate invite emails - SIMPLIFIED untuk hanya check email availability
@@ -30,26 +31,35 @@ export const validateInviteEmails = async (req, res) => {
     // Use existing validateInviteEmails method (email only)
     const validation = await PaymentService.validateInviteEmails(emails);
     
-    // Format response sesuai dengan frontend needs
+
+    // Format response dengan bundle information
     const response = {
       validEmails: validation.validEmails || [],
       invalidEmails: validation.invalidEmails || [],
       existingUsers: validation.existingUsers || [],
       nonExistingEmails: validation.nonExistingEmails || [],
       usersWithIntermediateEnrollment: validation.usersWithIntermediateEnrollment || [],
+      usersWithBundleEnrollment: validation.usersWithBundleEnrollment || [], // Tambahan
       summary: {
         total: emails.length,
         valid: validation.validEmails?.length || 0,
         invalid: (validation.invalidEmails?.length || 0),
-        alreadyEnrolled: validation.usersWithIntermediateEnrollment?.length || 0
+        alreadyEnrolledIntermediate: validation.usersWithIntermediateEnrollment?.length || 0,
+        alreadyEnrolledBundle: validation.usersWithBundleEnrollment?.length || 0 // Tambahan
       }
     };
     
     // Determine message based on results
     let message = 'Email validation completed';
+    
     if (response.usersWithIntermediateEnrollment.length > 0) {
-      message += `. Beberapa user sudah memiliki kelas INTERMEDIATE dan tidak dapat diundang.`;
+      message += `. ${response.usersWithIntermediateEnrollment.length} user(s) sudah memiliki kelas INTERMEDIATE dan tidak dapat diundang.`;
     }
+    
+    if (response.usersWithBundleEnrollment.length > 0) {
+      message += ` ${response.usersWithBundleEnrollment.length} user(s) sudah memiliki paket BUNDLE dan tidak dapat diundang.`;
+    }
+    
     if (response.nonExistingEmails.length > 0) {
       message += ` ${response.nonExistingEmails.length} email(s) tidak ditemukan di sistem.`;
     }
@@ -73,31 +83,11 @@ export const validateInviteEmails = async (req, res) => {
 export const createGroupPayment = async (req, res) => {
   try {
     const creatorId = req.user.id;
-    const { packageId, creatorCourseId, members, proofLink } = req.body;
-    
-    // Validate required fields
-    if (!packageId || !creatorCourseId || !members || !proofLink) {
-      return res.status(400).json(
-        ApiResponse.error('Package ID, Creator Course ID, members, dan proof link harus diisi')
-      );
-    }
 
-    if (!Array.isArray(members) || members.length === 0) {
-      return res.status(400).json(
-        ApiResponse.error('Minimal 1 member harus diundang')
-      );
-    }
-
-    // Validate members structure
-    const invalidMembers = members.filter(member => 
-      !member.email || !member.courseId
-    );
     
-    if (invalidMembers.length > 0) {
-      return res.status(400).json(
-        ApiResponse.error('Setiap member harus memiliki email dan courseId')
-      );
-    }
+    // Validate request body with schema
+    const validatedData = createGroupPaymentSchema.parse(req.body);
+    const { packageId, creatorCourseId, members, proofLink } = validatedData;
 
     const groupPayment = await PaymentService.createGroupPayment({
       creatorId,
@@ -111,6 +101,16 @@ export const createGroupPayment = async (req, res) => {
       ApiResponse.success(groupPayment, 'Group payment berhasil dibuat')
     );
   } catch (error) {
+    if (error.name === 'ZodError') {
+      const errors = error.errors.map(err => ({
+        field: err.path.join('.'),
+        message: err.message
+      }));
+      return res.status(400).json(
+        ApiResponse.error('Validation error', errors)
+      );
+    }
+
     console.error('Error creating group payment:', error);
     res.status(500).json(
       ApiResponse.error(error.message || 'Terjadi kesalahan saat membuat group payment')

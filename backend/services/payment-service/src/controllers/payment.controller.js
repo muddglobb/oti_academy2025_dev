@@ -625,12 +625,25 @@ export const getCourseEnrollmentStats = async (req, res) => {
       );
     }
 
+    // Use quota configuration from PaymentService
+    const quotaConfig = PaymentService.getQuotaConfig();
+    
+    // Determine applicable quota based on course level
+    let applicableEntryQuota;
+    if (course.level === 'INTERMEDIATE') {
+      applicableEntryQuota = quotaConfig.intermediateQuota;
+    } else {
+      applicableEntryQuota = quotaConfig.entryQuota;
+    }
+    
+    const totalQuota = applicableEntryQuota + quotaConfig.bundleQuota;
+
     // Gunakan fungsi yang sudah ada untuk menghitung enrollment
     const enrollmentCounts = await PaymentService.getCourseEnrollmentCount(courseId);
     
     // Hitung slot tersedia
-    const entryAvailable = course.entryQuota - enrollmentCounts.entryIntermediateCount;
-    const bundleAvailable = course.bundleQuota - enrollmentCounts.bundleCount;
+    const entryAvailable = applicableEntryQuota - enrollmentCounts.entryIntermediateCount;
+    const bundleAvailable = quotaConfig.bundleQuota - enrollmentCounts.bundleCount;
     
     // Format response
     const response = {
@@ -640,9 +653,9 @@ export const getCourseEnrollmentStats = async (req, res) => {
         level: course.level
       },
       quota: {
-        total: course.quota,
-        entryIntermediateQuota: course.entryQuota,
-        bundleQuota: course.bundleQuota
+        total: totalQuota,
+        entryIntermediateQuota: applicableEntryQuota,
+        bundleQuota: quotaConfig.bundleQuota
       },
       enrollments: {
         entryIntermediateCount: enrollmentCounts.entryIntermediateCount,
@@ -652,9 +665,9 @@ export const getCourseEnrollmentStats = async (req, res) => {
       available: {
         entryIntermediateAvailable: Math.max(0, entryAvailable),
         bundleAvailable: Math.max(0, bundleAvailable),
-        totalAvailable: Math.max(0, course.quota - enrollmentCounts.total)
+        totalAvailable: Math.max(0, totalQuota - enrollmentCounts.total)
       },
-      percentageFilled: Math.round((enrollmentCounts.total / course.quota) * 100)
+      percentageFilled: Math.round((enrollmentCounts.total / totalQuota) * 100)
     };
     
     res.status(200).json(ApiResponse.success(response));
