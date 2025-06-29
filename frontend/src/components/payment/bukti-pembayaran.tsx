@@ -4,6 +4,7 @@ import { CircleAlert } from "lucide-react";
 import { Link } from "lucide-react";
 import PerhatianPayment from "@/components/payment/perhatian-payment";
 import { useRouter } from "next/navigation";
+import TolakPopUp from "./tolak-popup";
 
 export function BuktiPembayaran({
   courseId,
@@ -70,6 +71,7 @@ export function BuktiPembayaran({
 
   return (
     <>
+      {availability <= 0 && <TolakPopUp type="Bundle" />}
       {showPopup && (
         <PerhatianPayment
           show={showPopup}
@@ -138,17 +140,22 @@ export function BuktiPembayaran({
                 <Link className="w-5 h-5 text-neutral-500" />
                 <input
                   type="text"
-                  placeholder="https://drive.google.com/omahtiacademy"
+                  disabled={availability <= 0}
+                  placeholder={
+                    availability <= 0
+                      ? "Pendaftaran sudah ditutup"
+                      : "https://drive.google.com/omahtiacademy"
+                  }
                   value={proofLink}
                   onChange={(e) => setProofLink(e.target.value)}
-                  className="w-full placeholder-neutral-400"
+                  className="w-full placeholder-neutral-400 disabled:cursor-not-allowed disabled:opacity-70"
                 />
               </div>
 
               <button
                 type="submit"
                 className="w-full py-2 px-3 rounded-lg font-semibold cursor-pointer bg-primary-500 text-white disabled:opacity-60 disabled:cursor-not-allowed"
-                disabled={isSubmitting}
+                disabled={isSubmitting || availability <= 0}
               >
                 {isSubmitting ? "Mengirim data..." : "Submit"}
               </button>
