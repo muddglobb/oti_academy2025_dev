@@ -63,6 +63,13 @@ const Sponsors = [
     height: 103,
     displaySize: "h-[70px] md:h-[103px] w-[70px] md:w-[103px]"
   },
+    {
+    src: "/images/sponsors/l-sarana.webp",
+    alt: "sponsor 5",
+    width: 600,
+    height: 180,
+    displaySize: "h-[90px] md:h-[180px]"
+  },
 ];
 
 const WhyUs = () => {
@@ -168,7 +175,7 @@ const WhyUs = () => {
               Sponsor Kami untuk Acara ini
             </motion.h1>
             <div className="flex flex-wrap justify-center items-center gap-4 w-full">
-              {/* Sponsor 1 */}
+              {/* MVR */}
               <motion.div
                 variants={slideInComp}
                 initial="hidden"
@@ -186,14 +193,14 @@ const WhyUs = () => {
                 />
               </motion.div>
 
-              {/* Sponsor 3 */}
+              {/* Mixue */}
               <motion.div
                 variants={slideInComp}
                 initial="hidden"
                 whileInView="visible"
                 custom={1}
                 viewport={{ once: true }}
-                className={`w-auto order-2 md:order-4 flex justify-center`}
+                className={`w-auto order-2 md:order-3 flex justify-center`}
               >
                 <Image
                   src={Sponsors[3].src}
@@ -204,14 +211,14 @@ const WhyUs = () => {
                 />
               </motion.div>
 
-              {/* Sponsor 2 */}
+              {/* ASN */}
               <motion.div
                 variants={slideInComp}
                 initial="hidden"
                 whileInView="visible"
                 custom={2}
                 viewport={{ once: true }}
-                className={`order-3 md:order-2 flex justify-center`}
+                className={`order-3 md:order-4 flex justify-center`}
               >
                 <Image
                   src={Sponsors[1].src}
@@ -222,7 +229,25 @@ const WhyUs = () => {
                 />
               </motion.div>
 
-              {/* Sponsor 4 */}
+              {/* iSystemAsia */}
+              <motion.div
+                variants={slideInComp}
+                initial="hidden"
+                whileInView="visible"
+                custom={3}
+                viewport={{ once: true }}
+                className={`w-auto order-4 md:order-2 flex justify-center`}
+              >
+                <Image
+                  src={Sponsors[2].src}
+                  alt={Sponsors[2].alt}
+                  width={Sponsors[2].width}
+                  height={Sponsors[2].height}
+                  className={`${Sponsors[2].displaySize}`}
+                />
+              </motion.div>
+
+              {/* iSystemAsia */}
               <motion.div
                 variants={slideInComp}
                 initial="hidden"
@@ -232,11 +257,11 @@ const WhyUs = () => {
                 className={`w-auto order-4 md:order-3 flex justify-center`}
               >
                 <Image
-                  src={Sponsors[2].src}
-                  alt={Sponsors[2].alt}
-                  width={Sponsors[2].width}
-                  height={Sponsors[2].height}
-                  className={`${Sponsors[2].displaySize}`}
+                  src={Sponsors[4].src}
+                  alt={Sponsors[4].alt}
+                  width={Sponsors[4].width}
+                  height={Sponsors[4].height}
+                  className={`${Sponsors[4].displaySize}`}
                 />
               </motion.div>
             </div>
