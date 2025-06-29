@@ -41,23 +41,46 @@ export class MaterialService {
       throw error;
     }
   }
+
   /**
-   * Format material data for response
-   * @param {Object} material - Raw material data from database
-   * @returns {Object} Formatted material data with proper date format
-   */
-  static formatMaterialResponse(material) {
-    if (!material) return null;
-    
-    return {
-      ...material,
-      unlockDate: formatDateObject(material.unlockDate)
-    };
-  }  /**
+ * Format material data for response
+ * @param {Object} material - Raw material data from database
+ * @param {boolean} isAdmin - Whether the user is admin
+ * @returns {Object} Formatted material data with proper date format
+ */
+static formatMaterialResponse(material, isAdmin = false) {
+  if (!material) return null;
+  
+  // Check if material is unlocked based on current time
+  const now = new Date();
+  const unlockDate = new Date(material.unlockDate);
+  const isUnlocked = now >= unlockDate;
+  
+  const formatted = {
+    ...material,
+    unlockDate: formatDateObject(material.unlockDate),
+    unlocked: isUnlocked, // Add unlocked status based on date
+    // Add admin-specific info if user is admin
+    ...(isAdmin && {
+      adminInfo: {
+        unlocked: isUnlocked,
+        unlockStatus: isUnlocked ? 'UNLOCKED' : 'LOCKED',
+        timeUntilUnlock: isUnlocked ? null : unlockDate.getTime() - now.getTime(),
+        daysUntilUnlock: isUnlocked ? null : Math.ceil((unlockDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+      }
+    })
+  };
+  
+  return formatted;
+}
+  
+  /**
    * Get all materials for a course
    * @param {string} courseId - Course ID
+   * @param {boolean} isAdmin - Whether the user is admin
    * @returns {Promise<Array>} Materials for the course
-   */    static async getMaterialsByCourse(courseId) {
+   */    
+  static async getMaterialsByCourse(courseId, isAdmin = false) {
     try {
       const ttl = config.CACHE?.TTL?.COURSE_MATERIALS || 900;
       const cacheKey = `course:${courseId}:materials`;
@@ -71,8 +94,8 @@ export class MaterialService {
         return materials;
       }, ttl);
       
-      // Format dates for response
-      const formattedMaterials = materials.map(material => this.formatMaterialResponse(material));
+      // Format dates for response with admin info
+      const formattedMaterials = materials.map(material => this.formatMaterialResponse(material, isAdmin));
       
       return formattedMaterials;
     } catch (error) {
@@ -82,8 +105,10 @@ export class MaterialService {
   }/**
    * Get material by ID
    * @param {string} id - Material ID
+   * @param {boolean} isAdmin - Whether the user is admin
    * @returns {Promise<Object>} Material
-   */  static async getMaterialById(id) {
+   */  
+  static async getMaterialById(id, isAdmin = false) {
     try {
     const cacheKey = `material:${id}`;
     const material = await CacheService.getOrSet(cacheKey, async () => {
@@ -92,15 +117,17 @@ export class MaterialService {
       });
     }, config.CACHE.TTL.MATERIAL);
       
-      return this.formatMaterialResponse(material);
+      return this.formatMaterialResponse(material, isAdmin);
     } catch (error) {
       console.error(`Error getting material ${id}:`, error);
       throw error;
     }
   }  /**
    * Get all materials
+   * @param {boolean} isAdmin - Whether the user is admin
    * @returns {Promise<Array>} All materials
-   */  static async getAllMaterials() {
+   */  
+  static async getAllMaterials(isAdmin = false) {
     try {
       // Try to get from cache first
       const cacheKey = 'all:materials';
@@ -115,8 +142,8 @@ export class MaterialService {
         return materials;
       }, config.CACHE.TTL.ALL_MATERIALS);
       
-      // Format dates for response
-      return materials.map(material => this.formatMaterialResponse(material));
+      // Format dates for response with admin info
+      return materials.map(material => this.formatMaterialResponse(material, isAdmin));
     } catch (error) {
       console.error('Error getting all materials:', error);
       throw error;
