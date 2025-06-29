@@ -194,6 +194,8 @@ const ClassCapacity = async ({
   const now = new Date();
   const targetDate = new Date("2025-06-29T23:59:00");
 
+  const displayCount = currentCount > 30 ? capacity : currentCount;
+
   return (
     <div className=" flex flex-col gap-[5px] ">
       <p className="self-start mb-[5px] text-neutral-50 text-sm">
@@ -261,8 +263,9 @@ const ClassCapacity = async ({
         </div>
 
         <p className="sm:text-lg text-xs">{ClassDesc}</p>
+
         <CapacityProgressBar
-          currentCount={currentCount}
+          currentCount={displayCount}
           capacity={capacity}
           percentage={percentage}
         />
