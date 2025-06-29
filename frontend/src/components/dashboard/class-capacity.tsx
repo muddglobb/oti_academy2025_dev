@@ -187,15 +187,13 @@ const ClassCapacity = async ({
   const percentage =
     capacity > 0 ? Math.round((currentCount / capacity) * 100) : 0;
 
-  // console.log(enrolledCourseID2);
-
-  // console.log(enrolledCourse2);
-
   const now = new Date();
   const targetDate = new Date("2025-06-29T23:59:00");
 
   const displayCount = currentCount > 30 ? capacity : currentCount;
   const displayCountBundle = currentCount > 15 ? capacity : currentCount;
+
+  console.log(now < targetDate);
 
   return (
     <div className=" flex flex-col gap-[5px] ">
@@ -280,7 +278,7 @@ const ClassCapacity = async ({
           />
         )}
 
-        {ClassLevel === "ENTRY"
+        {ClassLevel === "ENTRY" || ClassLevel === "BUNDLE"
           ? isEnrolled === false &&
             now < targetDate &&
             enrolledClassType !== "BUNDLE" &&
@@ -298,7 +296,7 @@ const ClassCapacity = async ({
           : isEnrolled === false &&
             (paymentDataLength === 0 || ClassLevel !== "BUNDLE") &&
             enrolledClassType !== "BUNDLE" &&
-            currentCount !== capacity &&
+            currentCount <= capacity &&
             paymentDataLength < 2 &&
             enrollmentCount < 2 &&
             enrolledClassType !== ClassLevel && (

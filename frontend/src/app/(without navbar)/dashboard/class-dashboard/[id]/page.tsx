@@ -505,7 +505,7 @@ export default async function Page({
         )}
       </div>
       <div className="md:hidden sticky z-10 w-full bottom-0 ">
-        {classData.ClassLevel === "ENTRY"
+        {classData.ClassLevel === "ENTRY" || classData.ClassLevel === "BUNDLE"
           ? isEnrolled === false &&
             now < targetDate &&
             enrolledClassType !== "BUNDLE" &&

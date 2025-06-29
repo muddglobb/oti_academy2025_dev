@@ -201,305 +201,402 @@ const SessionInfo = async ({
     Array<{
       courseTime: string;
       courseDuration: string;
+      linkZoom: string;
     }>
   > = {
     "Web Development": [
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "TBA",
         courseDuration: "TBA",
+        linkZoom: "https://www.zoom.com/",
       },
     ],
     "Software Engineering": [
       {
         courseTime: "14.00 - 15.00",
         courseDuration: "1 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 15.30",
         courseDuration: "1.5 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 15.00",
         courseDuration: "1 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
     ],
     "Basic Python": [
-      { courseTime: "09.00 - 11.00", courseDuration: "2 Jam" },
-      { courseTime: "09.00 - 11.00", courseDuration: "2 Jam" },
-      { courseTime: "09.00 - 11.00", courseDuration: "2 Jam" },
-      { courseTime: "09.00 - 11.00", courseDuration: "2 Jam" },
-      { courseTime: "09.00 - 11.00", courseDuration: "2 Jam" },
-      { courseTime: "09.00 - 11.00", courseDuration: "2 Jam" },
-      { courseTime: "TBA", courseDuration: "TBA" },
+      {
+        courseTime: "09.00 - 11.00",
+        courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
+      },
+      {
+        courseTime: "09.00 - 11.00",
+        courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
+      },
+      {
+        courseTime: "09.00 - 11.00",
+        courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
+      },
+      {
+        courseTime: "09.00 - 11.00",
+        courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
+      },
+      {
+        courseTime: "09.00 - 11.00",
+        courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
+      },
+      {
+        courseTime: "09.00 - 11.00",
+        courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
+      },
+      {
+        courseTime: "TBA",
+        courseDuration: "TBA",
+        linkZoom: "https://www.zoom.com/",
+      },
     ],
     "Fundamental Cyber Security": [
       {
         courseTime: "19.00 - 21.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "19.00 - 21.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "19.00 - 21.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "19.00 - 21.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "19.00 - 21.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "19.00 - 21.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "13.00 - 15.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
     ],
     "Game Development": [
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "15.00 - 17.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
     ],
     "Graphic Design": [
       {
         courseTime: "16.00 - 17.30",
         courseDuration: "1.5 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "19.00 - 20.30",
         courseDuration: "1.5 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "19.00 - 20.30",
         courseDuration: "1.5 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "19.00 - 20.30",
         courseDuration: "1.5 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "19.00 - 20.30",
         courseDuration: "1.5 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "19.00 - 20.30",
         courseDuration: "1.5 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "TBA",
         courseDuration: "TBA",
+        linkZoom: "https://www.zoom.com/",
       },
     ],
     "Competitive Programming": [
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "09.00 - 11.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
     ],
     "Data Science & Artificial Intelligence": [
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 15.00",
         courseDuration: "1 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
     ],
     "UI/UX": [
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
     ],
     "Cyber Security": [
       {
         courseTime: "13.00 - 15.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "13.00 - 15.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "13.00 - 15.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "13.00 - 15.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
       {
         courseTime: "13.00 - 15.00",
         courseDuration: "2 Jam",
+        linkZoom: "https://www.zoom.com/",
       },
     ],
   };
@@ -731,7 +828,7 @@ const SessionInfo = async ({
                             }`}
                           >
                             {status === "On Going" ? (
-                              <Link href={`https://www.zoom.com/`}>
+                              <Link href={extra.linkZoom}>
                                 <p>Link Zoom</p>
                               </Link>
                             ) : (
