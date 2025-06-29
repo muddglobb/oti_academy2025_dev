@@ -310,7 +310,9 @@ export default async function Page({
   // console.log("Availability: ", availability.available);
   // console.log("Availability: ", availability.available.entryIntermediateAvailable);
   // console.log(checkBundle, checkEntry, checkIntermediate);
+  const noBundle = matchedCourseId && matchedPackageId ? "NO" : "YES";
 
+  // console.log("fkoe", noBundle);
   // console.log(matchedPackageId);
   if (!matchedCourseId) {
     const packages = await getPackageById(matchedPackageId || "");
@@ -323,17 +325,20 @@ export default async function Page({
   );
   // console.log("Availability: ", availability.available.bundleAvailable);
   // console.log("Availability: ", availability.available.entryIntermediateAvailable);
-  const availabilityzz = matchedPackageId
-    ? availability.available.bundleAvailable
-    : availability.available.entryIntermediateAvailable;
+  const availabilityzz = noBundle
+    ? availability.available.entryIntermediateAvailable
+    : availability.available.bundleAvailable;
   // console.log("availabilityzz: ", availabilityzz);
+
+  // console.log("fjoef", matchedCourseId,)
+  // console.log("akwoaw", matchedPackageId)
 
   if (availabilityzz <= 0) {
     return (
       <div className="text-white py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4 items-center font-bold text-3xl">
         Pendaftaran Untuk Kelas Ini Sudah ditutup
       </div>
-    )
+    );
   }
   return (
     <div className="text-white py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4">
@@ -388,9 +393,9 @@ export default async function Page({
             courseId={matchedCourseId}
             packageId={matchedPackageId}
             availability={
-              matchedPackageId
-                ? availability.available.bundleAvailable
-                : availability.available.entryIntermediateAvailable
+              noBundle
+                ? availability.available.entryIntermediateAvailable
+                : availability.available.bundleAvailable
             }
           />
         </div>
