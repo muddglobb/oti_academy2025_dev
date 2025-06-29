@@ -22,8 +22,8 @@ type Course = {
   entryQuota: number;
   bundleQuota: number;
   sessions: Session[];
-  createdAt: string; 
-  updatedAt: string; 
+  createdAt: string;
+  updatedAt: string;
 };
 type CourseSummary = {
   id: string;
@@ -33,15 +33,15 @@ const GroupPayment = async () => {
   const payments = await getMyPayments();
   const users = await getUsers();
   const response = await getCourses();
-const courses = response.data;
+  const courses = response.data;
 
-const intermediateCourses: CourseSummary[] = courses
-  .filter((course: Course) => course.level === "INTERMEDIATE")
-  .map((course: Course) => ({
-    id: course.id,
-    title: course.title,
-  }));
-  
+  const intermediateCourses: CourseSummary[] = courses
+    .filter((course: Course) => course.level === "INTERMEDIATE")
+    .map((course: Course) => ({
+      id: course.id,
+      title: course.title,
+    }));
+
   let checkBundle = "NO";
   let checkEntry = "NO";
   let checkIntermediate = "NO";
@@ -70,13 +70,10 @@ const intermediateCourses: CourseSummary[] = courses
         <TolakPopUp type="Intermediate" isGroup={true} />
       )}
 
-      <div className="flex flex-col xl:flex-row gap-6">
-        <div className="flex flex-col gap-6 xl:w-240">
-          <Konfirmasi />
-          <ChooseClassGroup myEmail={users.data.email} CourseOptions={intermediateCourses}/>
-        </div>
-        <div className="w-full xl:w-2/5 flex flex-col gap-6"></div>
-      </div>
+      <ChooseClassGroup
+        myEmail={users.data.email}
+        CourseOptions={intermediateCourses}
+      />
     </div>
   );
 };
