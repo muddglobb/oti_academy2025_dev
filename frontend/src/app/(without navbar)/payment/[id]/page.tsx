@@ -310,18 +310,31 @@ export default async function Page({
   // console.log("Availability: ", availability.available);
   // console.log("Availability: ", availability.available.entryIntermediateAvailable);
   // console.log(checkBundle, checkEntry, checkIntermediate);
-  
+
   // console.log(matchedPackageId);
-  if(!matchedCourseId) {
+  if (!matchedCourseId) {
     const packages = await getPackageById(matchedPackageId || "");
     // console.log("packages: ", packages.courses[0].courseId);
     matchedCourseId = packages.courses[0].courseId;
   }
   // console.log("matchedCourseId: ", matchedCourseId);
-  const availability = await getCourseAvailabity(matchedCourseId ? matchedCourseId : "");
-  console.log("Availability: ", availability.available.bundleAvailable);
-  console.log("Availability: ", availability.available.entryIntermediateAvailable);
+  const availability = await getCourseAvailabity(
+    matchedCourseId ? matchedCourseId : ""
+  );
+  // console.log("Availability: ", availability.available.bundleAvailable);
+  // console.log("Availability: ", availability.available.entryIntermediateAvailable);
+  const availabilityzz = matchedPackageId
+    ? availability.available.bundleAvailable
+    : availability.available.entryIntermediateAvailable;
+  // console.log("availabilityzz: ", availabilityzz);
 
+  if (availabilityzz <= 30) {
+    return (
+      <div className="text-white py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4 items-center font-bold text-3xl">
+        Pendaftaran Untuk Kelas Ini Sudah ditutup
+      </div>
+    )
+  }
   return (
     <div className="text-white py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4">
       <Link
@@ -333,14 +346,29 @@ export default async function Page({
       </Link>
 
       {/* <PaymentPopUp /> */}
-      {checkBundle == "YES" && <TolakPopUp type="Bundle"/>}
-      {checkBundle == "NO" && classData?.ClassLevel == "BUNDLE" && checkIntermediate == "YES" && <TolakPopUp type="Intermediate"/>}
-      {checkBundle == "NO" && classData?.ClassLevel == "BUNDLE" && checkEntry == "YES" && <TolakPopUp type="Entry"/>}
-      {checkBundle == "NO" && classData?.ClassLevel == "BUNDLE" && checkEntry == "NO" && checkIntermediate == "NO" && <PaymentPopUp/>}
-      {checkBundle == "NO" && classData?.ClassLevel == "INTERMEDIATE" && checkIntermediate == "YES" && <TolakPopUp type="Intermediate"/>}
-      {checkBundle == "NO" && classData?.ClassLevel == "INTERMEDIATE" && checkIntermediate == "NO" && <PaymentPopUp/>}
-      {checkBundle == "NO" && classData?.ClassLevel == "ENTRY" && checkEntry == "YES" && <TolakPopUp type="Entry"/>}
-      {checkBundle == "NO" && classData?.ClassLevel == "ENTRY" && checkEntry == "NO" && <PaymentPopUp/>}
+      {checkBundle == "YES" && <TolakPopUp type="Bundle" />}
+      {checkBundle == "NO" &&
+        classData?.ClassLevel == "BUNDLE" &&
+        checkIntermediate == "YES" && <TolakPopUp type="Intermediate" />}
+      {checkBundle == "NO" &&
+        classData?.ClassLevel == "BUNDLE" &&
+        checkEntry == "YES" && <TolakPopUp type="Entry" />}
+      {checkBundle == "NO" &&
+        classData?.ClassLevel == "BUNDLE" &&
+        checkEntry == "NO" &&
+        checkIntermediate == "NO" && <PaymentPopUp />}
+      {checkBundle == "NO" &&
+        classData?.ClassLevel == "INTERMEDIATE" &&
+        checkIntermediate == "YES" && <TolakPopUp type="Intermediate" />}
+      {checkBundle == "NO" &&
+        classData?.ClassLevel == "INTERMEDIATE" &&
+        checkIntermediate == "NO" && <PaymentPopUp />}
+      {checkBundle == "NO" &&
+        classData?.ClassLevel == "ENTRY" &&
+        checkEntry == "YES" && <TolakPopUp type="Entry" />}
+      {checkBundle == "NO" &&
+        classData?.ClassLevel == "ENTRY" &&
+        checkEntry == "NO" && <PaymentPopUp />}
 
       <div className="flex flex-col xl:flex-row gap-6">
         <div className="flex flex-col gap-6 xl:w-240">
@@ -359,7 +387,11 @@ export default async function Page({
           <BuktiPembayaran
             courseId={matchedCourseId}
             packageId={matchedPackageId}
-            availability={matchedPackageId ? availability.available.bundleAvailable : availability.available.entryIntermediateAvailable}
+            availability={
+              matchedPackageId
+                ? availability.available.bundleAvailable
+                : availability.available.entryIntermediateAvailable
+            }
           />
         </div>
       </div>
