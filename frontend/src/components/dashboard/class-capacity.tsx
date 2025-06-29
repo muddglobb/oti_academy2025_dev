@@ -188,7 +188,7 @@ const ClassCapacity = async ({
     capacity > 0 ? Math.round((currentCount / capacity) * 100) : 0;
 
   const now = new Date();
-  const targetDate = new Date("2025-06-29T23:59:00");
+  const targetDate = new Date("2025-06-29T00:00:00");
 
   const displayCount = currentCount > 30 ? capacity : currentCount;
   const displayCountBundle = currentCount > 15 ? capacity : currentCount;
@@ -278,35 +278,21 @@ const ClassCapacity = async ({
           />
         )}
 
-        {ClassLevel === "ENTRY" || ClassLevel === "BUNDLE"
-          ? isEnrolled === false &&
-            now < targetDate &&
-            enrolledClassType !== "BUNDLE" &&
-            currentCount !== capacity &&
-            paymentDataLength < 2 &&
-            enrollmentCount < 2 &&
-            enrolledClassType !== ClassLevel && (
-              <Link
-                href={`/payment/${ClassSlug}`}
-                className="bg-primary-500 rounded-[8px] text-xs py-2 px-14.5 w-fit"
-              >
-                <p>Enroll Now</p>
-              </Link>
-            )
-          : isEnrolled === false &&
-            (paymentDataLength === 0 || ClassLevel !== "BUNDLE") &&
-            enrolledClassType !== "BUNDLE" &&
-            currentCount <= capacity &&
-            paymentDataLength < 2 &&
-            enrollmentCount < 2 &&
-            enrolledClassType !== ClassLevel && (
-              <Link
-                href={`/payment/${ClassSlug}`}
-                className="bg-primary-500 rounded-[8px] text-xs py-2 px-14.5 w-fit"
-              >
-                <p>Enroll Now</p>
-              </Link>
-            )}
+        {ClassLevel !== "INTERMEDIATE" && <p></p>}
+        {ClassLevel === "INTERMEDIATE" &&
+          isEnrolled === false &&
+          enrolledClassType !== "BUNDLE" &&
+          currentCount <= capacity &&
+          paymentDataLength < 2 &&
+          enrollmentCount < 2 &&
+          enrolledClassType !== ClassLevel && (
+            <Link
+              href={`/payment/${ClassSlug}`}
+              className="bg-primary-500 rounded-[8px] text-xs py-2 px-14.5 w-fit"
+            >
+              <p>Enroll Now</p>
+            </Link>
+          )}
       </div>
     </div>
   );

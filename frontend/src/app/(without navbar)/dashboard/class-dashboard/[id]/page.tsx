@@ -296,7 +296,7 @@ export default async function Page({
       : 0;
 
   const now = new Date();
-  const targetDate = new Date("2025-06-29T23:59:00");
+  const targetDate = new Date("2025-06-29T00:00:00");
   return (
     <>
       <div className="flex flex-col gap-4 py-10 px-2 lg:px-14 bg-neutral-900">
@@ -505,33 +505,20 @@ export default async function Page({
         )}
       </div>
       <div className="md:hidden sticky z-10 w-full bottom-0 ">
-        {classData.ClassLevel === "ENTRY" || classData.ClassLevel === "BUNDLE"
-          ? isEnrolled === false &&
-            now < targetDate &&
-            enrolledClassType !== "BUNDLE" &&
-            currentCount !== capacity &&
-            paymentDataLength < 2 &&
-            enrollmentCount < 2 &&
-            enrolledClassType !== classData.ClassLevel && (
-              <MobileBottomBar
-                CourseID={courseID}
-                ClassLevel={classData.ClassLevel}
-                ClassSlug={classData.slug}
-              />
-            )
-          : isEnrolled === false &&
-            (paymentDataLength === 0 || classData.ClassLevel !== "BUNDLE") &&
-            enrolledClassType !== "BUNDLE" &&
-            currentCount !== capacity &&
-            paymentDataLength < 2 &&
-            enrollmentCount < 2 &&
-            enrolledClassType !== classData.ClassLevel && (
-              <MobileBottomBar
-                CourseID={courseID}
-                ClassLevel={classData.ClassLevel}
-                ClassSlug={classData.slug}
-              />
-            )}
+        {classData.ClassLevel !== "INTERMEDIATE" && <p></p>}
+        {classData.ClassLevel === "INTERMEDIATE" &&
+          isEnrolled === false &&
+          enrolledClassType !== "BUNDLE" &&
+          currentCount <= capacity &&
+          paymentDataLength < 2 &&
+          enrollmentCount < 2 &&
+          enrolledClassType !== classData.ClassLevel && (
+            <MobileBottomBar
+              CourseID={courseID}
+              ClassLevel={classData.ClassLevel}
+              ClassSlug={classData.slug}
+            />
+          )}
       </div>
     </>
   );
