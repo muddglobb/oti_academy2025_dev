@@ -7,7 +7,7 @@ const AjakTeman = () => {
     <div className="bg-primary-800 rounded-[20px] p-5 mb-6 border-2 border-neutral-500 flex flex-col gap-3">
       <p className="text-[22px] font-bold">
         Ajak Teman, Dapat Potongan{" "}
-        <span className="text-error-300">Rp10.000</span>!
+        <span className="text-error-300">10%</span>!
       </p>
       <p className="text-justify">
         Sekarang beli kelas intermediate bisa <strong>lebih hemat</strong>! Ajak
