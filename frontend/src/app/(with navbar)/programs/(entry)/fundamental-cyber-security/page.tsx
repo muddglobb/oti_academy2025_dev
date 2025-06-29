@@ -19,7 +19,7 @@ const classInfo: [
   string
 ] = [
   "30 Juni – 15 Juli 2025",
-  "8 Sesi",
+  "6 Sesi",
   "2 Jam/Sesi",
   "6 Modul",
   "Ahsan Zaki",
