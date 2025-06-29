@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 export async function POST(req: NextRequest) {
-  const cookieStore = cookies() as unknown as ReadonlyRequestCookies;
+  const cookieStore = await cookies() as unknown as ReadonlyRequestCookies;
   const accessToken = cookieStore.get("access_token")?.value;
 
   if (!accessToken) {

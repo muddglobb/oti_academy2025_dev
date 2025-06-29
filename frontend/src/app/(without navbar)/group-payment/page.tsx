@@ -8,6 +8,7 @@ import ChooseClassGroup from "@/components/group-payment/choose-class";
 import { getUsers } from "@/lib/auth/fetch-users";
 import { getCourses } from "@/lib/courses/fetch-courses";
 import { getAllPackage } from "@/lib/package/fetch-package";
+import { getCourseAvailabity } from "@/lib/enrollment/fetch-enrollment";
 
 type Session = {
   id: string;
@@ -39,12 +40,26 @@ const GroupPayment = async () => {
   const packages = packageResponse.data;
   // console.log("packages", packages[0].id);
 
-  const intermediateCourses: CourseSummary[] = courses
-    .filter((course: Course) => course.level === "INTERMEDIATE")
-    .map((course: Course) => ({
-      id: course.id,
-      title: course.title,
-    }));
+  const intermediateCourses: CourseSummary[] = (
+    await Promise.all(
+      courses
+        .filter((course: Course) => course.level === "INTERMEDIATE")
+        .map(async (course: Course) => {
+          const data = await getCourseAvailabity(course.id);
+          const availableCount =
+            data?.available?.entryIntermediateAvailable ?? 0;
+
+          if (availableCount > 0) {
+            return {
+              id: course.id,
+              title: course.title,
+            };
+          }
+
+          return null;
+        })
+    )
+  ).filter((course): course is CourseSummary => course !== null);
 
   let checkBundle = "NO";
   let checkEntry = "NO";
@@ -79,8 +94,6 @@ const GroupPayment = async () => {
         CourseOptions={intermediateCourses}
         IntermediatePackageId={packages[0].id}
       />
-
-      
     </div>
   );
 };

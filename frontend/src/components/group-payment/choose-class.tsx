@@ -102,20 +102,23 @@ const ChooseClassGroup = ({
       } else {
         const data = result.data;
 
-        if (data.invalidEmails && data.invalidEmails.length > 0) {
-          setMessages((prev) => ({
-            ...prev,
-            [index]: "User tidak ditemukan, pastikan user sudah membuat akun",
-          }));
-          setMessageTypes((prev) => ({ ...prev, [index]: "error" }));
-        } else if (
-          data.usersWithIntermediateEnrollment &&
-          data.usersWithIntermediateEnrollment.length > 0
-        ) {
+        if (data.summary.alreadyEnrolledIntermediate) {
           setMessages((prev) => ({
             ...prev,
             [index]:
               "Peserta yang Anda undang sudah mendaftar kelas intermediate",
+          }));
+          setMessageTypes((prev) => ({ ...prev, [index]: "error" }));
+        } else if (data.summary.alreadyEnrolledBundle) {
+          setMessages((prev) => ({
+            ...prev,
+            [index]: "Peserta yang Anda undang sudah mendaftar kelas Bundle",
+          }));
+          setMessageTypes((prev) => ({ ...prev, [index]: "error" }));
+        } else if (data.summary.invalid) {
+          setMessages((prev) => ({
+            ...prev,
+            [index]: "User tidak ditemukan, pastikan user telah membuat akun",
           }));
           setMessageTypes((prev) => ({ ...prev, [index]: "error" }));
         } else {

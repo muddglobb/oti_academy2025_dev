@@ -8,7 +8,7 @@ import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adap
 export async function POST(req: NextRequest) {
   try {
     // Ambil access token dari cookies
-    const cookieStore = cookies() as unknown as ReadonlyRequestCookies;
+    const cookieStore = await cookies() as unknown as ReadonlyRequestCookies;
     const accessToken = cookieStore.get("access_token")?.value;
 
     if (!accessToken) {
