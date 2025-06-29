@@ -367,12 +367,12 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Validasi quota course berdasarkan tipe package
-   * @param {string} courseId - ID course yang akan divalidasi
-   * @param {string} packageType - Tipe package (ENTRY, INTERMEDIATE, BUNDLE)
-   * @returns {Promise<Object>} Hasil validasi dengan status dan pesan
-   */  
+/**
+ * Validasi quota course berdasarkan tipe package
+ * @param {string} courseId - ID course yang akan divalidasi
+ * @param {string} packageType - Tipe package (ENTRY, INTERMEDIATE, BUNDLE)
+ * @returns {Promise<Object>} Hasil validasi dengan status dan pesan
+ */  
 static async validateCourseAvailability(courseId, packageType) {
   try {
     // Import CourseService at the top level to avoid circular dependencies
@@ -396,32 +396,39 @@ static async validateCourseAvailability(courseId, packageType) {
       };
     }
     
-    // Get both approved and pending enrollment counts for this course
+    // HANYA HITUNG APPROVED ENROLLMENTS, BUKAN PENDING PAYMENTS
+    // Ini memungkinkan multiple users submit payment bahkan jika quota hampir penuh
     const approvedCounts = await this.getCourseEnrollmentCount(courseId);
     
-    // Also check pending payments (status 'PAID')
+    // Optional: Get pending counts untuk logging/monitoring (tidak digunakan untuk validasi)
     const pendingCounts = await this.getCoursePendingEnrollmentCount(courseId);
     
-    // Total counts including pending payments
-    const totalCounts = {
-      total: approvedCounts.total + pendingCounts.total,
+    // Log warning jika ada banyak pending payments yang bisa menyebabkan overbooking
+    const totalWithPending = {
       bundleCount: approvedCounts.bundleCount + pendingCounts.bundleCount,
       entryIntermediateCount: approvedCounts.entryIntermediateCount + pendingCounts.entryIntermediateCount
     };
     
-    // Check against the relevant quota based on package type
+    // Warning untuk admin jika mendekati potensi overbooking
+    if (packageType === 'BUNDLE' && totalWithPending.bundleCount > bundleQuota * 1.2) {
+      console.warn(`Warning: Course ${courseId} has ${totalWithPending.bundleCount} total bundle payments (approved + pending) against quota ${bundleQuota}`);
+    } else if (packageType !== 'BUNDLE' && totalWithPending.entryIntermediateCount > entryQuota * 1.2) {
+      console.warn(`Warning: Course ${courseId} has ${totalWithPending.entryIntermediateCount} total entry/intermediate payments (approved + pending) against quota ${entryQuota}`);
+    }
+    
+    // Check against the relevant quota based on package type - HANYA APPROVED
     if (packageType === 'BUNDLE') {
-      if (totalCounts.bundleCount >= bundleQuota) {
+      if (approvedCounts.bundleCount >= bundleQuota) {
         return { 
           valid: false, 
-          message: `Kuota kelas bundle untuk "${course.title}" sudah penuh (${totalCounts.bundleCount}/${bundleQuota}). Total kuota minimal: ${entryQuota + bundleQuota}` 
+          message: `Kuota kelas bundle untuk "${course.title}" sudah penuh (${approvedCounts.bundleCount}/${bundleQuota}). Total kuota minimal: ${entryQuota + bundleQuota}` 
         };
       }
     } else { // ENTRY or INTERMEDIATE
-      if (totalCounts.entryIntermediateCount >= entryQuota) {
+      if (approvedCounts.entryIntermediateCount >= entryQuota) {
         return { 
           valid: false, 
-          message: `Kuota kelas ${packageType.toLowerCase()} untuk "${course.title}" sudah penuh (${totalCounts.entryIntermediateCount}/${entryQuota}). Total kuota minimal: ${entryQuota + bundleQuota}` 
+          message: `Kuota kelas ${packageType.toLowerCase()} untuk "${course.title}" sudah penuh (${approvedCounts.entryIntermediateCount}/${entryQuota}). Total kuota minimal: ${entryQuota + bundleQuota}` 
         };
       }
     }
