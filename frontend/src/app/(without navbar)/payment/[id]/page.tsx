@@ -328,7 +328,7 @@ export default async function Page({
     : availability.available.entryIntermediateAvailable;
   // console.log("availabilityzz: ", availabilityzz);
 
-  if (availabilityzz <= 30) {
+  if (availabilityzz <= 0) {
     return (
       <div className="text-white py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4 items-center font-bold text-3xl">
         Pendaftaran Untuk Kelas Ini Sudah ditutup
