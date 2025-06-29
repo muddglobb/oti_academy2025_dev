@@ -229,47 +229,65 @@ export const createPayment = async (req, res) => {
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  */
+/**
+ * Get all payments (admin only) with pagination
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
 export const getAllPayments = async (req, res) => {
   try {
-    // Validate and parse query filters (remove pagination parameters)
-    const filters = {
-      status: req.query.status,
-      type: req.query.type,
-      backStatus: req.query.backStatus,
-      startDate: req.query.startDate ? new Date(req.query.startDate) : undefined,
-      endDate: req.query.endDate ? new Date(req.query.endDate) : undefined
+    // Extract pagination parameters from query string
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const sortBy = req.query.sortBy || 'createdAt';
+    const sortOrder = req.query.sortOrder || 'desc';
+
+    // Extract filter parameters
+    const filters = {};
+    
+    if (req.query.status) {
+      filters.status = req.query.status;
+    }
+    
+    if (req.query.type) {
+      filters.type = req.query.type;
+    }
+    
+    if (req.query.backStatus) {
+      filters.backStatus = req.query.backStatus;
+    }
+    
+    if (req.query.isGroupPayment !== undefined) {
+      filters.isGroupPayment = req.query.isGroupPayment === 'true';
+    }
+    
+    if (req.query.startDate) {
+      filters.startDate = new Date(req.query.startDate);
+    }
+    
+    if (req.query.endDate) {
+      filters.endDate = new Date(req.query.endDate);
+    }
+
+    // Build pagination object
+    const pagination = {
+      page,
+      limit,
+      sortBy,
+      sortOrder
     };
-    
-    // Remove undefined values
-    Object.keys(filters).forEach(key => {
-      if (filters[key] === undefined) {
-        delete filters[key];
-      }
-    });
-    
-    // Get all payments without pagination
-    const result = await PaymentService.getAllPayments(filters);
-    
-    // Extract user IDs for batch fetching
-    const userIds = result.payments.map(payment => payment.userId);
-    
-    // Batch fetch user information
-    const userInfoMap = await PaymentService.getBatchUserInfo(userIds);
-    
-    // Format payments for list view with user information
-    const formattedPayments = await PaymentService.formatPaymentsForList(
-      result.payments, 
-      userInfoMap
-    );
-    
-    // Prepare response without pagination meta
-    const response = {
-      payments: formattedPayments,
-      total: result.total
-    };
+
+    // Call service with filters and pagination
+    const result = await PaymentService.getAllPayments(filters, pagination);
     
     res.status(200).json(
-      ApiResponse.success(response, 'Payments retrieved successfully')
+      ApiResponse.success(
+        {
+          payments: result.payments,
+          pagination: result.pagination
+        },
+        'Payments retrieved successfully'
+      )
     );
   } catch (error) {
     if (error.name === 'ZodError') {
@@ -279,7 +297,9 @@ export const getAllPayments = async (req, res) => {
     }
     
     console.error('Error fetching payments:', error);
-    throw error;
+    res.status(500).json(
+      ApiResponse.error('Failed to get payments')
+    );
   }
 };
 
