@@ -333,7 +333,8 @@ export default async function Page({
   // console.log("fjoef", matchedCourseId,)
   // console.log("akwoaw", matchedPackageId)
 
-  if (availabilityzz <= 0) {
+  if (availabilityzz <= 0 || classData?.ClassLevel == "BUNDLE" || classData?.ClassLevel == "ENTRY") {
+    //penutupan daftar entry dan bundle (30 juni)
     return (
       <div className="text-white py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4 items-center font-bold text-3xl">
         Pendaftaran Untuk Kelas Ini Sudah ditutup

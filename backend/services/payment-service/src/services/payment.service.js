@@ -1457,6 +1457,7 @@ static async enhancePaymentsWithPrice(payments) {
             courseName: courseInfo?.title || 'Unknown Course',
             userName: userInfo?.name || 'Unknown User',
             userEmail: userInfo?.email || 'unknown@example.com',
+            userPhone: userInfo?.phone || null, // TAMBAHAN: Phone number
             role: memberCourse.userId === payment.userId ? 'creator' : 'member'
           };
         });
@@ -1720,7 +1721,17 @@ static formatPaymentsForList(payments, userInfoMap) {
           totalMembers: payment.totalParticipants || (payment.memberCourses?.length || 0),
           creatorCourse: payment.memberCourses?.find(mc => mc.userId === payment.userId) || null,
           allMemberCourses: payment.memberCourses || [],
-          groupStatus: payment.groupStatus || 'PENDING'
+          groupStatus: payment.groupStatus || 'PENDING',
+          // TAMBAHAN: Enhanced member info with phone
+          enhancedMembers: payment.memberCourses?.map(mc => ({
+            userId: mc.userId,
+            userName: mc.userName,
+            userEmail: mc.userEmail,
+            userPhone: mc.userPhone, // TAMBAHAN: Phone number
+            role: mc.role,
+            courseId: mc.courseId,
+            courseName: mc.courseName
+          })) || []
         }
       })
     };
@@ -2364,10 +2375,14 @@ static async formatDetailedPayment(payment, requestingUserId) {
               courseId: creatorCourseId,
               courseName: allMembersCourses.find(c => c.userId === creatorId)?.courseName
             },
-            ...memberValidation.validMembers.map(m => ({ 
-              ...m, 
-              role: 'member',
-              courseName: allMembersCourses.find(c => c.userId === m.userId)?.courseName
+            ...await Promise.all(memberValidation.validMembers.map(async (m) => {
+              const userInfo = await this.getUserInfo(m.userId);
+              return { 
+                ...userInfo, // This includes phone number
+                role: 'member',
+                courseId: m.courseId,
+                courseName: allMembersCourses.find(c => c.userId === m.userId)?.courseName
+              };
             }))
           ],
           memberCourses: allMembersCourses, // Already includes courseName
@@ -2420,10 +2435,20 @@ static async formatDetailedPayment(payment, requestingUserId) {
           ...invitedUsers.map(user => ({ ...user, role: 'member' }))
         ].filter(Boolean);
 
+        // TAMBAHAN: Enhanced member info with phone for group payments list
+        const enhancedMembersInfo = allMembers.map(member => ({
+          userId: member.id,
+          userName: member.name,
+          userEmail: member.email,
+          userPhone: member.phone, // TAMBAHAN: Phone number
+          role: member.role
+        }));
+
         return {
           ...payment,
           creator,
           members: allMembers, // All members without hierarchy
+          enhancedMembersInfo, // TAMBAHAN: Enhanced info with phone
           courseName,
           inviteEmails: payment.inviteEmails || [],
           totalMembers: allMembers.length
@@ -2472,7 +2497,9 @@ static async formatDetailedPayment(payment, requestingUserId) {
               courseChoice: {
                 courseId: mc.courseId,
                 courseName: courseInfo?.title || 'Unknown Course'
-              }
+              },
+              // TAMBAHAN: Ensure phone is included
+              phone: userInfo.phone || null
             };
           } catch (error) {
             console.error(`Error getting info for user ${mc.userId}:`, error.message);

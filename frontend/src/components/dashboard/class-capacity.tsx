@@ -195,6 +195,7 @@ const ClassCapacity = async ({
   const targetDate = new Date("2025-06-29T23:59:00");
 
   const displayCount = currentCount > 30 ? capacity : currentCount;
+  const displayCountBundle = currentCount > 15 ? capacity : currentCount;
 
   return (
     <div className=" flex flex-col gap-[5px] ">
@@ -263,12 +264,21 @@ const ClassCapacity = async ({
         </div>
 
         <p className="sm:text-lg text-xs">{ClassDesc}</p>
+        {ClassLevel !== "BUNDLE" && (
+          <CapacityProgressBar
+            currentCount={displayCount}
+            capacity={capacity}
+            percentage={percentage}
+          />
+        )}
 
-        <CapacityProgressBar
-          currentCount={displayCount}
-          capacity={capacity}
-          percentage={percentage}
-        />
+        {ClassLevel === "BUNDLE" && (
+          <CapacityProgressBar
+            currentCount={displayCountBundle}
+            capacity={capacity}
+            percentage={percentage}
+          />
+        )}
 
         {ClassLevel === "ENTRY"
           ? isEnrolled === false &&
