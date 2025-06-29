@@ -71,7 +71,7 @@ export const getAllMaterials = asyncHandler(async (req, res) => {
   const isAdmin = userRole === 'ADMIN';
   
   try {
-    const materials = await MaterialService.getAllMaterials();
+    const materials = await MaterialService.getAllMaterials(isAdmin);
     // Include course info for admin view, but add unlock status
     const enhancedMaterials = await MaterialEnhancer.enhanceWithCourseInfo(materials, true, isAdmin);
 
@@ -97,7 +97,7 @@ export const getMaterialsByCourse = asyncHandler(async (req, res) => {
   const isAdmin = userRole === 'ADMIN';
   
   try {
-    const materials = await MaterialService.getMaterialsByCourse(courseId);
+    const materials = await MaterialService.getMaterialsByCourse(courseId, isAdmin);
     
     if (materials.length === 0) {
       return res.status(404).json(
@@ -108,7 +108,7 @@ export const getMaterialsByCourse = asyncHandler(async (req, res) => {
     // Use MaterialEnhancer to properly handle unlock dates and resource URLs
     const enhancedMaterials = await MaterialEnhancer.enhanceWithCourseInfo(materials, false, isAdmin);
     
-    // Transform materials based on user role and unlock dates (similar to public endpoint)
+    // Transform materials based on user role and unlock dates
     const transformedMaterials = enhancedMaterials.map(material => {
       const baseMaterial = {
         id: material.id,
@@ -127,6 +127,11 @@ export const getMaterialsByCourse = asyncHandler(async (req, res) => {
       if (isAdmin) {
         baseMaterial.resourceUrl = material.resourceUrl || MaterialEnhancer.getHiddenResourceUrl(material);
         baseMaterial.enrollmentStatus = 'admin_access';
+        // TAMBAH: Admin info dan unlock status
+        if (material.adminInfo) {
+          baseMaterial.adminInfo = material.adminInfo;
+        }
+        baseMaterial.unlocked = material.unlocked;
       } else {
         // For enrolled users, show resourceUrl only if material is unlocked
         if (isUnlocked) {
@@ -136,6 +141,7 @@ export const getMaterialsByCourse = asyncHandler(async (req, res) => {
           baseMaterial.message = `This material will be available from ${material.availableFrom || 'soon'}`;
         }
         baseMaterial.enrollmentStatus = 'enrolled';
+        baseMaterial.unlocked = material.unlocked;
       }
 
       return baseMaterial;
@@ -162,7 +168,7 @@ export const getMaterial = asyncHandler(async (req, res) => {
   const userRole = req.user.role;
 
   try {
-    const material = await MaterialService.getMaterialById(id);
+    const material = await MaterialService.getMaterialById(id, userRole === 'ADMIN');
 
     if (!material) {
       return res.status(404).json(
@@ -232,7 +238,7 @@ export const updateMaterial = asyncHandler(async (req, res) => {
 
   try {
     // Check if material exists
-    const existingMaterial = await MaterialService.getMaterialById(id);
+    const existingMaterial = await MaterialService.getMaterialById(id, false);
     if (!existingMaterial) {
       return res.status(404).json(
         ApiResponse.error('Material not found')
@@ -284,7 +290,7 @@ export const deleteMaterial = asyncHandler(async (req, res) => {
 
   try {
     // Check if material exists
-    const material = await MaterialService.getMaterialById(id);
+    const material = await MaterialService.getMaterialById(id, false);
     if (!material) {
       return res.status(404).json(
         ApiResponse.error('Material not found')
@@ -316,16 +322,8 @@ export const getMaterialsByCoursePublic = asyncHandler(async (req, res) => {
   const { courseId } = req.params;
   
   try {
-    // Get all materials for the course
-    const materials = await MaterialService.getMaterialsByCourse(courseId);
-    
-    if (materials.length === 0) {
-      return res.status(404).json(
-        ApiResponse.error('No materials found for this course')
-      );
-    }    // Check if user is authenticated and enrolled (optional check)
-    let isUserEnrolled = false;
     let isAdmin = false;
+    let isUserEnrolled = false;
     let userId = null;
     
     // Extract token if provided (optional authentication)
@@ -348,7 +346,18 @@ export const getMaterialsByCoursePublic = asyncHandler(async (req, res) => {
         // Token invalid or enrollment check failed, continue as non-enrolled user
         console.log('Optional authentication failed, continuing as guest:', tokenError.message);
       }
-    }    // Use MaterialEnhancer to properly handle unlock dates and resource URLs
+    }
+
+    // Get all materials for the course
+    const materials = await MaterialService.getMaterialsByCourse(courseId, isAdmin);
+    
+    if (materials.length === 0) {
+      return res.status(404).json(
+        ApiResponse.error('No materials found for this course')
+      );
+    }
+
+    // Use MaterialEnhancer to properly handle unlock dates and resource URLs
     const enhancedMaterials = await MaterialEnhancer.enhanceWithCourseInfo(materials, false, isAdmin);
     
     // Transform materials based on enrollment status and unlock dates
@@ -370,6 +379,11 @@ export const getMaterialsByCoursePublic = asyncHandler(async (req, res) => {
       if (isAdmin) {
         baseMaterial.resourceUrl = material.resourceUrl || MaterialEnhancer.getHiddenResourceUrl(material);
         baseMaterial.enrollmentStatus = 'admin_access';
+        // TAMBAH: Admin info untuk debugging
+        if (material.adminInfo) {
+          baseMaterial.adminInfo = material.adminInfo;
+        }
+        baseMaterial.unlocked = material.unlocked;
       } else if (isUserEnrolled) {
         // For enrolled users, show resourceUrl only if material is unlocked
         if (isUnlocked) {
@@ -379,10 +393,12 @@ export const getMaterialsByCoursePublic = asyncHandler(async (req, res) => {
           baseMaterial.message = `This material will be available from ${material.availableFrom || 'soon'}`;
         }
         baseMaterial.enrollmentStatus = 'enrolled';
+        baseMaterial.unlocked = material.unlocked;
       } else {
         baseMaterial.resourceUrl = null;
         baseMaterial.enrollmentStatus = 'not_enrolled';
         baseMaterial.message = 'Resource access requires enrollment';
+        baseMaterial.unlocked = material.unlocked;
       }
 
       return baseMaterial;

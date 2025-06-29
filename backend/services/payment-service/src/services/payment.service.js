@@ -419,7 +419,7 @@ static async getPaymentsByUserId(userId) {
         const headers = {
           'Authorization': `Bearer ${serviceToken}`
         };
-        
+
         // Call to Package Service API with circuit breaker and retry
         return executeWithCircuitBreaker('package', async () => {
           const response = await retryWithBackoff(async () => {
