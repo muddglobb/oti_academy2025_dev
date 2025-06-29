@@ -296,7 +296,7 @@ export default async function Page({
       : 0;
 
   const now = new Date();
-  const targetDate = new Date("2025-06-29T00:00:00");
+  const targetDate = new Date("2025-06-29T23:59:00");
   return (
     <>
       <div className="flex flex-col gap-4 py-10 px-2 lg:px-14 bg-neutral-900">

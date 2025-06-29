@@ -59,12 +59,13 @@ export class PaymentService {
     });
   }
   
-  /**
-   * Get all payments with optional filtering
-   * @param {Object} filters - Optional filters for payments
-   * @returns {Promise<Array>} List of payments
-   */
-  static async getAllPayments(filters = {}) {
+/**
+ * Get all payments with optional filtering and pagination
+ * @param {Object} filters - Optional filters for payments
+ * @param {Object} pagination - Pagination options
+ * @returns {Promise<Object>} Paginated list of payments
+ */
+static async getAllPayments(filters = {}, pagination = {}) {
   const {
     status,
     type,
@@ -73,6 +74,16 @@ export class PaymentService {
     endDate,
     isGroupPayment
   } = filters;
+  
+  const {
+    page = 1,
+    limit = 20,
+    sortBy = 'createdAt',
+    sortOrder = 'desc'
+  } = pagination;
+  
+  // Calculate offset
+  const offset = (page - 1) * limit;
   
   // Build where conditions based on filters
   const where = {};
@@ -98,24 +109,29 @@ export class PaymentService {
     where.createdAt = {};
     
     if (startDate) {
-      where.createdAt.gte = startDate;
+      where.createdAt.gte = new Date(startDate);
     }
     
     if (endDate) {
-      where.createdAt.lte = endDate;
+      where.createdAt.lte = new Date(endDate);
     }
   }
   
+  // Get total count for pagination metadata
+  const totalCount = await prisma.payment.count({ where });
+  
+  // Get paginated payments
   const payments = await prisma.payment.findMany({
     where,
     orderBy: [
-      { createdAt: 'desc' }
-    ]
+      { [sortBy]: sortOrder }
+    ],
+    skip: offset,
+    take: limit
   });
 
-  // Custom sorting untuk memastikan APPROVED di atas, PAID di bawah
+  // Custom sorting untuk memastikan APPROVED di atas, PAID di bawah (dalam limit)
   const sortedPayments = payments.sort((a, b) => {
-    // Define status priority: APPROVED = 1, PAID = 2, others = 3
     const getStatusPriority = (status) => {
       switch (status) {
         case 'APPROVED': return 2;
@@ -127,36 +143,148 @@ export class PaymentService {
     const priorityA = getStatusPriority(a.status);
     const priorityB = getStatusPriority(b.status);
     
-    // Sort by status priority first
     if (priorityA !== priorityB) {
       return priorityA - priorityB;
     }
     
-    // If same status, sort by group payment (group payments first)
     if (a.isGroupPayment !== b.isGroupPayment) {
       return b.isGroupPayment - a.isGroupPayment;
     }
     
-    // If same status and group type, sort by creation date (newest first)
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
 
   // Enhance payments with package info and price
   const enhancedPayments = await this.enhancePaymentsWithPrice(sortedPayments);
   
-  // Get unique user IDs from payments
+  // Get unique user IDs from payments (sudah terbatas oleh pagination)
   const userIds = [...new Set(enhancedPayments.map(p => p.userId))];
   
-  // Batch fetch user info
+  // Batch fetch user info dengan limit yang lebih kecil
   const userInfoMap = await this.getBatchUserInfo(userIds);
   
   // Format payments with user information
   const formattedPayments = this.formatPaymentsForList(enhancedPayments, userInfoMap);
   
+  // Calculate pagination metadata
+  const totalPages = Math.ceil(totalCount / limit);
+  const hasNextPage = page < totalPages;
+  const hasPrevPage = page > 1;
+  
   return {
     payments: formattedPayments,
-    total: formattedPayments.length
+    pagination: {
+      total: totalCount,
+      page,
+      limit,
+      totalPages,
+      hasNextPage,
+      hasPrevPage,
+      nextPage: hasNextPage ? page + 1 : null,
+      prevPage: hasPrevPage ? page - 1 : null
+    }
   };
+}
+
+/**
+ * Get multiple users information by IDs from auth-service with batching
+ * @param {string[]} userIds - Array of user IDs
+ * @returns {Promise<Object>} Map of user information keyed by user ID
+ */
+static async getBatchUserInfo(userIds) {
+  try {
+    // Remove duplicates from userIds
+    const uniqueUserIds = [...new Set(userIds)];
+    
+    if (uniqueUserIds.length === 0) {
+      return {};
+    }
+
+    // Validate URL and set default if environment variable is missing
+    const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://auth-service-api:8001';
+    const jwtSecret = process.env.JWT_SECRET;
+    
+    // Ensure URL and JWT Secret are valid before calling API
+    if (!authServiceUrl) {
+      console.error('AUTH_SERVICE_URL is not defined');
+      return {};
+    }
+    
+    if (!jwtSecret) {
+      console.error('JWT_SECRET is not defined');
+      return {};
+    }
+
+    // PERBAIKAN: Batching untuk menghindari rate limit
+    const BATCH_SIZE = 25; // Limit batch size untuk menghindari rate limit
+    const userMap = {};
+    
+    // Process in smaller batches
+    for (let i = 0; i < uniqueUserIds.length; i += BATCH_SIZE) {
+      const batch = uniqueUserIds.slice(i, i + BATCH_SIZE);
+      
+      try {
+        // Generate a valid JWT token for service-to-service communication
+        const serviceToken = this.generateServiceToken();
+        
+        // Setup headers with JWT token
+        const headers = {
+          'Authorization': `Bearer ${serviceToken}`
+        };
+        
+        // console.log(`[INFO] Fetching batch ${Math.floor(i/BATCH_SIZE) + 1}/${Math.ceil(uniqueUserIds.length/BATCH_SIZE)} with ${batch.length} user IDs`);
+        
+        // Call to Auth Service API with smaller batch
+        const response = await axios.get(`${authServiceUrl}/users`, { 
+          headers,
+          params: { ids: batch.join(',') }
+        });
+        
+        if (response.data && response.data.data && Array.isArray(response.data.data)) {
+          // Merge batch results into userMap
+          response.data.data.forEach(user => {
+            if (user && user.id) {
+              userMap[user.id] = user;
+            }
+          });
+          
+         //  console.log(`[INFO] Successfully fetched ${response.data.data.length} users from batch`);
+        } else {
+          console.warn(`[WARN] Invalid response format from auth service for batch ${Math.floor(i/BATCH_SIZE) + 1}`);
+        }
+        
+        // Add small delay between batches to respect rate limits
+        if (i + BATCH_SIZE < uniqueUserIds.length) {
+          await new Promise(resolve => setTimeout(resolve, 100)); // 100ms delay
+          console.log(`[INFO] Waiting 100ms before next batch...`);
+        }
+        
+      } catch (batchError) {
+        console.error(`[ERROR] Error fetching user batch ${Math.floor(i/BATCH_SIZE) + 1} (${i}-${i + BATCH_SIZE}):`, batchError.message);
+        
+        // Log additional error details
+        if (batchError.response) {
+          console.error(`[ERROR] Response status: ${batchError.response.status}`);
+          console.error(`[ERROR] Response data:`, batchError.response.data);
+        }
+        
+        // Continue with next batch even if one fails
+        continue;
+      }
+    }
+    
+    // console.log(`[INFO] Batch user info fetch completed. Total users retrieved: ${Object.keys(userMap).length}/${uniqueUserIds.length}`);
+    
+    return userMap;
+  } catch (error) {
+    console.error('[ERROR] Error batch fetching user info:', error.message);
+    // Log detail error untuk debugging
+    if (error.response) {
+      console.error('[ERROR] Error response data:', error.response.data);
+      console.error('[ERROR] Error response status:', error.response.status);
+    }
+    return {};
+  }
 }
   
   /**
@@ -254,72 +382,6 @@ static async getPaymentsByUserId(userId) {
     }
   }
 
-  /**
-   * Get multiple users information by IDs from auth-service
-   * @param {string[]} userIds - Array of user IDs
-   * @returns {Promise<Object>} Map of user information keyed by user ID
-   */
-  static async getBatchUserInfo(userIds) {
-    try {
-      // Remove duplicates from userIds
-      const uniqueUserIds = [...new Set(userIds)];
-      
-      if (uniqueUserIds.length === 0) {
-        return {};
-      }
-
-      // Validate URL and set default if environment variable is missing
-      const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://auth-service-api:8001';
-      const jwtSecret = process.env.JWT_SECRET;
-      
-      // Ensure URL and JWT Secret are valid before calling API
-      if (!authServiceUrl) {
-        console.error('AUTH_SERVICE_URL is not defined');
-        return {};
-      }
-      
-      if (!jwtSecret) {
-        console.error('JWT_SECRET is not defined');
-        return {};
-      }
-      
-      // Generate a valid JWT token for service-to-service communication
-      const serviceToken = this.generateServiceToken();
-      
-      // Setup headers with JWT token
-      const headers = {
-        'Authorization': `Bearer ${serviceToken}`
-      };
-      
-      // Call to Auth Service API to get users info with comma-separated IDs
-      const response = await axios.get(`${authServiceUrl}/users`, { 
-        headers,
-        params: { ids: uniqueUserIds.join(',') }
-      });
-      
-      if (!response.data || !response.data.data || !Array.isArray(response.data.data)) {
-        return {};
-      }
-      
-      // Convert array of users to a map with userId as key
-      const userMap = {};
-      response.data.data.forEach(user => {
-        if (user && user.id) {
-          userMap[user.id] = user;
-        }
-      });
-      
-      return userMap;
-    } catch (error) {
-      console.error('Error batch fetching user info:', error.message);
-      // Log detail error untuk debugging
-      if (error.response) {
-        console.error('Error response data:', error.response.data);
-        console.error('Error response status:', error.response.status);
-      }
-      return {};
-    }
-  }
 
   /**
    * Get package information by ID
@@ -748,11 +810,14 @@ static async getCourseEnrollmentCount(courseId) {
 // Get total payments count with optimized performance
 static async getPaymentsCounts() {
   try {
-    // 1. Fetch all payments with their packageId in one query
+    // 1. Fetch all payments with required fields for group payment calculation
     const payments = await prisma.payment.findMany({
       select: {
         status: true,
-        packageId: true
+        packageId: true,
+        isGroupPayment: true,
+        totalParticipants: true,
+        memberCourses: true
       }
     });
 
@@ -774,21 +839,38 @@ static async getPaymentsCounts() {
       }
     }));
 
-    // 5. Count with optimized logic
+    // 5. Count with GROUP PAYMENT LOGIC
     let totalCount = 0;
     let approvedCount = 0;
     let pendingCount = 0;
 
     for (const payment of payments) {
       const packageType = packageTypeMap.get(payment.packageId);
-      const weightFactor = packageType === 'BUNDLE' ? 2 : 1;
+      
+      // PERBAIKAN: Hitung berdasarkan group payment dan jumlah member aktual
+      let countFactor;
+      
+      if (payment.isGroupPayment) {
+        // Untuk group payment, hitung semua member termasuk creator
+        if (payment.totalParticipants && payment.totalParticipants > 0) {
+          countFactor = payment.totalParticipants;
+        } else if (payment.memberCourses && Array.isArray(payment.memberCourses)) {
+          countFactor = payment.memberCourses.length;
+        } else {
+          // Fallback: minimal 1 jika data tidak lengkap
+          countFactor = 1;
+        }
+      } else {
+        // Untuk individual payment, gunakan weight berdasarkan package type
+        countFactor = packageType === 'BUNDLE' ? 2 : 1;
+      }
 
-      totalCount += weightFactor;
+      totalCount += countFactor;
       
       if (payment.status === 'APPROVED') {
-        approvedCount += weightFactor;
+        approvedCount += countFactor;
       } else if (payment.status === 'PAID') {
-        pendingCount += weightFactor;
+        pendingCount += countFactor;
       }
     }
 
@@ -814,7 +896,6 @@ static async getPaymentsCounts() {
     };
   }
 }
-
 /**
  * Mendapatkan jumlah pendaftaran untuk semua courses
  * @returns {Promise<Object>} Jumlah pendaftaran per course dengan detailnya
@@ -1422,7 +1503,7 @@ static async enhancePaymentsWithPrice(payments) {
         // URL for package-service API
         const packageServiceUrl = process.env.PACKAGE_SERVICE_URL || 'http://package-service-api:8005';
         
-        // console.log('Cache miss - fetching courses for package:', packageId);
+        // // console.log('Cache miss - fetching courses for package:', packageId);
         
         // Call to Package Service API with circuit breaker and retry
         const response = await executeWithCircuitBreaker('package', async () => {
@@ -1497,7 +1578,7 @@ static async enhancePaymentsWithPrice(payments) {
       }
       
       // If CourseService fails, try getting info from package courses as backup
-      // console.log(`Course not found with ID ${courseId}, trying to find in packages`);
+      // // console.log(`Course not found with ID ${courseId}, trying to find in packages`);
       
       // Get all active payments to check their packages
       const payments = await prisma.payment.findMany({
@@ -1511,7 +1592,7 @@ static async enhancePaymentsWithPrice(payments) {
         const matchingCourse = coursesInPackage.find(c => c.id === courseId);
         
         if (matchingCourse) {
-          console.log(`Found course info in package ${payment.packageId}: ${matchingCourse.title}`);
+          // console.log(`Found course info in package ${payment.packageId}: ${matchingCourse.title}`);
           return {
             id: courseId,
             title: matchingCourse.title,
@@ -1736,7 +1817,7 @@ static async formatDetailedPayment(payment, requestingUserId) {
         'Authorization': `Bearer ${serviceToken}`
       };
       
-      // console.log(`Making direct API call to course service for ID: ${finalCourseId}`);
+      // // console.log(`Making direct API call to course service for ID: ${finalCourseId}`);
       const response = await axios.get(`${courseServiceUrl}/courses/${finalCourseId}`, { headers });
       
       if (response.data && response.data.data) {
@@ -1753,7 +1834,7 @@ static async formatDetailedPayment(payment, requestingUserId) {
         const matchingCourse = coursesInPackage.find(c => c.id === finalCourseId);
         
         if (matchingCourse) {
-          console.log(`Found course info in package: ${matchingCourse.title}`);
+          // console.log(`Found course info in package: ${matchingCourse.title}`);
           courseInfo = {
             id: finalCourseId,
             title: matchingCourse.title,
@@ -2266,7 +2347,7 @@ static async formatDetailedPayment(payment, requestingUserId) {
         try {
           const allUserIds = [creatorId, ...memberValidation.validMembers.map(m => m.userId)];
           await this.sendGroupPaymentEmails(groupPayment, allUserIds, packageInfo);
-          console.log('Group payment confirmation emails sent successfully');
+          // console.log('Group payment confirmation emails sent successfully');
         } catch (emailError) {
           console.error('Failed to send group payment emails:', emailError);
           // Continue anyway since payment creation was successful
@@ -2435,9 +2516,9 @@ static async formatDetailedPayment(payment, requestingUserId) {
           throw new Error('Group payment sudah diapprove');
         }
 
-        // console.log('=== GROUP PAYMENT APPROVAL (DIFFERENT COURSES) ===');
-        // console.log('Payment ID:', groupPayment.id);
-        // console.log('Member Courses:', groupPayment.memberCourses);
+        // // console.log('=== GROUP PAYMENT APPROVAL (DIFFERENT COURSES) ===');
+        // // console.log('Payment ID:', groupPayment.id);
+        // // console.log('Member Courses:', groupPayment.memberCourses);
 
         // Update payment status
         const updatedPayment = await tx.payment.update({
@@ -2455,7 +2536,7 @@ static async formatDetailedPayment(payment, requestingUserId) {
           throw new Error('No member course data found');
         }
 
-        console.log(`📝 Creating enrollments for ${memberCourses.length} members with their chosen courses`);
+        // console.log(`📝 Creating enrollments for ${memberCourses.length} members with their chosen courses`);
         
         const enrollments = [];
         for (const memberCourse of memberCourses) {
@@ -2470,14 +2551,14 @@ static async formatDetailedPayment(payment, requestingUserId) {
               }
             });
             enrollments.push(enrollment);
-            console.log(`✅ Created enrollment for user ${memberCourse.userId} in course ${memberCourse.courseId}:`, enrollment.id);
+            // console.log(`✅ Created enrollment for user ${memberCourse.userId} in course ${memberCourse.courseId}:`, enrollment.id);
           } catch (enrollmentError) {
             console.error(`❌ Failed to create enrollment for user ${memberCourse.userId}:`, enrollmentError);
             throw new Error(`Failed to create enrollment for user ${memberCourse.userId}: ${enrollmentError.message}`);
           }
         }
 
-        console.log(`🎉 Successfully created ${enrollments.length} enrollments`);
+        // console.log(`🎉 Successfully created ${enrollments.length} enrollments`);
 
         // Clear cache for ALL courses involved
         try {
@@ -2489,13 +2570,13 @@ static async formatDetailedPayment(payment, requestingUserId) {
           // Clear cache for each course
           for (const courseId of uniqueCourseIds) {
             invalidateCache('enrollment', courseId);
-            console.log(`🔄 Cache cleared for course: ${courseId}`);
+            // console.log(`🔄 Cache cleared for course: ${courseId}`);
           }
           
           // Clear all-enrollments cache
           invalidateCache('all-enrollments', 'all-enrollments');
           
-          console.log('🔄 All enrollment caches cleared after group payment approval');
+          // console.log('🔄 All enrollment caches cleared after group payment approval');
         } catch (cacheError) {
           console.error('❌ Error clearing cache:', cacheError.message);
         }
@@ -2503,7 +2584,7 @@ static async formatDetailedPayment(payment, requestingUserId) {
         // Send notification emails to all members
         try {
           await this.sendGroupEnrollmentEmails(groupPayment, memberCourses);
-          console.log('📧 Group enrollment emails sent successfully');
+          // console.log('📧 Group enrollment emails sent successfully');
         } catch (emailError) {
           console.error('❌ Failed to send group enrollment emails:', emailError);
         }
@@ -2595,7 +2676,7 @@ static async formatDetailedPayment(payment, requestingUserId) {
             };
             
             await sendPaymentConfirmationEmail(paymentForEmail, userInfo, packageInfo);
-            console.log(`Payment confirmation email sent to member: ${userInfo.email}`);
+            // console.log(`Payment confirmation email sent to member: ${userInfo.email}`);
           }
         } catch (error) {
           console.error(`Error sending payment email to member ${userId}:`, error.message);
@@ -2641,7 +2722,7 @@ static async formatDetailedPayment(payment, requestingUserId) {
             };
             
             await sendEnrollmentConfirmationEmail(paymentForEmail, userInfo, packageInfo, courseNames);
-            console.log(`Enrollment confirmation email sent to member: ${userInfo.email} for course: ${memberCourse.courseId}`);
+            // console.log(`Enrollment confirmation email sent to member: ${userInfo.email} for course: ${memberCourse.courseId}`);
           }
         } catch (error) {
           console.error(`Error sending enrollment email to member ${memberCourse.userId}:`, error.message);
