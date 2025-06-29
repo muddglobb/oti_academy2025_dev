@@ -810,11 +810,14 @@ static async getCourseEnrollmentCount(courseId) {
 // Get total payments count with optimized performance
 static async getPaymentsCounts() {
   try {
-    // 1. Fetch all payments with their packageId in one query
+    // 1. Fetch all payments with required fields for group payment calculation
     const payments = await prisma.payment.findMany({
       select: {
         status: true,
-        packageId: true
+        packageId: true,
+        isGroupPayment: true,
+        totalParticipants: true,
+        memberCourses: true
       }
     });
 
@@ -836,21 +839,38 @@ static async getPaymentsCounts() {
       }
     }));
 
-    // 5. Count with optimized logic
+    // 5. Count with GROUP PAYMENT LOGIC
     let totalCount = 0;
     let approvedCount = 0;
     let pendingCount = 0;
 
     for (const payment of payments) {
       const packageType = packageTypeMap.get(payment.packageId);
-      const weightFactor = packageType === 'BUNDLE' ? 2 : 1;
+      
+      // PERBAIKAN: Hitung berdasarkan group payment dan jumlah member aktual
+      let countFactor;
+      
+      if (payment.isGroupPayment) {
+        // Untuk group payment, hitung semua member termasuk creator
+        if (payment.totalParticipants && payment.totalParticipants > 0) {
+          countFactor = payment.totalParticipants;
+        } else if (payment.memberCourses && Array.isArray(payment.memberCourses)) {
+          countFactor = payment.memberCourses.length;
+        } else {
+          // Fallback: minimal 1 jika data tidak lengkap
+          countFactor = 1;
+        }
+      } else {
+        // Untuk individual payment, gunakan weight berdasarkan package type
+        countFactor = packageType === 'BUNDLE' ? 2 : 1;
+      }
 
-      totalCount += weightFactor;
+      totalCount += countFactor;
       
       if (payment.status === 'APPROVED') {
-        approvedCount += weightFactor;
+        approvedCount += countFactor;
       } else if (payment.status === 'PAID') {
-        pendingCount += weightFactor;
+        pendingCount += countFactor;
       }
     }
 
@@ -876,7 +896,6 @@ static async getPaymentsCounts() {
     };
   }
 }
-
 /**
  * Mendapatkan jumlah pendaftaran untuk semua courses
  * @returns {Promise<Object>} Jumlah pendaftaran per course dengan detailnya
