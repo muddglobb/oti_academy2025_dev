@@ -87,3 +87,27 @@ export async function getAllPackage() {
     throw error;
   }
 }
+
+export async function getPackageById(courseId: string) {
+  try {
+    const accessToken = await getAccessToken();
+    const res = await fetch(`${process.env.BASE_URL}/packages/${courseId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        // "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      console.error("Gagal mendapatkan data kelas:", res.statusText);
+      throw new Error("Gagal memuat data kelas.");
+    }
+
+    const users = await res.json();
+    return users.data;
+  } catch (error) {
+    console.error("Terjadi kesalahan saat mengambil data kelas:", error);
+    throw error;
+  }
+}
