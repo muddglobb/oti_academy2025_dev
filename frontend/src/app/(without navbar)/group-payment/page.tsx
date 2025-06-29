@@ -7,6 +7,7 @@ import Konfirmasi from "@/components/payment/konfirmasi";
 import ChooseClassGroup from "@/components/group-payment/choose-class";
 import { getUsers } from "@/lib/auth/fetch-users";
 import { getCourses } from "@/lib/courses/fetch-courses";
+import { getAllPackage } from "@/lib/package/fetch-package";
 
 type Session = {
   id: string;
@@ -34,6 +35,9 @@ const GroupPayment = async () => {
   const users = await getUsers();
   const response = await getCourses();
   const courses = response.data;
+  const packageResponse = await getAllPackage();
+  const packages = packageResponse.data;
+  // console.log("packages", packages[0].id);
 
   const intermediateCourses: CourseSummary[] = courses
     .filter((course: Course) => course.level === "INTERMEDIATE")
@@ -58,7 +62,7 @@ const GroupPayment = async () => {
   return (
     <div className="text-neutral-50 py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4">
       <Link
-        href="/dashboard/dashboard"
+        href="/dashboard"
         className="flex gap-2 bg-primary-900 text-sm font-bold px-3.5 py-2 rounded-[8px] w-fit self-start"
       >
         <ArrowLeft size={20} color="white" />
@@ -73,7 +77,10 @@ const GroupPayment = async () => {
       <ChooseClassGroup
         myEmail={users.data.email}
         CourseOptions={intermediateCourses}
+        IntermediatePackageId={packages[0].id}
       />
+
+      
     </div>
   );
 };
