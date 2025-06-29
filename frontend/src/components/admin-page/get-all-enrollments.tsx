@@ -85,7 +85,7 @@ const GetAllEnrollments = async () => {
     })
   );
 
-  console.log(enrichedData);
+  // console.log(enrichedData);
 
 
   return <GetAllEnrollmentsClient data={enrichedData} />;

@@ -89,7 +89,7 @@ const GetAllEnrollmentsClient = ({
     item.userName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  console.log("beda nih", filteredData);
+  // console.log("beda nih", filteredData);
 
   return (
     <div className="bg-neutral-50 p-5 rounded-[20px] shadow-sm">
