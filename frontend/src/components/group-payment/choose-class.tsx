@@ -8,6 +8,10 @@ import {
   getImageByTitle,
 } from "@/lib/course-props/course-props";
 import ChosenCardzz from "./group-choosen-card";
+type CourseSummary = {
+  id: string;
+  title: string;
+};
 
 const CLASS_OPTIONS = [
   "Software Engineering",
@@ -15,12 +19,14 @@ const CLASS_OPTIONS = [
   "Cyber Security",
   "Data Science & Artificial Intelligence",
 ];
-const ChooseClassGroup = ({ myEmail }: { myEmail: string }) => {
+const ChooseClassGroup = ({ myEmail, CourseOptions }: { myEmail: string, CourseOptions: CourseSummary[] }) => {
   const [showClassOptions, setShowClassOptions] = useState(false);
-  const [selectedClass, setSelectedClass] = useState("");
+  const [selectedClassId, setSelectedClassId] = useState("");
+  const [selectedClassTitle, setSelectedClassTitle] = useState("");
 
   const handleResetClass = () => {
-    setSelectedClass("");
+    setSelectedClassId("");
+    setSelectedClassTitle("");
     setShowClassOptions(false);
   };
   return (
@@ -40,7 +46,7 @@ const ChooseClassGroup = ({ myEmail }: { myEmail: string }) => {
         <div className="flex flex-col gap-3">{myEmail}</div>
 
         <div className="flex flex-col gap-2">
-          {!selectedClass && !showClassOptions && (
+          {!selectedClassId && !showClassOptions && (
             <button
               type="button"
               onClick={() => setShowClassOptions(true)}
@@ -58,15 +64,15 @@ const ChooseClassGroup = ({ myEmail }: { myEmail: string }) => {
                   Pilih kelas
                 </p>
                 <div>
-                  <button className="p-1 bg-primary-500 rounded-sm cursor-pointer">
+                  <div className="p-1 bg-primary-500 rounded-sm cursor-pointer">
                     <ArrowUpRight />
-                  </button>
+                  </div>
                 </div>
               </div>
             </button>
           )}
 
-          {showClassOptions && !selectedClass && (
+          {showClassOptions && !selectedClassId && (
             <div>
               <div className="h-38 sm:h-50 w-auto border-2 border-neutral-500 rounded-xl flex">
                 <Image
@@ -105,18 +111,19 @@ const ChooseClassGroup = ({ myEmail }: { myEmail: string }) => {
                     </button>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
-                    {CLASS_OPTIONS.map((kelas) => (
+                    {CourseOptions.map((kelas) => (
                       <button
-                        key={kelas}
+                        key={kelas.id}
                         type="button"
                         onClick={() => {
-                          setSelectedClass(kelas);
+                          setSelectedClassId(kelas.id);
+                          setSelectedClassTitle(kelas.title);
                           setShowClassOptions(false); // langsung tutup popup setelah pilih
                         }}
                         className="h-38 sm:h-50 bg-neutral-50 w-auto border-2 border-neutral-500 rounded-xl flex"
                       >
                         <Image
-                          src={getImageByTitle(kelas)}
+                          src={getImageByTitle(kelas.title)}
                           alt={`Image ${kelas}`}
                           width={152}
                           height={152}
@@ -124,39 +131,30 @@ const ChooseClassGroup = ({ myEmail }: { myEmail: string }) => {
                         />
                         <div className="p-2 sm:p-4 w-full text-neutral-900">
                           <div className="flex justify-between items-center">
-                            <p className="font-bold text-[14px]">{kelas}</p>
+                            <p className="font-bold text-[14px]">{kelas.title}</p>
                             <div>
                               <div className="text-neutral-50 p-1 bg-primary-500 rounded-sm">
                                 <Plus />
                               </div>
                             </div>
                           </div>
-                          <p className="text-sm text-justify">
-                            {getDescByTitle(kelas)}
+                          <p className="text-sm text-justify line-clamp-6">
+                            {getDescByTitle(kelas.title)}
                           </p>
                         </div>
                       </button>
                     ))}
                   </div>
-
-                  {/* ❌ Tombol tutup */}
-                  {/* <button
-                    type="button"
-                    onClick={() => setShowClassOptions(false)}
-                    className="mt-4 w-full text-center text-sm text-red-500 hover:underline"
-                  >
-                    Batal
-                  </button> */}
                 </div>
               </div>
             </div>
           )}
 
-          {selectedClass && (
+          {selectedClassId && (
             <div className="h-38 sm:h-50 w-auto bg-neutral-50 text-neutral-900 rounded-md flex">
               <Image
-                src={getImageByTitle(selectedClass)}
-                alt={`Image ${selectedClass}`}
+                src={getImageByTitle(selectedClassTitle)}
+                alt={`Image ${selectedClassTitle}`}
                 width={152}
                 height={152}
                 className="rounded-l-md sm:w-[200px] sm:h-[200px] object-cover"
@@ -164,7 +162,7 @@ const ChooseClassGroup = ({ myEmail }: { myEmail: string }) => {
               <div className="p-2 sm:p-4 w-auto">
                 <div className="flex items-center justify-between">
                   <p className="text-[14px] sm:text-[18px] font-bold">
-                    {selectedClass}
+                    {selectedClassTitle}
                   </p>
                   <button
                     type="button"
@@ -175,20 +173,10 @@ const ChooseClassGroup = ({ myEmail }: { myEmail: string }) => {
                   </button>
                 </div>
                 <p className="line-clamp-2 sm:line-clamp-5 text-[12px] sm:text-base">
-                  {getDescByTitle(selectedClass)}
+                  {getDescByTitle(selectedClassTitle)}
                 </p>
               </div>
             </div>
-            // <div className="flex items-center justify-between px-3 py-2 bg-primary-400 rounded-md">
-            //   <span>{selectedClass}</span>
-            //   <button
-            //     type="button"
-            //     onClick={handleResetClass}
-            //     className="text-sm text-red-500 cursor-pointer"
-            //   >
-            //     Hapus
-            //   </button>
-            // </div>
           )}
         </div>
       </div>

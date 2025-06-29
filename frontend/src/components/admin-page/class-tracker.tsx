@@ -54,7 +54,7 @@ const ClassTracker = async () => {
               <div className="bg-neutral-200 w-full h-2 rounded-sm">
                 <div
                   className="bg-neutral-400 h-2 rounded-sm"
-                  style={{ width: `${stat.enrollment.total}%` }}
+                  style={{ width: `${(stat.enrollment.total / 30) * 100}%` }}
                 ></div>
               </div>
             </div>
