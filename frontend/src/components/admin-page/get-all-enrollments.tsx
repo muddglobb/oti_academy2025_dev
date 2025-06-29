@@ -32,6 +32,7 @@ export type MemberCoursesProps = {
   userEmail: string;
   userId: string;
   userName: string;
+  userPhone: string;
 };
 export type EnrollmentPayment = {
   id: string;

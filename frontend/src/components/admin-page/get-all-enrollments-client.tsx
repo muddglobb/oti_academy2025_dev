@@ -34,6 +34,7 @@ export type MemberCoursesProps = {
   userEmail: string;
   userId: string;
   userName: string;
+  userPhone: string;
 };
 export type EnrichedEnrollmentPayment = {
   id: string;
@@ -184,7 +185,16 @@ const GetAllEnrollmentsClient = ({
                       </div>
                     </td>
                     <td className="py-4 px-4 text-gray-900">
-                      {item.userPhone}
+                      <p>{item.userPhone}</p>
+                      <div>
+                        {item.isGroupPayment ? (
+                          <div className="border-t-2 border-neutral-950">
+                            {item.memberCourses[1].userPhone}
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </div>
                     </td>
                     <td className="py-4 px-4 text-gray-900">
                       <p>{item.courseTitle}</p>
