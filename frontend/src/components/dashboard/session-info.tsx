@@ -287,32 +287,38 @@ const SessionInfo = async ({
       {
         courseTime: "09.00 - 11.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "09.00 - 11.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "09.00 - 11.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "09.00 - 11.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "09.00 - 11.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "09.00 - 11.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "TBA",

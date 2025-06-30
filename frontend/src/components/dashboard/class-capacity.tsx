@@ -193,8 +193,6 @@ const ClassCapacity = async ({
   const displayCount = currentCount > 30 ? capacity : currentCount;
   const displayCountBundle = currentCount > 15 ? capacity : currentCount;
 
-  console.log(now < targetDate);
-
   return (
     <div className=" flex flex-col gap-[5px] ">
       <p className="self-start mb-[5px] text-neutral-50 text-sm">
