@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Check, Trash2 } from "lucide-react";
 import ApproveButton from "./approve-button";
 import DeletePopup from "./delete-popup";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 export type AllMemberCourseProps = {
   courseId: string;
@@ -66,11 +68,37 @@ export type EnrichedEnrollmentPayment = {
   totalParticipants: number;
 };
 
-const GetAllEnrollmentsClient = ({
-  data,
-}: {
-  data: EnrichedEnrollmentPayment[];
-}) => {
+export type EnrichedEnrollmentPaymentz = {
+  id: string;
+  userId: string;
+  packageId: string;
+  courseId: string;
+  type: string;
+  proofLink: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  packageName: string;
+  packageType: string;
+  price: number;
+  courseName: string;
+  userName: string;
+  userEmail: string;
+  userType: string;
+  userPhone: string;
+  courseTitle: string; // properti tambahan yang tidak ada di response awal
+  discountedAmount: number;
+  groupPaymentInfo: GroupPaymentInfoProps[];
+  groupStatus: string;
+  invitedEmail: string[];
+  invitedUserIds: string[];
+  isGroupPayment: boolean;
+  memberCourses: MemberCoursesProps[];
+  originalAmount: number;
+  totalParticipants: number;
+};
+
+const GetAllEnrollmentsClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selectedName, setSelectedName] = useState("");
@@ -85,10 +113,48 @@ const GetAllEnrollmentsClient = ({
   };
   // console.log(data);
 
-  const filteredData = data.filter((item) =>
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page") ?? "1";
+
+  // const [dataz, setData] = useState([]);
+  const [dataz, setData] = useState<EnrichedEnrollmentPaymentz[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  // console.log("atas",page);
+
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const res = await fetch(`/api/get-payment?page=${page}`);
+        const result = await res.json();
+        setData(result.data.payments);
+        setTotalPages(result.data.pagination.totalPages); // tergantung API response
+        console.log("apa", result.data.pagination.totalPages);
+      } catch (err) {
+        console.error("Error fetching payments:", err);
+      }
+    };
+
+    fetchPayments();
+  }, [page]);
+  // console.log("bawah",totalPages);
+
+  // console.log("client",dataz);
+  // console.log("data",data);
+  
+
+  // const filteredData = data.filter((item) =>
+  //   item.userName?.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
+
+  // console.log("filter",filteredData)
+  const filteredDataz = dataz.filter((item) =>
     item.userName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+
+  // const filteredData = dataz.filter((item) =>
+  //   item.userName?.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
   // console.log("beda nih", filteredData);
 
   return (
@@ -99,7 +165,7 @@ const GetAllEnrollmentsClient = ({
             Data Semua Pendaftar
           </h2>
           <span className="bg-neutral-300 text-sm px-2 py-1 rounded-sm">
-            {filteredData.length} Peserta
+            {filteredDataz.length} Peserta
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -119,7 +185,7 @@ const GetAllEnrollmentsClient = ({
         </div>
       </div>
 
-      {filteredData.length === 0 ? (
+      {filteredDataz.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">Belum ada pendaftar</p>
         </div>
@@ -152,7 +218,7 @@ const GetAllEnrollmentsClient = ({
               </tr>
             </thead>
             <tbody>
-              {filteredData.map(
+              {filteredDataz.map(
                 (item: EnrichedEnrollmentPayment, index: number) => (
                   <tr
                     key={item.id}
@@ -197,7 +263,7 @@ const GetAllEnrollmentsClient = ({
                       </div>
                     </td>
                     <td className="py-4 px-4 text-gray-900">
-                      <p>{item.courseTitle}</p>
+                      <p>{item.courseName}</p>
                       <div>
                         {item.isGroupPayment ? (
                           <div className="border-t-2 border-neutral-950">
@@ -268,6 +334,25 @@ const GetAllEnrollmentsClient = ({
           )}
         </div>
       )}
+
+      <div className="flex justify-center mt-6 gap-2">
+        {Array.from({ length: totalPages }).map((_, i) => {
+          const pagess = i + 1;
+          return (
+            <Link
+              key={pagess}
+              href={`/admin-page?page=${pagess}`}
+              className={`px-3 py-1 rounded-md border ${
+                pagess === parseInt(page)
+                  ? "bg-primary-500 text-white"
+                  : "bg-white text-black"
+              }`}
+            >
+              {pagess}
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 };

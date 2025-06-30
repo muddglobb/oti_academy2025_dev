@@ -1,5 +1,6 @@
 import React from "react";
-import { getAllEnrollment } from "@/lib/payment/fetch-payment";
+// import { getAllEnrollment } from "@/lib/payment/fetch-payment";
+import { getEnrollmentsByPage } from "@/lib/payment/fetch-payment";
 import { getCoursesById } from "@/lib/courses/fetch-courses";
 import GetAllEnrollmentsClient from "./get-all-enrollments-client";
 
@@ -64,31 +65,36 @@ export type EnrollmentPayment = {
   totalParticipants: number;
 };
 
+// const GetAllEnrollments = async ({page}:{page:number}) => {
 const GetAllEnrollments = async () => {
-  const data: EnrollmentPayment[] = await getAllEnrollment();
+
+  // const data: EnrollmentPayment[] = await getAllEnrollment();
+  // const { payments, pagination } = await getEnrollmentsByPage(page, 1);
+  // console.log("server", payments)
 
   // Ambil semua detail course berdasarkan courseId dari masing-masing item
-  const enrichedData = await Promise.all(
-    data.map(async (item: EnrollmentPayment) => {
-      if (item.packageType === "BUNDLE") {
-        return {
-          ...item,
-          courseTitle: item.packageName || "Tanpa nama paket",
-        };
-      }
+  // const enrichedData = await Promise.all(
+  //   payments.map(async (item: EnrollmentPayment) => {
+  //     if (item.packageType === "BUNDLE") {
+  //       return {
+  //         ...item,
+  //         courseTitle: item.packageName || "Tanpa nama paket",
+  //       };
+  //     }
 
-      const kelas = await getCoursesById(item.courseId);
-      return {
-        ...item,
-        courseTitle: kelas?.data?.title || "Tidak diketahui",
-      };
-    })
-  );
-
-  // console.log(enrichedData);
+  //     const kelas = await getCoursesById(item.courseId);
+  //     return {
+  //       ...item,
+  //       courseTitle: kelas?.data?.title || "Tidak diketahui",
+  //     };
+  //   })
+  // );
 
 
-  return <GetAllEnrollmentsClient data={enrichedData} />;
+  // return <GetAllEnrollmentsClient data={enrichedData} pagination={pagination}
+  //     currentPage={page}/>;
+  return <GetAllEnrollmentsClient/>;
+  // return <GetAllEnrollmentsClient/>;
 };
 
 export default GetAllEnrollments;
