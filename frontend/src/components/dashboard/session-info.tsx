@@ -208,37 +208,44 @@ const SessionInfo = async ({
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "TBA",
         courseDuration: "TBA",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
     ],
     "Software Engineering": [
@@ -285,6 +292,11 @@ const SessionInfo = async ({
     ],
     "Basic Python": [
       {
+        courseTime: "Asinkronus",
+        courseDuration: "Asinkronus",
+        linkZoom: "",
+      },
+      {
         courseTime: "09.00 - 11.00",
         courseDuration: "2 Jam",
         linkZoom:
@@ -323,158 +335,197 @@ const SessionInfo = async ({
       {
         courseTime: "TBA",
         courseDuration: "TBA",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
     ],
     "Fundamental Cyber Security": [
       {
         courseTime: "19.00 - 21.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "19.00 - 21.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "19.00 - 21.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "19.00 - 21.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "19.00 - 21.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "19.00 - 21.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "13.00 - 15.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
     ],
     "Game Development": [
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "15.00 - 17.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
     ],
     "Graphic Design": [
       {
         courseTime: "16.00 - 17.30",
         courseDuration: "1.5 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "19.00 - 20.30",
         courseDuration: "1.5 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "19.00 - 20.30",
         courseDuration: "1.5 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "19.00 - 20.30",
         courseDuration: "1.5 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "19.00 - 20.30",
         courseDuration: "1.5 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "19.00 - 20.30",
         courseDuration: "1.5 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "TBA",
         courseDuration: "TBA",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
     ],
     "Competitive Programming": [
       {
-        courseTime: "18.30 - 20.30",
-        courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        courseTime: "Asinkronus",
+        courseDuration: "Asinkronus",
+        linkZoom: "",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "18.30 - 20.30",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
+      },
+      {
+        courseTime: "18.30 - 20.30",
+        courseDuration: "2 Jam",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
         courseTime: "09.00 - 11.00",
         courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
     ],
     "Data Science & Artificial Intelligence": [
+      {
+        courseTime: "Asinkronus",
+        courseDuration: "Asinkronus",
+        linkZoom: "https://www.zoom.com/",
+      },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
