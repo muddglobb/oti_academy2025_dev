@@ -510,7 +510,7 @@ export default async function Page({
         {classData.ClassLevel === "INTERMEDIATE" &&
           isEnrolled === false &&
           enrolledClassType !== "BUNDLE" &&
-          currentCount <= capacity &&
+          currentCount < capacity &&
           paymentDataLength < 2 &&
           enrollmentCount < 2 &&
           enrolledClassType !== classData.ClassLevel && (
