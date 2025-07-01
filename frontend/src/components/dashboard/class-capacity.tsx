@@ -160,19 +160,24 @@ const ClassCapacity = async ({
         : "";
   }
 
+  const nonBundleCount = apiData.data?.enrollments?.entryIntermediateCount ?? 0;
+  const bundleCount = apiData.data?.enrollments?.bundleCount ?? 0;
+
+  const totalCount = nonBundleCount + bundleCount;
+
   const currentCount =
     ClassLevel === "ENTRY"
-      ? apiData.data?.enrollments?.entryIntermediateCount ?? 0
+      ? totalCount ?? 0
       : ClassLevel === "INTERMEDIATE"
-      ? apiData.data?.enrollments?.entryIntermediateCount ?? 0
+      ? totalCount ?? 0
       : ClassLevel === "BUNDLE"
       ? apiData.data?.enrollments?.bundleCount ?? 0
       : 0;
   const capacity =
     ClassLevel === "ENTRY"
-      ? apiData.data?.quota?.entryIntermediateQuota ?? 1
+      ? apiData.data?.quota?.total ?? 1
       : ClassLevel === "INTERMEDIATE"
-      ? apiData.data?.quota?.entryIntermediateQuota ?? 1
+      ? apiData.data?.quota?.total ?? 1
       : ClassLevel === "BUNDLE"
       ? apiData.data?.quota?.bundleQuota ?? 1
       : 0;
@@ -182,7 +187,8 @@ const ClassCapacity = async ({
   const now = new Date();
   const targetDate = new Date("2025-06-29T00:00:00");
 
-  const displayCount = currentCount > 15 ? capacity : currentCount;
+  const displayCount = currentCount > 30 ? capacity : currentCount;
+  const displayCountBundle = currentCount > 15 ? capacity : currentCount;
 
   return (
     <div className=" flex flex-col gap-[5px] ">
@@ -251,12 +257,21 @@ const ClassCapacity = async ({
         </div>
 
         <p className="sm:text-lg text-xs">{ClassDesc}</p>
+        {ClassLevel !== "BUNDLE" && (
+          <CapacityProgressBar
+            currentCount={displayCount}
+            capacity={capacity}
+            percentage={percentage}
+          />
+        )}
 
-        <CapacityProgressBar
-          currentCount={displayCount}
-          capacity={capacity}
-          percentage={percentage}
-        />
+        {ClassLevel === "BUNDLE" && (
+          <CapacityProgressBar
+            currentCount={displayCountBundle}
+            capacity={capacity}
+            percentage={percentage}
+          />
+        )}
 
         {ClassLevel !== "INTERMEDIATE" && <p></p>}
         {ClassLevel === "INTERMEDIATE" &&
