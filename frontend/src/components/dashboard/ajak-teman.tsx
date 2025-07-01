@@ -18,7 +18,7 @@ const AjakTeman = () => {
           dan mengajak 1 teman,
         </span>{" "}
         kalian
-        <strong>bebas pilih</strong>{" "}
+        <strong> bebas pilih</strong>{" "}
         <span className="text-error-300 font-bold">satu topik</span>{" "}
         <strong>yang berbeda</strong> sesuai minat masing-masing.
       </p>
