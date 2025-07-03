@@ -285,7 +285,7 @@ const SessionInfo = async ({
         linkZoom: "https://www.zoom.com/",
       },
       {
-        courseTime: "14.00 - 16.00",
+        courseTime: "10.00 - 16.00",
         courseDuration: "2 Jam",
         linkZoom: "https://www.zoom.com/",
       },
@@ -327,14 +327,14 @@ const SessionInfo = async ({
           "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
-        courseTime: "09.00 - 11.00",
-        courseDuration: "2 Jam",
+        courseTime: "TBA",
+        courseDuration: "TBA",
         linkZoom:
           "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
-        courseTime: "TBA",
-        courseDuration: "TBA",
+        courseTime: "Asinkronus",
+        courseDuration: "Asinkronus",
         linkZoom:
           "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
