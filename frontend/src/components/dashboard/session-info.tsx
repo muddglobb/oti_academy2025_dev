@@ -218,8 +218,8 @@ const SessionInfo = async ({
           "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
       {
-        courseTime: "14.00 - 16.00",
-        courseDuration: "2 Jam",
+        courseTime: "Asinkronus",
+        courseDuration: "Asinkronus",
         linkZoom:
           "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
