@@ -297,6 +297,7 @@ export default async function Page({
 
   const now = new Date();
   const targetDate = new Date("2025-06-29T00:00:00");
+
   return (
     <>
       <div className="flex flex-col gap-4 py-10 px-2 lg:px-14 bg-neutral-900">
@@ -509,7 +510,7 @@ export default async function Page({
         {classData.ClassLevel === "INTERMEDIATE" &&
           isEnrolled === false &&
           enrolledClassType !== "BUNDLE" &&
-          currentCount <= capacity &&
+          currentCount < capacity &&
           paymentDataLength < 2 &&
           enrollmentCount < 2 &&
           enrolledClassType !== classData.ClassLevel && (

@@ -216,6 +216,15 @@ const SessionInfo = async ({
         courseDuration: "2 Jam",
         linkZoom:
           "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
+<<<<<<< HEAD
+=======
+      },
+      {
+        courseTime: "Asinkronus",
+        courseDuration: "Asinkronus",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
+>>>>>>> 54eb25ad24ae5d4aabbca78a27b9dcf92ddfc4a0
       },
       {
         courseTime: "14.00 - 16.00",
@@ -234,12 +243,15 @@ const SessionInfo = async ({
         courseDuration: "2 Jam",
         linkZoom:
           "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
+<<<<<<< HEAD
       },
       {
         courseTime: "14.00 - 16.00",
         courseDuration: "2 Jam",
         linkZoom:
           "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
+=======
+>>>>>>> 54eb25ad24ae5d4aabbca78a27b9dcf92ddfc4a0
       },
       {
         courseTime: "TBA",
@@ -285,7 +297,7 @@ const SessionInfo = async ({
         linkZoom: "https://www.zoom.com/",
       },
       {
-        courseTime: "14.00 - 16.00",
+        courseTime: "10.00 - 16.00",
         courseDuration: "2 Jam",
         linkZoom: "https://www.zoom.com/",
       },
@@ -294,6 +306,7 @@ const SessionInfo = async ({
       {
         courseTime: "Asinkronus",
         courseDuration: "Asinkronus",
+<<<<<<< HEAD
         linkZoom:
           "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
       },
@@ -302,6 +315,9 @@ const SessionInfo = async ({
         courseDuration: "2 Jam",
         linkZoom:
           "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
+=======
+        linkZoom: "",
+>>>>>>> 54eb25ad24ae5d4aabbca78a27b9dcf92ddfc4a0
       },
       {
         courseTime: "09.00 - 11.00",
@@ -338,6 +354,15 @@ const SessionInfo = async ({
         courseDuration: "TBA",
         linkZoom:
           "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
+<<<<<<< HEAD
+=======
+      },
+      {
+        courseTime: "Asinkronus",
+        courseDuration: "Asinkronus",
+        linkZoom:
+          "https://ugm-id.zoom.us/j/97728915928?pwd=qgbncmnTcX7M1L2JGKXejMlpYDZar4.1",
+>>>>>>> 54eb25ad24ae5d4aabbca78a27b9dcf92ddfc4a0
       },
     ],
     "Fundamental Cyber Security": [

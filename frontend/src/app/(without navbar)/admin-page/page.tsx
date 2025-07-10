@@ -24,7 +24,7 @@ export default async function AdminPage() {
         <ClassTracker />
       </div>
       <div className="mt-6 ">
-        <GetAllEnrollments />
+        <GetAllEnrollments/>
       </div>
     </div>
   );

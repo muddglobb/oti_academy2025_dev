@@ -160,27 +160,24 @@ const ClassCapacity = async ({
         : "";
   }
 
-  const EntryInterCount = apiData.data?.enrollments?.entryIntermediateCount;
-  const BundleCount = apiData.data?.enrollments?.bundleCount;
-  const EntryInterQuota = apiData.data?.quota?.entryIntermediateQuota;
+  const nonBundleCount = apiData.data?.enrollments?.entryIntermediateCount ?? 0;
+  const bundleCount = apiData.data?.enrollments?.bundleCount ?? 0;
 
-  const nonBundleCount = EntryInterCount + BundleCount;
-
-  const nonBundleQuota = EntryInterQuota + BundleCount;
+  const totalCount = nonBundleCount + bundleCount;
 
   const currentCount =
     ClassLevel === "ENTRY"
-      ? nonBundleCount ?? 0
+      ? totalCount ?? 0
       : ClassLevel === "INTERMEDIATE"
-      ? nonBundleCount ?? 0
+      ? totalCount ?? 0
       : ClassLevel === "BUNDLE"
       ? apiData.data?.enrollments?.bundleCount ?? 0
       : 0;
   const capacity =
     ClassLevel === "ENTRY"
-      ? nonBundleQuota ?? 1
+      ? apiData.data?.quota?.total ?? 1
       : ClassLevel === "INTERMEDIATE"
-      ? nonBundleQuota ?? 1
+      ? apiData.data?.quota?.total ?? 1
       : ClassLevel === "BUNDLE"
       ? apiData.data?.quota?.bundleQuota ?? 1
       : 0;
@@ -280,7 +277,7 @@ const ClassCapacity = async ({
         {ClassLevel === "INTERMEDIATE" &&
           isEnrolled === false &&
           enrolledClassType !== "BUNDLE" &&
-          currentCount <= capacity &&
+          currentCount < capacity &&
           paymentDataLength < 2 &&
           enrollmentCount < 2 &&
           enrolledClassType !== ClassLevel && (

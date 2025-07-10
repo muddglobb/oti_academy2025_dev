@@ -139,7 +139,7 @@ export async function getAllEnrolledStats() {
 export async function getAllEnrollment() {
   try {
     const accessToken = await getAccessToken();
-    const res = await fetch(`${process.env.BASE_URL}/payments?page=1&limit=40`, {
+    const res = await fetch(`${process.env.BASE_URL}/payments?page=1&limit=3`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -153,13 +153,38 @@ export async function getAllEnrollment() {
     }
 
     const stats = await res.json();
-    // console.log(stats)
     return stats.data.payments;
   } catch (error) {
     console.error("Terjadi kesalahan saat mengambil data enroll:", error);
     throw error;
   }
 }
+
+export async function getEnrollmentsByPage(page: number, limit: number = 40) {
+  try {
+    const accessToken = await getAccessToken();
+    const res = await fetch(
+      `${process.env.BASE_URL}/payments?page=${page}&limit=${limit}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Gagal memuat data enroll.");
+    }
+
+    const stats = await res.json();
+    return stats.data; // berisi { payments: [...], pagination: { totalPages, currentPage, ...} }
+  } catch (error) {
+    console.error("Gagal ambil data enroll:", error);
+    throw error;
+  }
+}
+
 
 export async function getPendingEnrollment() {
   try {

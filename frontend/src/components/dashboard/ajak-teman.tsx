@@ -11,14 +11,14 @@ const AjakTeman = () => {
       </p>
       <p className="text-justify">
         Sekarang beli kelas intermediate bisa <strong>lebih hemat</strong>! Ajak
-        teman-temanmu dan dapatkan potongan{" "}
-        <span className="text-error-300 font-bold">Rp10.000 per orang.</span>{" "}
+        temanmu dan dapatkan potongan{" "}
+        <span className="text-error-300 font-bold">10%.</span>{" "}
         Cukup beli{" "}
         <span className="text-error-300 font-bold">
-          minimal mengajak 1 teman,
+          dan mengajak 1 teman,
         </span>{" "}
         kalian
-        <strong>bebas pilih</strong>{" "}
+        <strong> bebas pilih</strong>{" "}
         <span className="text-error-300 font-bold">satu topik</span>{" "}
         <strong>yang berbeda</strong> sesuai minat masing-masing.
       </p>
