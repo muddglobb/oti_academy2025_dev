@@ -272,22 +272,6 @@ const ClassCapacity = async ({
             percentage={percentage}
           />
         )}
-
-        {ClassLevel !== "INTERMEDIATE" && <p></p>}
-        {ClassLevel === "INTERMEDIATE" &&
-          isEnrolled === false &&
-          enrolledClassType !== "BUNDLE" &&
-          currentCount < capacity &&
-          paymentDataLength < 2 &&
-          enrollmentCount < 2 &&
-          enrolledClassType !== ClassLevel && (
-            <Link
-              href={`/payment/${ClassSlug}`}
-              className="bg-primary-500 rounded-[8px] text-xs py-2 px-14.5 w-fit"
-            >
-              <p>Enroll Now</p>
-            </Link>
-          )}
       </div>
     </div>
   );

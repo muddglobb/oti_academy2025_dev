@@ -505,22 +505,6 @@ export default async function Page({
           </div>
         )}
       </div>
-      <div className="md:hidden sticky z-10 w-full bottom-0 ">
-        {classData.ClassLevel !== "INTERMEDIATE" && <p></p>}
-        {classData.ClassLevel === "INTERMEDIATE" &&
-          isEnrolled === false &&
-          enrolledClassType !== "BUNDLE" &&
-          currentCount < capacity &&
-          paymentDataLength < 2 &&
-          enrollmentCount < 2 &&
-          enrolledClassType !== classData.ClassLevel && (
-            <MobileBottomBar
-              CourseID={courseID}
-              ClassLevel={classData.ClassLevel}
-              ClassSlug={classData.slug}
-            />
-          )}
-      </div>
     </>
   );
 }
