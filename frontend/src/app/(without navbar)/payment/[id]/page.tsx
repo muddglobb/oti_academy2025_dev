@@ -323,84 +323,82 @@ export default async function Page({
   const availability = await getCourseAvailabity(
     matchedCourseId ? matchedCourseId : ""
   );
-  // console.log("Availability: ", availability.available.bundleAvailable);
-  // console.log("Availability: ", availability.available.entryIntermediateAvailable);
   const availabilityzz = noBundle
     ? availability.available.entryIntermediateAvailable
     : availability.available.bundleAvailable;
-  // console.log("availabilityzz: ", availabilityzz);
+  // if (availabilityzz <= 0 || classData?.ClassLevel == "BUNDLE" || classData?.ClassLevel == "ENTRY") {
+  //   //penutupan daftar entry dan bundle (30 juni)
+  //   return (
+  //     <div className="text-white py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4 items-center font-bold text-3xl">
+  //       Pendaftaran Untuk Kelas Ini Sudah ditutup
+  //     </div>
+  //   );
+  // }
+  // return (
+  //   <div className="text-neutral-50 py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4">
+  //     <Link
+  //       href="/dashboard/class-dashboard"
+  //       className="flex gap-2 bg-primary-900 text-sm font-bold px-3.5 py-2 rounded-[8px] w-fit self-start"
+  //     >
+  //       <ArrowLeft size={20} color="white" />
+  //       <p className="text-white">Kembali</p>
+  //     </Link>
 
-  // console.log("fjoef", matchedCourseId,)
-  // console.log("akwoaw", matchedPackageId)
+  //     {/* <PaymentPopUp /> */}
+  //     {checkBundle == "YES" && <TolakPopUp type="Bundle" />}
+  //     {checkBundle == "NO" &&
+  //       classData?.ClassLevel == "BUNDLE" &&
+  //       checkIntermediate == "YES" && <TolakPopUp type="Intermediate" />}
+  //     {checkBundle == "NO" &&
+  //       classData?.ClassLevel == "BUNDLE" &&
+  //       checkEntry == "YES" && <TolakPopUp type="Entry" />}
+  //     {checkBundle == "NO" &&
+  //       classData?.ClassLevel == "BUNDLE" &&
+  //       checkEntry == "NO" &&
+  //       checkIntermediate == "NO" && <PaymentPopUp />}
+  //     {checkBundle == "NO" &&
+  //       classData?.ClassLevel == "INTERMEDIATE" &&
+  //       checkIntermediate == "YES" && <TolakPopUp type="Intermediate" />}
+  //     {checkBundle == "NO" &&
+  //       classData?.ClassLevel == "INTERMEDIATE" &&
+  //       checkIntermediate == "NO" && <PaymentPopUp />}
+  //     {checkBundle == "NO" &&
+  //       classData?.ClassLevel == "ENTRY" &&
+  //       checkEntry == "YES" && <TolakPopUp type="Entry" />}
+  //     {checkBundle == "NO" &&
+  //       classData?.ClassLevel == "ENTRY" &&
+  //       checkEntry == "NO" && <PaymentPopUp />}
 
-  if (availabilityzz <= 0 || classData?.ClassLevel == "BUNDLE" || classData?.ClassLevel == "ENTRY") {
-    //penutupan daftar entry dan bundle (30 juni)
-    return (
+  //     <div className="flex flex-col xl:flex-row gap-6">
+  //       <div className="flex flex-col gap-6 xl:w-240">
+  //         <Konfirmasi />
+  //         <ChosenClass
+  //           courseId={matchedCourseId}
+  //           packageId={matchedPackageId}
+  //         />
+  //       </div>
+  //       <div className="w-full xl:w-2/5 flex flex-col gap-6">
+  //         <Receipt
+  //           name={classData?.title}
+  //           prices={prices}
+  //           level={classData?.ClassLevel}
+  //         />
+  //         <BuktiPembayaran
+  //           courseId={matchedCourseId}
+  //           packageId={matchedPackageId}
+  //           availability={
+  //             noBundle
+  //               ? availability.available.entryIntermediateAvailable
+  //               : availability.available.bundleAvailable
+  //           }
+  //         />
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
+      return (
       <div className="text-white py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4 items-center font-bold text-3xl">
         Pendaftaran Untuk Kelas Ini Sudah ditutup
       </div>
     );
-  }
-  return (
-    <div className="text-neutral-50 py-3 xl:py-10 px-4 xl:px-14 flex flex-col gap-4">
-      <Link
-        href="/dashboard/class-dashboard"
-        className="flex gap-2 bg-primary-900 text-sm font-bold px-3.5 py-2 rounded-[8px] w-fit self-start"
-      >
-        <ArrowLeft size={20} color="white" />
-        <p className="text-white">Kembali</p>
-      </Link>
-
-      {/* <PaymentPopUp /> */}
-      {checkBundle == "YES" && <TolakPopUp type="Bundle" />}
-      {checkBundle == "NO" &&
-        classData?.ClassLevel == "BUNDLE" &&
-        checkIntermediate == "YES" && <TolakPopUp type="Intermediate" />}
-      {checkBundle == "NO" &&
-        classData?.ClassLevel == "BUNDLE" &&
-        checkEntry == "YES" && <TolakPopUp type="Entry" />}
-      {checkBundle == "NO" &&
-        classData?.ClassLevel == "BUNDLE" &&
-        checkEntry == "NO" &&
-        checkIntermediate == "NO" && <PaymentPopUp />}
-      {checkBundle == "NO" &&
-        classData?.ClassLevel == "INTERMEDIATE" &&
-        checkIntermediate == "YES" && <TolakPopUp type="Intermediate" />}
-      {checkBundle == "NO" &&
-        classData?.ClassLevel == "INTERMEDIATE" &&
-        checkIntermediate == "NO" && <PaymentPopUp />}
-      {checkBundle == "NO" &&
-        classData?.ClassLevel == "ENTRY" &&
-        checkEntry == "YES" && <TolakPopUp type="Entry" />}
-      {checkBundle == "NO" &&
-        classData?.ClassLevel == "ENTRY" &&
-        checkEntry == "NO" && <PaymentPopUp />}
-
-      <div className="flex flex-col xl:flex-row gap-6">
-        <div className="flex flex-col gap-6 xl:w-240">
-          <Konfirmasi />
-          <ChosenClass
-            courseId={matchedCourseId}
-            packageId={matchedPackageId}
-          />
-        </div>
-        <div className="w-full xl:w-2/5 flex flex-col gap-6">
-          <Receipt
-            name={classData?.title}
-            prices={prices}
-            level={classData?.ClassLevel}
-          />
-          <BuktiPembayaran
-            courseId={matchedCourseId}
-            packageId={matchedPackageId}
-            availability={
-              noBundle
-                ? availability.available.entryIntermediateAvailable
-                : availability.available.bundleAvailable
-            }
-          />
-        </div>
-      </div>
-    </div>
-  );
 }

@@ -12,7 +12,7 @@ const Dashboard = async () => {
   return (
     <main className="px-2 py-2 sm:px-6 sm:py-4 md:px-10 lg:px-14 md:py-6 lg:py-8 bg-neutral-900">
       <WelcomeCard userName={users.data.name} Phone={users.data.phone} />
-      <AjakTeman />
+      {/* <AjakTeman /> */}
       <SecondContent />
       <SelectClass />
       <EditProfile />
