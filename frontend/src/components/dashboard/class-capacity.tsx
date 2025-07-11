@@ -191,7 +191,7 @@ const ClassCapacity = async ({
   const displayCountBundle = currentCount > 15 ? capacity : currentCount;
 
   return (
-    <div className=" flex flex-col gap-[5px] ">
+    <div className=" flex flex-col gap-[5px]">
       <p className="self-start mb-[5px] text-neutral-50 text-sm">
         Class {"> "} {ClassName}
       </p>

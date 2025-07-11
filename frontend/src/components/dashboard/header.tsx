@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { getUsers } from "@/lib/auth/fetch-users";
 import { MiniHeader } from "@/components/dashboard/mini-header";
+import Link from "next/link";
 
 export async function DashboardHeader() {
   const users = await getUsers();
@@ -14,13 +15,15 @@ export async function DashboardHeader() {
           <div className="flex items-center">
             <span className="mr-3">{users.data.name}</span>
             <div className="bg-neutral-500 rounded-full">
-              <Image
-                src="/images/profile-picture.webp"
-                width={32}
-                height={32}
-                alt="PP"
-                className="rounded-full"
-              />
+              <Link href={`/dashboard/profile-page`}>
+                <Image
+                  src="/images/profile-picture.webp"
+                  width={32}
+                  height={32}
+                  alt="PP"
+                  className="rounded-full"
+                />
+              </Link>
             </div>
           </div>
         </header>
