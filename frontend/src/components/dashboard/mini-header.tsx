@@ -68,7 +68,9 @@ export function MiniHeader({ userName }: { userName: string }) {
         <div className="mt-15 flex flex-col">
           <div className="flex items-center gap-2">
             <div className="bg-neutral-500 rounded-full">
-              <User className="w-8 h-8 p-1" />
+              <Link href={`/dashboard/profile-page`}>
+                <User className="w-8 h-8 p-1" />
+              </Link>
             </div>
             <h2 className="">{userName}</h2>
           </div>
