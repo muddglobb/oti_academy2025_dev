@@ -310,8 +310,42 @@ export default async function Page({
         </Link>
 
         <div className="hidden xl:block">
-          {classData.ClassLevel === "BUNDLE" &&
-            classData.title !== "Graphic Design + UI/UX" && (
+          {(
+            classData.title === "Fundamental Cyber Security + Cyber Security") && (
+              <div className="flex flex-col gap-6">
+                <ClassCapacity
+                  ClassName={classData.title}
+                  ClassDesc={classData.desc}
+                  ClassLevel={classData.ClassLevel}
+                  CourseID={courseID}
+                  Courses1={classData.courses[0]}
+                  Courses2={classData.courses[1]}
+                  ClassSlug={classData.slug}
+                />
+                <div className="flex flex-row gap-6 w-full">
+                  <div className="w-1/2">
+                    <ClassInfo courseTitle={classData.title} />
+                  </div>
+                  <div className="w-1/2">
+                    <VideoTeaser
+                      slug={classData.slug}
+                      title={classData.title}
+                    />
+                  </div>
+                </div>
+                <Prerequisites courseTitle={classData.title} />
+                <TeacherCard courseTitle={classData.courses[1]} />
+                <SessionInfo
+                  courseID1={courseID}
+                  courseID2={courseID2}
+                  courseTitle1={classData.courses[0]}
+                  courseTitle2={classData.courses[1]}
+                  ClassLevel={classData.ClassLevel}
+                />
+              </div>
+            )}
+            {(
+            classData.title === "Web Development + Software Engineering") && (
               <div className="flex flex-col gap-6">
                 <ClassCapacity
                   ClassName={classData.title}
@@ -365,7 +399,7 @@ export default async function Page({
               </div>
               <div className="flex flex-row gap-6 items-stretch">
                 <div className="flex-1">
-                  <TeacherCard courseTitle="Mentor Card" />
+                  <TeacherCard courseTitle="Mentor UI/UX" />
                 </div>
                 <div className="flex-1">
                   <Prerequisites courseTitle={classData.title} />
@@ -381,6 +415,87 @@ export default async function Page({
               />
             </div>
           )}
+          {classData.title === "Python + Data Science & Artificial Intelligence" && (
+              <div className="flex flex-col gap-6">
+                <ClassCapacity
+                  ClassName={classData.title}
+                  ClassDesc={classData.desc}
+                  ClassLevel={classData.ClassLevel}
+                  CourseID={courseID}
+                  Courses1={classData.courses[0]}
+                  Courses2={classData.courses[1]}
+                  ClassSlug={classData.slug}
+                />
+                <div className="flex flex-row gap-6 w-full">
+                  <div className="w-1/2">
+                    <ClassInfo courseTitle={classData.title} />
+                  </div>
+                  <div className="w-1/2">
+                    <VideoTeaser
+                      slug={classData.slug}
+                      title={classData.title}
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-row gap-6 items-stretch">
+                  <div className="flex-1">
+                <TeacherCard courseTitle= "Data Science & Artificial Intelligence" />
+                  </div>
+                  <div className="flex-1">
+                    <Prerequisites courseTitle={classData.title} />
+                  </div>
+                </div>
+                <TeacherCard courseTitle="Mentor DSAI" />
+                <SessionInfo
+                  courseID1={courseID}
+                  courseID2={courseID2}
+                  courseTitle1={classData.courses[0]}
+                  courseTitle2={classData.courses[1]}
+                  ClassLevel={classData.ClassLevel}
+                />
+              </div>
+            )}
+
+            {classData.title === "Data Science & Artificial Intelligence" && (
+              <div className="flex flex-col gap-6">
+                <ClassCapacity
+                  ClassName={classData.title}
+                  ClassDesc={classData.desc}
+                  ClassLevel={classData.ClassLevel}
+                  CourseID={courseID}
+                  Courses1={classData.courses[0]}
+                  Courses2={classData.courses[1]}
+                  ClassSlug={classData.slug}
+                />
+                <div className="flex flex-row gap-6 w-full">
+                  <div className="w-1/2">
+                    <ClassInfo courseTitle={classData.title} />
+                  </div>
+                  <div className="w-1/2">
+                    <VideoTeaser
+                      slug={classData.slug}
+                      title={classData.title}
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-row gap-6 items-stretch">
+                  <div className="flex-1">
+                <TeacherCard courseTitle= "Data Science & Artificial Intelligence" />
+                  </div>
+                  <div className="flex-1">
+                    <Prerequisites courseTitle={classData.title} />
+                  </div>
+                </div>
+                <TeacherCard courseTitle="Mentor DSAI" />
+                <SessionInfo
+                  courseID1={courseID}
+                  courseID2={courseID2}
+                  courseTitle1={classData.courses[0]}
+                  courseTitle2={classData.courses[1]}
+                  ClassLevel={classData.ClassLevel}
+                />
+              </div>
+            )}
           {classData.ClassLevel === "ENTRY" && (
             <div className="flex flex-col gap-6">
               <ClassCapacity
@@ -410,7 +525,7 @@ export default async function Page({
               />
             </div>
           )}
-          {classData.ClassLevel === "INTERMEDIATE" && (
+          {classData.ClassLevel === "INTERMEDIATE" && classData.title !== "Data Science & Artificial Intelligence" && (
             <div className="flex flex-col gap-6">
               <ClassCapacity
                 ClassName={classData.title}
@@ -452,7 +567,18 @@ export default async function Page({
               ClassSlug={classData.slug}
             />
           )}
-          {classData.ClassLevel !== "BUNDLE" && (
+          {classData.ClassLevel === "ENTRY" && (
+            <ClassCapacity
+              ClassName={classData.title}
+              ClassDesc={classData.desc}
+              ClassLevel={classData.ClassLevel}
+              CourseID={courseID}
+              Courses1={classData.courses[0]}
+              ClassSlug={classData.slug}
+            />
+          )}
+
+          {classData.ClassLevel === "INTERMEDIATE" && classData.title !== "Data Science & Artificial Intelligence" && (
             <ClassCapacity
               ClassName={classData.title}
               ClassDesc={classData.desc}
@@ -467,12 +593,33 @@ export default async function Page({
           <ClassInfo courseTitle={classData.title} />
           <Prerequisites courseTitle={classData.title} />
           {classData.title === "Graphic Design + UI/UX" && (
-            <TeacherCard courseTitle="Mentor Card" />
+            <>
+            <TeacherCard courseTitle="Mentor UI/UX" />
+            <TeacherCard courseTitle={classData.title} />
+            </>
           )}
-          {classData.ClassLevel === "BUNDLE" && (
+          {classData.title === "Python + Data Science & Artificial Intelligence" && (
+            <>
+            <TeacherCard courseTitle="Data Science & Artificial Intelligence" />
+            <TeacherCard courseTitle="Mentor DSAI" />
+            </>
+          )}
+          {classData.title === "Data Science & Artificial Intelligence" && (
+            <>
+            <TeacherCard courseTitle="Data Science & Artificial Intelligence" />
+            <TeacherCard courseTitle="Mentor DSAI" />
+            </>
+          )}
+          {classData.title === "Fundamental Cyber Security + Cyber Security" && (
             <TeacherCard courseTitle={classData.courses[1]} />
           )}
-          {classData.ClassLevel !== "BUNDLE" && (
+          {classData.title === "Web Development + Software Engineering" && (
+            <TeacherCard courseTitle={classData.courses[1]} />
+          )}
+          {classData.ClassLevel === "ENTRY" && (
+            <TeacherCard courseTitle={classData.courses[0]} />
+          )}
+          {classData.ClassLevel === "INTERMEDIATE" && classData.title !== "Data Science & Artificial Intelligence" && (
             <TeacherCard courseTitle={classData.courses[0]} />
           )}
 
