@@ -65,7 +65,6 @@ const teacherCardData: Record<
     ],
   ],
   "Data Science & Artificial Intelligence": [
-    ["TBA", "Mentor", "/images/foto-orang/mentor-tba-2.webp", "", "-"],
     [
       "Daffa Aryza Pasya",
       "Teaching Assistant",
@@ -75,7 +74,13 @@ const teacherCardData: Record<
     ],
   ],
   "UI/UX": [
-    ["TBA", "Mentor", "/images/foto-orang/mentor-tba-2.webp", "", "-"],
+    [
+      "Louis Yasmin",
+      "Mentor",
+      "/images/foto-orang/mentor-uiux.webp",
+      "",
+      "Solution Architect at iSystem Asia.",
+    ],
     [
       "Ken Bima Satria Gandasasmita",
       "Teaching Assistant",
@@ -85,7 +90,13 @@ const teacherCardData: Record<
     ],
   ],
   "Software Engineering": [
-    ["TBA", "Mentor", "/images/foto-orang/mentor-tba-2.webp", "", "-"],
+    [
+      "Rifqi Afwan Muslihani",
+      "Mentor",
+      "/images/foto-orang/mentor-softeng.webp",
+      "",
+      "Backend Developer at PT Bank Mandiri tbk.",
+    ],
     [
       "Rayhan Firdaus Ardian",
       "Teaching Assistant",
@@ -121,6 +132,31 @@ const teacherCardData: Record<
       "/images/foto-orang/ken-bima.webp",
       "https://www.linkedin.com/in/kenbimasatriagandasasmita/",
       "-",
+    ],
+  ],
+  "Mentor UI/UX": [
+    [
+      "Louis Yasmin",
+      "Mentor",
+      "/images/foto-orang/mentor-uiux.webp",
+      "",
+      "Solution Architect at iSystem Asia.",
+    ],
+  ],
+  "Mentor DSAI": [
+    [
+      "Ach Rozikin",
+      "Mentor",
+      "/images/foto-orang/mentor-dsai-1.webp",
+      "",
+      "Senior VP of Engineering and Founding Team of Sarana AI.",
+    ],
+    [
+      "Ilham Bachtiar Irfani",
+      "Mentor",
+      "/images/foto-orang/mentor-dsai-2.webp",
+      "",
+      "Senior AI Engineer and Founding Team of Sarana AI.",
     ],
   ],
 };

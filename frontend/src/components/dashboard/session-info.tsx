@@ -280,11 +280,6 @@ const SessionInfo = async ({
         linkZoom: "https://www.zoom.com/",
       },
       {
-        courseTime: "14.00 - 16.00",
-        courseDuration: "2 Jam",
-        linkZoom: "https://www.zoom.com/",
-      },
-      {
         courseTime: "10.00 - 16.00",
         courseDuration: "2 Jam",
         linkZoom: "https://www.zoom.com/",
