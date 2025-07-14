@@ -2,7 +2,7 @@ import React from "react";
 import { requireAdmin } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getCoursesById } from "@/lib/courses/fetch-courses";
-import getAssignment from "@/lib/assignment/fetch-assignment";
+import {getAssignment} from "@/lib/assignment/fetch-assignment";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import AddAssignmentForm from "@/components/admin-page/add-assignment-form";
