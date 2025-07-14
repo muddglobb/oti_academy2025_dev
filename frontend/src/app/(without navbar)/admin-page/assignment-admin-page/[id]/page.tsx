@@ -1,10 +1,11 @@
-import getAssignment from "@/lib/assignment/fetch-assignment";
+import {getAssignment} from "@/lib/assignment/fetch-assignment";
 import { getCoursesById } from "@/lib/courses/fetch-courses";
 import { ArrowLeft, Plus } from "lucide-react";
 import React from "react";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import ShowSubmission from "@/components/admin-page/show-submission";
 
 const AssignmentPages = async ({
   params,
@@ -24,7 +25,7 @@ const AssignmentPages = async ({
   const course = await getCoursesById(id);
   // console.log(course);
   return (
-    <div className="py-[42px] px-14">
+    <div className="py-[42px] px-14 min-h-screen">
       <Link href={"/admin-page/assignment-admin-page"}>
         <button className="flex gap-2 px-3 py-2 bg-neutral-400 rounded-[8px] mb-4 cursor-pointer">
           <ArrowLeft />
@@ -45,11 +46,12 @@ const AssignmentPages = async ({
             </Link>
           </div>
         )}
-        <div className="bg-neutral-50 rounded-[20px] p-5">Submitted</div>
+        {/* <div className="bg-neutral-50 rounded-[20px] p-5">Submitted</div>
         <div className="bg-neutral-50 rounded-[20px] p-5">
           Haven't Submitted
-        </div>
+        </div> */}
       </div>
+      <ShowSubmission courseId={id}/>
     </div>
   );
 };

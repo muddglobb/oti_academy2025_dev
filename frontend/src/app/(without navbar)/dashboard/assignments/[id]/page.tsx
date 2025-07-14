@@ -1,4 +1,4 @@
-import getAssignment from "@/lib/assignment/fetch-assignment";
+import {getAssignment} from "@/lib/assignment/fetch-assignment";
 import React from "react";
 import { Lock } from "lucide-react";
 import { getCoursesById } from "@/lib/courses/fetch-courses";

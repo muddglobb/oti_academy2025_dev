@@ -31,7 +31,7 @@ const Assignments = async () => {
   const responses = await getCourses();
   const courses = responses.data;
   return (
-    <div className="py-[30px] px-14">
+    <div className="py-[30px] px-14 min-h-screen">
       <p className="mb-1">Assignment</p>
       <div className="grid grid-cols-2 gap-6">
         {courses.map((item: CourseData) => (
