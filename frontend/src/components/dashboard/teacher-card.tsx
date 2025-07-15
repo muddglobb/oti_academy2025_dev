@@ -106,7 +106,7 @@ const teacherCardData: Record<
     ],
   ],
   "Cyber Security": [
-    ["TBA", "Mentor", "/images/foto-orang/mentor-tba-2.webp", "", "-"],
+    ["Hernowo Adi Nugroho", "Mentor", "/images/foto-orang/mentor-cysec.webp", "", "Penetration Tester"],
     [
       "Muhammad Ahsan Zaki Wiryawan",
       "Teaching Assistant",
