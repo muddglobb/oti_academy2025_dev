@@ -41,13 +41,11 @@ const PrerequisitesData: Record<string, string> = {
 - Familiar with Design System
 
 4. Have already done with UI project, at least once
-
-Pre-requisite Softeng:
-- Sudah install VSCode atau IDE lainnya
-- Sudah install NodeJS
-- Sudah install Docker (opsional)
 `,
-  "Software Engineering": "-",
+  "Software Engineering": 
+  `- Sudah install VSCode atau IDE lainnya
+- Sudah install NodeJS
+- Sudah install Docker (opsional)`,
   "Cyber Security": "-",
   "Competitive Programming": `1. Pelajari C++ Dasar (rekomendasi: https://tlx.toki.id/courses/basic-cpp )
 
@@ -61,6 +59,15 @@ Pre-requisite Softeng:
   "Graphic Design": `- Bisa menggunakan Figma secara basic
 `,
   "Game Development": `- Sudah download GDevelop`,
+  "Python + Data Science & Artificial Intelligence": `-Vscode
+-Windows 10 (64-bit)
+-macOS 10.11+
+-PC/Laptop dengan spesifikasi apapun
+-Sudah punya akun Kaggle
+`,
+"Web Development + Software Engineering": `- Sudah install VSCode atau IDE lainnya
+- Sudah install NodeJS
+- Sudah install Docker (opsional)`
 };
 
 const Prerequisites = ({ courseTitle }: PrerequisitesProps) => {
