@@ -5,32 +5,39 @@ import Image from "next/image";
 
 const MentorContent = [
     {
-        nama: "Ayasha R.",
-        job: "Full Stack Developer",
-        linkedin: "https://www.linkedin.com/in/ayasharahmadinni/",
-        pic: "/logo.jpeg",
-        desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
+        nama: "Rifqi Afwan M.",
+        job: "Software Engineering Mentor",
+        linkedin: "https://www.linkedin.com/in/rifqiafwan/",
+        pic: "/images/teacher/softeng.webp",
+        desc: "Backend Developer at PT Bank Mandiri tbk"
     },
     {
-        nama: "Ayasha Rahmadinni",
-        job: "Full Stack Developer",
-        linkedin: "https://www.linkedin.com/in/ayasharahmadinni/",
-        pic: "images/sponsors/sponsor1.jpeg",
-        desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
+        nama: "Ilham Bachtiar I.",
+        job: "DSAI Mentor",
+        linkedin: "https://www.linkedin.com/in/ilham-bachtiar-irfani/",
+        pic: "/images/teacher/dsai1.webp",
+        desc: "Senior AI Engineer and Founding Team of Sarana AI"
     },
     {
-        nama: "Ayasha Rahmadinni",
-        job: "Full Stack Developer",
-        linkedin: "https://www.linkedin.com/in/ayasharahmadinni/",
-        pic: "images/sponsors/sponsor1.jpeg",
-        desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
+        nama: "Ach Rozikin",
+        job: "DSAI Mentor",
+        linkedin: "https://www.linkedin.com/in/achmad-rozikin/",
+        pic: "/images/teacher/dsai2.webp",
+        desc: "Senior VP of Engineering and Founding Team of Sarana AI"
     },
     {
-        nama: "Ayasha Rahmadinni",
-        job: "Full Stack Developer",
-        linkedin: "https://www.linkedin.com/in/ayasharahmadinni/",
-        pic: "images/sponsors/sponsor1.jpeg",
-        desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
+        nama: "Louis Yasmin",
+        job: "UI/UX Mentor",
+        linkedin: "https://www.linkedin.com/in/louis-yasmin/",
+        pic: "/images/teacher/uiux.webp",
+        desc: "Solution Architect at iSystem Asia"
+    },
+    {
+        nama: "Hernowo Adi N.",
+        job: "Cyber Security Mentor",
+        linkedin: "https://www.linkedin.com/in/hernowoadin/",
+        pic: "/images/teacher/cysec.webp",
+        desc: "Penetration Tester"
     }
 ]
 
