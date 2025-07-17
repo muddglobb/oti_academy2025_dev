@@ -44,7 +44,7 @@ export const classData: Record<
   "UI/UX": {
     slug: "ui-ux",
     image: "/logo-perkelas/uiux.webp",
-    teacher1: "/images/mentor-coming-soon.webp",
+    teacher1: "/images/mentor-uiux.webp",
     teacher2: "/images/foto-orang/ken-bima.webp",
     teacher3: "",
     desc : "Mulai dari mengubah PRD jadi desain, membuat mock-up, wireframe, hingga memahami UX laws dan desain yang aksesibel. Belajar secara fleksibel lewat modul online, tugas, konsultasi, dan proyek akhir yang bisa jadi portofolio.",
@@ -54,7 +54,7 @@ export const classData: Record<
   "Cyber Security": {
     slug: "cyber-security",
     image: "/logo-perkelas/cysec-inter.webp",
-    teacher1: "/images/mentor-coming-soon.webp",
+    teacher1: "/images/mentor-cysec.webp",
     teacher2: "/images/foto-orang/ahsan.webp",
     teacher3: "",
     desc: "Masuki dunia ethical hacking dan praktik langsung tahapan penetration testing, dari reconnaissance hingga post-exploitation, lengkap dengan penyusunan laporan uji keamanan secara profesional.",

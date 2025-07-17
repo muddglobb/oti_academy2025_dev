@@ -23,10 +23,10 @@ const classInfo: [
   string,
   string
 ] = [
-  "TBA",
-  "/person-placeholder.jpeg",
-  "To be announced",
-  "https://www.linkedin.com/",
+  "Rifqi Afwan Muslihani",
+  "/images/foto-orang/mentor-softeng.webp",
+  "Backend Developer at PT Bank Mandiri tbk.",
+  "",
 
   "Rayhan Firdaus Ardian",
   "/images/foto-orang/rehund.webp",

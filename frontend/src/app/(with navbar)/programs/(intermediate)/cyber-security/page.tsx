@@ -23,10 +23,10 @@ const classInfo: [
   string,
   string
 ] = [
-  "TBA",
-  "/person-placeholder.jpeg",
-  "To be announced",
-  "https://www.linkedin.com",
+  "Hernowo Adi Nugroho",
+  "/images/foto-orang/mentor-cysec.webp",
+  "Penetration Tester",
+  "",
 
   "Ahsan Zaki",
   "/images/foto-orang/ahsan.webp",

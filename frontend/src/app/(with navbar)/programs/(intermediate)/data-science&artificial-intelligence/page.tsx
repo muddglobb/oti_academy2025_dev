@@ -23,10 +23,10 @@ const classInfo: [
   string,
   string
 ] = [
-  "TBA",
-  "/person-placeholder.jpeg",
+  "Ach Rozikin",
+  "/images/foto-orang/mentor-dsai-1.webp",
+  "Senior VP of Engineering and Founding Team of Sarana AI.",
   "",
-  "https://www.linkedin.com/in/dhimas-sulistio/",
 
   "Daffa Aryza",
   "/images/foto-orang/daffa.webp",

@@ -77,11 +77,27 @@ const IntermediateClassInfo = ({ classInfo }: ClassInfoProps) => {
               description={mentorDesc}
               linkedin={mentorLink}
             /> */}
-            <TBACard
+            {/* <TBACard
               name="Mentor"
               imageUrl="/images/foto-orang/mentor-tba.webp"
               description="To Be Announced"
+            /> */}
+            <MentorCard
+              name={mentor}
+              imageUrl={mentorImage}
+              role="Mentor"
+              description={mentorDesc}
+              linkedin={mentorLink}
             />
+            {mentor === "Ach Rozikin" && (
+              <MentorCard
+              name="Ilham Bachtiar Irfani"
+              imageUrl="/images/foto-orang/mentor-dsai-2.webp"
+              role="Mentor"
+              description="Senior AI Engineer and Founding Team of Sarana AI."
+              linkedin={mentorLink}
+            />
+            )}
 
             <MentorCard
               name={TA}
